@@ -22,11 +22,11 @@ using FungleAPI.Role;
 namespace FungleAPI.LoadMod
 {
 	[BepInProcess("Among Us.exe")]
-	[BepInPlugin(ModGUID, "FungleAPI", "1.0.0")]
+	[BepInPlugin(ModId, "FungleAPI", "1.0.0")]
 	public class FungleAPIPlugin : BasePlugin
 	{
-        public const string ModGUID = "com.rafael.fungleapi";
-        public Harmony Harmony { get; } = new Harmony(ModGUID);
+        public const string ModId = "com.rafael.fungleapi";
+        public Harmony Harmony { get; } = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
 		{
@@ -54,7 +54,7 @@ namespace FungleAPI.LoadMod
                 {
                     plugin = new ModPlugin();
                     plugin.ModAssembly = Assembly.GetExecutingAssembly();
-                    plugin.ModName = plugin.ModAssembly.GetName().Name;
+                    plugin.ModName = "Vanilla";
                     plugin.BasePlugin = Instance;
                     ModPlugin.AllPlugins.Add(plugin);
                 }

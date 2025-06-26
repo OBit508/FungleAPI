@@ -14,23 +14,26 @@ namespace FungleAPI.Role
     {
         public static void Postfix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
         {
-            foreach (RoleBehaviour r in CustomRoleManager.AllRoles)
+            if (targetPlayer == PlayerControl.LocalPlayer)
             {
-                if (r as ICustomRole != null)
+                foreach (RoleBehaviour r in CustomRoleManager.AllRoles)
                 {
-                    foreach (CustomAbilityButton button in (r as ICustomRole).RoleB.Buttons)
+                    if (r as ICustomRole != null)
                     {
-                        button.Destroy();
+                        foreach (CustomAbilityButton button in (r as ICustomRole).RoleB.Buttons)
+                        {
+                            button.Destroy();
+                        }
                     }
-                }
 
-            }
-            ICustomRole role = CustomRoleManager.GetRole(roleType);
-            if (role != null && role.RoleB.Buttons != null)
-            {
-                foreach (CustomAbilityButton button in role.RoleB.Buttons)
+                }
+                ICustomRole role = CustomRoleManager.GetRole(roleType);
+                if (role != null && role.RoleB.Buttons != null)
                 {
-                    button.CreateButton();
+                    foreach (CustomAbilityButton button in role.RoleB.Buttons)
+                    {
+                        button.CreateButton();
+                    }
                 }
             }
         }
