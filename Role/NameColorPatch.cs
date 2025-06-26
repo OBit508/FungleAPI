@@ -1,0 +1,28 @@
+﻿using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using HarmonyLib;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
+
+namespace FungleAPI.Role
+{
+    [HarmonyPatch(typeof(PlayerNameColor), "Get", new Type[] { typeof(RoleBehaviour) })]
+    public static class NameColorPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] RoleBehaviour otherPlayerRole, ref Color __result)
+        {
+            RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
+            if (role.GetTeam() != ModdedTeam.Crewmates && role.GetTeam() != ModdedTeam.Impostors && role.GetTeam() == otherPlayerRole.GetTeam() && role.GetTeam().KnowMembers)
+            {
+                __result = otherPlayerRole.NameColor;
+                return false;
+            }
+            __result = Color.white;
+            return false;
+        }
+    }
+}

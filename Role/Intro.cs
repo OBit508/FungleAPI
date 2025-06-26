@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
+using FungleAPI.Role.Teams;
 using HarmonyLib;
 using LibCpp2IL.Elf;
 using Steamworks;
@@ -28,7 +29,7 @@ namespace FungleAPI.Roles
                 position.y -= 0.25f;
                 transform.position = position;
                 __instance.BackgroundBar.material.color = customRole.Team.TeamColor;
-                __instance.TeamTitle.text = customRole.Team.TeamName;
+                __instance.TeamTitle.text = customRole.Team.TeamName.GetString();
                 __instance.impostorScale = 1f;
                 __instance.ImpostorText.text = null;
                 __instance.TeamTitle.color = customRole.Team.TeamColor;

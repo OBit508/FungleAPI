@@ -18,6 +18,7 @@ using FungleAPI.Rpc;
 using System.Collections;
 using AmongUs.GameOptions;
 using FungleAPI.Role;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.LoadMod
 {
@@ -39,8 +40,9 @@ namespace FungleAPI.LoadMod
                 ClassInjector.RegisterTypeInIl2Cpp<Updater>();
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
-                ModdedTeam.Crewmates = ModdedTeam.Create(Plugin, Palette.CrewmateBlue, "Crewmate", RoleTeamTypes.Crewmate);
-                ModdedTeam.Impostors = ModdedTeam.Create(Plugin, Palette.ImpostorRed, "Impostor", RoleTeamTypes.Impostor);
+                ModdedTeam.Crewmates = ModdedTeam.RegisterTeam(typeof(CrewmateTeam));
+                ModdedTeam.Impostors = ModdedTeam.RegisterTeam(typeof(ImpostorTeam));
+                ModdedTeam.Neutrals = ModdedTeam.RegisterTeam(typeof(NeutralTeam));
                 CustomRpcManager.LoadModRpcs();
             }
             Harmony.PatchAll();
@@ -79,6 +81,12 @@ namespace FungleAPI.LoadMod
 			{
 				if (!allLoadded)
 				{
+                    foreach (LoadedAsset asset in LoadedAsset.Assets)
+                    {
+                        if (asset.GetAsset() != null)
+                        {
+                        }
+                    }
                     foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
                     {
                         Plugin.Roles.Add(role);

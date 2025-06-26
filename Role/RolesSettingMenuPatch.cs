@@ -15,6 +15,7 @@ using FungleAPI.MonoBehaviours;
 using FungleAPI.Assets;
 using FungleAPI.Rpc;
 using FungleAPI.Patches;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Role
 {
@@ -31,7 +32,7 @@ namespace FungleAPI.Role
         public static GameObject AdvancedTab;
         public static List<OptionBehaviour> options = new List<OptionBehaviour>();
         public static PassiveButton SwitchButton;
-        private static int currentIndex;
+        public static int currentIndex;
         public static void Reset()
         {
             currentPlugin = FungleAPIPlugin.Plugin;
@@ -152,8 +153,10 @@ namespace FungleAPI.Role
             menu.scrollBar.Inner.transform.localPosition = vec;
             CategoryHeaderEditRole crewHeader = CreateHeader(menu, new Color(0.4706f, 0.8f, 0.925f), new Color(0.0392f, 0.3412f, 0.451f), new Color(0.0392f, 0.3412f, 0.451f, 0.498f), new Color(0.0549f, 0.3569f, 0.4667f), "Crewmate Roles");
             CategoryHeaderEditRole impHeader = CreateHeader(menu, new Color(0.8f, 0.3255f, 0.3255f), new Color(0.5373f, 0.0863f, 0.0863f), new Color(0.5373f, 0.0863f, 0.0863f, 0.498f), new Color(0.3451f, 0.1373f, 0.1373f), "Impostor Roles");
+            CategoryHeaderEditRole neutralHeader = CreateHeader(menu, Utils.Light(Color.gray, 0.7f), Color.gray, Utils.Dark(Color.gray, 0.7f), Utils.Light(Color.gray, 0.9f), "Neutral Roles");
             List<RoleBehaviour> crewmateRoles = new List<RoleBehaviour>();
             List<RoleBehaviour> impostorRoles = new List<RoleBehaviour>();
+            List<RoleBehaviour> neutralRoles = new List<RoleBehaviour>();
             List<ModdedTeam> customTeams = new List<ModdedTeam>();
             foreach (RoleBehaviour role in plugin.Roles)
             {
@@ -164,6 +167,10 @@ namespace FungleAPI.Role
                 else if (role.GetTeam() == ModdedTeam.Impostors)
                 {
                     impostorRoles.Add(role);
+                }
+                else if (role.GetTeam() == ModdedTeam.Neutrals)
+                {
+                    neutralRoles.Add(role);
                 }
                 else if (!customTeams.Contains(role.GetTeam()))
                 {
@@ -182,6 +189,12 @@ namespace FungleAPI.Role
                 impHeader.transform.localPosition = Pos;
                 Pos = OrganizeRoles(impostorRoles, Pos, menu);
             }
+            if (neutralRoles.Count > 0)
+            {
+                neutralHeader.gameObject.SetActive(true);
+                neutralHeader.transform.localPosition = Pos;
+                Pos = OrganizeRoles(neutralRoles, Pos, menu);
+            }
             foreach (ModdedTeam team in customTeams)
             {
                 List<RoleBehaviour> teamRoles = new List<RoleBehaviour>();
@@ -192,7 +205,7 @@ namespace FungleAPI.Role
                         teamRoles.Add(role);
                     }
                 }
-                CategoryHeaderEditRole header = CreateHeader(menu, Utils.Light(team.TeamColor, 0.7f), team.TeamColor, Utils.Dark(team.TeamColor, 0.7f), Utils.Light(team.TeamColor, 0.9f), team.TeamName);
+                CategoryHeaderEditRole header = CreateHeader(menu, Utils.Light(team.TeamColor, 0.7f), team.TeamColor, Utils.Dark(team.TeamColor, 0.7f), Utils.Light(team.TeamColor, 0.9f), team.TeamName.GetString());
                 header.transform.localPosition = Pos;
                 Pos = OrganizeRoles(teamRoles, Pos, menu);
                 header.gameObject.SetActive(true);
@@ -214,7 +227,7 @@ namespace FungleAPI.Role
                 RoleOptionSetting option = UnityEngine.Object.Instantiate(menu.RoleChancesSettings.transform.GetChild(2).GetComponent<RoleOptionSetting>(), menu.RoleChancesSettings.transform);
                 option.transform.localPosition = currentVec;
                 option.titleText.text = role.NiceName;
-                option.labelSprite.color = role.TeamColor;
+                option.labelSprite.color = role.NameColor;
                 int count = (role as ICustomRole).Count.Value;
                 int chance = (role as ICustomRole).Chance.Value;
                 option.countText.text = count.ToString();
@@ -233,6 +246,10 @@ namespace FungleAPI.Role
                         send();
                     }
                 });
+                option.CountMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                {
+                    option.CountMinusBtn.SetInteractable(count > 0);
+                });
                 option.CountPlusBtn.SetNewAction(delegate
                 {
                     count++;
@@ -250,6 +267,10 @@ namespace FungleAPI.Role
                         send();
                     }
                 });
+                option.ChanceMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                {
+                    option.ChanceMinusBtn.SetInteractable(chance > 0);
+                });
                 option.ChancePlusBtn.SetNewAction(delegate
                 {
                     if (chance + 10 <= 100)
@@ -260,6 +281,10 @@ namespace FungleAPI.Role
                         send();
                     }
                 });
+                option.ChanceMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                {
+                    option.ChanceMinusBtn.SetInteractable(chance < 100);
+                });
                 GameOptionButton cog = UnityEngine.Object.Instantiate(option.ChanceMinusBtn, option.transform);
                 cog.transform.GetChild(0).gameObject.SetActive(false);
                 cog.buttonSprite.sprite = Cog.GetAsset();
@@ -267,35 +292,42 @@ namespace FungleAPI.Role
                 cog.transform.localScale = new Vector3(1, 1, 1);
                 cog.SetNewAction(delegate
                 {
-                    menu.AdvancedRolesSettings.gameObject.SetActive(false);
-                    menu.RoleChancesSettings.gameObject.SetActive(false);
-                    AdvancedTab.SetActive(true);
-                    ICustomRole cRole = role as ICustomRole;
-                    labelSprite.color = Utils.Light(cRole.RoleColor);
-                    labelText.text = role.NiceName;
-                    labelText.color = cRole.RoleColor;
-                    if (cRole != null)
+                    if ((role as ICustomRole).RoleB.Configs.Count() > 0)
                     {
-                        for (int i = 0; i < cRole.RoleB.Configs.Count(); i++)
+                        menu.AdvancedRolesSettings.gameObject.SetActive(false);
+                        menu.RoleChancesSettings.gameObject.SetActive(false);
+                        AdvancedTab.SetActive(true);
+                        ICustomRole cRole = role as ICustomRole;
+                        labelSprite.color = Utils.Light(cRole.RoleColor);
+                        labelText.text = role.NiceName;
+                        labelText.color = cRole.RoleColor;
+                        if (cRole != null)
                         {
-                            OptionBehaviour op = null;
-                            if (cRole.RoleB.Configs[i] is NumConfig f)
+                            for (int i = 0; i < cRole.RoleB.Configs.Count(); i++)
                             {
-                                op = CreateOption(numberPrefab, cRole, f, AdvancedTab.transform);
-                            }
-                            else if (cRole.RoleB.Configs[i] is BoolConfig b)
-                            {
-                                op = CreateOption(togglePrefab, cRole, b, AdvancedTab.transform);
-                            }
-                            else if (cRole.RoleB.Configs[i] is EnumConfig e)
-                            {
-                                op = CreateOption(numberPrefab, cRole, e, AdvancedTab.transform);
-                            }
+                                OptionBehaviour op = null;
+                                if (cRole.RoleB.Configs[i] is NumConfig f)
+                                {
+                                    op = CreateOption(numberPrefab, cRole, f, AdvancedTab.transform);
+                                }
+                                else if (cRole.RoleB.Configs[i] is BoolConfig b)
+                                {
+                                    op = CreateOption(togglePrefab, cRole, b, AdvancedTab.transform);
+                                }
+                                else if (cRole.RoleB.Configs[i] is EnumConfig e)
+                                {
+                                    op = CreateOption(numberPrefab, cRole, e, AdvancedTab.transform);
+                                }
                                 op.gameObject.SetActive(true);
-                            op.transform.localPosition = new Vector3(0.5f, 0.1f - 0.4f * i, -10f);
-                            options.Add(op);
+                                op.transform.localPosition = new Vector3(0.5f, 0.1f - 0.4f * i, -10f);
+                                options.Add(op);
+                            }
                         }
                     }
+                });
+                cog.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                {
+                    cog.SetInteractable((role as ICustomRole).RoleB.Configs.Count() > 0);
                 });
                 currentVec.y = currentVec.y - 0.43f;
                 option.gameObject.SetActive(true);

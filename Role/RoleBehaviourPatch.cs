@@ -7,6 +7,7 @@ using FungleAPI.Roles;
 using UnityEngine;
 using HarmonyLib;
 using AmongUs.GameOptions;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Role
 {
@@ -17,12 +18,8 @@ namespace FungleAPI.Role
         [HarmonyPatch("TeamColor", MethodType.Getter)]
         public static bool GetTeamColor(RoleBehaviour __instance, ref Color __result)
         {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).RoleColor;
-                return false;
-            }
-            return true;
+            __result = __instance.GetTeam().TeamColor;
+            return false;
         }
         [HarmonyPrefix]
         [HarmonyPatch("NameColor", MethodType.Getter)]
@@ -69,18 +66,12 @@ namespace FungleAPI.Role
             return true;
         }
         [HarmonyPrefix]
-        [HarmonyPatch("IsDead", MethodType.Getter)]
-        public static bool GetIsDead(RoleBehaviour __instance, ref bool __result)
-        {
-            return RoleManager.GhostRoles.Contains(__instance.Role);
-        }
-        [HarmonyPrefix]
         [HarmonyPatch("CanUseKillButton", MethodType.Getter)]
         public static bool GetCanKill(RoleBehaviour __instance, ref bool __result)
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.UseKillButton;
+                __result = (__instance as ICustomRole).RoleB.UseVanillaKillButton;
                 return false;
             }
             return true;

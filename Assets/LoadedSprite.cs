@@ -24,6 +24,7 @@ namespace FungleAPI.Assets
                 manifestResourceStream.CopyTo(memoryStream);
                 data = memoryStream.ToArray();
             }
+            Assets.Add(this);
         }
         internal byte[] data;
         internal string path;

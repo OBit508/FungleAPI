@@ -15,6 +15,7 @@ using FungleAPI.Role;
 using BepInEx.Configuration;
 using System.Runtime.CompilerServices;
 using FungleAPI.Translation;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Roles
 {

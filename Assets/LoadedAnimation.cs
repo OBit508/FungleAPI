@@ -32,6 +32,7 @@ namespace FungleAPI.Assets
             anim = new SpriteSheet();
             anim.SpriteChangeSpeed = speed;
             anim.Sprites = new Sprite[] { };
+            Assets.Add(this);
         }
         internal string path;
         internal float pixelPerUnit;

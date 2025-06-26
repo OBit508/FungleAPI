@@ -27,8 +27,9 @@ namespace FungleAPI.Translation
         }
         internal static List<Translator> All = new List<Translator>();
         internal string Default;
-        internal StringNames StringName;
+        public StringNames StringName;
         internal Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
+        public static Translator None = CreateOrGetTranslator("STRMISS");
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
             if (!Strings.Keys.Contains(lang))

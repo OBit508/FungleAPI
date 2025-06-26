@@ -30,7 +30,7 @@ namespace FungleAPI.Patches
                         Vector3 position = player.transform.position;
                         float num = Vector2.Distance(center, position);
                         bool flag = player.Data.Role.GetTeam() != PlayerControl.LocalPlayer.Data.Role.GetTeam();
-                        if (!flag && PlayerControl.LocalPlayer.Data.Role.GetTeam().BaseTeam == RoleTeamTypes.Crewmate)
+                        if (!flag && PlayerControl.LocalPlayer.Data.Role.GetTeam().FriendlyFire)
                         {
                             flag = true;
                         }

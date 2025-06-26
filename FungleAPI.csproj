@@ -21,13 +21,18 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
+    <Compile Include="Patches\ChangeableValue.cs" />
     <Compile Include="Role\CustomRoleBehaviour.cs" />
+    <Compile Include="Role\NameColorPatch.cs" />
     <Compile Include="Role\RoleManagerPatch.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
     <Compile Include="Role\BoolConfig.cs" />
     <Compile Include="Role\EnumConfig.cs" />
     <Compile Include="Role\NumConfig.cs" />
     <Compile Include="Role\RoleTaskHintType.cs" />
+    <Compile Include="Role\Teams\CrewmateTeam.cs" />
+    <Compile Include="Role\Teams\ImpostorTeam.cs" />
+    <Compile Include="Role\Teams\NeutralTeam.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Assets\SpriteSheet.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
@@ -64,7 +69,7 @@
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\Intro.cs" />
-    <Compile Include="Role\ModdedTeam.cs" />
+    <Compile Include="Role\Teams\ModdedTeam.cs" />
     <Compile Include="Role\Outline.cs" />
     <Compile Include="Rpc\CustomRpcManager.cs" />
     <Compile Include="Rpc\RpcReceiver.cs" />

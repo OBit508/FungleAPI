@@ -8,12 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using FungleAPI.MonoBehaviours;
-using FungleAPI.Roles;
 using AmongUs.GameOptions;
 using Epic.OnlineServices.Presence;
 using xCloud;
 using UnityEngine;
 using FungleAPI.Rpc;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Patches
 {

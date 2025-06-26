@@ -32,6 +32,7 @@ namespace FungleAPI.Assets
                     num += 2;
                 }
             }
+            Assets.Add(this);
         }
         internal float[] LeftChannel;
         internal int ChannelCount;

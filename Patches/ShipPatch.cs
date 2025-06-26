@@ -149,8 +149,8 @@ namespace FungleAPI.Patches
             {
                 PlayerControl.LocalPlayer.RpcSetRole(role.Role);
             }));
-            button.GetComponent<ButtonRolloverHandler>().OutColor = role.TeamColor;
-            button.GetComponent<SpriteRenderer>().color = role.TeamColor;
+            button.GetComponent<ButtonRolloverHandler>().OutColor = role.NameColor;
+            button.GetComponent<SpriteRenderer>().color = role.NameColor;
             button.transform.GetChild(1).GetComponent<TextMeshPro>().text = "Be_" + role.NiceName + ".exe";
             Vector3 localPosition = button.transform.GetChild(1).localPosition;
             localPosition.y = -0.6f;

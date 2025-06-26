@@ -16,10 +16,10 @@ namespace FungleAPI.Roles
         {
             public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] bool active)
             {
-                if (active)
+                if (active && __instance.Data.Role as ICustomRole != null)
                 {
                     __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", PlayerControl.LocalPlayer.Data.Role.TeamColor);
+                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", (__instance.Data.Role as ICustomRole).RoleB.OutlineColor);
                     return false;
                 }
                 return true;
@@ -30,27 +30,32 @@ namespace FungleAPI.Roles
         {
             public static bool Prefix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
             {
-                if (on)
+                ICustomRole role = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
+                if (role != null)
                 {
-                    __instance.myRend.material.SetFloat("_Outline", 1f);
-                    __instance.myRend.material.SetColor("_OutlineColor", PlayerControl.LocalPlayer.Data.Role.TeamColor);
+                    if (on)
+                    {
+                        __instance.myRend.material.SetFloat("_Outline", 1f);
+                        __instance.myRend.material.SetColor("_OutlineColor", role.RoleB.OutlineColor);
+                    }
+                    else
+                    {
+                        __instance.myRend.material.SetFloat("_Outline", 0f);
+                    }
+                    if (mainTarget)
+                    {
+                        float num = Mathf.Clamp01(role.RoleB.OutlineColor.r * 0.5f);
+                        float num2 = Mathf.Clamp01(role.RoleB.OutlineColor.g * 0.5f);
+                        float num3 = Mathf.Clamp01(role.RoleB.OutlineColor.b * 0.5f);
+                        __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
+                    }
+                    else
+                    {
+                        __instance.myRend.material.SetColor("_AddColor", new Color(0f, 0f, 0f, 0f));
+                    }
+                    return false;
                 }
-                else
-                {
-                    __instance.myRend.material.SetFloat("_Outline", 0f);
-                }
-                if (mainTarget)
-                {
-                    float num = Mathf.Clamp01(PlayerControl.LocalPlayer.Data.Role.TeamColor.r * 0.5f);
-                    float num2 = Mathf.Clamp01(PlayerControl.LocalPlayer.Data.Role.TeamColor.g * 0.5f);
-                    float num3 = Mathf.Clamp01(PlayerControl.LocalPlayer.Data.Role.TeamColor.b * 0.5f);
-                    __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
-                }
-                else
-                {
-                    __instance.myRend.material.SetColor("_AddColor", new Color(0f, 0f, 0f, 0f));
-                }
-                return false;
+                return true;
             }
         }
     }

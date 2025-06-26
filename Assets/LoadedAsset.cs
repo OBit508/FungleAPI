@@ -9,6 +9,7 @@ namespace FungleAPI.Assets
 {
     public class LoadedAsset
     {
+        public static List<LoadedAsset> Assets = new List<LoadedAsset>();
         public virtual object GetAsset()
         {
             return null;

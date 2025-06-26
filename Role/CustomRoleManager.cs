@@ -12,6 +12,7 @@ using Il2CppInterop.Runtime;
 using FungleAPI.Translation;
 using FungleAPI.Role;
 using System.Reflection;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Roles
 {
@@ -52,6 +53,7 @@ namespace FungleAPI.Roles
                 role.BlurbName = cRole.RoleBlur.StringName;
                 role.BlurbNameMed = cRole.RoleBlurMed.StringName;
                 role.BlurbNameLong = cRole.RoleBlurLong.StringName;
+                role.NameColor = cRole.RoleColor;
                 role.Role = roleType;
                 plugin.Roles.Add(role);
                 AllRoles.Add(role);
@@ -96,6 +98,15 @@ namespace FungleAPI.Roles
             if (role != null)
             {
                 return role.RoleB.CanSabotage;
+            }
+            return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
+        }
+        public static bool CanKill(this RoleBehaviour roleBehaviour)
+        {
+            ICustomRole role = roleBehaviour as ICustomRole;
+            if (role != null)
+            {
+                return role.RoleB.CanKill;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }

@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
-using FungleAPI.Roles;
+using FungleAPI.Role.Teams;
 using System;
 using System.Collections.Generic;
 using System.Linq;
