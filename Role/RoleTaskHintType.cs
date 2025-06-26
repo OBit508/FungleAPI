@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Role
 {
-    public enum TaskHintType
+    public enum RoleTaskHintType
     {
         None,
         TaskHint,

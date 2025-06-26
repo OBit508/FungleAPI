@@ -27,7 +27,7 @@
     <Compile Include="Role\BoolConfig.cs" />
     <Compile Include="Role\EnumConfig.cs" />
     <Compile Include="Role\NumConfig.cs" />
-    <Compile Include="Role\TaskHintType.cs" />
+    <Compile Include="Role\RoleTaskHintType.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Assets\SpriteSheet.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
