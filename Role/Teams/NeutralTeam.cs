@@ -13,6 +13,6 @@ namespace FungleAPI.Role.Teams
         public override bool FriendlyFire => true;
         public override bool KnowMembers => false;
         public override Color TeamColor => Color.gray;
-        public override StringNames TeamName => Translator.CreateOrGetTranslator("Neutral").AddTranslation(SupportedLangs.Brazilian, "Neutro").StringName;
+        public override StringNames TeamName => Translator.GetOrCreate("Neutral").AddTranslation(SupportedLangs.Brazilian, "Neutro").StringName;
     }
 }
