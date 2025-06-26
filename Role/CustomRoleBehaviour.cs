@@ -22,5 +22,13 @@ namespace FungleAPI.Role
         public virtual Config[] Configs => new Config[] {};
         public virtual CustomAbilityButton[] Buttons => new CustomAbilityButton[] {};
         public virtual RoleTypes GhostRole => RoleTypes.Crewmate;
+        public virtual TaskHintType HintType => TaskHintType.TaskHint;
+        public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
+        {
+            if (HintType == TaskHintType.TaskHint)
+            {
+                base.AppendTaskHint(taskStringBuilder);
+            }
+        }   
     }
 }

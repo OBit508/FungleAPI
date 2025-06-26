@@ -48,5 +48,9 @@ namespace FungleAPI.Translation
             }
             return Default;
         }
+        public override string ToString()
+        {
+            return GetString();
+        }
     }
 }

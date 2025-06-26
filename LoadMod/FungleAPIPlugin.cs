@@ -26,6 +26,7 @@ namespace FungleAPI.LoadMod
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModGUID = "com.rafael.fungleapi";
+        public static string Test;
         public Harmony Harmony { get; } = new Harmony(ModGUID);
         public static FungleAPIPlugin Instance;
 		public override void Load()

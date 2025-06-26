@@ -14,25 +14,18 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(TaskPanelBehaviour __instance, [HarmonyArgument(0)] string str)
         {
-            try
+            ICustomRole role = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
+            if (role != null && role.RoleB.HintType == Role.TaskHintType.Custom)
             {
-                ICustomRole role = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
-                if (role != null)
+                string roleText = "";
+                if (role.Team != ModdedTeam.Crewmates)
                 {
-                    string roleText = "";
-                    if (role.Team != ModdedTeam.Crewmates)
-                    {
-                        roleText = "\n" + StringNames.FakeTasks.GetString();
-                    }
-                    str = "<color=#" + ColorUtility.ToHtmlStringRGBA(role.RoleColor) + ">" + role.RoleName + " </color>(<color=#" + ColorUtility.ToHtmlStringRGBA(role.Team.TeamColor) + ">" + role.Team.TeamName + "</color>)" + "<color=#" + ColorUtility.ToHtmlStringRGBA(role.RoleColor) + ">" + "\n" + role.RoleBlur + roleText + "\n</color>" + str;
+                    roleText = "\n" + StringNames.FakeTasks.GetString();
                 }
-                __instance.taskText.text = str;
-                return false;
+                str = "<color=#" + ColorUtility.ToHtmlStringRGBA(role.RoleColor) + ">" + role.RoleName + " </color>(<color=#" + ColorUtility.ToHtmlStringRGBA(role.Team.TeamColor) + ">" + role.Team.TeamName + "</color>)" + "<color=#" + ColorUtility.ToHtmlStringRGBA(role.RoleColor) + ">" + "\n" + role.RoleBlur + roleText + "\n</color>" + str;
             }
-            catch
-            {
-                return true;
-            }
+            __instance.taskText.text = str;
+            return false;
         }
     }
 }
