@@ -68,7 +68,7 @@
     <Compile Include="Role\Config.cs" />
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
-    <Compile Include="Role\Intro.cs" />
+    <Compile Include="Role\IntroCutscenePatch.cs" />
     <Compile Include="Role\Teams\ModdedTeam.cs" />
     <Compile Include="Role\Outline.cs" />
     <Compile Include="Rpc\CustomRpcManager.cs" />

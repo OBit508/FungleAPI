@@ -26,6 +26,10 @@ namespace FungleAPI.Patches
         {
             try
             {
+                if (Input.GetKeyDown(KeyCode.F1))
+                {
+                    __instance.StartCoroutine(__instance.CoShowIntro());
+                }
                 foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
                 {
                     button.upd();

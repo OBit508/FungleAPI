@@ -26,6 +26,7 @@ namespace FungleAPI.Role
         public virtual RoleTypes GhostRole => RoleTypes.Crewmate;
         public virtual RoleTaskHintType HintType => RoleTaskHintType.TaskHint;
         public virtual Color OutlineColor => NameColor;
+        public virtual bool ShowTeamColorOnIntro => false;
         public override bool IsDead => IsGhostRole;
         public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {

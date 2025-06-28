@@ -78,7 +78,7 @@ namespace FungleAPI.Rpc
                 int count = rpcCustomEndGame.ReadInt();
                 for (int i = 0; i < count; i++)
                 {
-                    EndGamePatch.Winners.Add(new CachedPlayerData(rpcCustomEndGame.ReadPlayer().Data));
+                    EndGamePatch.Winners.Add(new CachedPlayerData(rpcCustomEndGame.ReadNetObject()));
                 }
             });
             rpcSendNotification = CreateRpc(FungleAPIPlugin.Plugin, RpcType.Player, delegate

@@ -57,22 +57,5 @@ namespace FungleAPI.Patches
         {
             return player.cosmetics.currentBodySprite.BodySprite.GetComponent<PlayerAnimator>();
         }
-        public static void RpcCustomEndGame(this GameManager manager, ModdedTeam team)
-        {
-            GameManagerPatch.customEnd = true;
-            manager.RpcEndGame(team.WinReason, false);
-        }
-        public static void RpcCustomEndGame(this GameManager manager, List<PlayerControl> winners)
-        {
-            CustomRpcManager.rpcCustomEndGame.Write(winners.Count);
-            foreach (PlayerControl player in winners)
-            {
-                CustomRpcManager.rpcCustomEndGame.Write(player.Data);
-                EndGamePatch.Winners.Add(new CachedPlayerData(player.Data));
-            }
-            CustomRpcManager.rpcCustomEndGame.SendRpc();
-            GameManagerPatch.customEnd = true;
-            manager.RpcEndGame(GameOverReason.ImpostorsByKill, false);
-        }
     }
 }

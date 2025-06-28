@@ -8,6 +8,7 @@ namespace FungleAPI.Rpc
 {
     public enum RpcType
     {
+        None,
         Player,
         Ship,
         GameManager,

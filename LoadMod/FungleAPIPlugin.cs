@@ -23,10 +23,11 @@ using FungleAPI.Role.Teams;
 namespace FungleAPI.LoadMod
 {
 	[BepInProcess("Among Us.exe")]
-	[BepInPlugin(ModId, "FungleAPI", "1.0.0")]
+	[BepInPlugin(ModId, "FungleAPI", ModV)]
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
+        public const string ModV = "0.1.0";
         public Harmony Harmony { get; } = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()

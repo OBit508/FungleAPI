@@ -1,17 +1,18 @@
 ﻿using FungleAPI.MonoBehaviours;
+using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using FungleAPI.Rpc;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Roles;
-using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(GameManager))]
-    public class GameManagerPatch
+    public static class GameManagerPatch
     {
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
@@ -33,7 +34,7 @@ namespace FungleAPI.Patches
             }
             else if (endReason == GameOverReason.CrewmatesByTask)
             {
-                __instance.RpcCustomEndGame(ModdedTeam.Crewmates);
+                RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
                 return false;
             }
             return false;
@@ -84,17 +85,34 @@ namespace FungleAPI.Patches
                 }
                 if (pair.Count == 1 && pair.Values.ToArray()[0].Value >= crewmates && neutralKillers.Count == 0)
                 {
-                    __instance.RpcCustomEndGame(pair.Keys.ToArray()[0]);
+                    RpcCustomEndGame(__instance, pair.Keys.ToArray()[0]);
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 1 && neutralKillers.Count >= crewmates)
                 {
-                    __instance.RpcCustomEndGame(neutralKillers);
+                    RpcCustomEndGame(__instance, neutralKillers);
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 0)
                 {
-                    __instance.RpcCustomEndGame(ModdedTeam.Crewmates);
+                    RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
                 }
             }
+        }
+        public static void RpcCustomEndGame(this GameManager manager, ModdedTeam team)
+        {
+            customEnd = true;
+            manager.RpcEndGame(team.WinReason, false);
+        }
+        public static void RpcCustomEndGame(this GameManager manager, List<PlayerControl> winners)
+        {
+            CustomRpcManager.rpcCustomEndGame.Write(winners.Count);
+            foreach (PlayerControl player in winners)
+            {
+                CustomRpcManager.rpcCustomEndGame.Write(player.Data);
+                EndGamePatch.Winners.Add(new CachedPlayerData(player.Data));
+            }
+            CustomRpcManager.rpcCustomEndGame.SendRpc();
+            customEnd = true;
+            manager.RpcEndGame(GameOverReason.ImpostorsByKill, false);
         }
     }
 }
