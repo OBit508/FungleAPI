@@ -24,17 +24,13 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static void OnUpdate(HudManager __instance)
         {
+            foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
+            {
+                button.upd();
+                button.Update();
+            }
             try
             {
-                if (Input.GetKeyDown(KeyCode.F1))
-                {
-                    __instance.StartCoroutine(__instance.CoShowIntro());
-                }
-                foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
-                {
-                    button.upd();
-                    button.Update();
-                }
                 HudManager.Instance.ImpostorVentButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanVent && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Data.RoleType != AmongUs.GameOptions.RoleTypes.Engineer && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));
                 HudManager.Instance.KillButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanUseKillButton && !PlayerControl.LocalPlayer.Data.IsDead && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));
                 HudManager.Instance.SabotageButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanSabotage() && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));

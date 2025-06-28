@@ -9,12 +9,11 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
-    public class CustomDeadBody : MonoBehaviour
+    public class CustomDeadBody : DeadBody
     {
         public static List<CustomDeadBody> AllBodies = new List<CustomDeadBody>();
         public PlayerControl Carring;
         public PlayerControl Owner;
-        public DeadBody Body;
         public void Destroy()
         {
             AllBodies.Remove(this);
@@ -22,13 +21,13 @@ namespace FungleAPI.MonoBehaviours
         }
         public void Start()
         {
-            Body = GetComponent<DeadBody>();
-            if (Body != GameManager.Instance.DeadBodyPrefab)
+            Owner = Utils.GetPlayerById(ParentId);
+            GetComponent<BoxCollider2D>().isTrigger = false;
+            if (this != GameManager.Instance.deadBodyPrefab)
             {
-                Owner = Utils.GetPlayerById(Body.ParentId);
                 AllBodies.Add(this);
-                GetComponent<BoxCollider2D>().isTrigger = false;
             }
+            Owner.SetPlayerMaterialColors(bloodSplatter);
         }
         public void Update()
         {

@@ -34,7 +34,7 @@ namespace FungleAPI.Patches
         {
             foreach (CustomDeadBody body in CustomDeadBody.AllBodies)
             {
-                if (body.Body.ParentId == id)
+                if (body.ParentId == id)
                 {
                     return body;
                 }

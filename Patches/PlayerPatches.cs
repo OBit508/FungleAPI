@@ -14,6 +14,7 @@ using xCloud;
 using UnityEngine;
 using FungleAPI.Rpc;
 using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
 
 namespace FungleAPI.Patches
 {
@@ -29,6 +30,15 @@ namespace FungleAPI.Patches
                 PlayerAnimator animator = body.BodySprite.gameObject.AddComponent<PlayerAnimator>();
                 animator.Player = __instance;
                 animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
+            }
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch("RpcMurderPlayer")]
+        public static void PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
+        {
+            if (didSucceed && __instance.Data.Role as ICustomRole != null)
+            {
+                (__instance.Data.Role as ICustomRole).RoleB.OnKill(target, target.GetBody());
             }
         }
         [HarmonyPatch("FixedUpdate")]

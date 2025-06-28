@@ -18,9 +18,17 @@ namespace FungleAPI.Role
         [HarmonyPatch("TeamColor", MethodType.Getter)]
         public static bool GetTeamColor(RoleBehaviour __instance, ref Color __result)
         {
-            if (__instance as ICustomRole != null)
+            ICustomRole role = __instance as ICustomRole;
+            if (role != null)
             {
-                __result = (__instance as ICustomRole).RoleColor;
+                if (role.RoleB.ShowTeamColorOnIntro)
+                {
+                    __result = role.Team.TeamColor;
+                }
+                else
+                {
+                    __result = role.RoleColor;
+                }
                 return false;
             }
             return false;

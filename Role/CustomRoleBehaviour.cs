@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using System;
@@ -27,6 +28,10 @@ namespace FungleAPI.Role
         public virtual RoleTaskHintType HintType => RoleTaskHintType.TaskHint;
         public virtual Color OutlineColor => NameColor;
         public virtual bool ShowTeamColorOnIntro => false;
+        public virtual void OnKill(PlayerControl target, CustomDeadBody body)
+        {
+
+        }
         public override bool IsDead => IsGhostRole;
         public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {
