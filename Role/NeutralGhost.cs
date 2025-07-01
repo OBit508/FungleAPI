@@ -12,23 +12,14 @@ using UnityEngine;
 
 namespace FungleAPI.Role
 {
-    public class NeutralGhost : RoleBehaviour, ICustomRole
+    public class NeutralGhost : CustomRoleBehaviour, ICustomRole
     {
-        public NeutralGhost(IntPtr ptr) : base(ptr) { }
         public ModdedTeam Team => ModdedTeam.Neutrals;
         public StringNames RoleName => StringNames.None;
         public StringNames RoleBlur => StringNames.None;
         public StringNames RoleBlurLong => StringNames.None;
         public StringNames RoleBlurMed => StringNames.None;
         public Color RoleColor => Color.gray;
-        public RoleConfig Configuration => new RoleConfig(this)
-        {
-            IsGhostRole = true
-        };
-        public void MurderPlayer(PlayerControl target, CustomDeadBody deadBody)
-        {
-            GameObject.Destroy(target.gameObject);
-            GameObject.Destroy(deadBody.gameObject);
-        }
+        public override bool IsGhostRole => true;
     }
 }

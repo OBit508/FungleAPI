@@ -292,7 +292,7 @@ namespace FungleAPI.Role
                 cog.transform.localScale = new Vector3(1, 1, 1);
                 cog.SetNewAction(delegate
                 {
-                    if ((role as ICustomRole).CachedConfig.Configs.Count() > 0)
+                    if ((role as ICustomRole).Role.Configs.Count() > 0)
                     {
                         menu.AdvancedRolesSettings.gameObject.SetActive(false);
                         menu.RoleChancesSettings.gameObject.SetActive(false);
@@ -303,18 +303,18 @@ namespace FungleAPI.Role
                         labelText.color = cRole.RoleColor;
                         if (cRole != null)
                         {
-                            for (int i = 0; i < cRole.CachedConfig.Configs.Count(); i++)
+                            for (int i = 0; i < cRole.Role.Configs.Count(); i++)
                             {
                                 OptionBehaviour op = null;
-                                if (cRole.CachedConfig.Configs[i] is NumConfig f)
+                                if (cRole.Role.Configs[i] is NumConfig f)
                                 {
                                     op = CreateOption(numberPrefab, cRole, f, AdvancedTab.transform);
                                 }
-                                else if (cRole.CachedConfig.Configs[i] is BoolConfig b)
+                                else if (cRole.Role.Configs[i] is BoolConfig b)
                                 {
                                     op = CreateOption(togglePrefab, cRole, b, AdvancedTab.transform);
                                 }
-                                else if (cRole.CachedConfig.Configs[i] is EnumConfig e)
+                                else if (cRole.Role.Configs[i] is EnumConfig e)
                                 {
                                     op = CreateOption(numberPrefab, cRole, e, AdvancedTab.transform);
                                 }
@@ -327,7 +327,7 @@ namespace FungleAPI.Role
                 });
                 cog.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
                 {
-                    cog.SetInteractable((role as ICustomRole).CachedConfig.Configs.Count() > 0);
+                    cog.SetInteractable((role as ICustomRole).Role.Configs.Count() > 0);
                 });
                 currentVec.y = currentVec.y - 0.43f;
                 option.gameObject.SetActive(true);

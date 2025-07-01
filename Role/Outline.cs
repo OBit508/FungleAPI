@@ -19,7 +19,7 @@ namespace FungleAPI.Roles
                 if (active && __instance.Data.Role as ICustomRole != null)
                 {
                     __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", (__instance.Data.Role as ICustomRole).RoleColor);
+                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", (__instance.Data.Role as ICustomRole).Role.OutlineColor);
                     return false;
                 }
                 return true;
@@ -36,7 +36,7 @@ namespace FungleAPI.Roles
                     if (on)
                     {
                         __instance.myRend.material.SetFloat("_Outline", 1f);
-                        __instance.myRend.material.SetColor("_OutlineColor", role.RoleColor);
+                        __instance.myRend.material.SetColor("_OutlineColor", role.Role.OutlineColor);
                     }
                     else
                     {
@@ -44,9 +44,9 @@ namespace FungleAPI.Roles
                     }
                     if (mainTarget)
                     {
-                        float num = Mathf.Clamp01(role.RoleColor.r * 0.5f);
-                        float num2 = Mathf.Clamp01(role.RoleColor.g * 0.5f);
-                        float num3 = Mathf.Clamp01(role.RoleColor.b * 0.5f);
+                        float num = Mathf.Clamp01(role.Role.OutlineColor.r * 0.5f);
+                        float num2 = Mathf.Clamp01(role.Role.OutlineColor.g * 0.5f);
+                        float num3 = Mathf.Clamp01(role.Role.OutlineColor.b * 0.5f);
                         __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
                     }
                     else

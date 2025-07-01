@@ -47,21 +47,6 @@ namespace FungleAPI.Roles
             }
             return null;
         }
-        public static void MurderPlayer(PlayerControl killer, PlayerControl target)
-        {
-            var method = killer.Data.Role.GetType().GetMethod("MurderPlayer", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-            if (method == null)
-            {
-                return;
-            }
-            var p = method.GetParameters();
-            if (p.Length == 2 &&
-                p[0].ParameterType == typeof(PlayerControl) &&
-                p[1].ParameterType == typeof(CustomDeadBody))
-            {
-                method.Invoke(null, new object[] { target, target.GetBody() });
-            }
-        }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
@@ -77,7 +62,7 @@ namespace FungleAPI.Roles
             role.Role = roleType;
             plugin.Roles.Add(role);
             AllRoles.Add(role);
-            if (cRole.CachedConfig.IsGhostRole)
+            if (cRole.Role.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }
@@ -114,7 +99,7 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour as ICustomRole;
             if (role != null)
             {
-                return role.CachedConfig.CanSabotage;
+                return role.Role.CanSabotage;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
@@ -123,7 +108,7 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour as ICustomRole;
             if (role != null)
             {
-                return role.CachedConfig.CanKill;
+                return role.Role.CanKill;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }

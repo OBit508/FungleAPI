@@ -21,7 +21,7 @@ namespace FungleAPI.Role
             ICustomRole role = __instance as ICustomRole;
             if (role != null)
             {
-                if (role.CachedConfig.ShowTeamColor)
+                if (role.Role.ShowTeamColor)
                 {
                     __result = role.Team.TeamColor;
                 }
@@ -50,7 +50,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.AffectedByLightOnAirship;
+                __result = (__instance as ICustomRole).Role.AffectedByLightOnAirship;
                 return false;
             }
             return true;
@@ -61,7 +61,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.AffectedByComms;
+                __result = (__instance as ICustomRole).Role.AffectedByComms;
                 return false;
             }
             return true;
@@ -72,7 +72,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.UseVanillaKillButton;
+                __result = (__instance as ICustomRole).Role.UseVanillaKillButton;
                 return false;
             }
             return true;
@@ -83,7 +83,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.CanUseVent;
+                __result = (__instance as ICustomRole).Role.CanUseVent;
                 return false;
             }
             return true;
@@ -94,7 +94,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.TasksCountForProgress;
+                __result = (__instance as ICustomRole).Role.TasksCountForProgress;
                 return false;
             }
             return true;
@@ -105,7 +105,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).CachedConfig.IsGhostRole;
+                __result = (__instance as ICustomRole).Role.IsGhostRole;
                 return false;
             }
             return true;
@@ -127,7 +127,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             { 
-                __result = (__instance as ICustomRole).CachedConfig.GhostRole;
+                __result = (__instance as ICustomRole).Role.GhostRole;
                 return false;
             }
             return true;

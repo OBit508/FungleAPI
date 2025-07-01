@@ -16,7 +16,7 @@ namespace FungleAPI.Patches
         public static bool Prefix(TaskPanelBehaviour __instance, [HarmonyArgument(0)] string str)
         {
             ICustomRole role = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
-            if (role != null && role.CachedConfig.HintType == Role.RoleTaskHintType.Custom)
+            if (role != null && role.Role.HintType == Role.RoleTaskHintType.Custom)
             {
                 string roleText = "";
                 if (role.Team != ModdedTeam.Crewmates)
