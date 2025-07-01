@@ -22,8 +22,9 @@
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="Patches\ChangeableValue.cs" />
-    <Compile Include="Role\CustomRoleBehaviour.cs" />
+    <Compile Include="Role\RoleConfig.cs" />
     <Compile Include="Role\NameColorPatch.cs" />
+    <Compile Include="Role\NeutralGhost.cs" />
     <Compile Include="Role\RoleManagerPatch.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
     <Compile Include="Role\BoolConfig.cs" />

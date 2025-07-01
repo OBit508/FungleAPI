@@ -20,7 +20,7 @@ namespace FungleAPI.Role
                 {
                     if (r as ICustomRole != null)
                     {
-                        foreach (CustomAbilityButton button in (r as ICustomRole).RoleB.Buttons)
+                        foreach (CustomAbilityButton button in (r as ICustomRole).CachedConfig.Buttons)
                         {
                             button.Destroy();
                         }
@@ -28,9 +28,9 @@ namespace FungleAPI.Role
 
                 }
                 ICustomRole role = CustomRoleManager.GetRole(roleType);
-                if (role != null && role.RoleB.Buttons != null)
+                if (role != null && role.CachedConfig.Buttons != null)
                 {
-                    foreach (CustomAbilityButton button in role.RoleB.Buttons)
+                    foreach (CustomAbilityButton button in role.CachedConfig.Buttons)
                     {
                         button.CreateButton();
                     }

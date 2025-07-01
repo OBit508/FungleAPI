@@ -21,7 +21,7 @@ namespace FungleAPI.Role
             ICustomRole role = __instance as ICustomRole;
             if (role != null)
             {
-                if (role.RoleB.ShowTeamColorOnIntro)
+                if (role.CachedConfig.ShowTeamColor)
                 {
                     __result = role.Team.TeamColor;
                 }
@@ -32,17 +32,6 @@ namespace FungleAPI.Role
                 return false;
             }
             return false;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("NameColor", MethodType.Getter)]
-        public static bool GetNameColor(RoleBehaviour __instance, ref Color __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).RoleColor;
-                return false;
-            }
-            return true;
         }
         [HarmonyPrefix]
         [HarmonyPatch("IsSimpleRole", MethodType.Getter)]
@@ -61,7 +50,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.AffectedByLightOnAirship;
+                __result = (__instance as ICustomRole).CachedConfig.AffectedByLightOnAirship;
                 return false;
             }
             return true;
@@ -72,7 +61,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.AffectedByComms;
+                __result = (__instance as ICustomRole).CachedConfig.AffectedByComms;
                 return false;
             }
             return true;
@@ -83,7 +72,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.UseVanillaKillButton;
+                __result = (__instance as ICustomRole).CachedConfig.UseVanillaKillButton;
                 return false;
             }
             return true;
@@ -94,7 +83,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.CanUseVent;
+                __result = (__instance as ICustomRole).CachedConfig.CanUseVent;
                 return false;
             }
             return true;
@@ -105,7 +94,18 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             {
-                __result = (__instance as ICustomRole).RoleB.TasksCountForProgress;
+                __result = (__instance as ICustomRole).CachedConfig.TasksCountForProgress;
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPrefix]
+        [HarmonyPatch("IsDead", MethodType.Getter)]
+        public static bool GetIsDead(RoleBehaviour __instance, ref bool __result)
+        {
+            if (__instance as ICustomRole != null)
+            {
+                __result = (__instance as ICustomRole).CachedConfig.IsGhostRole;
                 return false;
             }
             return true;
@@ -127,7 +127,7 @@ namespace FungleAPI.Role
         {
             if (__instance as ICustomRole != null)
             { 
-                __result = (__instance as ICustomRole).RoleB.GhostRole;
+                __result = (__instance as ICustomRole).CachedConfig.GhostRole;
                 return false;
             }
             return true;

@@ -11,6 +11,7 @@ namespace FungleAPI.MonoBehaviours
 {
     public class CustomDeadBody : DeadBody
     {
+        public CustomDeadBody(IntPtr ptr) : base(ptr) { }
         public static List<CustomDeadBody> AllBodies = new List<CustomDeadBody>();
         public PlayerControl Carring;
         public PlayerControl Owner;

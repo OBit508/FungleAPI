@@ -1,32 +1,40 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using BepInEx.Core.Logging.Interpolation;
+using FungleAPI.LoadMod;
+using FungleAPI.MonoBehaviours;
+using FungleAPI.Patches;
+using FungleAPI.Role;
+using FungleAPI.Role.Teams;
+using FungleAPI.Translation;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.Injection;
+using MonoMod.Cil;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using AmongUs.GameOptions;
-using FungleAPI.LoadMod;
-using FungleAPI.Patches;
-using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
-using Il2CppInterop.Runtime;
-using FungleAPI.Translation;
-using FungleAPI.Role;
-using System.Reflection;
-using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Roles
 {
     public static class CustomRoleManager
     {
-        internal static int id = 1;
+        public static RoleTypes NeutralGhost;
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();
         public static RoleTypes RegisterRole(Type type)
         {
-            id++;
-            RoleTypes roleType = (RoleTypes)(id + 99);
-            RolesToRegister.Add((type, ModPlugin.GetModPlugin(type.Assembly), roleType));
-            return roleType;
+            ICustomRole.id++;
+            RoleTypes role = (RoleTypes)ICustomRole.id;
+            if (typeof(RoleBehaviour).IsAssignableFrom(type) || typeof(ICustomRole).IsAssignableFrom(type))
+            {
+                ICustomRole.AllTypes.Add((type, role));
+                RolesToRegister.Add((type, ModPlugin.GetModPlugin(type.Assembly), role));
+                ClassInjector.RegisterTypeInIl2Cpp(type);
+            }
+            return role;
         }
         public static ICustomRole GetRole(RoleTypes type)
         {
@@ -39,33 +47,42 @@ namespace FungleAPI.Roles
             }
             return null;
         }
-        internal static CustomRoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
+        public static void MurderPlayer(PlayerControl killer, PlayerControl target)
         {
-            try
+            var method = killer.Data.Role.GetType().GetMethod("MurderPlayer", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method == null)
             {
-                ClassInjector.RegisterTypeInIl2Cpp(type);
-                CustomRoleBehaviour role = (CustomRoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
-                ICustomRole cRole = role as ICustomRole;
-                cRole.Count = FungleAPIPlugin.Instance.Config.Bind<int>(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Count", 1);
-                cRole.Chance = FungleAPIPlugin.Instance.Config.Bind<int>(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Chance", 100);
-                role.name = cRole.RoleName.GetString();
-                role.StringName = cRole.RoleName.StringName;
-                role.BlurbName = cRole.RoleBlur.StringName;
-                role.BlurbNameMed = cRole.RoleBlurMed.StringName;
-                role.BlurbNameLong = cRole.RoleBlurLong.StringName;
-                role.NameColor = cRole.RoleColor;
-                role.Role = roleType;
-                plugin.Roles.Add(role);
-                AllRoles.Add(role);
-                cRole.OnRegister?.Invoke();
-                plugin.BasePlugin.Log.LogInfo("Registered Role " + cRole.RoleName.GetString() + ".");
-                return role;
+                return;
             }
-            catch
+            var p = method.GetParameters();
+            if (p.Length == 2 &&
+                p[0].ParameterType == typeof(PlayerControl) &&
+                p[1].ParameterType == typeof(CustomDeadBody))
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to register Role of the mod " + plugin.ModName + ".");
-                return null;
+                method.Invoke(null, new object[] { target, target.GetBody() });
             }
+        }
+        internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
+        {
+            RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
+            ICustomRole cRole = role as ICustomRole;
+            cRole.Count = plugin.BasePlugin.Config.Bind(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Count", 1);
+            cRole.Chance = plugin.BasePlugin.Config.Bind(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Chance", 100);
+            role.name = cRole.RoleName.GetString();
+            role.StringName = cRole.RoleName;
+            role.BlurbName = cRole.RoleBlur;
+            role.BlurbNameMed = cRole.RoleBlurMed;
+            role.BlurbNameLong = cRole.RoleBlurLong;
+            role.NameColor = cRole.RoleColor;
+            role.Role = roleType;
+            plugin.Roles.Add(role);
+            AllRoles.Add(role);
+            if (cRole.CachedConfig.IsGhostRole)
+            {
+                RoleManager.GhostRoles.Add(roleType);
+            }
+            plugin.BasePlugin.Log.LogInfo("Registered Role " + cRole.RoleName.GetString() + ".");
+            return role;
         }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {
@@ -97,7 +114,7 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour as ICustomRole;
             if (role != null)
             {
-                return role.RoleB.CanSabotage;
+                return role.CachedConfig.CanSabotage;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
@@ -106,7 +123,7 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour as ICustomRole;
             if (role != null)
             {
-                return role.RoleB.CanKill;
+                return role.CachedConfig.CanKill;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }

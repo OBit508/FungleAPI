@@ -38,7 +38,7 @@ namespace FungleAPI.Patches
         {
             if (didSucceed && __instance.Data.Role as ICustomRole != null)
             {
-                (__instance.Data.Role as ICustomRole).RoleB.OnKill(target, target.GetBody());
+                CustomRoleManager.MurderPlayer(__instance, target);
             }
         }
         [HarmonyPatch("FixedUpdate")]

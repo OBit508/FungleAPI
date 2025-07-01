@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.LoadMod;
+using FungleAPI.Patches;
 using FungleAPI.Roles;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ namespace FungleAPI.Role
             ReduceValue = reduceValue;
             IncreceValue = increceValue;
             ConfigId = Id;
-            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.RoleName.Default + " - " + Id, configName, value);
+            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.GetType().Name + " - " + Id, configName, value);
         }
         public float ReduceValue;
         public float IncreceValue;

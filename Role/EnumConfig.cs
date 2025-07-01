@@ -20,7 +20,7 @@ namespace FungleAPI.Role
             DefaultValue = value;
             Role = role;
             ConfigId = Id;
-            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.RoleName.Default + " - " + Id, configName, value[0]);
+            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.GetType().Name + " - " + Id, configName, value[0]);
         }
         internal int currentIndex;
         internal string[] DefaultValue;

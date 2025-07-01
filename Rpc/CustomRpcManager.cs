@@ -92,7 +92,7 @@ namespace FungleAPI.Rpc
                 ICustomRole role = CustomRoleManager.GetRole((RoleTypes)rpcSetNewRoleValue.ReadInt());
                 string configName = rpcSetNewRoleValue.ReadString();
                 string notificationText = rpcSetNewRoleValue.ReadString();
-                foreach (Config config in role.RoleB.Configs)
+                foreach (Config config in role.CachedConfig.Configs)
                 {
                     if (config.ConfigName == configName)
                     {
@@ -121,7 +121,7 @@ namespace FungleAPI.Rpc
                 for (int i = 0; i < count; i++)
                 {
                     ICustomRole role = CustomRoleManager.GetRole((RoleTypes)rpcSyncRoleSettings.ReadInt());
-                    foreach (Config config in role.RoleB.Configs)
+                    foreach (Config config in role.CachedConfig.Configs)
                     {
                         if (config is NumConfig n)
                         {
@@ -152,8 +152,8 @@ namespace FungleAPI.Rpc
             rpcSyncRoleSettings.Write(roles.Count);
             foreach (ICustomRole role in roles)
             {
-                rpcSyncRoleSettings.Write((int)role.RoleB.Role);
-                foreach (Config config in role.RoleB.Configs)
+                rpcSyncRoleSettings.Write((int)role.RoleType);
+                foreach (Config config in role.CachedConfig.Configs)
                 {
                     if (config is NumConfig n)
                     {
@@ -173,7 +173,7 @@ namespace FungleAPI.Rpc
         }
         public static void RpcSetNewRoleValue(this ICustomRole role, Config config, object value, string notificationText = "")
         {
-            rpcSetNewRoleValue.Write((int)role.RoleB.Role);
+            rpcSetNewRoleValue.Write((int)role.RoleType);
             rpcSetNewRoleValue.Write(config.ConfigName);
             rpcSetNewRoleValue.Write(notificationText);
             if (config is NumConfig n)

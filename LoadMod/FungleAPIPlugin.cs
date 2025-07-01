@@ -44,6 +44,7 @@ namespace FungleAPI.LoadMod
                 ModdedTeam.Crewmates = ModdedTeam.RegisterTeam(typeof(CrewmateTeam));
                 ModdedTeam.Impostors = ModdedTeam.RegisterTeam(typeof(ImpostorTeam));
                 ModdedTeam.Neutrals = ModdedTeam.RegisterTeam(typeof(NeutralTeam));
+                CustomRoleManager.NeutralGhost = CustomRoleManager.RegisterRole(typeof(NeutralGhost));
                 CustomRpcManager.LoadModRpcs();
             }
             Harmony.PatchAll();
@@ -93,19 +94,11 @@ namespace FungleAPI.LoadMod
                         Plugin.Roles.Add(role);
                         CustomRoleManager.AllRoles.Add(role);
                     }
-                    List<CustomRoleBehaviour> roleB = new List<CustomRoleBehaviour>();
                     foreach ((Type x1, ModPlugin x2, RoleTypes x3) pair in CustomRoleManager.RolesToRegister)
                     {
-                        roleB.Add(CustomRoleManager.Register(pair.x1, pair.x2, pair.x3));
+                        CustomRoleManager.Register(pair.x1, pair.x2, pair.x3);
                     }
                     RoleManager.Instance.DontDestroy().AllRoles = CustomRoleManager.AllRoles.ToArray();
-                    foreach (CustomRoleBehaviour role in roleB)
-                    {
-                        if (role.IsGhostRole)
-                        {
-                            RoleManager.GhostRoles.Add(role.Role);
-                        }
-                    }
                     if (loadAll != null)
 					{
                         loadAll();

@@ -62,24 +62,5 @@ namespace FungleAPI.Roles
                 __instance.TeamTitle.color = customRole.Team.TeamColor;
             }
         }
-        public static System.Collections.IEnumerator ShowCustomRole(IntroCutscene intro)
-        {
-            while (true)
-            {
-                ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
-                if (customRole != null && !customRole.RoleB.ShowTeamColorOnIntro)
-                {
-                    intro.YouAreText.color = customRole.RoleColor;
-                    intro.RoleBlurbText.color = customRole.RoleColor;
-                    intro.RoleText.color = customRole.RoleColor;
-                }
-            }
-        }
-        [HarmonyPatch("ShowRole")]
-        [HarmonyPostfix]
-        public static void OnShowRole(IntroCutscene __instance)
-        {
-            
-        }
     }
 }
