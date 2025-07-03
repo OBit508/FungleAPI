@@ -19,6 +19,8 @@ namespace FungleAPI.Patches
         {
             prefab = GameObject.Instantiate<AbilityButton>(__instance.AbilityButton, __instance.transform);
             prefab.gameObject.SetActive(false);
+            MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
+            MapBehaviour.Instance.gameObject.SetActive(false);
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]

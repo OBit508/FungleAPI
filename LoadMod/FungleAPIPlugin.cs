@@ -45,6 +45,7 @@ namespace FungleAPI.LoadMod
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<RoleHelper>();
+                ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
                 ModdedTeam.Crewmates = ModdedTeam.RegisterTeam(typeof(CrewmateTeam));
                 ModdedTeam.Impostors = ModdedTeam.RegisterTeam(typeof(ImpostorTeam));
                 ModdedTeam.Neutrals = ModdedTeam.RegisterTeam(typeof(NeutralTeam));
