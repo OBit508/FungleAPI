@@ -20,6 +20,7 @@ using AmongUs.GameOptions;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using Il2CppSystem.Text;
+using InnerNet;
 
 namespace FungleAPI.LoadMod
 {
@@ -72,11 +73,11 @@ namespace FungleAPI.LoadMod
 		{
 			[HarmonyPatch("CreatePlayer")]
 			[HarmonyPostfix]
-			private static void SyncRoles(AmongUsClient __instance)
+			private static void SyncRoles(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
 			{
-                if (__instance.AmHost && !__instance.IsInGame)
+                if (__instance.AmHost && clientData.Id != __instance.HostId)
                 {
-                    CustomRpcManager.RpcSyncAllRoleSettings();
+                    CustomRpcManager.RpcSyncAllRoleSettings(clientData.Id);
                 }
             }
             [HarmonyPatch("Awake")]

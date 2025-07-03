@@ -139,7 +139,7 @@ namespace FungleAPI.Rpc
                 }
             });
         }
-        public static void RpcSyncAllRoleSettings()
+        public static void RpcSyncAllRoleSettings(int clientId)
         {
             List<ICustomRole> roles = new List<ICustomRole>();
             foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
@@ -169,7 +169,7 @@ namespace FungleAPI.Rpc
                     }
                 }
             }
-            rpcSyncRoleSettings.SendRpc();
+            rpcSyncRoleSettings.SendRpc(PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, clientId);
         }
         public static void RpcSetNewRoleValue(this ICustomRole role, Config config, object value, string notificationText = "")
         {
