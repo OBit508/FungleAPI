@@ -1,41 +1,29 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
+using FungleAPI.Role.Teams;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using AmongUs.GameOptions;
 using UnityEngine;
-using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.Injection;
-using MonoMod.Cil;
-using FungleAPI.LoadMod;
-using FungleAPI.MonoBehaviours;
-using FungleAPI.Role;
-using BepInEx.Configuration;
-using System.Runtime.CompilerServices;
-using FungleAPI.Translation;
-using FungleAPI.Role.Teams;
 
-namespace FungleAPI.Roles
+namespace FungleAPI.Role
 {
     public interface ICustomRole
     {
-        CustomRoleBehaviour Role => this as CustomRoleBehaviour;
-        ModPlugin RolePlugin => ModPlugin.GetModPlugin(GetType().Assembly);
         ModdedTeam Team { get; }
-        StringNames RoleName { get;}
+        StringNames RoleName { get; }
         StringNames RoleBlur { get; }
         StringNames RoleBlurMed { get; }
         StringNames RoleBlurLong { get; }
         Color RoleColor { get; }
-        int RoleCount => Count.Value;
-        int RoleChance => Chance.Value;
-        public RoleTypes RoleType
+        RoleConfig Configuration { get; }
+        public RoleTypes Role
         {
             get
             {
-                foreach ((Type role, RoleTypes type) pair in AllTypes)
+                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
                 {
                     if (pair.role == GetType())
                     {
@@ -45,51 +33,48 @@ namespace FungleAPI.Roles
                 return RoleTypes.Crewmate;
             }
         }
-        internal ConfigEntry<int> Count 
+        public RoleConfig CachedConfiguration
         {
             get
             {
-                foreach ((ConfigEntry<int> count, ICustomRole role) pair in AllCounts)
+                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
                 {
-                    if (pair.role == this)
+                    if (pair.role == GetType())
+                    {
+                        return pair.config;
+                    }
+                }
+                return null;
+            }
+        }
+        public ConfigEntry<int> RoleCount
+        {
+            get
+            {
+                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
+                {
+                    if (pair.role == GetType())
                     {
                         return pair.count;
                     }
                 }
                 return null;
             }
-            set
-            {
-                if (!AllCounts.Contains((value, this)))
-                {
-                    AllCounts.Add((value, this));
-                }
-            }
         }
-        internal ConfigEntry<int> Chance
+        public ConfigEntry<int> RoleChance
         {
             get
             {
-                foreach ((ConfigEntry<int> chance, ICustomRole role) pair in AllChances)
+                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
                 {
-                    if (pair.role == this)
+                    if (pair.role == GetType())
                     {
                         return pair.chance;
                     }
                 }
                 return null;
             }
-            set
-            {
-                if (!AllChances.Contains((value, this)))
-                {
-                    AllChances.Add((value, this));
-                }
-            }
         }
-        internal static List<(Type role, RoleTypes type)> AllTypes = new List<(Type role, RoleTypes type)>();
-        internal static List<(ConfigEntry<int> count, ICustomRole role)> AllCounts = new List<(ConfigEntry<int> count, ICustomRole role)>();
-        internal static List<(ConfigEntry<int> chance, ICustomRole role)> AllChances = new List<(ConfigEntry<int> chance, ICustomRole role)>();
-        internal static int id = 10;
+        internal static List<(ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role)> Values = new List<(ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role)>();
     }
 }

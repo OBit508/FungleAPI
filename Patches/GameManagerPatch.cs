@@ -114,7 +114,7 @@ namespace FungleAPI.Patches
             foreach (PlayerControl player in winners)
             {
                 CustomRpcManager.rpcCustomEndGame.Write(player.Data);
-                EndGamePatch.Winners.Add(new CachedPlayerData(player.Data));
+                EndGamePatch.Winners.Add(player.Data);
             }
             CustomRpcManager.rpcCustomEndGame.SendRpc();
             customEnd = true;

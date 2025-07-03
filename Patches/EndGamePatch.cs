@@ -15,24 +15,8 @@ namespace FungleAPI.Patches
     {
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] EndGameResult endGameResult)
         {
-            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-            if (Winners.Count > 0)
-            {
-                EndGameResult.CachedWinners = Winners;
-                Winners.Clear();
-            }
-            else
-            {
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    if (player.Data.Role.GetTeam().WinReason == endGameResult.GameOverReason)
-                    {
-                        EndGameResult.CachedWinners.Add(new CachedPlayerData(player.Data));
-                        FungleAPIPlugin.Instance.Log.LogError(player.name + " Winned");
-                    }
-                }
-            }
+            Winners.Clear();
         }
-        public static Il2CppSystem.Collections.Generic.List<CachedPlayerData> Winners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+        public static Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> Winners = new Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo>();
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using BepInEx.Configuration;
+using FungleAPI.LoadMod;
+using FungleAPI.Role;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.LoadMod;
-using BepInEx.Configuration;
 
 namespace FungleAPI.Roles
 {
@@ -16,6 +17,6 @@ namespace FungleAPI.Roles
         }
         public string ConfigName;
         public int ConfigId;
-        public ICustomRole Role;
+        public RoleBehaviour Role;
     }
 }

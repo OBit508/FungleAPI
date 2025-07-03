@@ -1,13 +1,14 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
+using FungleAPI.LoadMod;
+using FungleAPI.Patches;
+using FungleAPI.Roles;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AmongUs.GameOptions;
-using BepInEx.Configuration;
-using FungleAPI.LoadMod;
-using FungleAPI.Roles;
-using HarmonyLib;
 using xCloud;
 
 namespace FungleAPI.Role
@@ -21,9 +22,9 @@ namespace FungleAPI.Role
         {
             foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
             {
-                if (role.Role == roleType && role as ICustomRole != null)
+                if (role.Role == roleType && role.CustomRole() != null)
                 {
-                    __result = (role as ICustomRole).Chance.Value;
+                    __result = role.CustomRole().RoleChance.Value;
                     return false;
                 }
             }
@@ -35,9 +36,9 @@ namespace FungleAPI.Role
         {
             foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
             {
-                if (role.Role == roleType && role as ICustomRole != null)
+                if (role.Role == roleType && role.CustomRole() != null)
                 {
-                    __result = (role as ICustomRole).Count.Value;
+                    __result = role.CustomRole().RoleCount.Value;
                     return false;
                 }
             }

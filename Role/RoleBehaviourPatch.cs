@@ -1,13 +1,14 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using FungleAPI.Patches;
+using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using HarmonyLib;
+using Il2CppSystem.Text;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Roles;
 using UnityEngine;
-using HarmonyLib;
-using AmongUs.GameOptions;
-using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Role
 {
@@ -17,11 +18,11 @@ namespace FungleAPI.Role
         [HarmonyPrefix]
         [HarmonyPatch("TeamColor", MethodType.Getter)]
         public static bool GetTeamColor(RoleBehaviour __instance, ref Color __result)
-        {
-            ICustomRole role = __instance as ICustomRole;
+        { 
+            ICustomRole role = __instance.CustomRole();
             if (role != null)
             {
-                if (role.Role.ShowTeamColor)
+                if (role.CachedConfiguration.ShowTeamColor)
                 {
                     __result = role.Team.TeamColor;
                 }
@@ -31,115 +32,15 @@ namespace FungleAPI.Role
                 }
                 return false;
             }
-            return false;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("IsSimpleRole", MethodType.Getter)]
-        public static bool GetSimpleRole(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = true;
-                return false;
-            }
             return true;
         }
+        [HarmonyPatch("AppendTaskHint", new Type[] { typeof(StringBuilder) })]
         [HarmonyPrefix]
-        [HarmonyPatch("AffectedByLightAffectors", MethodType.Getter)]
-        public static bool GetAffectedByLightAirShip(RoleBehaviour __instance, ref bool __result)
+        public static bool OnAppendTaskHint(RoleBehaviour __instance)
         {
-            if (__instance as ICustomRole != null)
+            ICustomRole role = __instance.CustomRole();
+            if (role != null && role.CachedConfiguration.HintType != RoleTaskHintType.Normal)
             {
-                __result = (__instance as ICustomRole).Role.AffectedByLightOnAirship;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("IsAffectedByComms", MethodType.Getter)]
-        public static bool GetAffectedByComss(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Role.AffectedByComms;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("CanUseKillButton", MethodType.Getter)]
-        public static bool GetCanKill(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Role.UseVanillaKillButton;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("CanVent", MethodType.Getter)]
-        public static bool GetCanVent(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Role.CanUseVent;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("TasksCountTowardProgress", MethodType.Getter)]
-        public static bool GetTasksCountTowardProgress(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Role.TasksCountForProgress;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("IsDead", MethodType.Getter)]
-        public static bool GetIsDead(RoleBehaviour __instance, ref bool __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Role.IsGhostRole;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("MaxCount", MethodType.Getter)]
-        public static bool GetMaxCount(RoleBehaviour __instance, ref int __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                __result = (__instance as ICustomRole).Count.Value;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("DefaultGhostRole", MethodType.Getter)]
-        public static bool GetDefaultGhostRole(RoleBehaviour __instance, ref RoleTypes __result)
-        {
-            if (__instance as ICustomRole != null)
-            { 
-                __result = (__instance as ICustomRole).Role.GhostRole;
-                return false;
-            }
-            return true;
-        }
-        [HarmonyPrefix]
-        [HarmonyPatch("TeamType", MethodType.Getter)]
-        public static bool GetTeamType(RoleBehaviour __instance, ref RoleTeamTypes __result)
-        {
-            if (__instance as ICustomRole != null)
-            {
-                
-                __result = (__instance as ICustomRole).Team == ModdedTeam.Impostors ? RoleTeamTypes.Impostor : RoleTeamTypes.Crewmate;
                 return false;
             }
             return true;

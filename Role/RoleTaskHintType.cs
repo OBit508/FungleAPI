@@ -9,7 +9,7 @@ namespace FungleAPI.Role
     public enum RoleTaskHintType
     {
         None,
-        TaskHint,
+        Normal,
         Custom
     }
 }

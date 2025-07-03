@@ -14,7 +14,7 @@ namespace FungleAPI.Patches
         {
             if (__instance.GetComponent<CustomConsole>() != null)
             {
-                if (DestroyableSingleton<HudManager>.Instance.UseButton.currentTarget.Cast<SystemConsole>() != null && (Vector2.Distance(PlayerControl.LocalPlayer.transform.position, __instance.transform.position) <= __instance.UsableDistance || DestroyableSingleton<HudManager>.Instance.UseButton.currentTarget.Cast<SystemConsole>() == __instance) && !PhysicsHelpers.AnythingBetween(PlayerControl.LocalPlayer.Collider, PlayerControl.LocalPlayer.Collider.bounds.center, __instance.transform.position, Constants.ShipOnlyMask, false) && __instance.GetComponent<CustomConsole>().onUse != null && !Minigame.Instance)
+                if (DestroyableSingleton<HudManager>.Instance.UseButton.currentTarget.SafeCast<SystemConsole>() != null && (Vector2.Distance(PlayerControl.LocalPlayer.transform.position, __instance.transform.position) <= __instance.UsableDistance || DestroyableSingleton<HudManager>.Instance.UseButton.currentTarget.SafeCast<SystemConsole>() == __instance) && !PhysicsHelpers.AnythingBetween(PlayerControl.LocalPlayer.Collider, PlayerControl.LocalPlayer.Collider.bounds.center, __instance.transform.position, Constants.ShipOnlyMask, false) && __instance.GetComponent<CustomConsole>().onUse != null && !Minigame.Instance)
                 {
                     bool flag = true;
                     if (PlayerControl.LocalPlayer.Data.IsDead)

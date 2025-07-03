@@ -14,13 +14,13 @@ namespace FungleAPI.Role
 {
     public class EnumConfig : Config
     {
-        public EnumConfig(ICustomRole role, string configName, string[] value, int Id = 0)
+        public EnumConfig(RoleBehaviour role, string configName, string[] value, int Id = 0)
         {
             ConfigName = configName;
             DefaultValue = value;
             Role = role;
             ConfigId = Id;
-            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.GetType().Name + " - " + Id, configName, value[0]);
+            ConfigEntry = role.GetRolePlugin().BasePlugin.Config.Bind(role.GetRolePlugin().ModName + " - " + role.GetType().Name + " - " + Id, configName, value[0]);
         }
         internal int currentIndex;
         internal string[] DefaultValue;

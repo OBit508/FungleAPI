@@ -15,6 +15,7 @@ using UnityEngine;
 using FungleAPI.Rpc;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
+using FungleAPI.Role;
 
 namespace FungleAPI.Patches
 {
@@ -31,14 +32,15 @@ namespace FungleAPI.Patches
                 animator.Player = __instance;
                 animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
             }
+            __instance.gameObject.AddComponent<RoleHelper>();
         }
         [HarmonyPrefix]
         [HarmonyPatch("RpcMurderPlayer")]
         public static void PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
         {
-            if (didSucceed && __instance.Data.Role as ICustomRole != null)
+            if (didSucceed && __instance.Data.Role.CustomRole() != null)
             {
-                (__instance.Data.Role as ICustomRole).Role.MurderPlayer(target, target.GetBody());
+                __instance.Data.Role.InvokeMethod("MurderPlayer", new Type[] {typeof(PlayerControl)}, new object[] {target});
             }
         }
         [HarmonyPatch("FixedUpdate")]

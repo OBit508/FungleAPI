@@ -1,15 +1,16 @@
 ﻿using FungleAPI.MonoBehaviours;
+using FungleAPI.Roles;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
-using System.Reflection;
-using Il2CppInterop.Runtime;
 using UnityEngine;
-using FungleAPI.Roles;
-using System.Runtime.CompilerServices;
 
 namespace FungleAPI.Patches
 {
@@ -137,6 +138,31 @@ namespace FungleAPI.Patches
             List<T> list = array.ToList();
             list.Remove(item);
             return list.ToArray();
+        }
+        public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
+        {
+            try
+            {
+                return obj.Cast<T>();
+            }
+            catch
+            {
+                return null;
+            }
+        }
+        public static void InvokeMethod(this object obj, string methodName, Type[] types, object[] arguments)
+        {
+            MethodInfo method = obj.GetType().GetMethod(methodName, types);
+            try
+            {
+                if (method != null)
+                {
+                    method.Invoke(obj, arguments);
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

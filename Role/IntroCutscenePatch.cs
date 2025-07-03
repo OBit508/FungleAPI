@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
+using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using HarmonyLib;
 using LibCpp2IL.Elf;
 using Steamworks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Unity.IL2CPP.Metadata;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
-using BepInEx.Unity.IL2CPP.Utils;
 
 namespace FungleAPI.Roles
 {
@@ -48,7 +49,7 @@ namespace FungleAPI.Roles
         [HarmonyPostfix]
         public static void BeginCustom(IntroCutscene __instance)
         {
-            ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
+            ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
             if (customRole != null && customRole.Team != ModdedTeam.Crewmates)
             {
                 Transform transform = __instance.BackgroundBar.transform;

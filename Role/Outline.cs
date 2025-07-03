@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Patches;
+using FungleAPI.Role;
 using HarmonyLib;
 using UnityEngine;
 
@@ -16,10 +17,9 @@ namespace FungleAPI.Roles
         {
             public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] bool active)
             {
-                if (active && __instance.Data.Role as ICustomRole != null)
+                if (__instance.Data.Role.CustomRole() != null)
                 {
-                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                    __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", (__instance.Data.Role as ICustomRole).Role.OutlineColor);
+                    __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().CachedConfiguration.OutlineColor));
                     return false;
                 }
                 return true;
@@ -30,13 +30,13 @@ namespace FungleAPI.Roles
         {
             public static bool Prefix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
             {
-                ICustomRole role = PlayerControl.LocalPlayer.Data.Role as ICustomRole;
+                ICustomRole role = PlayerControl.LocalPlayer.Data.Role.CustomRole();
                 if (role != null)
                 {
                     if (on)
                     {
                         __instance.myRend.material.SetFloat("_Outline", 1f);
-                        __instance.myRend.material.SetColor("_OutlineColor", role.Role.OutlineColor);
+                        __instance.myRend.material.SetColor("_OutlineColor", role.CachedConfiguration.OutlineColor);
                     }
                     else
                     {
@@ -44,9 +44,9 @@ namespace FungleAPI.Roles
                     }
                     if (mainTarget)
                     {
-                        float num = Mathf.Clamp01(role.Role.OutlineColor.r * 0.5f);
-                        float num2 = Mathf.Clamp01(role.Role.OutlineColor.g * 0.5f);
-                        float num3 = Mathf.Clamp01(role.Role.OutlineColor.b * 0.5f);
+                        float num = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.r * 0.5f);
+                        float num2 = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.g * 0.5f);
+                        float num3 = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.b * 0.5f);
                         __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
                     }
                     else

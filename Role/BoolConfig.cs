@@ -12,12 +12,12 @@ namespace FungleAPI.Role
 {
     public class BoolConfig : Config
     {
-        public BoolConfig(ICustomRole role, string configName, bool value, int Id = 0)
+        public BoolConfig(RoleBehaviour role, string configName, bool value, int Id = 0)
         {
             ConfigName = configName;
             Role = role;
             ConfigId = Id;
-            ConfigEntry = role.RolePlugin.BasePlugin.Config.Bind(role.RolePlugin.ModName + " - " + role.GetType().Name + " - " + Id, configName, value);
+            ConfigEntry = role.GetRolePlugin().BasePlugin.Config.Bind(role.GetRolePlugin().ModName + " - " + role.GetType().Name + " - " + Id, configName, value);
         }
         public ConfigEntry<bool> ConfigEntry;
     }

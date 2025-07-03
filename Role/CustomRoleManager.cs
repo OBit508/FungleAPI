@@ -24,25 +24,29 @@ namespace FungleAPI.Roles
         public static RoleTypes NeutralGhost;
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();
+        internal static int id = 10;
         public static RoleTypes RegisterRole(Type type)
         {
-            ICustomRole.id++;
-            RoleTypes role = (RoleTypes)ICustomRole.id;
-            if (typeof(RoleBehaviour).IsAssignableFrom(type) || typeof(ICustomRole).IsAssignableFrom(type))
+            id++;
+            RoleTypes role = (RoleTypes)id;
+            if (typeof(RoleBehaviour).IsAssignableFrom(type))
             {
-                ICustomRole.AllTypes.Add((type, role));
                 RolesToRegister.Add((type, ModPlugin.GetModPlugin(type.Assembly), role));
                 ClassInjector.RegisterTypeInIl2Cpp(type);
             }
             return role;
         }
+        public static ICustomRole CustomRole(this RoleBehaviour role)
+        {
+            return role as ICustomRole;
+        }
         public static ICustomRole GetRole(RoleTypes type)
         {
-            foreach (RoleBehaviour role in AllRoles)
+            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
             {
-                if ((role as ICustomRole) != null && role.Role == type)
+                if (role.Role == type && role.CustomRole() != null)
                 {
-                    return (role as ICustomRole);
+                    return role.CustomRole();
                 }
             }
             return null;
@@ -50,23 +54,27 @@ namespace FungleAPI.Roles
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
-            ICustomRole cRole = role as ICustomRole;
-            cRole.Count = plugin.BasePlugin.Config.Bind(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Count", 1);
-            cRole.Chance = plugin.BasePlugin.Config.Bind(cRole.RolePlugin.ModName + "-" + cRole.RoleName, "Chance", 100);
-            role.name = cRole.RoleName.GetString();
-            role.StringName = cRole.RoleName;
-            role.BlurbName = cRole.RoleBlur;
-            role.BlurbNameMed = cRole.RoleBlurMed;
-            role.BlurbNameLong = cRole.RoleBlurLong;
-            role.NameColor = cRole.RoleColor;
+            ICustomRole customRole = role.CustomRole();
+            ICustomRole.Values.Add((plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.Name, "Count", 1), plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.Name, "Chance", 100), customRole.Configuration, roleType, type));
+            RoleConfig config = customRole.CachedConfiguration;
+            role.name = type.Name;
+            role.StringName = customRole.RoleName;
+            role.BlurbName = customRole.RoleBlur;
+            role.BlurbNameMed = customRole.RoleBlurMed;
+            role.BlurbNameLong = customRole.RoleBlurLong;
+            role.NameColor = customRole.RoleColor;
+            role.AffectedByLightAffectors = config.AffectedByLightOnAirship;
+            role.CanUseKillButton = config.UseVanillaKillButton;
+            role.CanVent = config.CanVent;
+            role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.Role = roleType;
             plugin.Roles.Add(role);
             AllRoles.Add(role);
-            if (cRole.Role.IsGhostRole)
+            if (customRole.CachedConfiguration.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }
-            plugin.BasePlugin.Log.LogInfo("Registered Role " + cRole.RoleName.GetString() + ".");
+            plugin.BasePlugin.Log.LogInfo("Registered Role " + type.Name + ".");
             return role;
         }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
@@ -83,10 +91,9 @@ namespace FungleAPI.Roles
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {
-            ICustomRole crole = role as ICustomRole;
-            if (crole != null)
+            if (role.CustomRole() != null)
             {
-                return crole.Team;
+                return role.CustomRole().Team;
             }
             if (role.TeamType == RoleTeamTypes.Crewmate)
             {
@@ -96,19 +103,17 @@ namespace FungleAPI.Roles
         }
         public static bool CanSabotage(this RoleBehaviour roleBehaviour)
         {
-            ICustomRole role = roleBehaviour as ICustomRole;
-            if (role != null)
+            if (roleBehaviour.CustomRole() != null)
             {
-                return role.Role.CanSabotage;
+                return roleBehaviour.CustomRole().CachedConfiguration.CanSabotage;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
         public static bool CanKill(this RoleBehaviour roleBehaviour)
         {
-            ICustomRole role = roleBehaviour as ICustomRole;
-            if (role != null)
+            if (roleBehaviour.CustomRole() != null)
             {
-                return role.Role.CanKill;
+                return roleBehaviour.CustomRole().CachedConfiguration.CanKill;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
