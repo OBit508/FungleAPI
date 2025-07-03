@@ -45,5 +45,22 @@ namespace FungleAPI.Role
             }
             return true;
         }
+        [HarmonyPatch("DidWin")]
+        [HarmonyPrefix]
+        public static bool OnDidWin(RoleBehaviour __instance, [HarmonyArgument(0)] GameOverReason gameOverReason, ref bool __result)
+        {
+            ICustomRole role = __instance.CustomRole();
+            if (role != null)
+            {
+                if (role.Team == ModdedTeam.Neutrals)
+                {
+                    __result = EndGamePatch.Winners.Contains(__instance.Player.Data);
+                    return false;
+                }
+                __result = role.Team.WinReason == gameOverReason;
+                return false;
+            }
+            return true;
+        }
     }
 }

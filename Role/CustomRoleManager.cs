@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Roles
 {
@@ -68,6 +69,7 @@ namespace FungleAPI.Roles
             role.CanVent = config.CanVent;
             role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.Role = roleType;
+            role.InvokeMethod("Register", new Type[] { }, new object[] { });
             plugin.Roles.Add(role);
             AllRoles.Add(role);
             if (customRole.CachedConfiguration.IsGhostRole)

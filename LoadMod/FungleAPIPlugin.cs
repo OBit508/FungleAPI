@@ -21,6 +21,7 @@ using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using Il2CppSystem.Text;
 using InnerNet;
+using FungleAPI.Translation;
 
 namespace FungleAPI.LoadMod
 {
@@ -102,6 +103,8 @@ namespace FungleAPI.LoadMod
                         CustomRoleManager.Register(pair.x1, pair.x2, pair.x3);
                     }
                     RoleManager.Instance.DontDestroy().AllRoles = CustomRoleManager.AllRoles.ToArray();
+                    RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
+                    RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
                     if (loadAll != null)
 					{
                         loadAll();
