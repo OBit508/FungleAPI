@@ -16,8 +16,26 @@ namespace FungleAPI.Role
     {
         public static void Prefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
         {
-            RoleHelper helper = targetPlayer.GetComponent<RoleHelper>();
+            PlayerHelper helper = targetPlayer.GetComponent<PlayerHelper>();
             helper.OldRole = __instance.GetRole(targetPlayer.Data.RoleType);
+            if (targetPlayer == PlayerControl.LocalPlayer)
+            {
+                if (helper.OldRole.CustomRole() != null)
+                {
+                    foreach (CustomAbilityButton button in helper.OldRole.CustomRole().CachedConfiguration.Buttons)
+                    {
+                        button.Destroy();
+                    }
+                }
+                ICustomRole role = CustomRoleManager.GetRole(roleType);
+                if (role != null)
+                {
+                    foreach (CustomAbilityButton button in role.CachedConfiguration.Buttons)
+                    {
+                        button.CreateButton();
+                    }
+                }
+            }
         }
     }
 }

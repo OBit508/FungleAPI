@@ -44,7 +44,7 @@ namespace FungleAPI.LoadMod
                 ClassInjector.RegisterTypeInIl2Cpp<Updater>();
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
-                ClassInjector.RegisterTypeInIl2Cpp<RoleHelper>();
+                ClassInjector.RegisterTypeInIl2Cpp<PlayerHelper>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
             }
             Harmony.PatchAll();
@@ -80,12 +80,6 @@ namespace FungleAPI.LoadMod
 			{
 				if (!allLoadded)
 				{
-                    foreach (LoadedAsset asset in LoadedAsset.Assets)
-                    {
-                        if (asset.GetAsset() != null)
-                        {
-                        }
-                    }
                     (RoleTypes role, Type type) neutralRole = Plugin.Roles[0];
                     Plugin.Roles.Clear();
                     foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)

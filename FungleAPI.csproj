@@ -14,15 +14,11 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Compile Include="Assets\LoadedAnimation.cs" />
-    <Compile Include="Assets\LoadedAsset.cs" />
-    <Compile Include="Assets\LoadedAudioClip.cs" />
-    <Compile Include="Assets\LoadedSprite.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
-    <Compile Include="MonoBehaviours\RoleHelper.cs" />
+    <Compile Include="MonoBehaviours\PlayerHelper.cs" />
     <Compile Include="Patches\ChangeableValue.cs" />
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\NameColorPatch.cs" />

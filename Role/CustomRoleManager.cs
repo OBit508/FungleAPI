@@ -51,14 +51,7 @@ namespace FungleAPI.Roles
         }
         public static ICustomRole GetRole(RoleTypes type)
         {
-            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
-            {
-                if (role.Role == type && role.CustomRole() != null)
-                {
-                    return role.CustomRole();
-                }
-            }
-            return null;
+            return RoleManager.Instance.GetRole(type).CustomRole();
         }
         public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
         {

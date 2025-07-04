@@ -290,13 +290,14 @@ namespace FungleAPI.Role
                 });
                 GameOptionButton cog = UnityEngine.Object.Instantiate(option.ChanceMinusBtn, option.transform);
                 cog.transform.GetChild(0).gameObject.SetActive(false);
-                cog.buttonSprite.sprite = Cog.GetAsset();
+                cog.buttonSprite.sprite = Cog;
                 cog.transform.localPosition = new Vector3(-1.278f, -0.3f, 0f);
                 cog.transform.localScale = new Vector3(1, 1, 1);
                 cog.SetNewAction(delegate
                 {
                     if (role.CachedConfiguration.Configs.Count() > 0)
                     {
+                        GameSettingMenu.Instance.MenuDescriptionText.text = role.RoleBlurLong.GetString();
                         menu.AdvancedRolesSettings.gameObject.SetActive(false);
                         menu.RoleChancesSettings.gameObject.SetActive(false);
                         AdvancedTab.SetActive(true);
@@ -413,6 +414,6 @@ namespace FungleAPI.Role
             header.gameObject.SetActive(false);
             return header;
         }
-        public static LoadedSprite Cog = new LoadedSprite("FungleAPI.Resources.cog", 100f, FungleAPIPlugin.Plugin);
+        public static Sprite Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 100f);
     }
 }

@@ -32,7 +32,7 @@ namespace FungleAPI.Patches
                 animator.Player = __instance;
                 animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
             }
-            __instance.gameObject.AddComponent<RoleHelper>();
+            __instance.gameObject.AddComponent<PlayerHelper>();
         }
         [HarmonyPrefix]
         [HarmonyPatch("RpcMurderPlayer")]
@@ -79,6 +79,10 @@ namespace FungleAPI.Patches
         public static PlayerAnimator CustomAnimator(this PlayerControl player)
         {
             return player.cosmetics.currentBodySprite.BodySprite.GetComponent<PlayerAnimator>();
+        }
+        public static void ToogleCosmetics(this PlayerControl player, bool on)
+        {
+            player.GetComponent<PlayerHelper>().ToogleCosmetics = on;
         }
     }
 }

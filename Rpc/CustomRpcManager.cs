@@ -14,7 +14,7 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 namespace FungleAPI.Rpc
 {
     [HarmonyPatch]
-    internal static class CustomRpcManager
+    public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         public static T GetInstance<T>() where T : RpcHelper

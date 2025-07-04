@@ -20,7 +20,7 @@ namespace FungleAPI.Role
             {
                 if (Player != null)
                 {
-                    return Player.GetComponent<RoleHelper>().OldRole;
+                    return Player.GetComponent<PlayerHelper>().OldRole;
                 }
                 return null;
             }

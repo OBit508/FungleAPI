@@ -84,6 +84,5 @@ namespace FungleAPI.LoadMod
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public List<CustomAbilityButton> Buttons = new List<CustomAbilityButton>();
         public List<RpcHelper> RPCs = new List<RpcHelper>();
-        internal int rpcId;
     }
 }

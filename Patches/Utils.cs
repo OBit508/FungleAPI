@@ -16,6 +16,12 @@ namespace FungleAPI.Patches
 {
     public static class Utils
     {
+        public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
+        {
+            ref T ptr = ref obj;
+            ptr.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            return obj;
+        }
         public static T SimpleCast<T>(this object obj)
         {
             return (T)obj;
