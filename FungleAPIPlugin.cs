@@ -7,7 +7,6 @@ using FungleAPI.MonoBehaviours;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
 using FungleAPI.Roles;
-using FungleAPI.LoadMod;
 using System.Reflection;
 using System.Linq;
 using System.Collections.Generic;
@@ -23,7 +22,7 @@ using Il2CppSystem.Text;
 using InnerNet;
 using FungleAPI.Translation;
 
-namespace FungleAPI.LoadMod
+namespace FungleAPI
 {
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]

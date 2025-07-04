@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using BepInEx.Configuration;
-using FungleAPI.LoadMod;
+using FungleAPI;
 
 namespace FungleAPI.Role
 {

@@ -1,5 +1,4 @@
-﻿using FungleAPI.LoadMod;
-using FungleAPI.Patches;
+﻿using FungleAPI.Patches;
 using HarmonyLib;
 using Hazel;
 using InnerNet;

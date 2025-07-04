@@ -1,4 +1,4 @@
-﻿using FungleAPI.LoadMod;
+﻿using FungleAPI;
 using System;
 using System.Diagnostics;
 using System.Reflection;

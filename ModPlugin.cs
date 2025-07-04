@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -13,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using xCloud;
 
-namespace FungleAPI.LoadMod
+namespace FungleAPI
 {
     public class ModPlugin
     {
@@ -75,7 +76,7 @@ namespace FungleAPI.LoadMod
         }
         public ConfigEntry<T> CreateConfig<T>(string Name, T value)
         {
-            return BasePlugin.Config.Bind<T>(ModName + " - Configs", Name, value);
+            return BasePlugin.Config.Bind(ModName + " - Configs", Name, value);
         }
         public string ModName;
         public Assembly ModAssembly;

@@ -1,4 +1,4 @@
-﻿using FungleAPI.LoadMod;
+﻿using AsmResolver.PE.Win32Resources;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using Il2CppInterop.Runtime;
@@ -19,6 +19,10 @@ namespace FungleAPI.Assets
 {
     public static class ResourceHelper
     {
+        public static string ReadText(ModPlugin plugin, string resource)
+        {
+            return new System.IO.StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)).ReadToEnd();
+        }
         public static T LoadAsset<T>(AssetBundle bundle, string name, bool dontUnload = true) where T : UnityEngine.Object
         {
             T asset = bundle.LoadAsset(name, Il2CppType.Of<T>()).SafeCast<T>();
@@ -31,57 +35,49 @@ namespace FungleAPI.Assets
         public static AssetBundle LoadBundle(ModPlugin plugin, string resource)
         {
             System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
-            using (System.IO.MemoryStream ms = new System.IO.MemoryStream())
-            {
-                stream.CopyTo(ms);
-                return AssetBundle.LoadFromMemory(ms.ToArray());
-            }
+            System.IO.MemoryStream ms = new System.IO.MemoryStream();
+            stream.CopyTo(ms);
+            return AssetBundle.LoadFromMemory(ms.ToArray());
         }
         public static AudioClip LoadAudio(ModPlugin plugin, string resource, string clipName, bool dontUnload = true)
         {
             resource = resource + ".wav";
-            using (System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
+            System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
+            byte[] array = new byte[stream.Length];
+            stream.Read(array, 0, array.Length);
+            WAV wav = new WAV(array);
+            AudioClip audioClip = AudioClip.Create(resource, wav.SampleCount, wav.ChannelCount, wav.Frequency, false);
+            audioClip.SetData(wav.LeftChannel, 0);
+            if (dontUnload)
             {
-                byte[] array = new byte[stream.Length];
-                stream.Read(array, 0, array.Length);
-                WAV wav = new WAV(array);
-                AudioClip audioClip = AudioClip.Create(resource, wav.SampleCount, wav.ChannelCount, wav.Frequency, false);
-                audioClip.SetData(wav.LeftChannel, 0);
-                if (dontUnload)
-                {
-                    audioClip.DontUnload();
-                }
-                return audioClip;
+                audioClip.DontUnload();
             }
+            return audioClip;
         }
         public static List<Sprite> LoadSprites(ModPlugin plugin, string resource, float PixelPerUnit, int tileWidth, bool dontUnload = true)
         {
             List<Sprite> sprites = new List<Sprite>();
             resource += ".png";
-            using (System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
-            {
-                if (stream == null)
-                    return null;
+            System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
+            if (stream == null)
+                return null;
 
-                Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-                using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+            Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            stream.CopyTo(memoryStream);
+            texture.LoadImage(memoryStream.ToArray());
+            int tileHeight = texture.height;
+            int totalTiles = texture.width / tileWidth;
+            for (int i = 0; i < totalTiles; i++)
+            {
+                Rect rect = new Rect(i * tileWidth, 0, tileWidth, tileHeight);
+                Vector2 pivot = new Vector2(0.5f, 0.5f);
+                Sprite sprite = Sprite.Create(texture, rect, pivot, PixelPerUnit);
+                if (dontUnload)
                 {
-                    stream.CopyTo(memoryStream);
-                    texture.LoadImage(memoryStream.ToArray());
+                    sprite.DontUnload();
                 }
-                int tileHeight = texture.height;
-                int totalTiles = texture.width / tileWidth;
-                for (int i = 0; i < totalTiles; i++)
-                {
-                    Rect rect = new Rect(i * tileWidth, 0, tileWidth, tileHeight);
-                    Vector2 pivot = new Vector2(0.5f, 0.5f);
-                    Sprite sprite = Sprite.Create(texture, rect, pivot, PixelPerUnit);
-                    if (dontUnload)
-                    {
-                        sprite.DontUnload();
-                    }
-                    sprites.Add(sprite);
-                }
+                sprites.Add(sprite);
             }
             return sprites;
         }
@@ -97,17 +93,15 @@ namespace FungleAPI.Assets
             resource = resource + ".png";
             System.IO.Stream manifestResourceStream = plugin.ModAssembly.GetManifestResourceStream(resource);
             Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            using (System.IO.MemoryStream memoryStream = new System.IO.MemoryStream())
+            System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
+            manifestResourceStream.CopyTo(memoryStream);
+            texture2D.LoadImage(memoryStream.ToArray());
+            Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
+            if (dontUnload)
             {
-                manifestResourceStream.CopyTo(memoryStream);
-                texture2D.LoadImage(memoryStream.ToArray());
-                Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
-                if (dontUnload)
-                {
-                    sprite.DontUnload();
-                }
-                return sprite;
+                sprite.DontUnload();
             }
+            return sprite;
         }
         public static Transform parent;
     }

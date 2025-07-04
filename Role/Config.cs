@@ -1,5 +1,5 @@
 ﻿using BepInEx.Configuration;
-using FungleAPI.LoadMod;
+using FungleAPI;
 using FungleAPI.Role;
 using System;
 using System.Collections.Generic;

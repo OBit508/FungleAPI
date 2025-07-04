@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using BepInEx.Configuration;
-using FungleAPI.LoadMod;
+using FungleAPI;
 using Il2CppSystem.Web;
 
 namespace FungleAPI.Role

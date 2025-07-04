@@ -1,6 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Core.Logging.Interpolation;
-using FungleAPI.LoadMod;
+using FungleAPI;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using FungleAPI.Role;

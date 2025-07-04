@@ -67,8 +67,8 @@
     <Compile Include="Patches\VersionShowerPatch.cs" />
     <Compile Include="Assets\WAV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LoadMod\FungleAPIPlugin.cs" />
-    <Compile Include="LoadMod\ModPlugin.cs" />
+    <Compile Include="FungleAPIPlugin.cs" />
+    <Compile Include="ModPlugin.cs" />
     <Compile Include="Role\Config.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\IntroCutscenePatch.cs" />
