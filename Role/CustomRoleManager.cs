@@ -22,19 +22,27 @@ namespace FungleAPI.Roles
 {
     public static class CustomRoleManager
     {
-        public static RoleTypes NeutralGhost;
+        public static RoleTypes NeutralGhost => GetInstance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();
         internal static int id = 10;
-        public static RoleTypes RegisterRole(Type type)
+        public static RoleTypes GetInstance<T>() where T : RoleBehaviour
+        {
+            foreach ((RoleTypes role, Type type) pair in ModPlugin.GetModPlugin(typeof(T).Assembly).Roles)
+            {
+                if (pair.type == typeof(T))
+                {
+                    return pair.role;
+                }
+            }
+            return RoleTypes.Crewmate;
+        }
+        internal static RoleTypes RegisterRole(Type type, ModPlugin plugin)
         {
             id++;
             RoleTypes role = (RoleTypes)id;
-            if (typeof(RoleBehaviour).IsAssignableFrom(type))
-            {
-                RolesToRegister.Add((type, ModPlugin.GetModPlugin(type.Assembly), role));
-                ClassInjector.RegisterTypeInIl2Cpp(type);
-            }
+            RolesToRegister.Add((type, plugin, role));
+            ClassInjector.RegisterTypeInIl2Cpp(type);
             return role;
         }
         public static ICustomRole CustomRole(this RoleBehaviour role)
@@ -70,13 +78,11 @@ namespace FungleAPI.Roles
             role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.Role = roleType;
             role.InvokeMethod("Register", new Type[] { }, new object[] { });
-            plugin.Roles.Add(role);
             AllRoles.Add(role);
             if (customRole.CachedConfiguration.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }
-            plugin.BasePlugin.Log.LogInfo("Registered Role " + type.Name + ".");
             return role;
         }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)

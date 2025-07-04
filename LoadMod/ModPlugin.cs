@@ -1,12 +1,16 @@
-﻿using BepInEx.Configuration;
+﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Role;
 using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using xCloud;
 
 namespace FungleAPI.LoadMod
 {
@@ -23,19 +27,40 @@ namespace FungleAPI.LoadMod
             }
             return null;
         }
+        internal static ModPlugin Register(BasePlugin basePlugin)
+        {
+            ModPlugin plugin = new ModPlugin();
+            plugin.ModAssembly = basePlugin.GetType().Assembly;
+            plugin.ModName = plugin.ModAssembly.GetName().Name;
+            plugin.BasePlugin = basePlugin;
+            foreach (Type type in plugin.ModAssembly.GetTypes())
+            {
+                if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
+                {
+                    plugin.Buttons.Add(CustomAbilityButton.RegisterButton(type, plugin));
+                }
+                else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
+                {
+                    plugin.Roles.Add((CustomRoleManager.RegisterRole(type, plugin), type));
+                }
+                else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
+                {
+                    plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
+                }
+            }
+            AllPlugins.Add(plugin);
+            return plugin;
+        }
         public static ModPlugin RegisterMod(BasePlugin basePlugin, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
             {
-                plugin.ModAssembly = basePlugin.GetType().Assembly;
-                plugin.ModName = plugin.ModAssembly.GetName().Name;
+                plugin = Register(basePlugin);
                 if (ModName != null)
                 {
                     plugin.ModName = ModName;
                 }
-                plugin.BasePlugin = basePlugin;
-                AllPlugins.Add(plugin);
             }
             return plugin;
         }
@@ -50,8 +75,9 @@ namespace FungleAPI.LoadMod
         public string ModName;
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
-        public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
+        public List<(RoleTypes role, Type type)> Roles = new List<(RoleTypes role, Type type)>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
+        public List<CustomAbilityButton> Buttons = new List<CustomAbilityButton>();
         internal int rpcId;
     }
 }

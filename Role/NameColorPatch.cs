@@ -18,6 +18,18 @@ namespace FungleAPI.Role
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
             if (role.GetTeam() != ModdedTeam.Crewmates && role.GetTeam() != ModdedTeam.Impostors && role.GetTeam() == otherPlayerRole.GetTeam() && role.GetTeam().KnowMembers)
             {
+                if (otherPlayerRole.CustomRole() != null)
+                {
+                    if (otherPlayerRole.CustomRole().CachedConfiguration.ShowTeamColor)
+                    {
+                        __result = otherPlayerRole.GetTeam().TeamColor;
+                    }
+                    else
+                    {
+                        __result = otherPlayerRole.CustomRole().RoleColor;
+                    }
+                    return false;
+                }
                 __result = otherPlayerRole.NameColor;
                 return false;
             }

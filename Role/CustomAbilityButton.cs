@@ -1,5 +1,6 @@
 ﻿using FungleAPI.LoadMod;
 using FungleAPI.Patches;
+using FungleAPI.Role.Teams;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,17 @@ namespace FungleAPI.Roles
 {
     public class CustomAbilityButton
     {
+        public static T GetInstance<T>() where T : CustomAbilityButton
+        {
+            foreach (CustomAbilityButton button in buttons)
+            {
+                if (button.GetType() == typeof(T))
+                {
+                    return button.SimpleCast<T>();
+                }
+            }
+            return null;
+        }
         public bool Active
         {
             get
@@ -195,17 +207,18 @@ namespace FungleAPI.Roles
             }
             return Button;
         }
-        public static CustomAbilityButton RegisterButton(Type type)
+        internal static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)
         {
             try
             {
                 CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
                 buttons.Add(button);
+                plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
                 return button;
             }
             catch
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to register Button.");
+                plugin.BasePlugin.Log.LogError("Failed to register Button " + type.Name);
                 return null;
             }
         }

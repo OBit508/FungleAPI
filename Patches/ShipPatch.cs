@@ -134,7 +134,7 @@ namespace FungleAPI.Patches
                         {
                             LoadMain(minigame, transform);
                         }));
-                        CreateRoleButton(plugin.Roles[i], new Vector3(num5, num6), minigame, transform);
+                        CreateRoleButton(RoleManager.Instance.GetRole(plugin.Roles[i].role), new Vector3(num5, num6), minigame, transform);
                     }
                 });
             }

@@ -25,7 +25,17 @@ namespace FungleAPI.Role
                 return null;
             }
         }
-        public ModdedTeam Team => ModdedTeam.Neutrals;
+        public ModdedTeam Team
+        {
+            get
+            {
+                if (OldRole != null)
+                {
+                    return OldRole.GetTeam();
+                }
+                return ModdedTeam.Neutrals;
+            }
+        }
         public StringNames RoleName 
         {
             get

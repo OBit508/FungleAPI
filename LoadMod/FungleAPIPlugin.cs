@@ -46,10 +46,6 @@ namespace FungleAPI.LoadMod
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<RoleHelper>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
-                ModdedTeam.Crewmates = ModdedTeam.RegisterTeam(typeof(CrewmateTeam));
-                ModdedTeam.Impostors = ModdedTeam.RegisterTeam(typeof(ImpostorTeam));
-                ModdedTeam.Neutrals = ModdedTeam.RegisterTeam(typeof(NeutralTeam));
-                CustomRoleManager.NeutralGhost = CustomRoleManager.RegisterRole(typeof(NeutralGhost));
                 CustomRpcManager.LoadModRpcs();
             }
             Harmony.PatchAll();
@@ -61,11 +57,8 @@ namespace FungleAPI.LoadMod
             {
                 if (plugin == null)
                 {
-                    plugin = new ModPlugin();
-                    plugin.ModAssembly = Assembly.GetExecutingAssembly();
+                    plugin = ModPlugin.Register(Instance);
                     plugin.ModName = "Vanilla";
-                    plugin.BasePlugin = Instance;
-                    ModPlugin.AllPlugins.Add(plugin);
                 }
                 return plugin;
             }
@@ -94,11 +87,14 @@ namespace FungleAPI.LoadMod
                         {
                         }
                     }
+                    (RoleTypes role, Type type) neutralRole = Plugin.Roles[0];
+                    Plugin.Roles.Clear();
                     foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
                     {
-                        Plugin.Roles.Add(role);
                         CustomRoleManager.AllRoles.Add(role);
+                        Plugin.Roles.Add((role.Role, role.GetType()));
                     }
+                    Plugin.Roles.Add(neutralRole);
                     foreach ((Type x1, ModPlugin x2, RoleTypes x3) pair in CustomRoleManager.RolesToRegister)
                     {
                         CustomRoleManager.Register(pair.x1, pair.x2, pair.x3);

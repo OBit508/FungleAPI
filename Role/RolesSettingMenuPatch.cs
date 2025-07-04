@@ -16,6 +16,7 @@ using FungleAPI.Assets;
 using FungleAPI.Rpc;
 using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
+using AmongUs.GameOptions;
 
 namespace FungleAPI.Role
 {
@@ -158,8 +159,9 @@ namespace FungleAPI.Role
             List<RoleBehaviour> impostorRoles = new List<RoleBehaviour>();
             List<RoleBehaviour> neutralRoles = new List<RoleBehaviour>();
             List<ModdedTeam> customTeams = new List<ModdedTeam>();
-            foreach (RoleBehaviour role in plugin.Roles)
+            foreach ((RoleTypes role, Type type) roleType in plugin.Roles)
             {
+                RoleBehaviour role = RoleManager.Instance.GetRole(roleType.role);
                 if (role.GetTeam() == ModdedTeam.Crewmates)
                 {
                     crewmateRoles.Add(role);
@@ -198,8 +200,9 @@ namespace FungleAPI.Role
             foreach (ModdedTeam team in customTeams)
             {
                 List<RoleBehaviour> teamRoles = new List<RoleBehaviour>();
-                foreach (RoleBehaviour role in plugin.Roles)
+                foreach ((RoleTypes role, Type type) roleType in plugin.Roles)
                 {
+                    RoleBehaviour role = RoleManager.Instance.GetRole(roleType.role);
                     if (role.GetTeam() == team)
                     {
                         teamRoles.Add(role);
