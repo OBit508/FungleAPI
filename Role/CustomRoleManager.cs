@@ -60,6 +60,19 @@ namespace FungleAPI.Roles
             }
             return null;
         }
+        public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
+        {
+            ICustomRole role = roleBehaviour.CustomRole();
+            if (role != null)
+            {
+                if (((int)gameOverReason).ToString().StartsWith("1000"))
+                {
+                    return roleBehaviour.Player.PlayerId == int.Parse(((int)gameOverReason).ToString().Replace("1000", ""));
+                }
+                return role.Team.WinReason == gameOverReason;
+            }
+            return roleBehaviour.DidWin(gameOverReason);
+        }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();

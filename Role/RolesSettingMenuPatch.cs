@@ -237,7 +237,7 @@ namespace FungleAPI.Role
                 option.chanceText.text = chance.ToString();
                 Action send = new Action(delegate
                 {
-                    HudManager.Instance.RpcSendNotification("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName.GetString() + "</color>: " + count.ToString() + ", Chance: " + chance.ToString() + "%.");
+                    CustomRpcManager.GetInstance<RpcSendNotification>().Send(("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName.GetString() + "</color>: " + count.ToString() + ", Chance: " + chance.ToString() + "%.", true), PlayerControl.LocalPlayer.NetId);
                 });
                 option.CountMinusBtn.SetNewAction(delegate
                 {
@@ -344,13 +344,13 @@ namespace FungleAPI.Role
                 if (num - config.ReduceValue >= 0)
                 {
                     num = num - config.ReduceValue;
-                    role.RpcSetNewRoleValue(config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                    CustomRpcManager.GetInstance<RpcSetNewRoleValue>().Send((role, config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + "."), PlayerControl.LocalPlayer.NetId);
                 }
             });
             option.PlusBtn.SetNewAction(delegate
             {
                 num = num + config.IncreceValue;
-                role.RpcSetNewRoleValue(config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                CustomRpcManager.GetInstance<RpcSetNewRoleValue>().Send((role, config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + "."), PlayerControl.LocalPlayer.NetId);
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
@@ -368,7 +368,7 @@ namespace FungleAPI.Role
             option.transform.GetChild(1).GetComponent<PassiveButton>().SetNewAction(delegate
             {
                 num = !num;
-                role.RpcSetNewRoleValue(config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                CustomRpcManager.GetInstance<RpcSetNewRoleValue>().Send((role, config, num, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + "."), PlayerControl.LocalPlayer.NetId);
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
@@ -384,12 +384,12 @@ namespace FungleAPI.Role
             option.MinusBtn.SetNewAction(delegate
             {
                 config.BackValue();
-                role.RpcSetNewRoleValue(config, config.ConfigEntry.Value, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.ConfigEntry.Value + ".");
+                CustomRpcManager.GetInstance<RpcSetNewRoleValue>().Send((role, config, config.ConfigEntry.Value, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.ConfigEntry.Value + "."), PlayerControl.LocalPlayer.NetId);
             });
             option.PlusBtn.SetNewAction(delegate
             {
                 config.NextValue();
-                role.RpcSetNewRoleValue(config, config.ConfigEntry.Value, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.ConfigEntry.Value + ".");
+                CustomRpcManager.GetInstance<RpcSetNewRoleValue>().Send((role, config, config.ConfigEntry.Value, "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.ConfigEntry.Value + "."), PlayerControl.LocalPlayer.NetId);
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {

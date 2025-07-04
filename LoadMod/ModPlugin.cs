@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
+using FungleAPI.Rpc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,10 @@ namespace FungleAPI.LoadMod
                 {
                     plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
                 }
+                else if (typeof(RpcHelper).IsAssignableFrom(type) && (type.Assembly != Assembly.GetExecutingAssembly() || typeof(RpcSendNotification) == type || typeof(RpcSetNewRoleValue) == type || typeof(RpcSyncAllRoleSettings) == type))
+                {
+                    plugin.RPCs.Add(CustomRpcManager.RegisterRpc(type, plugin));
+                }
             }
             AllPlugins.Add(plugin);
             return plugin;
@@ -78,6 +83,7 @@ namespace FungleAPI.LoadMod
         public List<(RoleTypes role, Type type)> Roles = new List<(RoleTypes role, Type type)>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public List<CustomAbilityButton> Buttons = new List<CustomAbilityButton>();
+        public List<RpcHelper> RPCs = new List<RpcHelper>();
         internal int rpcId;
     }
 }

@@ -46,7 +46,6 @@ namespace FungleAPI.LoadMod
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<RoleHelper>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
-                CustomRpcManager.LoadModRpcs();
             }
             Harmony.PatchAll();
         }
@@ -72,7 +71,7 @@ namespace FungleAPI.LoadMod
 			{
                 if (__instance.AmHost && clientData.Id != __instance.HostId)
                 {
-                    CustomRpcManager.RpcSyncAllRoleSettings(clientData.Id);
+                    CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(null, PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, clientData.Id);
                 }
             }
             [HarmonyPatch("Awake")]

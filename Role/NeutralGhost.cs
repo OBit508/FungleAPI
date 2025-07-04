@@ -93,5 +93,9 @@ namespace FungleAPI.Role
         }
         public RoleConfig Configuration => new RoleConfig(this) { IsGhostRole = true, HintType = RoleTaskHintType.None };
         public override bool IsDead => true;
+        public override bool DidWin(GameOverReason gameOverReason)
+        {
+            return CustomRoleManager.DidWin(this, gameOverReason);
+        }
     }
 }

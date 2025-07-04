@@ -95,7 +95,7 @@ namespace FungleAPI.Patches
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 1 && neutralKillers.Count >= crewmates)
                 {
-                    RpcCustomEndGame(__instance, neutralKillers);
+                    RpcCustomEndGame(__instance, neutralKillers[0]);
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 0)
                 {
@@ -108,17 +108,10 @@ namespace FungleAPI.Patches
             customEnd = true;
             manager.RpcEndGame(team.WinReason, false);
         }
-        public static void RpcCustomEndGame(this GameManager manager, List<PlayerControl> winners)
+        public static void RpcCustomEndGame(this GameManager manager, PlayerControl winner)
         {
-            CustomRpcManager.rpcCustomEndGame.Write(winners.Count);
-            foreach (PlayerControl player in winners)
-            {
-                CustomRpcManager.rpcCustomEndGame.Write(player.Data);
-                EndGamePatch.Winners.Add(player.Data);
-            }
-            CustomRpcManager.rpcCustomEndGame.SendRpc();
             customEnd = true;
-            manager.RpcEndGame(GameOverReason.ImpostorsByKill, false);
+            manager.RpcEndGame((GameOverReason)int.Parse("1000" + winner.PlayerId), false);
         }
     }
 }
