@@ -1,0 +1,1 @@
+FungleAPI is an API for modding Among Us, with support for creating custom roles, skill buttons, teams, RPCs. It also contains an easy translation system that allows you to translate text through StringName to all languages ​​supported by the game and files that allow the persistent loading of images, audios and animations, keeping them available throughout the game's execution.
