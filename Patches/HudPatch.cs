@@ -26,16 +26,19 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static void OnUpdate(HudManager __instance)
         {
-            foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
+            foreach (CustomAbilityButton button in CustomAbilityButton.activeButton)
             {
                 button.upd();
                 button.Update();
             }
             try
             {
-                HudManager.Instance.ImpostorVentButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanVent && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Data.RoleType != AmongUs.GameOptions.RoleTypes.Engineer && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));
-                HudManager.Instance.KillButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanUseKillButton && !PlayerControl.LocalPlayer.Data.IsDead && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));
-                HudManager.Instance.SabotageButton.gameObject.SetActive(PlayerControl.LocalPlayer.Data.Role.CanSabotage() && (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled));
+                PlayerControl localPlayer = PlayerControl.LocalPlayer;
+                RoleBehaviour localRole = localPlayer.Data.Role;
+                bool active = (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled);
+                HudManager.Instance.ImpostorVentButton.gameObject.SetActive(localRole.CanVent() && !localPlayer.Data.IsDead && localRole.Role != AmongUs.GameOptions.RoleTypes.Engineer && active);
+                HudManager.Instance.KillButton.gameObject.SetActive(localRole.UseKillButton() && !localPlayer.Data.IsDead && active);
+                HudManager.Instance.SabotageButton.gameObject.SetActive(localRole.CanSabotage() && active);
             }
             catch
             {

@@ -37,6 +37,7 @@ namespace FungleAPI.Roles
             }
         }
         internal static List<CustomAbilityButton> buttons = new List<CustomAbilityButton>();
+        internal static List<CustomAbilityButton> activeButton = new List<CustomAbilityButton>();
         public AbilityButton Button;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
@@ -103,14 +104,12 @@ namespace FungleAPI.Roles
                     {
                         Timer -= Time.deltaTime;
                         Button.SetCoolDown(Timer, Cooldown);
-                        Button.cooldownTimerText.color = Color.white;
                     }
                 }
                 else if (!MeetingHud.Instance && !ExileController.Instance && TransformTimer > 0f)
                 {
                     TransformTimer -= Time.deltaTime;
-                    Button.SetCoolDown(TransformTimer, TransformDuration);
-                    Button.cooldownTimerText.color = Color.magenta;
+                    Button.SetFillUp(TransformTimer, TransformDuration);
                     if (TransformTimer <= 0f)
                     {
                         TransformTimer = TransformDuration;
@@ -123,17 +122,23 @@ namespace FungleAPI.Roles
                 }
                 Button.gameObject.SetActive(Active);
             }
+            else if (activeButton.Contains(this))
+            {
+                activeButton.Remove(this);
+            }
         }
         public void Destroy()
         {
            if (Button != null)
             {
+                activeButton.Remove(this);
                 GameObject.Destroy(Button.gameObject);
                 Button = null;
             }
         }
         public AbilityButton CreateButton()
         {
+            activeButton.Add(this);
             if (Button != null)
             {
                 Destroy();

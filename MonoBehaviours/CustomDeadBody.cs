@@ -28,7 +28,7 @@ namespace FungleAPI.MonoBehaviours
             {
                 AllBodies.Add(this);
             }
-            Owner.SetPlayerMaterialColors(bloodSplatter);
+            bloodSplatter.material = Owner.cosmetics.currentBodySprite.BodySprite.material;
         }
         public void Update()
         {

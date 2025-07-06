@@ -72,9 +72,7 @@ namespace FungleAPI.Patches
                         {
                             if (!pair.Keys.Contains(team))
                             {
-                                ChangeableValue<int> value = new ChangeableValue<int>();
-                                value.Value++;
-                                pair.Add(team, value);
+                                pair.Add(team, new ChangeableValue<int>(1));
                             }
                             else
                             {
@@ -111,7 +109,7 @@ namespace FungleAPI.Patches
         public static void RpcCustomEndGame(this GameManager manager, PlayerControl winner)
         {
             customEnd = true;
-            manager.RpcEndGame((GameOverReason)int.Parse("1000" + winner.PlayerId), false);
+            manager.RpcEndGame((GameOverReason)int.Parse("99" + winner.PlayerId), false);
         }
     }
 }

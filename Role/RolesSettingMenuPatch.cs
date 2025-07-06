@@ -237,7 +237,8 @@ namespace FungleAPI.Role
                 option.chanceText.text = chance.ToString();
                 Action send = new Action(delegate
                 {
-                    CustomRpcManager.GetInstance<RpcSendNotification>().Send(("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName.GetString() + "</color>: " + count.ToString() + ", Chance: " + chance.ToString() + "%.", true), PlayerControl.LocalPlayer.NetId);
+                    string s = "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName.GetString() + "</color>: " + count.ToString() + ", Chance: " + chance.ToString() + "%.";
+                    CustomRpcManager.GetInstance<RpcSyncCountAndChance>().Send((role, count, chance, s), PlayerControl.LocalPlayer.NetId);
                 });
                 option.CountMinusBtn.SetNewAction(delegate
                 {

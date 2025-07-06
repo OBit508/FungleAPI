@@ -20,7 +20,7 @@ namespace FungleAPI.Patches
             __instance.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 target = null;
-                if (!PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Data.Role.CanUseKillButton)
+                if (PlayerControl.LocalPlayer.Data.Role.CanKill())
                 {
                     PlayerControl p = null;
                     float d = PlayerControl.LocalPlayer.Data.Role.GetAbilityDistance();
@@ -56,7 +56,7 @@ namespace FungleAPI.Patches
                 if (timer <= 0 && target != null)
                 {
                     timer = GameOptionsManager.Instance.currentGameOptions.GetFloat(AmongUs.GameOptions.FloatOptionNames.KillCooldown);
-                    PlayerControl.LocalPlayer.RpcMurderPlayer(target, true);
+                    PlayerControl.LocalPlayer.CheckMurder(target);
                 }
             }));
         }

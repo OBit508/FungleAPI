@@ -14,13 +14,13 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(Animator __instance)
         {
-            bool flag = true;
-            if (__instance.GetComponent<SpriteAnimator>() != null && __instance.GetComponent<SpriteAnimator>().canPlay)
+            SpriteAnimator animator = __instance.GetComponent<SpriteAnimator>();
+            if (animator != null && animator.canPlay)
             {
-                flag = false;
+                __instance.enabled = false;
+                return false;
             }
-            __instance.enabled = flag;
-            return flag;
+            return true;
         }
     }
 }

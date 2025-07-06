@@ -9,5 +9,9 @@ namespace FungleAPI.Patches
     public class ChangeableValue<T>
     {
         public T Value;
+        public ChangeableValue(T value)
+        {
+            this.Value = value;
+        }
     }
 }

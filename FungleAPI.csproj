@@ -39,6 +39,7 @@
     <Compile Include="Rpc\RpcSendNotification.cs" />
     <Compile Include="Rpc\RpcSetNewRoleValue.cs" />
     <Compile Include="Rpc\RpcSyncAllRoleSettings.cs" />
+    <Compile Include="Rpc\RpcSyncCountAndChance.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Assets\SpriteSheet.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
@@ -51,7 +52,6 @@
     <Compile Include="MonoBehaviours\CustomDeadBody.cs" />
     <Compile Include="Patches\HudPatch.cs" />
     <Compile Include="Patches\KillButtonPatch.cs" />
-    <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="MonoBehaviours\PlayerAnimator.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Assets\ResourceHelper.cs" />

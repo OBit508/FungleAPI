@@ -58,9 +58,9 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour.CustomRole();
             if (role != null)
             {
-                if (((int)gameOverReason).ToString().StartsWith("1000"))
+                if (((int)gameOverReason).ToString().StartsWith("99"))
                 {
-                    return roleBehaviour.Player.PlayerId == int.Parse(((int)gameOverReason).ToString().Replace("1000", ""));
+                    return roleBehaviour.Player.PlayerId == int.Parse(((int)gameOverReason).ToString().Replace("99", ""));
                 }
                 return role.Team.WinReason == gameOverReason;
             }
@@ -129,7 +129,28 @@ namespace FungleAPI.Roles
             {
                 return roleBehaviour.CustomRole().CachedConfiguration.CanKill;
             }
-            return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
+            bool flag = roleBehaviour.CanUseKillButton;
+            if (roleBehaviour.Role == RoleTypes.Phantom)
+            {
+                flag = !roleBehaviour.SafeCast<PhantomRole>().IsInvisible;
+            }
+            return flag && !roleBehaviour.Player.shapeshifting;
+        }
+        public static bool UseKillButton(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CachedConfiguration.UseVanillaKillButton;
+            }
+            return roleBehaviour.CanUseKillButton;
+        }
+        public static bool CanVent(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CachedConfiguration.CanVent;
+            }
+            return roleBehaviour.CanVent;
         }
     }
 }

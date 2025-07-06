@@ -37,5 +37,19 @@ namespace FungleAPI.Role
                 }
             }
         }
+        public static void Postfix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
+        {
+            if (CustomRoleManager.GetRole(roleType) != null)
+            {
+                foreach (PlayerTask text in targetPlayer.myTasks)
+                {
+                    if (text.gameObject.GetComponent<ImportantTextTask>() != null)
+                    {
+                        targetPlayer.myTasks.Remove(text);
+                        return;
+                    }
+                }
+            }
+        }
     }
 }

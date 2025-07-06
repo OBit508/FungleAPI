@@ -15,7 +15,7 @@ namespace FungleAPI.Role.Teams
         public static ModdedTeam Crewmates => GetInstance<CrewmateTeam>();
         public static ModdedTeam Impostors => GetInstance<ImpostorTeam>();
         public static ModdedTeam Neutrals => GetInstance<NeutralTeam>();
-        private static int Ids = 20;
+        private static int Ids = 9;
         internal static ModdedTeam RegisterTeam(Type type, ModPlugin plugin)
         {
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);

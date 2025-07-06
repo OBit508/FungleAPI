@@ -49,7 +49,7 @@ namespace FungleAPI
                 {
                     plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
                 }
-                else if (typeof(RpcHelper).IsAssignableFrom(type) && (type.Assembly != Assembly.GetExecutingAssembly() || typeof(RpcSendNotification) == type || typeof(RpcSetNewRoleValue) == type || typeof(RpcSyncAllRoleSettings) == type))
+                else if (typeof(RpcHelper).IsAssignableFrom(type) && (type.Assembly != Assembly.GetExecutingAssembly() || typeof(RpcSendNotification) == type || typeof(RpcSetNewRoleValue) == type || typeof(RpcSyncAllRoleSettings) == type || typeof(RpcSyncCountAndChance) == type))
                 {
                     plugin.RPCs.Add(CustomRpcManager.RegisterRpc(type, plugin));
                 }

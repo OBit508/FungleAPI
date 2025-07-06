@@ -13,7 +13,7 @@ namespace FungleAPI.Patches
     {
         public static void Postfix(VersionShower __instance)
         {
-            __instance.text.text = "AmongUs " + __instance.text.text + " - FungleAPI Test";
+            __instance.text.text = "AmongUs " + __instance.text.text + " - FungleAPI " + FungleAPIPlugin.ModV;
         }
     }
 }

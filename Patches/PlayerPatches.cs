@@ -43,35 +43,14 @@ namespace FungleAPI.Patches
                 __instance.Data.Role.InvokeMethod("MurderPlayer", new Type[] {typeof(PlayerControl)}, new object[] {target});
             }
         }
-        [HarmonyPatch("FixedUpdate")]
-        [HarmonyPostfix]
-        public static void OnUpdate(PlayerControl __instance)
-        {
-            try
-            {
-                if ((AmongUsClient.Instance.IsGameStarted || AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay) && __instance.Data.Role != null)
-                {
-                    foreach (PlayerTask text in PlayerControl.LocalPlayer.myTasks)
-                    {
-                        if (text.gameObject.GetComponent<ImportantTextTask>() != null)
-                        {
-                            PlayerControl.LocalPlayer.myTasks.Remove(text);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-
-            }
-        }
         [HarmonyPatch("ToggleHighlight")]
         [HarmonyPrefix]
         public static bool OnToggleHighlight(PlayerControl __instance, [HarmonyArgument(0)] bool active)
         {
-            if (__instance.Data.Role.CustomRole() != null)
+            if (__instance.Data.Role.CustomRole() != null && active)
             {
-                __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().CachedConfiguration.OutlineColor));
+                __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
+                __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", __instance.Data.Role.CustomRole().CachedConfiguration.OutlineColor);
                 return false;
             }
             return true;

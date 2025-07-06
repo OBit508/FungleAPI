@@ -20,13 +20,11 @@ namespace FungleAPI.Role
         [HarmonyPatch("GetChancePerGame")]
         public static bool GetChancePrefix([HarmonyArgument(0)] RoleTypes roleType, ref int __result)
         {
-            foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
+            ICustomRole role = CustomRoleManager.GetRole(roleType);
+            if (role != null)
             {
-                if (role.Role == roleType && role.CustomRole() != null)
-                {
-                    __result = role.CustomRole().RoleChance.Value;
-                    return false;
-                }
+                __result = role.RoleChance.Value;
+                return false;
             }
             return true;
         }
@@ -34,13 +32,11 @@ namespace FungleAPI.Role
         [HarmonyPatch("GetNumPerGame")]
         public static bool GetNumPrefix([HarmonyArgument(0)] RoleTypes roleType, ref int __result)
         {
-            foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
+            ICustomRole role = CustomRoleManager.GetRole(roleType);
+            if (role != null)
             {
-                if (role.Role == roleType && role.CustomRole() != null)
-                {
-                    __result = role.CustomRole().RoleCount.Value;
-                    return false;
-                }
+                __result = role.RoleCount.Value;
+                return false;
             }
             return true;
         }
