@@ -59,9 +59,5 @@ namespace FungleAPI.Patches
         {
             return player.cosmetics.currentBodySprite.BodySprite.GetComponent<PlayerAnimator>();
         }
-        public static void ToogleCosmetics(this PlayerControl player, bool on)
-        {
-            player.GetComponent<PlayerHelper>().ToogleCosmetics = on;
-        }
     }
 }
