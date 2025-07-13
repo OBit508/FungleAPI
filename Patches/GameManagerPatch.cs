@@ -38,10 +38,10 @@ namespace FungleAPI.Patches
                 customEnd = false;
                 return true;
             }
-            else if (endReason == GameOverReason.CrewmatesByTask)
+            if (endReason == GameOverReason.CrewmatesByTask)
             {
+                customEnd = true;
                 RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
-                return false;
             }
             return false;
         }
@@ -109,7 +109,7 @@ namespace FungleAPI.Patches
         public static void RpcCustomEndGame(this GameManager manager, PlayerControl winner)
         {
             customEnd = true;
-            manager.RpcEndGame((GameOverReason)int.Parse("99" + winner.PlayerId), false);
+            manager.RpcEndGame((GameOverReason)(winner.PlayerId + 10), false);
         }
     }
 }

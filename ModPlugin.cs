@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
+using FungleAPI.Cosmetics;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -12,22 +13,15 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.AddressableAssets;
 using xCloud;
 
 namespace FungleAPI
 {
     public class ModPlugin
     {
-        public static ModPlugin GetModPlugin(Assembly assembly)
+        internal ModPlugin()
         {
-            foreach (ModPlugin mod in AllPlugins)
-            {
-                if (mod.ModAssembly == assembly)
-                {
-                    return mod;
-                }
-            }
-            return null;
         }
         internal static ModPlugin Register(BasePlugin basePlugin)
         {
@@ -49,6 +43,10 @@ namespace FungleAPI
                 {
                     plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
                 }
+                else if (typeof(ModCosmetics).IsAssignableFrom(type) && type != typeof(ModCosmetics))
+                {
+                    plugin.Cosmetics = type;
+                }
                 else if (typeof(RpcHelper).IsAssignableFrom(type) && (type.Assembly != Assembly.GetExecutingAssembly() || typeof(RpcSendNotification) == type || typeof(RpcSetNewRoleValue) == type || typeof(RpcSyncAllRoleSettings) == type || typeof(RpcSyncCountAndChance) == type))
                 {
                     plugin.RPCs.Add(CustomRpcManager.RegisterRpc(type, plugin));
@@ -57,6 +55,18 @@ namespace FungleAPI
             AllPlugins.Add(plugin);
             return plugin;
         }
+        public static ModPlugin GetModPlugin(Assembly assembly)
+        {
+            foreach (ModPlugin mod in AllPlugins)
+            {
+                if (mod.ModAssembly == assembly)
+                {
+                    return mod;
+                }
+            }
+            return null;
+        }
+        
         public static ModPlugin RegisterMod(BasePlugin basePlugin, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();
@@ -70,10 +80,6 @@ namespace FungleAPI
             }
             return plugin;
         }
-        public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
-        internal ModPlugin()
-        {
-        }
         public ConfigEntry<T> CreateConfig<T>(string Name, T value)
         {
             return BasePlugin.Config.Bind(ModName + " - Configs", Name, value);
@@ -85,5 +91,7 @@ namespace FungleAPI
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public List<CustomAbilityButton> Buttons = new List<CustomAbilityButton>();
         public List<RpcHelper> RPCs = new List<RpcHelper>();
+        public Type Cosmetics;
+        public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
     }
 }

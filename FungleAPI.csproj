@@ -16,6 +16,12 @@
   <ItemGroup>
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="Cosmetics\AssetReferencePatch.cs" />
+    <Compile Include="Cosmetics\CustomPet.cs" />
+    <Compile Include="Cosmetics\CustomPetBehaviour.cs" />
+    <Compile Include="Cosmetics\HatManagerPatch.cs" />
+    <Compile Include="Cosmetics\ModCosmetics.cs" />
+    <Compile Include="Cosmetics\TestCosmetic.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />

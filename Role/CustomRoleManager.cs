@@ -58,11 +58,14 @@ namespace FungleAPI.Roles
             ICustomRole role = roleBehaviour.CustomRole();
             if (role != null)
             {
-                if (((int)gameOverReason).ToString().StartsWith("99"))
+                if ((int)gameOverReason >= 500)
                 {
-                    return roleBehaviour.Player.PlayerId == int.Parse(((int)gameOverReason).ToString().Replace("99", ""));
+                    return role.Team.WinReason == gameOverReason;
                 }
-                return role.Team.WinReason == gameOverReason;
+                else
+                {
+                    return roleBehaviour.Player.PlayerId == ((int)gameOverReason - 10);
+                }
             }
             return roleBehaviour.DidWin(gameOverReason);
         }

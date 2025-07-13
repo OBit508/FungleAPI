@@ -64,6 +64,19 @@ namespace FungleAPI
 		[HarmonyPatch(typeof(AmongUsClient))]
 		public class LoadAPIThings
 		{
+            [HarmonyPatch("OnGameEnd")]
+            [HarmonyPostfix]
+            public static void EndGame()
+            {
+                EndGameResult.CachedWinners.Clear();
+                foreach(NetworkedPlayerInfo info in GameData.Instance.AllPlayers)
+                {
+                    if (info.Role.DidWin(EndGameResult.CachedGameOverReason))
+                    {
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(info));
+                    }
+                }
+            }
 			[HarmonyPatch("CreatePlayer")]
 			[HarmonyPostfix]
 			private static void SyncRoles(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
