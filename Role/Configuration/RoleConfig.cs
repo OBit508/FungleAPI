@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Role.Configuration
 {
     public class RoleConfig
     {
@@ -20,7 +20,7 @@ namespace FungleAPI.Role
             UseVanillaKillButton = role.Team == ModdedTeam.Impostors;
             CanVent = role.Team == ModdedTeam.Impostors;
             CanSabotage = role.Team == ModdedTeam.Impostors;
-            Configs = new Config[] { };
+            Configs = new CustomConfig[] { };
             Buttons = new CustomAbilityButton[] { };
             OutlineColor = role.RoleColor;
             HintType = RoleTaskHintType.Normal;
@@ -41,7 +41,7 @@ namespace FungleAPI.Role
         public bool CanSabotage;
         public bool TasksCountForProgress;
         public bool IsGhostRole;
-        public Config[] Configs;
+        public CustomConfig[] Configs;
         public CustomAbilityButton[] Buttons;
         public RoleTypes GhostRole;
         public RoleTaskHintType HintType;

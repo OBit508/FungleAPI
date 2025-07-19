@@ -4,7 +4,9 @@ using FungleAPI;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using FungleAPI.Role;
+using FungleAPI.Role.Configuration;
 using FungleAPI.Role.Teams;
+using FungleAPI.Rpc;
 using FungleAPI.Translation;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
@@ -22,6 +24,10 @@ namespace FungleAPI.Roles
 {
     public static class CustomRoleManager
     {
+        public static void RpcSyncSettings(string text = null)
+        {
+            CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(text, PlayerControl.LocalPlayer.NetId);
+        }
         public static RoleTypes NeutralGhost => GetInstance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();

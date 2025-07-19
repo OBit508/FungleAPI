@@ -2,7 +2,6 @@
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
-using FungleAPI.Cosmetics;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -42,10 +41,6 @@ namespace FungleAPI
                 else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
                 {
                     plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
-                }
-                else if (typeof(ModCosmetics).IsAssignableFrom(type) && type != typeof(ModCosmetics))
-                {
-                    plugin.Cosmetics = type;
                 }
                 else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
                 {

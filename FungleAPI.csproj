@@ -20,15 +20,16 @@
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
     <Compile Include="Patches\ChangeableValue.cs" />
+    <Compile Include="Role\Configuration\CustomConfig.cs" />
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\NameColorPatch.cs" />
     <Compile Include="Role\NeutralGhost.cs" />
-    <Compile Include="Role\RoleConfig.cs" />
+    <Compile Include="Role\Configuration\RoleConfig.cs" />
     <Compile Include="Role\RoleManagerPatch.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
-    <Compile Include="Role\BoolConfig.cs" />
-    <Compile Include="Role\EnumConfig.cs" />
-    <Compile Include="Role\NumConfig.cs" />
+    <Compile Include="Role\Configuration\BoolConfig.cs" />
+    <Compile Include="Role\Configuration\EnumConfig.cs" />
+    <Compile Include="Role\Configuration\NumConfig.cs" />
     <Compile Include="Role\RoleTaskHintType.cs" />
     <Compile Include="Role\Teams\CrewmateTeam.cs" />
     <Compile Include="Role\Teams\ImpostorTeam.cs" />
@@ -37,8 +38,6 @@
     <Compile Include="Rpc\RpcCustomMurder.cs" />
     <Compile Include="Rpc\RpcHelper.cs" />
     <Compile Include="Rpc\MessageExtension.cs" />
-    <Compile Include="Rpc\RpcSendNotification.cs" />
-    <Compile Include="Rpc\RpcSetNewRoleValue.cs" />
     <Compile Include="Rpc\RpcSyncAllRoleSettings.cs" />
     <Compile Include="Rpc\RpcSyncCountAndChance.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FungleAPIPlugin.cs" />
     <Compile Include="ModPlugin.cs" />
-    <Compile Include="Role\Config.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\IntroCutscenePatch.cs" />
     <Compile Include="Role\Teams\ModdedTeam.cs" />
