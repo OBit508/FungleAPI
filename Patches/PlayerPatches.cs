@@ -16,6 +16,7 @@ using FungleAPI.Rpc;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Role;
+using AsmResolver.PE.DotNet.ReadyToRun;
 
 namespace FungleAPI.Patches
 {
@@ -36,12 +37,10 @@ namespace FungleAPI.Patches
         }
         [HarmonyPrefix]
         [HarmonyPatch("RpcMurderPlayer")]
-        public static void PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
+        public static bool PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
         {
-            if (didSucceed && __instance.Data.Role.CustomRole() != null)
-            {
-                __instance.Data.Role.InvokeMethod("MurderPlayer", new Type[] {typeof(PlayerControl)}, new object[] {target});
-            }
+            RpcCustomMurderPlayer(__instance, target, MurderResultFlags.Succeeded);
+            return false;
         }
         [HarmonyPatch("ToggleHighlight")]
         [HarmonyPrefix]
@@ -58,6 +57,10 @@ namespace FungleAPI.Patches
         public static PlayerAnimator CustomAnimator(this PlayerControl player)
         {
             return player.cosmetics.currentBodySprite.BodySprite.GetComponent<PlayerAnimator>();
+        }
+        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            CustomRpcManager.GetInstance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
         }
     }
 }

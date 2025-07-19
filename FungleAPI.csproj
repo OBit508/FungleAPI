@@ -16,12 +16,6 @@
   <ItemGroup>
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
-    <Compile Include="Cosmetics\AssetReferencePatch.cs" />
-    <Compile Include="Cosmetics\CustomPet.cs" />
-    <Compile Include="Cosmetics\CustomPetBehaviour.cs" />
-    <Compile Include="Cosmetics\HatManagerPatch.cs" />
-    <Compile Include="Cosmetics\ModCosmetics.cs" />
-    <Compile Include="Cosmetics\TestCosmetic.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
@@ -40,6 +34,7 @@
     <Compile Include="Role\Teams\ImpostorTeam.cs" />
     <Compile Include="Role\Teams\NeutralTeam.cs" />
     <Compile Include="Rpc\CustomRpc.cs" />
+    <Compile Include="Rpc\RpcCustomMurder.cs" />
     <Compile Include="Rpc\RpcHelper.cs" />
     <Compile Include="Rpc\MessageExtension.cs" />
     <Compile Include="Rpc\RpcSendNotification.cs" />
@@ -80,7 +75,6 @@
     <Compile Include="Role\IntroCutscenePatch.cs" />
     <Compile Include="Role\Teams\ModdedTeam.cs" />
     <Compile Include="Rpc\CustomRpcManager.cs" />
-    <Compile Include="Rpc\RpcType.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
   </ItemGroup>

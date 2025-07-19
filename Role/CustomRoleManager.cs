@@ -26,6 +26,7 @@ namespace FungleAPI.Roles
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();
         internal static int id = 10;
+        internal static int gameOverId = 20;
         public static RoleTypes GetInstance<T>() where T : RoleBehaviour
         {
             foreach ((RoleTypes role, Type type) pair in ModPlugin.GetModPlugin(typeof(T).Assembly).Roles)
@@ -53,19 +54,21 @@ namespace FungleAPI.Roles
         {
             return RoleManager.Instance.GetRole(type).CustomRole();
         }
+        public static GameOverReason GetValidGameOver()
+        {
+            gameOverId++;
+            return (GameOverReason)gameOverId;
+        }
         public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
         {
             ICustomRole role = roleBehaviour.CustomRole();
             if (role != null)
             {
-                if ((int)gameOverReason >= 500)
+                if (role.Team == ModdedTeam.Neutrals)
                 {
-                    return role.Team.WinReason == gameOverReason;
+                    return !roleBehaviour.IsDead && role.Team.WinReason == gameOverReason;
                 }
-                else
-                {
-                    return roleBehaviour.Player.PlayerId == ((int)gameOverReason - 10);
-                }
+                return role.Team.WinReason == gameOverReason;
             }
             return roleBehaviour.DidWin(gameOverReason);
         }

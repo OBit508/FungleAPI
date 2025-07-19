@@ -47,7 +47,7 @@ namespace FungleAPI
                 {
                     plugin.Cosmetics = type;
                 }
-                else if (typeof(RpcHelper).IsAssignableFrom(type) && (type.Assembly != Assembly.GetExecutingAssembly() || typeof(RpcSendNotification) == type || typeof(RpcSetNewRoleValue) == type || typeof(RpcSyncAllRoleSettings) == type || typeof(RpcSyncCountAndChance) == type))
+                else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
                 {
                     plugin.RPCs.Add(CustomRpcManager.RegisterRpc(type, plugin));
                 }

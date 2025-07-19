@@ -16,6 +16,14 @@ namespace FungleAPI.Patches
 {
     public static class Utils
     {
+        public static void ClearAndDestroy<T>(this List<T> list) where T : UnityEngine.Object
+        {
+            foreach (T t in list)
+            {
+                GameObject.Destroy(t);
+            }
+            list.Clear();
+        }
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
         {
             ref T ptr = ref obj;
@@ -147,14 +155,11 @@ namespace FungleAPI.Patches
         }
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
-            try
-            {
-                return obj.Cast<T>();
-            }
-            catch
+            if (obj == null || obj.TryCast<T>() == null)
             {
                 return null;
             }
+            return obj.Cast<T>();
         }
         public static void InvokeMethod(this object obj, string methodName, Type[] types, object[] arguments)
         {

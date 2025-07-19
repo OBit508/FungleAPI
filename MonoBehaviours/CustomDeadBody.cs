@@ -28,7 +28,10 @@ namespace FungleAPI.MonoBehaviours
             {
                 AllBodies.Add(this);
             }
-            bloodSplatter.material = Owner.cosmetics.currentBodySprite.BodySprite.material;
+            foreach (SpriteRenderer rend in GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                Owner.SetPlayerMaterialColors(rend);
+            }
         }
         public void Update()
         {
@@ -55,20 +58,11 @@ namespace FungleAPI.MonoBehaviours
             DeadBody body = Instantiate(GameManager.Instance.deadBodyPrefab);
             body.enabled = false;
             body.ParentId = from.PlayerId;
-            foreach (SpriteRenderer spriteRenderer in body.bodyRenderers)
-            {
-                from.SetPlayerMaterialColors(spriteRenderer);
-            }
-            from.SetPlayerMaterialColors(body.bloodSplatter);
             Vector3 vector = from.transform.position + from.KillAnimations[0].BodyOffset;
             vector.z = vector.y / 1000f;
             body.transform.position = vector;
             body.enabled = true;
-            CustomDeadBody Cbody = body.gameObject.AddComponent<CustomDeadBody>();
-            Cbody.Owner = from;
-            Cbody.GetComponent<BoxCollider2D>().isTrigger = false;
-            AllBodies.Add(Cbody);
-            return Cbody;
+            return body.SafeCast<CustomDeadBody>();
         }
     }
 }

@@ -56,7 +56,7 @@ namespace FungleAPI.Patches
                 if (timer <= 0 && target != null)
                 {
                     timer = GameOptionsManager.Instance.currentGameOptions.GetFloat(AmongUs.GameOptions.FloatOptionNames.KillCooldown);
-                    PlayerControl.LocalPlayer.RpcMurderPlayer(target, target.protectedByGuardianId == -1);
+                    PlayerControl.LocalPlayer.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost);
                 }
             }));
         }

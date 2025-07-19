@@ -1,4 +1,5 @@
-﻿using FungleAPI.MonoBehaviours;
+﻿using AmongUs.GameOptions;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Rpc;
@@ -93,7 +94,7 @@ namespace FungleAPI.Patches
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 1 && neutralKillers.Count >= crewmates)
                 {
-                    RpcCustomEndGame(__instance, neutralKillers[0]);
+                    RpcCustomEndGame(__instance, ModdedTeam.Neutrals);
                 }
                 else if (pair.Count == 0 && neutralKillers.Count == 0)
                 {
@@ -105,11 +106,6 @@ namespace FungleAPI.Patches
         {
             customEnd = true;
             manager.RpcEndGame(team.WinReason, false);
-        }
-        public static void RpcCustomEndGame(this GameManager manager, PlayerControl winner)
-        {
-            customEnd = true;
-            manager.RpcEndGame((GameOverReason)(winner.PlayerId + 10), false);
         }
     }
 }
