@@ -13,7 +13,7 @@ namespace FungleAPI.Rpc
 {
     public class RpcSyncCountAndChance : CustomRpc<(ICustomRole role, int count, int chance, string s)>
     {
-        public override void OnSend((ICustomRole role, int count, int chance, string s) value)
+        public override void Handle((ICustomRole role, int count, int chance, string s) value)
         {
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value.s, true);
         }

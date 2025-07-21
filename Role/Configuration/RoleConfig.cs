@@ -33,6 +33,7 @@ namespace FungleAPI.Role.Configuration
                 GhostRole =  RoleTypes.ImpostorGhost;
             }
             GhostRole = CustomRoleManager.NeutralGhost;
+            WinReason = role.Team.WinReason;
         }
         public bool AffectedByLightOnAirship;
         public bool CanKill;
@@ -47,5 +48,6 @@ namespace FungleAPI.Role.Configuration
         public RoleTaskHintType HintType;
         public Color OutlineColor;
         public bool ShowTeamColor;
+        public GameOverReason WinReason;
     }
 }

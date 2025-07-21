@@ -12,7 +12,6 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Rpc
 {
-    [HarmonyPatch]
     public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
@@ -33,15 +32,6 @@ namespace FungleAPI.Rpc
             AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
-        }
-        private static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes()
-                                                                  where x.IsSubclassOf(typeof(InnerNetObject)) && x != typeof(LobbyBehaviour)
-                                                                  select x).ToList<Type>();
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            return InnerNetObjectTypes
-                .Select(x => x.GetMethod("HandleRpc", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
-                .Where(m => m != null);
         }
         public static void Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {

@@ -22,6 +22,7 @@ using Il2CppSystem.Text;
 using InnerNet;
 using FungleAPI.Translation;
 using System.Diagnostics;
+using BepInEx.Unity.IL2CPP.Utils;
 
 namespace FungleAPI
 {
@@ -48,6 +49,7 @@ namespace FungleAPI
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
             }
             Harmony.PatchAll();
+            Harmony.PatchAllDerivedMethods(typeof(InnerNetObject), typeof(CustomRpcManager).GetMethod("Prefix", BindingFlags.Static | BindingFlags.Public));
         }
         internal static ModPlugin plugin;
 		public static ModPlugin Plugin 
@@ -65,26 +67,21 @@ namespace FungleAPI
 		[HarmonyPatch(typeof(AmongUsClient))]
 		public class LoadAPIThings
 		{
-            [HarmonyPatch("OnGameEnd")]
-            [HarmonyPostfix]
-            public static void EndGame()
-            {
-                EndGameResult.CachedWinners.Clear();
-                foreach(NetworkedPlayerInfo info in GameData.Instance.AllPlayers)
-                {
-                    if (info.Role.DidWin(EndGameResult.CachedGameOverReason))
-                    {
-                        EndGameResult.CachedWinners.Add(new CachedPlayerData(info));
-                    }
-                }
-            }
 			[HarmonyPatch("CreatePlayer")]
 			[HarmonyPostfix]
 			private static void SyncRoles(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
 			{
                 if (__instance.AmHost && clientData.Id != __instance.HostId)
                 {
-                    CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(null, PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, clientData.Id);
+                    IEnumerator delay()
+                    {
+                        yield return new WaitForSeconds(0.1f);
+                        while (clientData.Character == null)
+                        {
+                        }
+                        CustomRoleManager.RpcSyncSettings();
+                    }
+                    __instance.StartCoroutine(delay());
                 }
             }
             [HarmonyPatch("Awake")]
@@ -108,26 +105,10 @@ namespace FungleAPI
                     RoleManager.Instance.DontDestroy().AllRoles = CustomRoleManager.AllRoles.ToArray();
                     RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
                     RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
-                    if (loadAll != null)
-					{
-                        loadAll();
-                    }
                     allLoadded = true;
                 }
 			}
 			private static bool allLoadded;
 		}
-        public static void AddNewLoad(Action load)
-		{
-			Action action = loadAll;
-			loadAll = new Action(delegate
-			{
-                load();
-                action();
-            });
-		}
-		internal static Action loadAll = new Action(delegate
-		{
-		});
 	}
 }

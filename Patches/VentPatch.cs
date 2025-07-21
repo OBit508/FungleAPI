@@ -53,7 +53,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void OnStart(Vent __instance)
         {
-            List<Vent> list = new List<Vent>();
+            List<Vent> list = __instance.gameObject.AddComponent<CustomVent>().NearbyVents;
             if (__instance.Right != null)
             {
                 list.Add(__instance.Right);
@@ -66,7 +66,6 @@ namespace FungleAPI.Patches
             {
                 list.Add(__instance.Left);
             }
-            __instance.gameObject.AddComponent<CustomVent>().NearbyVents = list.ToArray();
         }
         public static void ConnectVent(this Vent v, Vent vent)
         {
@@ -83,7 +82,7 @@ namespace FungleAPI.Patches
                 CreateArrow(v, v1, prefab, d);
             }
             CreateArrow(v, vent, prefab, d);
-            v.GetComponent<CustomVent>().NearbyVents = v.GetComponent<CustomVent>().NearbyVents.Add(vent);
+            v.GetComponent<CustomVent>().NearbyVents.Add(vent);
             UnityEngine.Object.Destroy(prefab.gameObject);
             v.SetButtons(Vent.currentVent == v);
         }
@@ -97,7 +96,7 @@ namespace FungleAPI.Patches
             float d = Vector2.Distance(v.Buttons[0].transform.position, v.transform.position);
             v.Buttons = new ButtonBehavior[] { };
             v.CleaningIndicators = new GameObject[] { };
-            v.GetComponent<CustomVent>().NearbyVents = v.GetComponent<CustomVent>().NearbyVents.Remove(vent);
+            v.GetComponent<CustomVent>().NearbyVents.Remove(vent);
             foreach (Vent v1 in v.NearbyVents)
             {
                 CreateArrow(v, v1, prefab, d);
@@ -124,7 +123,7 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static bool OnGetVents(Vent __instance, ref Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Vent> __result)
         {
-            __result = __instance.GetNearbyVents();
+            __result = __instance.GetNearbyVents().ToArray();
             return false;
         }
         public static Vent CreateVent()
@@ -147,13 +146,13 @@ namespace FungleAPI.Patches
             ShipStatus.Instance.AllVents = list.ToArray();
             return vent2;
         }
-        public static Vent[] GetNearbyVents(this Vent vent)
+        public static List<Vent> GetNearbyVents(this Vent vent)
         {
             if (vent.GetComponent<CustomVent>() != null)
             {
                 return vent.GetComponent<CustomVent>().NearbyVents;
             }
-            return new Vent[] { };
+            return new List<Vent>();
         }
         internal static void Organize(Transform button, Transform vent, Transform target, float d)
         {

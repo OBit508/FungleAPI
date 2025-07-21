@@ -20,15 +20,18 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         private static void OnAwake(GameManager __instance)
         {
-            GameObject bodyPrefab = __instance.deadBodyPrefab.gameObject;
-            SpriteRenderer[] renderers = __instance.deadBodyPrefab.bodyRenderers;
-            SpriteRenderer renderer = __instance.deadBodyPrefab.bloodSplatter;
-            GameObject.Destroy(__instance.deadBodyPrefab);
-            CustomDeadBody body = bodyPrefab.AddComponent<CustomDeadBody>();
-            body.bodyRenderers = renderers;
-            body.bloodSplatter = renderer;
-            body.myCollider = body.GetComponent<Collider2D>();
-            __instance.deadBodyPrefab = body;
+            if (__instance.deadBodyPrefab != null)
+            {
+                GameObject bodyPrefab = __instance.deadBodyPrefab.gameObject;
+                SpriteRenderer[] renderers = __instance.deadBodyPrefab.bodyRenderers;
+                SpriteRenderer renderer = __instance.deadBodyPrefab.bloodSplatter;
+                GameObject.Destroy(__instance.deadBodyPrefab);
+                CustomDeadBody body = bodyPrefab.AddComponent<CustomDeadBody>();
+                body.bodyRenderers = renderers;
+                body.bloodSplatter = renderer;
+                body.myCollider = body.GetComponent<Collider2D>();
+                __instance.deadBodyPrefab = body;
+            }
         }
         [HarmonyPatch("RpcEndGame")]
         [HarmonyPrefix]

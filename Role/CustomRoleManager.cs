@@ -72,9 +72,9 @@ namespace FungleAPI.Roles
             {
                 if (role.Team == ModdedTeam.Neutrals)
                 {
-                    return !roleBehaviour.IsDead && role.Team.WinReason == gameOverReason;
+                    return !roleBehaviour.IsDead && role.CachedConfiguration.WinReason == gameOverReason;
                 }
-                return role.Team.WinReason == gameOverReason;
+                return role.CachedConfiguration.WinReason == gameOverReason;
             }
             return roleBehaviour.DidWin(gameOverReason);
         }

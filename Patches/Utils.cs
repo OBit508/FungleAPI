@@ -1,5 +1,6 @@
 ﻿using FungleAPI.MonoBehaviours;
 using FungleAPI.Roles;
+using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using System;
@@ -141,18 +142,6 @@ namespace FungleAPI.Patches
             GameObject.DontDestroyOnLoad(obj);
             return obj;
         }
-        public static T[] Add<T>(this T[] array, T item)
-        {
-            List<T> list = array.ToList();
-            list.Add(item);
-            return list.ToArray();
-        }
-        public static T[] Remove<T>(this T[] array, T item)
-        {
-            List<T> list = array.ToList();
-            list.Remove(item);
-            return list.ToArray();
-        }
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
             if (obj == null || obj.TryCast<T>() == null)
@@ -173,6 +162,30 @@ namespace FungleAPI.Patches
             }
             catch
             {
+            }
+        }
+        public static void PatchAllDerivedMethods(this Harmony harmony, Type baseType, MethodInfo prefix = null, MethodInfo postfix = null)
+        {
+            foreach (Type type in baseType.Assembly.GetTypes())
+            {
+                if (type == baseType || !baseType.IsAssignableFrom(type))
+                {
+                    foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+                    {
+                        if (method.IsSpecialName)
+                        {
+                            ParameterInfo[] parameters = method.GetParameters();
+                            if (parameters.Length >= 2 &&
+                                parameters[0].ParameterType == typeof(byte) &&
+                                parameters[1].ParameterType == typeof(Hazel.MessageReader))
+                            {
+                                var prefixAttr = prefix != null ? new HarmonyMethod(prefix) : null;
+                                var postfixAttr = postfix != null ? new HarmonyMethod(postfix) : null;
+                                harmony.Patch(method, prefix: prefixAttr, postfix: postfixAttr);
+                            }
+                        }
+                    }
+                }
             }
         }
     }

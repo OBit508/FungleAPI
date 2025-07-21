@@ -25,17 +25,7 @@ namespace FungleAPI.Roles
             }
             return null;
         }
-        public bool Active
-        {
-            get
-            {
-                if (PlayerControl.LocalPlayer != null && HudManager.Instance != null)
-                {
-                    return !PlayerControl.LocalPlayer.Data.IsDead && (HudManager.Instance.UseButton.isActiveAndEnabled || HudManager.Instance.PetButton.isActiveAndEnabled);
-                }
-                return false;
-            }
-        }
+        public bool Active => true;
         internal static List<CustomAbilityButton> buttons = new List<CustomAbilityButton>();
         internal static List<CustomAbilityButton> activeButton = new List<CustomAbilityButton>();
         public AbilityButton Button;
@@ -91,7 +81,6 @@ namespace FungleAPI.Roles
                     color = Palette.EnabledColor;
                     num = 0;
                 }
-
                 Button.graphic.color = color;
                 Button.graphic.material.SetFloat("_Desat", num);
                 Button.usesRemainingSprite.color = color;
@@ -120,7 +109,6 @@ namespace FungleAPI.Roles
                         }
                     }
                 }
-                Button.gameObject.SetActive(Active);
             }
             else if (activeButton.Contains(this))
             {

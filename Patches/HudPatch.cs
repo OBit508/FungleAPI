@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FungleAPI;
+using FungleAPI.Role;
+using FungleAPI.Roles;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI;
-using FungleAPI.Roles;
-using HarmonyLib;
 using UnityEngine;
 
 namespace FungleAPI.Patches
@@ -19,8 +20,11 @@ namespace FungleAPI.Patches
         {
             prefab = GameObject.Instantiate<AbilityButton>(__instance.AbilityButton, __instance.transform);
             prefab.gameObject.SetActive(false);
-            MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
-            MapBehaviour.Instance.gameObject.SetActive(false);
+            if (ShipStatus.Instance != null)
+            {
+                MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
+                MapBehaviour.Instance.gameObject.SetActive(false);
+            }
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
@@ -31,17 +35,26 @@ namespace FungleAPI.Patches
                 button.upd();
                 button.Update();
             }
-            try
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch("SetHudActive", new Type[]
+        {
+            typeof(PlayerControl),
+            typeof(RoleBehaviour),
+            typeof(bool)
+        })]
+        public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
+        {
+            HudManager.Instance.ImpostorVentButton.gameObject.SetActive(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
+            HudManager.Instance.KillButton.gameObject.SetActive(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
+            HudManager.Instance.SabotageButton.gameObject.SetActive(role.CanSabotage() && isActive);
+            ICustomRole customRole = role as ICustomRole;
+            if (customRole != null)
             {
-                PlayerControl localPlayer = PlayerControl.LocalPlayer;
-                RoleBehaviour localRole = localPlayer.Data.Role;
-                bool active = (__instance.UseButton.isActiveAndEnabled || __instance.PetButton.isActiveAndEnabled);
-                HudManager.Instance.ImpostorVentButton.gameObject.SetActive(localRole.CanVent() && !localPlayer.Data.IsDead && localRole.Role != AmongUs.GameOptions.RoleTypes.Engineer && active);
-                HudManager.Instance.KillButton.gameObject.SetActive(localRole.UseKillButton() && !localPlayer.Data.IsDead && active);
-                HudManager.Instance.SabotageButton.gameObject.SetActive(localRole.CanSabotage() && active);
-            }
-            catch
-            {
+                foreach (CustomAbilityButton button in customRole.CachedConfiguration.Buttons)
+                {
+                    button.Button.gameObject.SetActive(button.Active && isActive);
+                }
             }
         }
         public static AbilityButton prefab;
