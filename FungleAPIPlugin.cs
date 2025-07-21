@@ -21,6 +21,7 @@ using FungleAPI.Role.Teams;
 using Il2CppSystem.Text;
 using InnerNet;
 using FungleAPI.Translation;
+using System.Diagnostics;
 
 namespace FungleAPI
 {

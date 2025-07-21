@@ -1,13 +1,17 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using FungleAPI.Assets;
+using FungleAPI.MonoBehaviours;
+using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.MonoBehaviours;
-using FungleAPI.Roles;
-using HarmonyLib;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements.UIR;
 using xCloud;
 
 namespace FungleAPI.Patches
@@ -15,6 +19,8 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(ShipStatus), "Start")]
     internal class ShipPatch
     {
+        public static int index;
+        public static ModPlugin LastPlugin;
         public static Vector3 PcPosition 
         {
             get
@@ -53,8 +59,18 @@ namespace FungleAPI.Patches
             {
                 TaskAdderGame taskAdderGame = GameObject.Instantiate<TaskAdderGame>(obj.MinigamePrefab.Cast<TaskAdderGame>(), Camera.main.transform);
                 Minigame.Instance = taskAdderGame;
-                taskAdderGame.transform.GetChild(2).GetComponent<TextMeshPro>().text = "Role Tester 5080";
                 Transform transform = new GameObject("RolesParent").transform;
+                taskAdderGame.transform.GetChild(5).GetComponent<PassiveButton>().OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                taskAdderGame.transform.GetChild(5).GetComponent<PassiveButton>().OnClick.AddListener(new Action(delegate
+                {
+                    LoadMain(taskAdderGame, transform);
+                }));
+                taskAdderGame.BackButton.GetComponent<PassiveButton>().OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+                taskAdderGame.BackButton.GetComponent<PassiveButton>().OnClick.AddListener(new Action(delegate
+                {
+                    Back(taskAdderGame, transform);
+                }));
+                taskAdderGame.transform.GetChild(2).GetComponent<TextMeshPro>().text = "Role Tester 5080";
                 Scroller scroller = taskAdderGame.gameObject.AddComponent<Scroller>();
                 scroller.ContentYBounds.min = 0;
                 scroller.allowX = false;
@@ -63,8 +79,11 @@ namespace FungleAPI.Patches
                 GameObject gameObject = new GameObject("Hitbox");
                 gameObject.layer = 5;
                 gameObject.transform.SetParent(taskAdderGame.transform, false);
-                gameObject.transform.localScale = new Vector3(7.5f, 6.5f, 1f);
-                gameObject.transform.localPosition = new Vector3(2.8f, -2.2f, 0f);
+                gameObject.transform.localScale = new Vector3(10, 0.4f, 1f);
+                gameObject.transform.localPosition = new Vector3(2.8f, -0.1f, 0f);
+                SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
+                spriteMask.sprite = ResourceHelper.EmptySprite;
+                spriteMask.alphaCutoff = 0f;
                 BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
                 collider.size = new Vector2(1f, 1f);
                 collider.enabled = true;
@@ -81,8 +100,20 @@ namespace FungleAPI.Patches
             customConsole.transform.localScale = obj.transform.localScale;
             customConsole.transform.position = PcPosition;
         }
+        public static void Back(TaskAdderGame minigame, Transform transform)
+        {
+            if (index == 1)
+            {
+                LoadMain(minigame, transform);
+            }
+            else if (index == 2)
+            {
+                LoadPluginFolder(LastPlugin, minigame, transform);
+            }
+        }
         public static void LoadMain(TaskAdderGame minigame, Transform transform)
         {
+            index = 0;
             for (int i = 0; i < transform.GetChildCount(); i++)
             {
                 GameObject.Destroy(transform.GetChild(i).gameObject);
@@ -100,42 +131,86 @@ namespace FungleAPI.Patches
                 TaskFolder folder = GameObject.Instantiate<TaskFolder>(minigame.RootFolderPrefab, transform);
                 folder.transform.SetParent(transform);
                 folder.transform.localPosition = new Vector3(num5, num6);
-                folder.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
-                {
-                    folder.transform.GetChild(0).GetComponent<TextMeshPro>().text = plugin.ModName;
-                });
+                TextMeshPro text = folder.transform.GetChild(0).GetComponent<TextMeshPro>();
+                folder.FolderName = plugin.ModName;
+                text.fontMaterial.SetFloat("_Stencil", 1f);
+                text.fontMaterial.SetFloat("_StencilComp", 4f);
+                folder.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                 PassiveButton button = folder.GetComponent<PassiveButton>();
                 button.SetNewAction(delegate
                 {
-                    for (int i = 0; i < transform.GetChildCount(); i++)
-                    {
-                        GameObject.Destroy(transform.GetChild(i).gameObject);
-                    }
-                    minigame.transform.GetChild(6).GetComponent<TextMeshPro>().text = "RoleTester/" + plugin.ModName;
-                    TaskFolder folder = GameObject.Instantiate<TaskFolder>(minigame.RootFolderPrefab, transform);
-                    folder.transform.SetParent(transform);
-                    folder.transform.localPosition = new Vector3(-2.3f, 1.7f);
-                    folder.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
-                    {
-                        folder.transform.GetChild(0).GetComponent<TextMeshPro>().text = "← Back";
-                    });
-                    for (int i = 0; i < plugin.Roles.Count; i++)
-                    {
-                        float num = -2.3f;
-                        float num2 = 1.7f;
-                        int num3 = (i + 1) % 6;
-                        int num4 = (i + 1) / 6;
-                        float num5 = num + 1.15f * (float)num3;
-                        float num6 = num2 - 1.3f * (float)num4;
-                        PassiveButton button = folder.GetComponent<PassiveButton>();
-                        button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                        button.OnClick.AddListener(new Action(delegate
-                        {
-                            LoadMain(minigame, transform);
-                        }));
-                        CreateRoleButton(RoleManager.Instance.GetRole(plugin.Roles[i].role), new Vector3(num5, num6), minigame, transform);
-                    }
+                    LastPlugin = plugin;
+                    LoadPluginFolder(plugin, minigame, transform);
                 });
+            }
+        }
+        public static void LoadPluginFolder(ModPlugin plugin, TaskAdderGame minigame, Transform transform)
+        {
+            index = 1;
+            for (int i = 0; i < transform.GetChildCount(); i++)
+            {
+                GameObject.Destroy(transform.GetChild(i).gameObject);
+            }
+            minigame.transform.GetChild(6).GetComponent<TextMeshPro>().text = "RoleTester/" + plugin.ModName;
+            List<ModdedTeam> teams = new List<ModdedTeam>() { ModdedTeam.Crewmates, ModdedTeam.Impostors, ModdedTeam.Neutrals };
+            foreach ((RoleTypes role, Type type) p in plugin.Roles)
+            {
+                RoleBehaviour role = RoleManager.Instance.GetRole(p.role);
+                if (!teams.Contains(role.GetTeam()))
+                {
+                    teams.Add(role.GetTeam());
+                }
+            }
+            for (int i = 0; i < teams.Count(); i++)
+            {
+                ModdedTeam team = teams[i];
+                float num = -2.3f;
+                float num2 = 1.7f;
+                int num3 = i % 6;
+                int num4 = i / 6;
+                float num5 = num + 1.15f * (float)num3;
+                float num6 = num2 - 1.3f * (float)num4;
+                TaskFolder folder = GameObject.Instantiate<TaskFolder>(minigame.RootFolderPrefab, transform);
+                folder.transform.SetParent(transform);
+                folder.transform.localPosition = new Vector3(num5, num6);
+                TextMeshPro text = folder.transform.GetChild(0).GetComponent<TextMeshPro>();
+                folder.FolderName = team.TeamName.GetString();
+                text.fontMaterial.SetFloat("_Stencil", 1f);
+                text.fontMaterial.SetFloat("_StencilComp", 4f);
+                folder.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                PassiveButton button = folder.GetComponent<PassiveButton>();
+                button.SetNewAction(delegate
+                {
+                    LoadRoleFolder(plugin, team, minigame, transform);
+                });
+            }
+        }
+        public static void LoadRoleFolder(ModPlugin plugin, ModdedTeam team, TaskAdderGame minigame, Transform transform)
+        {
+            index = 2;
+            for (int i = 0; i < transform.GetChildCount(); i++)
+            {
+                GameObject.Destroy(transform.GetChild(i).gameObject);
+            }
+            minigame.transform.GetChild(6).GetComponent<TextMeshPro>().text = "RoleTester/" + plugin.ModName + "/" + team.TeamName.GetString();
+            List<RoleBehaviour> roles = new List<RoleBehaviour>();
+            foreach ((RoleTypes role, Type type) p in plugin.Roles)
+            {
+                RoleBehaviour role = RoleManager.Instance.GetRole(p.role);
+                if (role.GetTeam() == team)
+                {
+                    roles.Add(role);
+                }
+            }
+            for (int i = 0; i < roles.Count; i++)
+            {
+                float num = -2.3f;
+                float num2 = 1.7f;
+                int num3 = i % 6;
+                int num4 = i / 6;
+                float num5 = num + 1.15f * (float)num3;
+                float num6 = num2 - 1.3f * (float)num4;
+                CreateRoleButton(RoleManager.Instance.GetRole(plugin.Roles[i].role), new Vector3(num5, num6), minigame, transform);
             }
         }
         public static void CreateRoleButton(RoleBehaviour role, Vector3 pos, TaskAdderGame minigame, Transform transform)
@@ -150,7 +225,11 @@ namespace FungleAPI.Patches
             }));
             button.GetComponent<ButtonRolloverHandler>().OutColor = role.TeamColor;
             button.GetComponent<SpriteRenderer>().color = role.TeamColor;
-            button.transform.GetChild(1).GetComponent<TextMeshPro>().text = "Be_" + role.NiceName + ".exe";
+            button.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            TextMeshPro text = button.transform.GetChild(1).GetComponent<TextMeshPro>();
+            text.text = "Be_" + role.NiceName + ".exe";
+            text.fontMaterial.SetFloat("_Stencil", 1f);
+            text.fontMaterial.SetFloat("_StencilComp", 4f);
             Vector3 localPosition = button.transform.GetChild(1).localPosition;
             localPosition.y = -0.6f;
             button.transform.GetChild(1).localPosition = localPosition;

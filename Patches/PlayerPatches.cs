@@ -1,22 +1,24 @@
-﻿using HarmonyLib;
+﻿using AmongUs.GameOptions;
+using AsmResolver.PE.DotNet.ReadyToRun;
+using Epic.OnlineServices.Presence;
+using FungleAPI.MonoBehaviours;
+using FungleAPI.Role;
+using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using FungleAPI.Rpc;
+using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Net;
+using Rewired;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using FungleAPI.MonoBehaviours;
-using AmongUs.GameOptions;
-using Epic.OnlineServices.Presence;
-using xCloud;
 using UnityEngine;
-using FungleAPI.Rpc;
-using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
-using FungleAPI.Role;
-using AsmResolver.PE.DotNet.ReadyToRun;
+using xCloud;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Patches
 {
@@ -61,6 +63,23 @@ namespace FungleAPI.Patches
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             CustomRpcManager.GetInstance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
+        }
+        public static PlayerControl GetClosest(this PlayerControl target)
+        {
+            PlayerControl closest = null;
+            float dis = target.Data.Role.GetAbilityDistance();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                Vector3 center = target.Collider.bounds.center;
+                Vector3 position = player.transform.position;
+                float num = Vector2.Distance(center, position);
+                if (player != target && !player.Data.IsDead && !PhysicsHelpers.AnythingBetween(target.Collider, center, position, Constants.ShipOnlyMask, false) && num < dis)
+                {
+                    closest = player;
+                    dis = num;
+                }
+            }
+            return closest;
         }
     }
 }

@@ -121,11 +121,7 @@ namespace FungleAPI.Roles
             {
                 return role.CustomRole().Team;
             }
-            if (role.TeamType == RoleTeamTypes.Crewmate)
-            {
-                return ModdedTeam.Crewmates;
-            }
-            return ModdedTeam.Impostors;
+            return RoleManager.IsImpostorRole(role.Role) ? ModdedTeam.Impostors : ModdedTeam.Crewmates;
         }
         public static bool CanSabotage(this RoleBehaviour roleBehaviour)
         {

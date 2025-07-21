@@ -1,8 +1,10 @@
-﻿using AsmResolver.PE.Win32Resources;
+﻿using AsmResolver.PE.DotNet.ReadyToRun;
+using AsmResolver.PE.Win32Resources;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using Il2CppInterop.Runtime;
 using Il2CppSystem.IO;
+using Rewired.UI;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -13,12 +15,14 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 using xCloud;
 
 namespace FungleAPI.Assets
 {
     public static class ResourceHelper
     {
+        public static Sprite EmptySprite = LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
         public static string ReadText(ModPlugin plugin, string resource)
         {
             return new System.IO.StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)).ReadToEnd();
