@@ -2,7 +2,6 @@
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
-using FungleAPI.Patches;
 using FungleAPI.MonoBehaviours;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
@@ -23,6 +22,8 @@ using InnerNet;
 using FungleAPI.Translation;
 using System.Diagnostics;
 using BepInEx.Unity.IL2CPP.Utils;
+using Unity.Services.Core.Internal;
+using FungleAPI.Utilities;
 
 namespace FungleAPI
 {
@@ -90,19 +91,12 @@ namespace FungleAPI
 			{
 				if (!allLoadded)
 				{
-                    (RoleTypes role, Type type) neutralRole = Plugin.Roles[0];
-                    Plugin.Roles.Clear();
-                    foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
+                    Plugin.Roles = RoleManager.Instance.AllRoles.Concat(Plugin.Roles).ToList();
+                    foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
                     {
-                        CustomRoleManager.AllRoles.Add(role);
-                        Plugin.Roles.Add((role.Role, role.GetType()));
+                        CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value);
                     }
-                    Plugin.Roles.Add(neutralRole);
-                    foreach ((Type x1, ModPlugin x2, RoleTypes x3) pair in CustomRoleManager.RolesToRegister)
-                    {
-                        CustomRoleManager.Register(pair.x1, pair.x2, pair.x3);
-                    }
-                    RoleManager.Instance.DontDestroy().AllRoles = CustomRoleManager.AllRoles.ToArray();
+                    RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
                     RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
                     RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
                     allLoadded = true;

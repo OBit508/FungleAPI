@@ -7,18 +7,27 @@ using System.Threading.Tasks;
 using System.IO;
 using BepInEx.Configuration;
 using FungleAPI.Patches;
+using System.Reflection;
+using FungleAPI.Utilities;
 
 namespace FungleAPI.Role.Configuration
 {
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class BoolConfig : CustomConfig
     {
-        public BoolConfig(ICustomRole role, string configName, bool defaultValue, int Id = 0)
+        public BoolConfig(StringNames configName)
         {
-            ModPlugin plugin = ModPlugin.GetModPlugin(role.GetType().Assembly);
             ConfigName = configName;
-            Role = role;
-            localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + role.GetType().FullName + " - " + Id, configName, defaultValue.ToString());
-            onlineValue = defaultValue.ToString();
+        }
+        public override void Initialize(Type type, PropertyInfo property, object obj)
+        {
+            if (property.PropertyType == typeof(bool))
+            {
+                ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
+                bool value = (bool)property.GetValue(obj);
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                onlineValue = value.ToString();
+            }
         }
     }
 }

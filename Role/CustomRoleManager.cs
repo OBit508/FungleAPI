@@ -2,12 +2,13 @@
 using BepInEx.Core.Logging.Interpolation;
 using FungleAPI;
 using FungleAPI.MonoBehaviours;
-using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Rpc;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
+using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using MonoMod.Cil;
@@ -18,37 +19,42 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Reflection.RuntimePropertyInfo;
 using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Roles
 {
     public static class CustomRoleManager
     {
+        public static RoleBehaviour NeutralGhost => GetInstance<NeutralGhost>();
         public static void RpcSyncSettings(string text = null)
         {
             CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(text, PlayerControl.LocalPlayer.NetId);
         }
-        public static RoleTypes NeutralGhost => GetInstance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
-        internal static List<(Type x1, ModPlugin x2, RoleTypes x3)> RolesToRegister = new List<(Type x1, ModPlugin x2, RoleTypes x3)>();
         internal static int id = 10;
         internal static int gameOverId = 20;
-        public static RoleTypes GetInstance<T>() where T : RoleBehaviour
+        internal static System.Collections.Generic.Dictionary<Type, RoleTypes> RolesToRegister = new System.Collections.Generic.Dictionary<Type, RoleTypes>();
+        public static T GetInstance<T>() where T : RoleBehaviour
         {
-            foreach ((RoleTypes role, Type type) pair in ModPlugin.GetModPlugin(typeof(T).Assembly).Roles)
+            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
             {
-                if (pair.type == typeof(T))
+                if (role.GetType() == typeof(T))
                 {
-                    return pair.role;
+                    return role.SafeCast<T>();
                 }
             }
-            return RoleTypes.Crewmate;
+            return null;
+        }
+        public static RoleTypes GetType<T>() where T : RoleBehaviour
+        {
+            return RolesToRegister[typeof(T)];
         }
         internal static RoleTypes RegisterRole(Type type, ModPlugin plugin)
         {
             id++;
             RoleTypes role = (RoleTypes)id;
-            RolesToRegister.Add((type, plugin, role));
+            RolesToRegister.Add(type, role);
             ClassInjector.RegisterTypeInIl2Cpp(type);
             return role;
         }
@@ -65,25 +71,13 @@ namespace FungleAPI.Roles
             gameOverId++;
             return (GameOverReason)gameOverId;
         }
-        public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
-        {
-            ICustomRole role = roleBehaviour.CustomRole();
-            if (role != null)
-            {
-                if (role.Team == ModdedTeam.Neutrals)
-                {
-                    return !roleBehaviour.IsDead && role.CachedConfiguration.WinReason == gameOverReason;
-                }
-                return role.CachedConfiguration.WinReason == gameOverReason;
-            }
-            return roleBehaviour.DidWin(gameOverReason);
-        }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            ICustomRole.Values.Add((plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.Name, "Count", 1), plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.Name, "Chance", 100), customRole.Configuration, roleType, type));
+            ICustomRole.Values.Add((plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Count", 1), plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Chance", 100), customRole.Configuration, roleType, type));
             RoleConfig config = customRole.CachedConfiguration;
+            config.Configs = ConfigurationManager.InitializeConfigs(role);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;
@@ -97,6 +91,7 @@ namespace FungleAPI.Roles
             role.Role = roleType;
             role.InvokeMethod("Register", new Type[] { }, new object[] { });
             AllRoles.Add(role);
+            plugin.Roles.Add(role);
             if (customRole.CachedConfiguration.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
@@ -114,6 +109,19 @@ namespace FungleAPI.Roles
                 }
             }
             return FungleAPIPlugin.Plugin;
+        }
+        public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
+        {
+            ICustomRole role = roleBehaviour.CustomRole();
+            if (role != null)
+            {
+                if (role.Team == ModdedTeam.Neutrals)
+                {
+                    return !roleBehaviour.IsDead && role.CachedConfiguration.WinReason == gameOverReason;
+                }
+                return role.CachedConfiguration.WinReason == gameOverReason;
+            }
+            return roleBehaviour.DidWin(gameOverReason);
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {

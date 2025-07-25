@@ -32,19 +32,19 @@ namespace FungleAPI
             {
                 if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
                 {
-                    plugin.Buttons.Add(CustomAbilityButton.RegisterButton(type, plugin));
+                    CustomAbilityButton.RegisterButton(type, plugin);
                 }
                 else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
                 {
-                    plugin.Roles.Add((CustomRoleManager.RegisterRole(type, plugin), type));
+                    CustomRoleManager.RegisterRole(type, plugin);
                 }
                 else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
                 {
-                    plugin.Teams.Add(ModdedTeam.RegisterTeam(type, plugin));
+                    ModdedTeam.RegisterTeam(type, plugin);
                 }
                 else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
                 {
-                    plugin.RPCs.Add(CustomRpcManager.RegisterRpc(type, plugin));
+                    CustomRpcManager.RegisterRpc(type, plugin);
                 }
             }
             AllPlugins.Add(plugin);
@@ -82,11 +82,7 @@ namespace FungleAPI
         public string ModName;
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
-        public List<(RoleTypes role, Type type)> Roles = new List<(RoleTypes role, Type type)>();
-        public List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public List<CustomAbilityButton> Buttons = new List<CustomAbilityButton>();
-        public List<RpcHelper> RPCs = new List<RpcHelper>();
-        public Type Cosmetics;
+        public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
     }
 }

@@ -3,6 +3,7 @@ using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Rpc;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -56,7 +57,7 @@ namespace FungleAPI.Patches
         {
             if (AmongUsClient.Instance.IsGameStarted)
             {
-                Dictionary<ModdedTeam, ChangeableValue<int>> pair = new Dictionary<ModdedTeam, ChangeableValue<int>>();
+                System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>> pair = new System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>>();
                 int crewmates = 0;
                 List<PlayerControl> neutralKillers = new List<PlayerControl>();
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls)

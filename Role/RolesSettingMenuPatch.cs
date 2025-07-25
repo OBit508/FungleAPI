@@ -14,10 +14,10 @@ using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Assets;
 using FungleAPI.Rpc;
-using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
 using AmongUs.GameOptions;
 using FungleAPI.Role.Configuration;
+using FungleAPI.Utilities;
 
 namespace FungleAPI.Role
 {
@@ -160,9 +160,8 @@ namespace FungleAPI.Role
             List<RoleBehaviour> impostorRoles = new List<RoleBehaviour>();
             List<RoleBehaviour> neutralRoles = new List<RoleBehaviour>();
             List<ModdedTeam> customTeams = new List<ModdedTeam>();
-            foreach ((RoleTypes role, Type type) roleType in plugin.Roles)
+            foreach (RoleBehaviour role in plugin.Roles)
             {
-                RoleBehaviour role = RoleManager.Instance.GetRole(roleType.role);
                 if (role.GetTeam() == ModdedTeam.Crewmates)
                 {
                     crewmateRoles.Add(role);
@@ -201,9 +200,8 @@ namespace FungleAPI.Role
             foreach (ModdedTeam team in customTeams)
             {
                 List<RoleBehaviour> teamRoles = new List<RoleBehaviour>();
-                foreach ((RoleTypes role, Type type) roleType in plugin.Roles)
+                foreach (RoleBehaviour role in plugin.Roles)
                 {
-                    RoleBehaviour role = RoleManager.Instance.GetRole(roleType.role);
                     if (role.GetTeam() == team)
                     {
                         teamRoles.Add(role);
@@ -358,7 +356,7 @@ namespace FungleAPI.Role
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName;
+                option.TitleText.text = config.ConfigName.GetString();
                 option.ValueText.enabled = true;
                 option.ValueText.text = num.ToString();
             });
@@ -376,7 +374,7 @@ namespace FungleAPI.Role
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName;
+                option.TitleText.text = config.ConfigName.GetString();
                 option.CheckMark.gameObject.SetActive(num);
             });
             return option;
@@ -397,7 +395,7 @@ namespace FungleAPI.Role
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName;
+                option.TitleText.text = config.ConfigName.GetString();
                 option.ValueText.enabled = true;
                 option.ValueText.text = config.localValue.Value;
             });

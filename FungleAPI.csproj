@@ -19,7 +19,11 @@
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
-    <Compile Include="Patches\ChangeableValue.cs" />
+    <Compile Include="Role\RoleEvent\EventManager.cs" />
+    <Compile Include="Role\RoleEvent\EventTime.cs" />
+    <Compile Include="Role\RoleEvent\MurderPlayer.cs" />
+    <Compile Include="Utilities\ChangeableValue.cs" />
+    <Compile Include="Role\Configuration\ConfigurationManager.cs" />
     <Compile Include="Role\Configuration\CustomConfig.cs" />
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\NameColorPatch.cs" />
@@ -41,7 +45,7 @@
     <Compile Include="Rpc\RpcSyncAllRoleSettings.cs" />
     <Compile Include="Rpc\RpcSyncCountAndChance.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
-    <Compile Include="Assets\SpriteSheet.cs" />
+    <Compile Include="Utilities\SpriteSheet.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
     <Compile Include="Patches\AnimatorPatch.cs" />
     <Compile Include="Patches\ExileControllerPatch.cs" />
@@ -54,7 +58,7 @@
     <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="MonoBehaviours\PlayerAnimator.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
-    <Compile Include="Assets\ResourceHelper.cs" />
+    <Compile Include="Utilities\ResourceHelper.cs" />
     <Compile Include="MonoBehaviours\SpriteAnimator.cs" />
     <Compile Include="Role\RoleBehaviourPatch.cs" />
     <Compile Include="Role\RoleOptions.cs" />
@@ -62,10 +66,10 @@
     <Compile Include="Patches\ShipPatch.cs" />
     <Compile Include="Patches\TaskAdderGamePatch.cs" />
     <Compile Include="Patches\TaskPanelPatch.cs" />
-    <Compile Include="Patches\Utils.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Patches\VentPatch.cs" />
     <Compile Include="Patches\VersionShowerPatch.cs" />
-    <Compile Include="Assets\WAV.cs" />
+    <Compile Include="Utilities\WAV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FungleAPIPlugin.cs" />
     <Compile Include="ModPlugin.cs" />

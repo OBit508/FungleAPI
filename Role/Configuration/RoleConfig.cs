@@ -20,7 +20,6 @@ namespace FungleAPI.Role.Configuration
             UseVanillaKillButton = role.Team == ModdedTeam.Impostors;
             CanVent = role.Team == ModdedTeam.Impostors;
             CanSabotage = role.Team == ModdedTeam.Impostors;
-            Configs = new CustomConfig[] { };
             Buttons = new CustomAbilityButton[] { };
             OutlineColor = role.RoleColor;
             HintType = RoleTaskHintType.Normal;
@@ -32,7 +31,7 @@ namespace FungleAPI.Role.Configuration
             {
                 GhostRole =  RoleTypes.ImpostorGhost;
             }
-            GhostRole = CustomRoleManager.NeutralGhost;
+            GhostRole = CustomRoleManager.GetType<NeutralGhost>();
             WinReason = role.Team.WinReason;
         }
         public bool AffectedByLightOnAirship;
@@ -42,7 +41,7 @@ namespace FungleAPI.Role.Configuration
         public bool CanSabotage;
         public bool TasksCountForProgress;
         public bool IsGhostRole;
-        public CustomConfig[] Configs;
+        internal List<CustomConfig> Configs;
         public CustomAbilityButton[] Buttons;
         public RoleTypes GhostRole;
         public RoleTaskHintType HintType;

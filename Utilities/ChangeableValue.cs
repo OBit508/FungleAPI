@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Utilities
 {
     public class ChangeableValue<T>
     {
         public T Value;
         public ChangeableValue(T value)
         {
-            this.Value = value;
+            Value = value;
         }
     }
 }

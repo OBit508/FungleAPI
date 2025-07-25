@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Roles;
+using FungleAPI.Utilities;
 using HarmonyLib;
 
 namespace FungleAPI.Patches

@@ -1,6 +1,6 @@
-﻿using FungleAPI.Patches;
-using FungleAPI.Roles;
+﻿using FungleAPI.Roles;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +20,12 @@ namespace FungleAPI.Role.Teams
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
             team.WinReason = CustomRoleManager.GetValidGameOver();
             plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name);
+            Teams.Add(team);
             return team;
         }
         public static T GetInstance<T>() where T : ModdedTeam
         {
-            foreach (ModdedTeam team in ModPlugin.GetModPlugin(typeof(T).Assembly).Teams)
+            foreach (ModdedTeam team in Teams)
             {
                 if (team.GetType() == typeof(T))
                 {
@@ -39,5 +40,6 @@ namespace FungleAPI.Role.Teams
         public virtual StringNames TeamName => StringNames.None;
         public virtual bool FriendlyFire => true;
         public virtual bool KnowMembers => false;
+        public static List<ModdedTeam> Teams = new List<ModdedTeam>();
     }
 }

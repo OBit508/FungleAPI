@@ -3,6 +3,7 @@ using FungleAPI.Assets;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -153,9 +154,8 @@ namespace FungleAPI.Patches
             }
             minigame.transform.GetChild(6).GetComponent<TextMeshPro>().text = "RoleTester/" + plugin.ModName;
             List<ModdedTeam> teams = new List<ModdedTeam>() { ModdedTeam.Crewmates, ModdedTeam.Impostors, ModdedTeam.Neutrals };
-            foreach ((RoleTypes role, Type type) p in plugin.Roles)
+            foreach (RoleBehaviour role in plugin.Roles)
             {
-                RoleBehaviour role = RoleManager.Instance.GetRole(p.role);
                 if (!teams.Contains(role.GetTeam()))
                 {
                     teams.Add(role.GetTeam());
@@ -194,9 +194,8 @@ namespace FungleAPI.Patches
             }
             minigame.transform.GetChild(6).GetComponent<TextMeshPro>().text = "RoleTester/" + plugin.ModName + "/" + team.TeamName.GetString();
             List<RoleBehaviour> roles = new List<RoleBehaviour>();
-            foreach ((RoleTypes role, Type type) p in plugin.Roles)
+            foreach (RoleBehaviour role in plugin.Roles)
             {
-                RoleBehaviour role = RoleManager.Instance.GetRole(p.role);
                 if (role.GetTeam() == team)
                 {
                     roles.Add(role);
@@ -210,7 +209,7 @@ namespace FungleAPI.Patches
                 int num4 = i / 6;
                 float num5 = num + 1.15f * (float)num3;
                 float num6 = num2 - 1.3f * (float)num4;
-                CreateRoleButton(RoleManager.Instance.GetRole(plugin.Roles[i].role), new Vector3(num5, num6), minigame, transform);
+                CreateRoleButton(plugin.Roles[i], new Vector3(num5, num6), minigame, transform);
             }
         }
         public static void CreateRoleButton(RoleBehaviour role, Vector3 pos, TaskAdderGame minigame, Transform transform)

@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Utilities
 {
     public static class Utils
     {
@@ -21,7 +21,7 @@ namespace FungleAPI.Patches
         {
             foreach (T t in list)
             {
-                GameObject.Destroy(t);
+                UnityEngine.Object.Destroy(t);
             }
             list.Clear();
         }
@@ -108,7 +108,7 @@ namespace FungleAPI.Patches
         }
         public static int GetIndex<T>(this T[] list, T thing)
         {
-            for (int i = 0; i < list.Count<T>(); i++)
+            for (int i = 0; i < list.Count(); i++)
             {
                 if (list[i].Equals(thing))
                 {
@@ -139,7 +139,7 @@ namespace FungleAPI.Patches
         public static T DontDestroy<T>(this T obj) where T : Component
         {
             obj.hideFlags |= HideFlags.HideAndDontSave;
-            GameObject.DontDestroyOnLoad(obj);
+            UnityEngine.Object.DontDestroyOnLoad(obj);
             return obj;
         }
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
@@ -162,6 +162,21 @@ namespace FungleAPI.Patches
             }
             catch
             {
+            }
+        }
+        public static object InvokeMethod(this object obj, MethodInfo method, object[] arguments)
+        {
+            try
+            {
+                if (method != null)
+                {
+                    return method.Invoke(obj, arguments);
+                }
+                return null;
+            }
+            catch
+            {
+                return null;
             }
         }
         public static void PatchAllDerivedMethods(this Harmony harmony, Type baseType, MethodInfo prefix = null, MethodInfo postfix = null)

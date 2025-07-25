@@ -1,7 +1,7 @@
 ﻿using AsmResolver.PE.DotNet.ReadyToRun;
 using AsmResolver.PE.Win32Resources;
 using FungleAPI.MonoBehaviours;
-using FungleAPI.Patches;
+using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppSystem.IO;
 using Rewired.UI;
