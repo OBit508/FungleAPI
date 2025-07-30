@@ -9,6 +9,6 @@ namespace FungleAPI.MonoBehaviours
 {
     public class CustomVent : MonoBehaviour
     {
-        public List<Vent> NearbyVents;
+        public List<Vent> NearbyVents = new List<Vent>();
     }
 }
