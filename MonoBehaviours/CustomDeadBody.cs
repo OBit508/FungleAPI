@@ -12,6 +12,7 @@ namespace FungleAPI.MonoBehaviours
     public class CustomDeadBody : DeadBody
     {
         public CustomDeadBody(IntPtr ptr) : base(ptr) { }
+        internal static List<Il2CppSystem.Type> AllBodyComponents = new List<Il2CppSystem.Type>();
         public static List<CustomDeadBody> AllBodies = new List<CustomDeadBody>();
         public PlayerControl Carring;
         public PlayerControl Owner;
@@ -31,6 +32,10 @@ namespace FungleAPI.MonoBehaviours
             foreach (SpriteRenderer rend in GetComponentsInChildren<SpriteRenderer>(true))
             {
                 Owner.SetPlayerMaterialColors(rend);
+            }
+            foreach (Il2CppSystem.Type type in AllBodyComponents)
+            {
+                gameObject.AddComponent(type);
             }
         }
         public void Update()

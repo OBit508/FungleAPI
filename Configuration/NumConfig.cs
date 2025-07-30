@@ -12,12 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role.Configuration
+namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class NumConfig : CustomConfig
     {
-        public NumConfig(StringNames configName, float minValue, float maxValue, float reduceValue = 1, float increceValue = 1)
+        public NumConfig(string configName, float minValue, float maxValue, float reduceValue = 1, float increceValue = 1)
         {
             ReduceValue = reduceValue;
             IncreceValue = increceValue;
@@ -29,8 +29,9 @@ namespace FungleAPI.Role.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 float value = (float)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
+                FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         public float ReduceValue;

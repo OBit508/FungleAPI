@@ -32,7 +32,6 @@ namespace FungleAPI.Patches
         {
             foreach (CustomAbilityButton button in CustomAbilityButton.activeButton)
             {
-                button.upd();
                 button.Update();
             }
         }

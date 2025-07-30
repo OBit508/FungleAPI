@@ -10,12 +10,12 @@ using FungleAPI.Patches;
 using System.Reflection;
 using FungleAPI.Utilities;
 
-namespace FungleAPI.Role.Configuration
+namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class BoolConfig : CustomConfig
     {
-        public BoolConfig(StringNames configName)
+        public BoolConfig(string configName)
         {
             ConfigName = configName;
         }
@@ -25,8 +25,9 @@ namespace FungleAPI.Role.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 bool value = (bool)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
+                FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
     }

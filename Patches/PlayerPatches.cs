@@ -25,6 +25,7 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(PlayerControl))]
     public static class PlayerPatches
     {
+        internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         public static void OnStart(PlayerControl __instance)
@@ -36,6 +37,10 @@ namespace FungleAPI.Patches
                 animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
             }
             __instance.gameObject.AddComponent<PlayerHelper>();
+            foreach (Il2CppSystem.Type type in AllPlayerComponents)
+            {
+                __instance.gameObject.AddComponent(type);
+            }
         }
         [HarmonyPrefix]
         [HarmonyPatch("RpcMurderPlayer")]

@@ -1,6 +1,5 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
-using FungleAPI.Role.Configuration;
 using FungleAPI.Role.Teams;
 using System;
 using System.Collections.Generic;

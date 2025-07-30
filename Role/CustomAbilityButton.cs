@@ -15,6 +15,8 @@ namespace FungleAPI.Roles
 {
     public class CustomAbilityButton
     {
+        internal static List<CustomAbilityButton> buttons = new List<CustomAbilityButton>();
+        internal static List<CustomAbilityButton> activeButton = new List<CustomAbilityButton>();
         public static T GetInstance<T>() where T : CustomAbilityButton
         {
             foreach (CustomAbilityButton button in buttons)
@@ -26,9 +28,7 @@ namespace FungleAPI.Roles
             }
             return null;
         }
-        public bool Active => true;
-        internal static List<CustomAbilityButton> buttons = new List<CustomAbilityButton>();
-        internal static List<CustomAbilityButton> activeButton = new List<CustomAbilityButton>();
+        public virtual bool Active => true;
         public AbilityButton Button;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
@@ -41,8 +41,8 @@ namespace FungleAPI.Roles
         public virtual float TransformDuration { get; }
         public float TransformTimer;
         public bool Transformed;
-        public virtual Action OnDestransform { get; }
-        public virtual Action OnClick { get; }
+        public virtual void Destransform() { }
+        public virtual void Click() { }
         public virtual string OverrideText { get { return "Ability Button"; } }
         public virtual Sprite ButtonSprite { get; }
         public virtual Color32 TextOutlineColor { get { return Color.white; } }
@@ -62,10 +62,6 @@ namespace FungleAPI.Roles
             Button.SetCoolDown(Timer, newDuration);
         }
         public virtual void Update()
-        {
-            
-        }
-        internal void upd()
         {
             if (Button != null)
             {
@@ -104,10 +100,7 @@ namespace FungleAPI.Roles
                     {
                         TransformTimer = TransformDuration;
                         Transformed = false;
-                        if (OnDestransform != null)
-                        {
-                            OnDestransform();
-                        }
+                        Destransform();
                     }
                 }
             }
@@ -159,7 +152,7 @@ namespace FungleAPI.Roles
                         flag2 = CurrentNumUses > 0;
                     }
 
-                    if (flag && flag2 && Timer <= 0f && OnClick != null)
+                    if (flag && flag2 && Timer <= 0f)
                     {
                         Timer = Cooldown;
                         if (HaveUses)
@@ -170,8 +163,7 @@ namespace FungleAPI.Roles
                                 Button.SetUsesRemaining(CurrentNumUses);
                             }
                         }
-
-                        OnClick();
+                        Click();
                         if (TransformButton)
                         {
                             Transformed = true;
@@ -182,10 +174,7 @@ namespace FungleAPI.Roles
                     {
                         Transformed = false;
                         TransformTimer = TransformDuration;
-                        if (OnDestransform != null)
-                        {
-                            OnDestransform();
-                        }
+                        Destransform();
                     }
                 }
             });

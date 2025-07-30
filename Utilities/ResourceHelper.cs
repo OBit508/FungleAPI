@@ -3,8 +3,10 @@ using AsmResolver.PE.Win32Resources;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.IO;
 using Rewired.UI;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -69,7 +71,7 @@ namespace FungleAPI.Assets
             Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             stream.CopyTo(memoryStream);
-            texture.LoadImage(memoryStream.ToArray());
+            LoadImage(texture, memoryStream.ToArray(), true);
             int tileHeight = texture.height;
             int totalTiles = texture.width / tileWidth;
             for (int i = 0; i < totalTiles; i++)
@@ -99,7 +101,7 @@ namespace FungleAPI.Assets
             Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             manifestResourceStream.CopyTo(memoryStream);
-            texture2D.LoadImage(memoryStream.ToArray());
+            LoadImage(texture2D, memoryStream.ToArray(), true);
             Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
             if (dontUnload)
             {
@@ -107,6 +109,16 @@ namespace FungleAPI.Assets
             }
             return sprite;
         }
-        public static Transform parent;
+        private static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable)
+        {
+            if (iCall_LoadImage == null)
+                iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
+
+            var il2cppArray = (Il2CppStructArray<byte>)data;
+
+            return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
+        }
+        internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
+        internal static d_LoadImage iCall_LoadImage;
     }
 }

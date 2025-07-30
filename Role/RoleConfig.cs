@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role.Configuration
+namespace FungleAPI.Role
 {
     public class RoleConfig
     {

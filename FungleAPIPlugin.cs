@@ -24,6 +24,7 @@ using System.Diagnostics;
 using BepInEx.Unity.IL2CPP.Utils;
 using Unity.Services.Core.Internal;
 using FungleAPI.Utilities;
+using FungleAPI.Configuration;
 
 namespace FungleAPI
 {
@@ -59,7 +60,8 @@ namespace FungleAPI
             {
                 if (plugin == null)
                 {
-                    plugin = ModPlugin.Register(Instance);
+                    plugin = new ModPlugin();
+                    ModPlugin.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                 }
                 return plugin;
@@ -80,7 +82,7 @@ namespace FungleAPI
                         while (clientData.Character == null)
                         {
                         }
-                        CustomRoleManager.RpcSyncSettings();
+                        ConfigurationManager.RpcSyncSettings();
                     }
                     __instance.StartCoroutine(delay());
                 }

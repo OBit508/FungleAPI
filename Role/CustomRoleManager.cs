@@ -1,9 +1,9 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Core.Logging.Interpolation;
 using FungleAPI;
+using FungleAPI.Configuration;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
-using FungleAPI.Role.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Rpc;
 using FungleAPI.Translation;
@@ -27,10 +27,6 @@ namespace FungleAPI.Roles
     public static class CustomRoleManager
     {
         public static RoleBehaviour NeutralGhost => GetInstance<NeutralGhost>();
-        public static void RpcSyncSettings(string text = null)
-        {
-            CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(text, PlayerControl.LocalPlayer.NetId);
-        }
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         internal static int id = 10;
         internal static int gameOverId = 20;

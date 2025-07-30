@@ -12,12 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Role.Configuration
+namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class EnumConfig : CustomConfig
     {
-        public EnumConfig(StringNames configName, string[] defaultValue)
+        public EnumConfig(string configName, string[] defaultValue)
         {
             ConfigName = configName;
             Enum = defaultValue;
@@ -28,8 +28,9 @@ namespace FungleAPI.Role.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 string value = (string)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
+                FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         internal int currentIndex;

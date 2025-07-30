@@ -1,6 +1,5 @@
 ﻿using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
-using FungleAPI.Role.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Translation;

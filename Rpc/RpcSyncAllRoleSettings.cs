@@ -1,6 +1,6 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Configuration;
 using FungleAPI.Role;
-using FungleAPI.Role.Configuration;
 using FungleAPI.Roles;
 using Hazel;
 using System;
@@ -18,43 +18,40 @@ namespace FungleAPI.Rpc
             int count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
             {
-                ICustomRole role = CustomRoleManager.GetRole((RoleTypes)reader.ReadInt32());
-                foreach (CustomConfig config in role.CachedConfiguration.Configs)
+                string fullConfigName = reader.ReadString();
+                string configValue = reader.ReadString();
+                foreach (CustomConfig config in ConfigurationManager.Configs.Values)
                 {
-                    config.SetValue(reader.ReadString());
+                    if (config.FullConfigName == fullConfigName)
+                    {
+                        config.SetValue(configValue);
+                        break;
+                    }
                 }
             }
             bool stringNull = reader.ReadBoolean();
             if (!stringNull)
             {
                 string str = reader.ReadString();
-                HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, str, !AmongUsClient.Instance.AmHost);
+                Handle(str);
             }
+        }
+        public override void Handle(string value)
+        {
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value, !AmongUsClient.Instance.AmHost);
         }
         public override void Write(MessageWriter writer, string value)
         {
-            List<ICustomRole> roles = new List<ICustomRole>();
-            foreach (RoleBehaviour role in CustomRoleManager.AllRoles)
+            writer.Write(ConfigurationManager.Configs.Values.Count);
+            foreach (CustomConfig config in ConfigurationManager.Configs.Values)
             {
-                if (role.CustomRole() != null)
-                {
-                    roles.Add(role.CustomRole());
-                }
-            }
-            writer.Write(roles.Count);
-            foreach (ICustomRole role in roles)
-            {
-                writer.Write((int)role.Role);
-                foreach (CustomConfig config in role.CachedConfiguration.Configs)
-                {
-                    writer.Write(config.GetValue());
-                }
+                writer.Write(config.FullConfigName);
+                writer.Write(config.GetValue());
             }
             writer.Write(value == null);
             if (value != null)
             {
                 writer.Write(value);
-                HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value, !AmongUsClient.Instance.AmHost);
             }
         }
     }

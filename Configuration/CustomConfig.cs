@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Role.Configuration
+namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class CustomConfig : Attribute
     {
-        public StringNames ConfigName;
+        public string ConfigName;
+        internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
         public string GetValue()

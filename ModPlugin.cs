@@ -2,10 +2,14 @@
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
+using FungleAPI.MonoBehaviours;
+using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Rpc;
+using Il2CppInterop.Runtime;
+using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,33 +26,48 @@ namespace FungleAPI
         internal ModPlugin()
         {
         }
-        internal static ModPlugin Register(BasePlugin basePlugin)
+        internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
         {
-            ModPlugin plugin = new ModPlugin();
             plugin.ModAssembly = basePlugin.GetType().Assembly;
             plugin.ModName = plugin.ModAssembly.GetName().Name;
             plugin.BasePlugin = basePlugin;
             foreach (Type type in plugin.ModAssembly.GetTypes())
             {
-                if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
+                try
                 {
-                    CustomAbilityButton.RegisterButton(type, plugin);
+                    if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
+                    {
+                        CustomAbilityButton.RegisterButton(type, plugin);
+                    }
+                    else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
+                    {
+                        CustomRoleManager.RegisterRole(type, plugin);
+                    }
+                    else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
+                    {
+                        ModdedTeam.RegisterTeam(type, plugin);
+                    }
+                    else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
+                    {
+                        CustomRpcManager.RegisterRpc(type, plugin);
+                    }
+                    else if (typeof(PlayerComponent).IsAssignableFrom(type) && type != typeof(PlayerComponent))
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                        PlayerPatches.AllPlayerComponents.Add(Il2CppType.From(type));
+                    }
+                    else if (typeof(BodyComponent).IsAssignableFrom(type) && type != typeof(BodyComponent))
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                        CustomDeadBody.AllBodyComponents.Add(Il2CppType.From(type));
+                    }
                 }
-                else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
+                catch (Exception ex)
                 {
-                    CustomRoleManager.RegisterRole(type, plugin);
-                }
-                else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
-                {
-                    ModdedTeam.RegisterTeam(type, plugin);
-                }
-                else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
-                {
-                    CustomRpcManager.RegisterRpc(type, plugin);
+                    basePlugin.Log.LogError(ex);
                 }
             }
             AllPlugins.Add(plugin);
-            return plugin;
         }
         public static ModPlugin GetModPlugin(Assembly assembly)
         {
@@ -67,7 +86,7 @@ namespace FungleAPI
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
             {
-                plugin = Register(basePlugin);
+                Register(plugin, basePlugin);
                 if (ModName != null)
                 {
                     plugin.ModName = ModName;

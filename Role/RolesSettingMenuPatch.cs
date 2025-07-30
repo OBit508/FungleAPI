@@ -16,8 +16,8 @@ using FungleAPI.Assets;
 using FungleAPI.Rpc;
 using FungleAPI.Role.Teams;
 using AmongUs.GameOptions;
-using FungleAPI.Role.Configuration;
 using FungleAPI.Utilities;
+using FungleAPI.Configuration;
 
 namespace FungleAPI.Role
 {
@@ -342,21 +342,26 @@ namespace FungleAPI.Role
             float num = float.Parse(config.localValue.Value);
             option.MinusBtn.SetNewAction(delegate
             {
-                if (num - config.ReduceValue >= 0)
+                if ((num - config.ReduceValue) >= 0 && (num - config.ReduceValue) >= config.MinValue)
                 {
-                    num = num - config.ReduceValue;
-                    CustomRoleManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                    num -= config.ReduceValue;
+                    config.SetValue(num.ToString());
+                    ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
                 }
             });
             option.PlusBtn.SetNewAction(delegate
             {
-                num = num + config.IncreceValue;
-                CustomRoleManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                if ((num + config.IncreceValue) <= config.MaxValue)
+                {
+                    num += config.IncreceValue;
+                    config.SetValue(num.ToString());
+                    ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                }
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName.GetString();
+                option.TitleText.text = config.ConfigName;
                 option.ValueText.enabled = true;
                 option.ValueText.text = num.ToString();
             });
@@ -369,12 +374,13 @@ namespace FungleAPI.Role
             option.transform.GetChild(1).GetComponent<PassiveButton>().SetNewAction(delegate
             {
                 num = !num;
-                CustomRoleManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                config.SetValue(num.ToString());
+                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName.GetString();
+                option.TitleText.text = config.ConfigName;
                 option.CheckMark.gameObject.SetActive(num);
             });
             return option;
@@ -385,17 +391,17 @@ namespace FungleAPI.Role
             option.MinusBtn.SetNewAction(delegate
             {
                 config.BackValue();
-                CustomRoleManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
+                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
             });
             option.PlusBtn.SetNewAction(delegate
             {
                 config.NextValue();
-                CustomRoleManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
+                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
                 option.TitleText.enabled = true;
-                option.TitleText.text = config.ConfigName.GetString();
+                option.TitleText.text = config.ConfigName;
                 option.ValueText.enabled = true;
                 option.ValueText.text = config.localValue.Value;
             });

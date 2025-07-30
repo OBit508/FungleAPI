@@ -106,6 +106,14 @@ namespace FungleAPI.Utilities
                 action();
             }));
         }
+        public static void SetNewAction(this ButtonBehavior button, Action action)
+        {
+            button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
+            button.OnClick.AddListener(new Action(delegate
+            {
+                action();
+            }));
+        }
         public static int GetIndex<T>(this T[] list, T thing)
         {
             for (int i = 0; i < list.Count(); i++)
@@ -194,8 +202,8 @@ namespace FungleAPI.Utilities
                                 parameters[0].ParameterType == typeof(byte) &&
                                 parameters[1].ParameterType == typeof(Hazel.MessageReader))
                             {
-                                var prefixAttr = prefix != null ? new HarmonyMethod(prefix) : null;
-                                var postfixAttr = postfix != null ? new HarmonyMethod(postfix) : null;
+                                HarmonyMethod prefixAttr = prefix != null ? new HarmonyMethod(prefix) : null;
+                                HarmonyMethod postfixAttr = postfix != null ? new HarmonyMethod(postfix) : null;
                                 harmony.Patch(method, prefix: prefixAttr, postfix: postfixAttr);
                             }
                         }
