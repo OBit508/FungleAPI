@@ -38,6 +38,10 @@ namespace FungleAPI.MonoBehaviours
                 gameObject.AddComponent(type);
             }
         }
+        public T GetBodyComponent<T>() where T : BodyComponent
+        {
+            return GetComponent<T>();
+        }
         public void Update()
         {
             if (Carring != null)

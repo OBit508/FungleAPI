@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace FungleAPI.Role.RoleEvent
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class MurderPlayer : Attribute
+    public class MeetingEvent : Attribute
     {
         public EventTime Time;
-        public MurderPlayer(EventTime time)
+        public MeetingEvent(EventTime time)
         {
             Time = time;
         }

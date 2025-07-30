@@ -21,9 +21,11 @@
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerComponent.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
+    <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Role\RoleEvent\EventManager.cs" />
     <Compile Include="Role\RoleEvent\EventTime.cs" />
-    <Compile Include="Role\RoleEvent\MurderPlayer.cs" />
+    <Compile Include="Role\RoleEvent\MeetingEvent.cs" />
+    <Compile Include="Role\RoleEvent\MurderEvent.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\CustomConfig.cs" />

@@ -61,6 +61,13 @@ namespace FungleAPI.Roles
             TransformTimer = newDuration;
             Button.SetCoolDown(Timer, newDuration);
         }
+        public virtual void MeetingStart(MeetingHud meetingHud)
+        {
+            if (Transformed)
+            {
+                Destransform();
+            }
+        }
         public virtual void Update()
         {
             if (Button != null)

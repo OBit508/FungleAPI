@@ -6,6 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Role.RoleEvent
 {
@@ -15,7 +17,7 @@ namespace FungleAPI.Role.RoleEvent
         {
             foreach (MethodInfo method in role.GetType().GetMethods())
             {
-                MurderPlayer murderPlayer = method.GetCustomAttribute<MurderPlayer>();
+                MurderEvent murderPlayer = method.GetCustomAttribute<MurderEvent>();
                 if (murderPlayer != null && murderPlayer.Time == time)
                 {
                     ParameterInfo[] parameters = method.GetParameters();
@@ -30,6 +32,24 @@ namespace FungleAPI.Role.RoleEvent
                 }
             }
             return true;
+        }
+        public static void InvokeMeetingEvent(this MeetingHud meetingHud, bool isEnd)
+        {
+            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
+            {
+                foreach (MethodInfo method in role.GetType().GetMethods())
+                {
+                    MeetingEvent meetingEvent = method.GetCustomAttribute<MeetingEvent>();
+                    if (meetingEvent != null && isEnd ? meetingEvent.Time == EventTime.After : meetingEvent.Time == EventTime.Before)
+                    {
+                        ParameterInfo[] parameters = method.GetParameters();
+                        if (parameters.Count() == 1 && parameters[0].ParameterType == typeof(MeetingHud))
+                        {
+                            role.InvokeMethod(method, new object[] { meetingHud });
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -69,6 +69,10 @@ namespace FungleAPI.Patches
         {
             CustomRpcManager.GetInstance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
         }
+        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
+        {
+            return player.GetComponent<T>();
+        }
         public static PlayerControl GetClosest(this PlayerControl target)
         {
             PlayerControl closest = null;
