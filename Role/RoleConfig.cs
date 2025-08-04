@@ -34,6 +34,7 @@ namespace FungleAPI.Role
             }
             GhostRole = CustomRoleManager.GetType<NeutralGhost>();
             WinReason = role.Team.WinReason;
+            CanDoTasks = role.Team == ModdedTeam.Crewmates;
         }
         public bool AffectedByLightOnAirship;
         public bool CanKill;
@@ -48,6 +49,7 @@ namespace FungleAPI.Role
         public RoleTaskHintType HintType;
         public Color OutlineColor;
         public bool ShowTeamColor;
+        public bool CanDoTasks;
         public GameOverReason WinReason;
     }
 }

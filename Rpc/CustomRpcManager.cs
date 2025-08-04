@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,11 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Rpc
 {
+    [HarmonyPatch]
     public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
+        internal static Dictionary<MessageReader, List<object>> CustomReaders = new Dictionary<MessageReader, List<object>>();
         public static T GetInstance<T>() where T : RpcHelper
         {
             foreach (RpcHelper rpc in AllRpc)
@@ -32,6 +35,20 @@ namespace FungleAPI.Rpc
             AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
+        }
+        public static MessageReader CreateMessageReader(List<object> objects)
+        {
+            MessageReader reader = new MessageReader();
+            CustomReaders.Add(reader, objects);
+            return reader;
+        }
+        internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
+        public static IEnumerable<MethodBase> TargetMethods()
+        {
+            return from x in InnerNetObjectTypes
+                   select x.GetMethod("HandleRpc", AccessTools.allDeclared) into m
+                   where m != null
+                   select m;
         }
         public static void Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {

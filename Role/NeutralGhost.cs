@@ -1,4 +1,5 @@
-﻿using FungleAPI.MonoBehaviours;
+﻿using AmongUs.GameOptions;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -20,7 +21,7 @@ namespace FungleAPI.Role
             {
                 if (Player != null)
                 {
-                    return Player.GetComponent<PlayerHelper>().OldRole;
+                    return Player.GetComponent<PlayerPatches.PlayerHelper>().OldRole;
                 }
                 return null;
             }

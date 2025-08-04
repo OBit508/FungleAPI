@@ -25,6 +25,7 @@ using BepInEx.Unity.IL2CPP.Utils;
 using Unity.Services.Core.Internal;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration;
+using Hazel;
 
 namespace FungleAPI
 {
@@ -34,7 +35,7 @@ namespace FungleAPI
 	{
         public const string ModId = "com.rafael.fungleapi";
         public const string ModV = "0.1.0";
-        public Harmony Harmony { get; } = new Harmony(ModId);
+        public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
 		{
@@ -47,11 +48,9 @@ namespace FungleAPI
                 ClassInjector.RegisterTypeInIl2Cpp<Updater>();
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
-                ClassInjector.RegisterTypeInIl2Cpp<PlayerHelper>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
             }
             Harmony.PatchAll();
-            Harmony.PatchAllDerivedMethods(typeof(InnerNetObject), typeof(CustomRpcManager).GetMethod("Prefix", BindingFlags.Static | BindingFlags.Public));
         }
         internal static ModPlugin plugin;
 		public static ModPlugin Plugin 
@@ -67,7 +66,7 @@ namespace FungleAPI
                 return plugin;
             }
         }
-		[HarmonyPatch(typeof(AmongUsClient))]
+        [HarmonyPatch(typeof(AmongUsClient))]
 		public class LoadAPIThings
 		{
 			[HarmonyPatch("CreatePlayer")]

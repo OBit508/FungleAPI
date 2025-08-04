@@ -51,7 +51,7 @@ namespace FungleAPI.Rpc
         }
         public static void CustomMurder(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {
-            if (killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags, EventTime.Before))
+            if (killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags, false))
             {
                 if (resultFlags == MurderResultFlags.FailedError || resultFlags == MurderResultFlags.NULL)
                 {
@@ -133,7 +133,7 @@ namespace FungleAPI.Rpc
                     }
                     killer.isKilling = false;
                 }
-                killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags);
+                killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags, true);
             }
         }
     }

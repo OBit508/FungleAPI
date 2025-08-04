@@ -108,16 +108,11 @@ namespace FungleAPI.Roles
         }
         public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
         {
-            ICustomRole role = roleBehaviour.CustomRole();
-            if (role != null)
+            if (roleBehaviour.GetTeam() == ModdedTeam.Neutrals)
             {
-                if (role.Team == ModdedTeam.Neutrals)
-                {
-                    return !roleBehaviour.IsDead && role.CachedConfiguration.WinReason == gameOverReason;
-                }
-                return role.CachedConfiguration.WinReason == gameOverReason;
+                return !roleBehaviour.IsDead && roleBehaviour.GetTeam().WinReason == gameOverReason;
             }
-            return roleBehaviour.DidWin(gameOverReason);
+            return roleBehaviour.GetTeam().WinReason == gameOverReason;
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {
@@ -163,6 +158,14 @@ namespace FungleAPI.Roles
                 return roleBehaviour.CustomRole().CachedConfiguration.CanVent;
             }
             return roleBehaviour.CanVent;
+        }
+        public static bool CanDoTasks(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CachedConfiguration.CanDoTasks;
+            }
+            return roleBehaviour.GetTeam() == ModdedTeam.Crewmates;
         }
     }
 }

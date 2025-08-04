@@ -13,20 +13,24 @@ namespace FungleAPI.Role.RoleEvent
 {
     public static class EventManager
     {
-        public static bool InvokeMurderPlayerEvent(this RoleBehaviour role, PlayerControl target, MurderResultFlags resultFlags, EventTime time = EventTime.After)
+        public static bool InvokeMurderPlayerEvent(this RoleBehaviour role, PlayerControl target, MurderResultFlags resultFlags, bool after)
         {
             foreach (MethodInfo method in role.GetType().GetMethods())
             {
                 MurderEvent murderPlayer = method.GetCustomAttribute<MurderEvent>();
-                if (murderPlayer != null && murderPlayer.Time == time)
+                if (murderPlayer != null)
                 {
+                    if (murderPlayer.Time == EventTime.Before && after)
+                    {
+                        return true;
+                    }
                     ParameterInfo[] parameters = method.GetParameters();
                     if (parameters.Count() == 2 && parameters[0].ParameterType == typeof(PlayerControl) && parameters[1].ParameterType == typeof(MurderResultFlags))
                     {
                         object result = role.InvokeMethod(method, new object[] { target, resultFlags });
-                        if (time == EventTime.Before && method.ReturnType == typeof(bool) && result != null && !(bool)result)
+                        if (!after && method.ReturnType == typeof(bool) && result != null && result is bool value)
                         {
-                            return (bool)result;
+                            return value;
                         }
                     }
                 }
@@ -40,8 +44,12 @@ namespace FungleAPI.Role.RoleEvent
                 foreach (MethodInfo method in role.GetType().GetMethods())
                 {
                     MeetingEvent meetingEvent = method.GetCustomAttribute<MeetingEvent>();
-                    if (meetingEvent != null && isEnd ? meetingEvent.Time == EventTime.After : meetingEvent.Time == EventTime.Before)
+                    if (meetingEvent != null)
                     {
+                        if (isEnd && meetingEvent.Time == EventTime.Before)
+                        {
+                            return;
+                        }
                         ParameterInfo[] parameters = method.GetParameters();
                         if (parameters.Count() == 1 && parameters[0].ParameterType == typeof(MeetingHud))
                         {

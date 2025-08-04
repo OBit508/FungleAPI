@@ -70,7 +70,7 @@ namespace FungleAPI.Roles
         }
         public virtual void Update()
         {
-            if (Button != null)
+            if (Button != null && Button.isActiveAndEnabled)
             {
                 Color color = Palette.DisabledClear;
                 int num = 1;
@@ -125,7 +125,7 @@ namespace FungleAPI.Roles
                 Button = null;
             }
         }
-        public AbilityButton CreateButton()
+        public void Reset()
         {
             activeButton.Add(this);
             if (Button != null)
@@ -136,6 +136,10 @@ namespace FungleAPI.Roles
             CurrentNumUses = NumUses;
             Transformed = false;
             TransformTimer = TransformDuration;
+        }
+        public AbilityButton CreateButton()
+        {
+            Reset();
             Button = UnityEngine.Object.Instantiate(HudPatch.prefab, DestroyableSingleton<HudManager>.Instance.AbilityButton.transform.parent);
             PassiveButton component = Button.GetComponent<PassiveButton>();
             Button.graphic.sprite = ButtonSprite;
@@ -192,7 +196,7 @@ namespace FungleAPI.Roles
             }
             else
             {
-                Button.usesRemainingSprite.transform.gameObject.SetActive(false);
+                Button.usesRemainingSprite.gameObject.SetActive(false);
             }
             return Button;
         }

@@ -36,7 +36,6 @@ namespace FungleAPI.Patches
                 animator.Player = __instance;
                 animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
             }
-            __instance.gameObject.AddComponent<PlayerHelper>();
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 __instance.gameObject.AddComponent(type);
@@ -89,6 +88,10 @@ namespace FungleAPI.Patches
                 }
             }
             return closest;
+        }
+        public class PlayerHelper : PlayerComponent
+        {
+            public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
         }
     }
 }

@@ -5,6 +5,7 @@ using FungleAPI.Roles;
 using FungleAPI.Rpc;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(GameManager))]
     public static class GameManagerPatch
     {
+        internal static MessageReader CustomEndGameReader => CustomRpcManager.CreateMessageReader(new List<object>() { (byte)GameOverReason.CrewmatesByVote, false });
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
         private static void OnAwake(GameManager __instance)
@@ -43,25 +45,31 @@ namespace FungleAPI.Patches
                 customEnd = false;
                 return true;
             }
-            if (endReason == GameOverReason.CrewmatesByTask)
-            {
-                customEnd = true;
-                RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
-            }
             return false;
         }
-        internal static bool customEnd = true;
+        internal static bool customEnd = false;
         [HarmonyPatch("FixedUpdate")]
         [HarmonyPrefix]
         private static void OnUpdate(GameManager __instance)
         {
-            if (AmongUsClient.Instance.IsGameStarted)
+            if (AmongUsClient.Instance.IsGameStarted && __instance.CanReportBodies() && ShipStatus.Instance != null && LobbyBehaviour.Instance == null && IntroCutscene.Instance == null && HudManager.Instance != null)
             {
                 System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>> pair = new System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>>();
                 int crewmates = 0;
+                bool flag = true;
                 List<PlayerControl> neutralKillers = new List<PlayerControl>();
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 {
+                    if (player.Data.Role.CanDoTasks())
+                    {
+                        foreach (PlayerTask task in player.myTasks)
+                        {
+                            if (!task.IsComplete)
+                            {
+                                flag = false;
+                            }
+                        }
+                    }
                     if (!player.Data.IsDead)
                     {
                         ModdedTeam team = player.Data.Role.GetTeam();
@@ -100,7 +108,7 @@ namespace FungleAPI.Patches
                 {
                     RpcCustomEndGame(__instance, ModdedTeam.Neutrals);
                 }
-                else if (pair.Count == 0 && neutralKillers.Count == 0)
+                else if (pair.Count == 0 && neutralKillers.Count == 0 || flag)
                 {
                     RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
                 }

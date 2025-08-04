@@ -80,7 +80,6 @@ namespace FungleAPI
             }
             return null;
         }
-        
         public static ModPlugin RegisterMod(BasePlugin basePlugin, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();

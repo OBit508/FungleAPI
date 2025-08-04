@@ -1,8 +1,10 @@
 ﻿using FungleAPI.MonoBehaviours;
 using FungleAPI.Roles;
 using HarmonyLib;
+using Hazel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -185,30 +187,6 @@ namespace FungleAPI.Utilities
             catch
             {
                 return null;
-            }
-        }
-        public static void PatchAllDerivedMethods(this Harmony harmony, Type baseType, MethodInfo prefix = null, MethodInfo postfix = null)
-        {
-            foreach (Type type in baseType.Assembly.GetTypes())
-            {
-                if (type == baseType || !baseType.IsAssignableFrom(type))
-                {
-                    foreach (MethodInfo method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly))
-                    {
-                        if (method.IsSpecialName)
-                        {
-                            ParameterInfo[] parameters = method.GetParameters();
-                            if (parameters.Length >= 2 &&
-                                parameters[0].ParameterType == typeof(byte) &&
-                                parameters[1].ParameterType == typeof(Hazel.MessageReader))
-                            {
-                                HarmonyMethod prefixAttr = prefix != null ? new HarmonyMethod(prefix) : null;
-                                HarmonyMethod postfixAttr = postfix != null ? new HarmonyMethod(postfix) : null;
-                                harmony.Patch(method, prefix: prefixAttr, postfix: postfixAttr);
-                            }
-                        }
-                    }
-                }
             }
         }
     }
