@@ -28,8 +28,8 @@ namespace FungleAPI.Roles
     {
         public static RoleBehaviour NeutralGhost => GetInstance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
-        internal static int id = 10;
-        internal static int gameOverId = 20;
+        internal static int id = Enum.GetNames<RoleTypes>().Length;
+        internal static int gameOverId = 0;
         internal static System.Collections.Generic.Dictionary<Type, RoleTypes> RolesToRegister = new System.Collections.Generic.Dictionary<Type, RoleTypes>();
         public static T GetInstance<T>() where T : RoleBehaviour
         {

@@ -32,6 +32,7 @@ namespace FungleAPI.Rpc
             writer.Write(value.teleportMurderer);
             writer.Write(value.showKillAnim);
             writer.Write(value.playKillSound);
+            CustomMurder(value.killer, value.target, value.resultFlags, value.resetKillTimer, value.createDeadBody, value.teleportMurderer, value.showKillAnim, value.playKillSound);
         }
         public override void Read(MessageReader reader)
         {
@@ -44,10 +45,6 @@ namespace FungleAPI.Rpc
             bool showKillAnim = reader.ReadBoolean();
             bool playKillSound = reader.ReadBoolean();
             CustomMurder(killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
-        }
-        public override void Handle((PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound) value)
-        {
-            CustomMurder(value.killer, value.target, value.resultFlags, value.resetKillTimer, value.createDeadBody, value.teleportMurderer, value.showKillAnim, value.playKillSound);
         }
         public static void CustomMurder(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {

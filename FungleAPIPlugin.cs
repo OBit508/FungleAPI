@@ -1,31 +1,32 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.Unity.IL2CPP;
-using FungleAPI.MonoBehaviours;
-using HarmonyLib;
-using Il2CppInterop.Runtime.Injection;
-using FungleAPI.Roles;
-using System.Reflection;
-using System.Linq;
-using System.Collections.Generic;
-using UnityEngine;
-using FungleAPI.Assets;
 using BepInEx.Logging;
-using FungleAPI.Rpc;
-using System.Collections;
-using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP;
+using BepInEx.Unity.IL2CPP.Utils;
+using FungleAPI.Assets;
+using FungleAPI.Configuration;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using FungleAPI.Rpc;
+using FungleAPI.Translation;
+using FungleAPI.Utilities;
+using HarmonyLib;
+using Hazel;
+using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.Text;
 using InnerNet;
-using FungleAPI.Translation;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
-using BepInEx.Unity.IL2CPP.Utils;
+using System.Linq;
+using System.Reflection;
 using Unity.Services.Core.Internal;
-using FungleAPI.Utilities;
-using FungleAPI.Configuration;
-using Hazel;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace FungleAPI
 {
@@ -51,7 +52,23 @@ namespace FungleAPI
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
             }
             Harmony.PatchAll();
+            SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
+            {
+                if (!allLoadded && scene.name == "MainMenu")
+                {
+                    Plugin.Roles = RoleManager.Instance.AllRoles.Concat(Plugin.Roles).ToList();
+                    foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
+                    {
+                        CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value);
+                    }
+                    RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
+                    RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
+                    RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
+                    allLoadded = true;
+                }
+            }));
         }
+        private static bool allLoadded;
         internal static ModPlugin plugin;
 		public static ModPlugin Plugin 
         {
@@ -66,44 +83,17 @@ namespace FungleAPI
                 return plugin;
             }
         }
-        [HarmonyPatch(typeof(AmongUsClient))]
-		public class LoadAPIThings
+        [HarmonyPatch(typeof(AmongUsClient), "CreatePlayer")]
+		public static class SyncOptions
 		{
-			[HarmonyPatch("CreatePlayer")]
-			[HarmonyPostfix]
-			private static void SyncRoles(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
+			private static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
 			{
                 if (__instance.AmHost && clientData.Id != __instance.HostId)
                 {
-                    IEnumerator delay()
-                    {
-                        yield return new WaitForSeconds(0.1f);
-                        while (clientData.Character == null)
-                        {
-                        }
-                        ConfigurationManager.RpcSyncSettings();
-                    }
-                    __instance.StartCoroutine(delay());
+                    ConfigurationManager.RpcSyncSettings();
                 }
             }
-            [HarmonyPatch("Awake")]
-            [HarmonyPostfix]
-            private static void LoadAll()
-			{
-				if (!allLoadded)
-				{
-                    Plugin.Roles = RoleManager.Instance.AllRoles.Concat(Plugin.Roles).ToList();
-                    foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
-                    {
-                        CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value);
-                    }
-                    RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
-                    RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
-                    RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
-                    allLoadded = true;
-                }
-			}
-			private static bool allLoadded;
+			
 		}
 	}
 }

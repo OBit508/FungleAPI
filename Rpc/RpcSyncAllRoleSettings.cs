@@ -33,12 +33,7 @@ namespace FungleAPI.Rpc
             if (!stringNull)
             {
                 string str = reader.ReadString();
-                Handle(str);
             }
-        }
-        public override void Handle(string value)
-        {
-            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value, !AmongUsClient.Instance.AmHost);
         }
         public override void Write(MessageWriter writer, string value)
         {
@@ -53,6 +48,7 @@ namespace FungleAPI.Rpc
             {
                 writer.Write(value);
             }
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value, !AmongUsClient.Instance.AmHost);
         }
     }
 }

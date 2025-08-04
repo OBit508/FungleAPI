@@ -17,10 +17,6 @@ namespace FungleAPI.Rpc
             writer.Write(GetType().FullName);
             Write(writer, data);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            Handle(data);
-        }
-        public virtual void Handle(DataT value)
-        {
         }
         public virtual void Write(MessageWriter writer, DataT value)
         {

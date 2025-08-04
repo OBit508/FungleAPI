@@ -13,10 +13,6 @@ namespace FungleAPI.Rpc
 {
     public class RpcSyncCountAndChance : CustomRpc<(ICustomRole role, int count, int chance, string s)>
     {
-        public override void Handle((ICustomRole role, int count, int chance, string s) value)
-        {
-            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value.s, true);
-        }
         public override void Read(MessageReader reader)
         {
             ICustomRole role = CustomRoleManager.GetRole((RoleTypes)reader.ReadInt32());
@@ -31,6 +27,7 @@ namespace FungleAPI.Rpc
             writer.Write(value.count);
             writer.Write(value.chance);
             writer.Write(value.s);
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value.s, true);
         }
     }
 }

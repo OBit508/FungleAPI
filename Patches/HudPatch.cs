@@ -37,7 +37,6 @@ namespace FungleAPI.Patches
                 MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
                 MapBehaviour.Instance.gameObject.SetActive(false);
             }
-            __instance.SetHudActive(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer.Data.Role, true);
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
