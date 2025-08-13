@@ -10,58 +10,77 @@ namespace FungleAPI.MonoBehaviours
 {
     public class SpriteAnimator : MonoBehaviour
     {
-        public SpriteRenderer renderer;
-        public SpriteSheet animation;
+        public SpriteRenderer spriteRenderer;
+        public SpriteAnimation anim;
         public bool canPlay;
-        public bool loop;
         public int currentSprite;
         public float timer;
-        public void PlayAnimation(bool loop)
+        public Action EndAnim;
+        public Action StartAnim;
+        public void PlayAnimation(bool reset = true, bool playStartEvent = true)
         {
-            this.loop = loop;
+            if (playStartEvent)
+            {
+                StartAnim?.Invoke();
+            }
+            if (reset)
+            {
+                currentSprite = 0;
+                timer = 0;
+            }
             canPlay = true;
         }
-        public void StopAnimation()
+        public void StopAnimation(bool playEndEvent = true)
         {
+            if (playEndEvent)
+            {
+                EndAnim?.Invoke();
+            }
             canPlay = false;
         }
-        public void SetAnimation(SpriteSheet newAnim)
+        public void SetAnimation(SpriteAnimation animation, bool playStartEvent = true, bool setAnimEvents = true)
         {
-            if (animation != newAnim)
+            if (anim != animation)
             {
-                animation = newAnim;
+                anim = animation;
                 currentSprite = 0;
+                timer = 0;
+                if (setAnimEvents)
+                {
+                    StartAnim = animation.StartAnim;
+                    EndAnim = animation.EndAnim;
+                }
+                if (canPlay && playStartEvent)
+                {
+                    StartAnim?.Invoke();
+                }
             }
         }
         public void Update()
         {
-            if (animation != null && canPlay)
+            if (anim != null && canPlay && spriteRenderer != null)
             {
-                renderer.sprite = animation.Sprites[currentSprite];
-                timer -= Time.deltaTime;
-                if (timer <= 0)
+                Sprite sprite = anim.Frames.Keys.ToArray()[currentSprite];
+                spriteRenderer.sprite = sprite;
+                timer += Time.deltaTime;
+                if (timer >= anim.Frames[sprite].Value)
                 {
-                    timer = animation.SpriteChangeSpeed;
-                    if (currentSprite + 1 >= animation.Sprites.Count())
+                    if (currentSprite + 1 >= anim.Frames.Count())
                     {
                         currentSprite = 0;
-                        if (!loop)
+                        if (!anim.Loop)
                         {
                             canPlay = false;
+                            EndAnim?.Invoke();
                         }
                     }
                     else
                     {
                         currentSprite++;
                     }
+                    timer = anim.Frames.Values.ToArray()[currentSprite].Value;
                 }
             }
-        }
-        public static SpriteAnimator AddCustomAnimator(SpriteRenderer renderer)
-        {
-            SpriteAnimator animator = renderer.gameObject.AddComponent<SpriteAnimator>();
-            animator.renderer = renderer;
-            return animator;
         }
     }
 }

@@ -35,87 +35,36 @@ namespace FungleAPI.Patches
                 __instance.deadBodyPrefab = body;
             }
         }
-        [HarmonyPatch("RpcEndGame")]
+        [HarmonyPatch("CheckEndGameViaTasks")]
         [HarmonyPrefix]
-        private static bool OnRpcEndGame(GameManager __instance, [HarmonyArgument(0)] GameOverReason endReason)
+        private static bool CheckEndGameViaTasksPrefix(GameManager __instance, ref bool __result)
         {
-            if (customEnd)
+            GameData.Instance.RecomputeTaskCounts();
+            bool flag = true;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                customEnd = false;
-                return true;
+                if (player.Data.Role.CanDoTasks())
+                {
+                    foreach (PlayerTask task in player.myTasks)
+                    {
+                        if (task.SafeCast<NormalPlayerTask>() != null && !task.SafeCast<NormalPlayerTask>().IsComplete)
+                        {
+                            flag = false;
+                        }
+                    }
+                }
             }
+            if (flag)
+            {
+                RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
+                __result = true;
+                return false;
+            }
+            __result = false;
             return false;
-        }
-        internal static bool customEnd = false;
-        [HarmonyPatch("FixedUpdate")]
-        [HarmonyPrefix]
-        private static void OnUpdate(GameManager __instance)
-        {
-            if (AmongUsClient.Instance.IsGameStarted && __instance.CanReportBodies() && ShipStatus.Instance != null && LobbyBehaviour.Instance == null && IntroCutscene.Instance == null && HudManager.Instance != null)
-            {
-                System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>> pair = new System.Collections.Generic.Dictionary<ModdedTeam, ChangeableValue<int>>();
-                int crewmates = 0;
-                bool flag = true;
-                List<PlayerControl> neutralKillers = new List<PlayerControl>();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                {
-                    if (player.Data.Role.CanDoTasks())
-                    {
-                        foreach (PlayerTask task in player.myTasks)
-                        {
-                            if (!task.IsComplete)
-                            {
-                                flag = false;
-                            }
-                        }
-                    }
-                    if (!player.Data.IsDead)
-                    {
-                        ModdedTeam team = player.Data.Role.GetTeam();
-                        if (team == ModdedTeam.Crewmates)
-                        {
-                            crewmates++;
-                        }
-                        else if (team == ModdedTeam.Neutrals && player.Data.Role.CanKill())
-                        {
-                            neutralKillers.Add(player);
-                        }
-                        else
-                        {
-                            if (!pair.Keys.Contains(team))
-                            {
-                                pair.Add(team, new ChangeableValue<int>(1));
-                            }
-                            else
-                            {
-                                foreach (KeyValuePair<ModdedTeam, ChangeableValue<int>> pair2 in pair)
-                                {
-                                    if (pair2.Key == team)
-                                    {
-                                        pair2.Value.Value++;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (pair.Count == 1 && pair.Values.ToArray()[0].Value >= crewmates && neutralKillers.Count == 0)
-                {
-                    RpcCustomEndGame(__instance, pair.Keys.ToArray()[0]);
-                }
-                else if (pair.Count == 0 && neutralKillers.Count == 1 && neutralKillers.Count >= crewmates)
-                {
-                    RpcCustomEndGame(__instance, ModdedTeam.Neutrals);
-                }
-                else if (pair.Count == 0 && neutralKillers.Count == 0 || flag)
-                {
-                    RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
-                }
-            }
         }
         public static void RpcCustomEndGame(this GameManager manager, ModdedTeam team)
         {
-            customEnd = true;
             manager.RpcEndGame(team.WinReason, false);
         }
     }

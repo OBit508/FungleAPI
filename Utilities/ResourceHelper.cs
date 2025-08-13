@@ -5,6 +5,7 @@ using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.IO;
+using Il2CppSystem.Runtime.Serialization;
 using Rewired.UI;
 using System;
 using System.Collections.Generic;
@@ -86,13 +87,6 @@ namespace FungleAPI.Assets
                 sprites.Add(sprite);
             }
             return sprites;
-        }
-        public static SpriteSheet ConvertToSpriteSheet(Sprite[] sprites, float animationSpeed)
-        {
-            SpriteSheet anim = new SpriteSheet();
-            anim.SpriteChangeSpeed = animationSpeed;
-            anim.Sprites = sprites;
-            return anim;
         }
         public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)
         {

@@ -30,12 +30,6 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void OnStart(PlayerControl __instance)
         {
-            foreach (PlayerBodySprite body in __instance.cosmetics.bodySprites)
-            {
-                PlayerAnimator animator = body.BodySprite.gameObject.AddComponent<PlayerAnimator>();
-                animator.Player = __instance;
-                animator.Animator = SpriteAnimator.AddCustomAnimator(body.BodySprite);
-            }
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 __instance.gameObject.AddComponent(type);

@@ -20,6 +20,7 @@ namespace FungleAPI.Patches
                 __instance.enabled = false;
                 return false;
             }
+            __instance.enabled = true;
             return true;
         }
     }

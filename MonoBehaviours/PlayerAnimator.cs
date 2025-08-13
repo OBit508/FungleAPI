@@ -9,54 +9,61 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
-    public class PlayerAnimator : MonoBehaviour
+    public class PlayerAnimator : PlayerComponent
     {
-        public PlayerControl Player;
+        public PlayerControl Player => GetComponent<PlayerControl>();
+        public SpriteAnimation RunAnim;
+        public SpriteAnimation Idle;
+        public SpriteAnimation CustomAnimation;
         public SpriteAnimator Animator;
-        public SpriteSheet RunAnim;
-        public SpriteSheet Idle;
-        public bool PlayingAnimation;
-        public bool PlayCustomAnimation;
+        internal bool play;
+        public void Start()
+        {
+            Animator = Player.gameObject.AddComponent<SpriteAnimator>();
+            Animator.spriteRenderer = Player.cosmetics.currentBodySprite.BodySprite;
+        }
         public void Play()
         {
-            PlayingAnimation = true;
-            Animator.PlayAnimation(true);
+            play = true;
             Player.MyPhysics.Animations.PlayIdleAnimation();
         }
         public void Stop()
         {
-            PlayingAnimation = false;
-            Animator.StopAnimation();
+            play = false;
             Player.MyPhysics.Animations.PlayIdleAnimation();
         }
-        public void PlayAnimation(SpriteSheet anim)
+        public void PlayAnimation(Assets.SpriteAnimation anim)
         {
-            PlayCustomAnimation = true;
-            Animator.SetAnimation(anim);
-            Animator.PlayAnimation(false);
+            play = false;
+            CustomAnimation = anim;
             Player.MyPhysics.Animations.PlayIdleAnimation();
         }
         public void Update()
         {
-            if (Animator.canPlay && !PlayCustomAnimation)
+            SpriteAnimation anim = null;
+            Action EndAnim = null;
+            if (CustomAnimation != null)
             {
-                SpriteSheet anim = Idle;
+                anim = CustomAnimation;
+                EndAnim = new Action(delegate
+                {
+                    CustomAnimation = null;
+                    Play();
+                });
+            }
+            else if (play)
+            {
+                anim = Idle;
                 if (Player.MyPhysics.Animations.IsPlayingRunAnimation())
                 {
                     anim = RunAnim;
                 }
-                if (Animator.animation != anim && anim != null)
-                {
-                    Animator.SetAnimation(anim);
-                }
             }
-            else if (!Animator.canPlay && PlayCustomAnimation)
+            if (Animator.spriteRenderer != Player.cosmetics.currentBodySprite.BodySprite)
             {
-                PlayCustomAnimation = false;
-                if (PlayingAnimation)
-                {
-                    Play();
-                }
+                Animator.spriteRenderer = Player.cosmetics.currentBodySprite.BodySprite;
+                Animator.SetAnimation(anim, false, false);
+                Animator.EndAnim = EndAnim;
             }
         }
     }
