@@ -9,7 +9,7 @@ namespace FungleAPI.Rpc
 {
     public class RpcHelper
     {
-        public virtual void Read(MessageReader reader)
+        public virtual void Handle(MessageReader reader)
         {
         }
     }

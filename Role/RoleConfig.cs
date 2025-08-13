@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
 using FungleAPI.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Role
 {
@@ -51,5 +53,31 @@ namespace FungleAPI.Role
         public bool ShowTeamColor;
         public bool CanDoTasks;
         public GameOverReason WinReason;
+        public int GetCount()
+        {
+            if (AmongUsClient.Instance.AmHost)
+            {
+                return localCount.Value;
+            }
+            else
+            {
+                return onlineCount;
+            }
+        }
+        public int GetChance()
+        {
+            if (AmongUsClient.Instance.AmHost)
+            {
+                return localChance.Value;
+            }
+            else
+            {
+                return onlineChance;
+            }
+        }
+        internal ConfigEntry<int> localCount;
+        internal int onlineCount;
+        internal ConfigEntry<int> localChance;
+        internal int onlineChance;
     }
 }

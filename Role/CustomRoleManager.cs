@@ -9,6 +9,8 @@ using FungleAPI.Rpc;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Hazel;
+using Il2CppInterop.Generator.Extensions;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using MonoMod.Cil;
@@ -19,6 +21,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using xCloud;
 using static Il2CppSystem.Reflection.RuntimePropertyInfo;
 using static UnityEngine.GraphicsBuffer;
 
@@ -28,9 +31,10 @@ namespace FungleAPI.Roles
     {
         public static RoleBehaviour NeutralGhost => GetInstance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
+        public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
         internal static int id = Enum.GetNames<RoleTypes>().Length;
-        internal static int gameOverId = 0;
-        internal static System.Collections.Generic.Dictionary<Type, RoleTypes> RolesToRegister = new System.Collections.Generic.Dictionary<Type, RoleTypes>();
+        internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
+        internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
         public static T GetInstance<T>() where T : RoleBehaviour
         {
             foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
@@ -67,12 +71,28 @@ namespace FungleAPI.Roles
             gameOverId++;
             return (GameOverReason)gameOverId;
         }
+        public static int CaculeCountByChance(this RoleBehaviour role, IRoleOptionsCollection roleOptions)
+        {
+            int count = 0;
+            for (int i = 0; i < roleOptions.GetNumPerGame(role.Role); i++)
+            {
+                if (new System.Random().Next(0, 100) < roleOptions.GetChancePerGame(role.Role))
+                {
+                    count++;
+                }
+            }
+            return count;
+        }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            ICustomRole.Values.Add((plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Count", 1), plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Chance", 100), customRole.Configuration, roleType, type));
+            ICustomRole.cachedConfigs.Add(type, customRole.Configuration);
             RoleConfig config = customRole.CachedConfiguration;
+            config.localCount = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Count", 1);
+            config.onlineCount = config.localCount.Value;
+            config.localChance = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Chance", 100);
+            config.onlineChance = config.localChance.Value;
             config.Configs = ConfigurationManager.InitializeConfigs(role);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
@@ -87,6 +107,7 @@ namespace FungleAPI.Roles
             role.Role = roleType;
             role.InvokeMethod("Register", new Type[] { }, new object[] { });
             AllRoles.Add(role);
+            AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);
             if (customRole.CachedConfiguration.IsGhostRole)
             {

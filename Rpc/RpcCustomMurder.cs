@@ -34,7 +34,7 @@ namespace FungleAPI.Rpc
             writer.Write(value.playKillSound);
             CustomMurder(value.killer, value.target, value.resultFlags, value.resetKillTimer, value.createDeadBody, value.teleportMurderer, value.showKillAnim, value.playKillSound);
         }
-        public override void Read(MessageReader reader)
+        public override void Handle(MessageReader reader)
         {
             PlayerControl killer = reader.ReadPlayer();
             PlayerControl target = reader.ReadPlayer();

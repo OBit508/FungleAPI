@@ -1,10 +1,12 @@
-﻿using Hazel;
+﻿using FungleAPI.MCIPatches;
+using FungleAPI.Patches;
+using Hazel;
+using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Patches;
 
 namespace FungleAPI.Rpc
 {
@@ -12,11 +14,17 @@ namespace FungleAPI.Rpc
     {
         public void Send(DataT data, uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, 70, sendOption, targetClientId);
-            writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
-            writer.Write(GetType().FullName);
-            Write(writer, data);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            if (MCIUtils.GetClient(targetClientId) == null)
+            {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
+                writer.Write(false);
+                writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
+                writer.Write(GetType().FullName);
+                writer.StartMessage(0);
+                Write(writer, data);
+                writer.EndMessage();
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }
         }
         public virtual void Write(MessageWriter writer, DataT value)
         {

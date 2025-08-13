@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using FungleAPI;
+using FungleAPI.MCIPatches;
 
 namespace FungleAPI.Patches
 {
@@ -13,7 +14,8 @@ namespace FungleAPI.Patches
     {
         public static void Postfix(VersionShower __instance)
         {
-            __instance.text.text = "AmongUs " + __instance.text.text + " - FungleAPI " + FungleAPIPlugin.ModV;
+            string mciText = MCIUtils.GetMCI() == null ? "" : " - MCI " + MCIUtils.GetMCIVersion();
+            __instance.text.text = "AmongUs " + __instance.text.text + " - FungleAPI " + FungleAPIPlugin.ModV + mciText;
         }
     }
 }

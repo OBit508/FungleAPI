@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,62 +20,10 @@ namespace FungleAPI.Role
         StringNames RoleBlurLong { get; }
         Color RoleColor { get; }
         RoleConfig Configuration { get; }
-        public RoleTypes Role
-        {
-            get
-            {
-                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
-                {
-                    if (pair.role == GetType())
-                    {
-                        return pair.type;
-                    }
-                }
-                return RoleTypes.Crewmate;
-            }
-        }
-        public RoleConfig CachedConfiguration
-        {
-            get
-            {
-                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
-                {
-                    if (pair.role == GetType())
-                    {
-                        return pair.config;
-                    }
-                }
-                return null;
-            }
-        }
-        public ConfigEntry<int> RoleCount
-        {
-            get
-            {
-                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
-                {
-                    if (pair.role == GetType())
-                    {
-                        return pair.count;
-                    }
-                }
-                return null;
-            }
-        }
-        public ConfigEntry<int> RoleChance
-        {
-            get
-            {
-                foreach ((ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role) pair in Values)
-                {
-                    if (pair.role == GetType())
-                    {
-                        return pair.chance;
-                    }
-                }
-                return null;
-            }
-        }
-        internal static List<(ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role)> Values = new List<(ConfigEntry<int> count, ConfigEntry<int> chance, RoleConfig config, RoleTypes type, Type role)>();
+        public RoleTypes Role => CustomRoleManager.RolesToRegister[GetType()];
+        public RoleConfig CachedConfiguration => cachedConfigs[GetType()];
+        public int RoleCount => CachedConfiguration.GetCount();
+        public int RoleChance => CachedConfiguration.GetChance();
+        internal static Dictionary<Type, RoleConfig> cachedConfigs = new Dictionary<Type, RoleConfig>();
     }
 }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Unity.Services.Analytics.Internal;
 using UnityEngine;
 using FungleAPI.Utilities;
+using FungleAPI.Configuration;
 
 namespace FungleAPI.Rpc
 {
@@ -34,6 +35,10 @@ namespace FungleAPI.Rpc
             Writer.Write(vector.y);
             Writer.Write(vector.z);
         }
+        public static void WriteConfig(this MessageWriter Writer, CustomConfig config)
+        {
+            Writer.Write(config.FullConfigName);
+        }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
             float x = Reader.ReadSingle();
@@ -54,6 +59,18 @@ namespace FungleAPI.Rpc
         public static CustomDeadBody ReadBody(this MessageReader Reader)
         {
             return Utils.GetBodyById(Reader.ReadByte());
+        }
+        public static CustomConfig ReadConfig(this MessageReader Reader)
+        {
+            string fullConfigName = Reader.ReadString();
+            foreach (CustomConfig config in ConfigurationManager.Configs.Values)
+            {
+                if (config.FullConfigName == fullConfigName)
+                {
+                    return config;
+                }
+            }
+            return null;
         }
     }
 }

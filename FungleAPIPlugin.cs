@@ -1,11 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
+using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Assets;
 using FungleAPI.Configuration;
+using FungleAPI.MCIPatches;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
@@ -18,6 +20,7 @@ using Hazel;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.Text;
 using InnerNet;
+using Steamworks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,6 +30,7 @@ using System.Reflection;
 using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 namespace FungleAPI
 {
@@ -50,6 +54,7 @@ namespace FungleAPI
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
+                ClassInjector.RegisterTypeInIl2Cpp<RpcPair>();
             }
             Harmony.PatchAll();
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
@@ -64,6 +69,7 @@ namespace FungleAPI
                     RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
                     RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
                     RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
+                    MCIUtils.TryPatchSwitchTo();
                     allLoadded = true;
                 }
             }));
@@ -84,16 +90,24 @@ namespace FungleAPI
             }
         }
         [HarmonyPatch(typeof(AmongUsClient), "CreatePlayer")]
-		public static class SyncOptions
-		{
-			private static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
-			{
-                if (__instance.AmHost && clientData.Id != __instance.HostId)
+        internal static class SyncOptions
+        {
+            public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
+            {
+                StackTrace trace = new StackTrace();
+                if (clientData.Id != __instance.HostId && __instance.AmHost && MCIUtils.GetClient(clientData.Id) == null && !trace.ToString().Contains("_CreatePlayerInstanceEnumerator"))
                 {
-                    ConfigurationManager.RpcSyncSettings();
+                    RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
+                    foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
+                    {
+                        if (role.CustomRole() != null)
+                        {
+                            pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role.CustomRole());
+                        }
+                    }
+                    pair.SendPair();
                 }
             }
-			
-		}
+        }
 	}
 }

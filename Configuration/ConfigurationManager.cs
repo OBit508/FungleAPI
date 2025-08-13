@@ -14,10 +14,6 @@ namespace FungleAPI.Configuration
     public static class ConfigurationManager
     {
         public static Dictionary<MethodBase, CustomConfig> Configs = new Dictionary<MethodBase, CustomConfig>();
-        public static void RpcSyncSettings(string text = null)
-        {
-            CustomRpcManager.GetInstance<RpcSyncAllRoleSettings>().Send(text, PlayerControl.LocalPlayer.NetId);
-        }
         public static List<CustomConfig> InitializeConfigs(object obj)
         {
             Type type = obj.GetType();

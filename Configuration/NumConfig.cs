@@ -22,6 +22,8 @@ namespace FungleAPI.Configuration
             ReduceValue = reduceValue;
             IncreceValue = increceValue;
             ConfigName = configName;
+            MaxValue = maxValue;
+            MinValue = minValue;
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
         {

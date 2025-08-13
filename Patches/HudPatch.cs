@@ -13,7 +13,7 @@ using UnityEngine;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(HudManager))]
-    class HudPatch
+    public static class HudPatch
     {
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
@@ -21,17 +21,6 @@ namespace FungleAPI.Patches
         {
             prefab = GameObject.Instantiate<AbilityButton>(__instance.AbilityButton, __instance.transform);
             prefab.gameObject.SetActive(false);
-            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
-            {
-                ICustomRole customRole = role.CustomRole();
-                if (customRole != null)
-                {
-                    foreach (CustomAbilityButton button in customRole.CachedConfiguration.Buttons)
-                    {
-                        button.CreateButton();
-                    }
-                }
-            }
             if (ShipStatus.Instance != null)
             {
                 MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
@@ -44,7 +33,10 @@ namespace FungleAPI.Patches
         {
             foreach (CustomAbilityButton button in CustomAbilityButton.activeButton)
             {
-                button.Update();
+                if (button.Button != null && button.Button.isActiveAndEnabled)
+                {
+                    button.Update();
+                }
             }
         }
         [HarmonyPostfix]
@@ -61,12 +53,10 @@ namespace FungleAPI.Patches
             HudManager.Instance.SabotageButton.gameObject.SetActive(role.CanSabotage() && isActive);
             foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
             {
-                bool flag = false;
-                if (role.CustomRole() != null)
+                if (button.Button != null && button.Button.isActiveAndEnabled)
                 {
-                    flag = role.CustomRole().CachedConfiguration.Buttons.Contains(button);
+                    button.Button.gameObject.SetActive(button.Active && isActive);
                 }
-                button.Button.gameObject.SetActive(button.Active && isActive && flag);
             }
         }
         public static AbilityButton prefab;

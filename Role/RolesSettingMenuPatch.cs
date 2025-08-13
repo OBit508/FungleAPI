@@ -1,23 +1,24 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using FungleAPI;
+using FungleAPI.Assets;
+using FungleAPI.Configuration;
+using FungleAPI.MonoBehaviours;
+using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
+using FungleAPI.Rpc;
+using FungleAPI.Utilities;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI;
-using FungleAPI.Roles;
-using HarmonyLib;
+using TMPro;
 using UnityEngine;
 using UnityEngine.ProBuilder;
-using System.Reflection;
-using TMPro;
+using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
 using static Rewired.UI.ControlMapper.ControlMapper;
-using FungleAPI.MonoBehaviours;
-using FungleAPI.Assets;
-using FungleAPI.Rpc;
-using FungleAPI.Role.Teams;
-using AmongUs.GameOptions;
-using FungleAPI.Utilities;
-using FungleAPI.Configuration;
 
 namespace FungleAPI.Role
 {
@@ -210,6 +211,33 @@ namespace FungleAPI.Role
                 CategoryHeaderEditRole header = CreateHeader(menu, Utils.Light(team.TeamColor, 0.7f), team.TeamColor, Utils.Dark(team.TeamColor, 0.7f), Utils.Light(team.TeamColor, 0.9f), team.TeamName.GetString());
                 header.transform.localPosition = Pos;
                 Pos = OrganizeRoles(teamRoles, Pos, menu);
+                Transform transform = GameObject.Instantiate<GameObject>(menu.RoleChancesSettings.transform.GetChild(2).GetChild(1).gameObject, header.blankLabel.transform).transform;
+                transform.localPosition = new Vector3(0f, 0f, -10f);
+                int count = team.GetCount();
+                TextMeshPro valueText = transform.GetChild(0).GetComponent<TextMeshPro>();
+                PassiveButton component = transform.GetChild(1).GetComponent<PassiveButton>();
+                PassiveButton component2 = transform.GetChild(2).GetComponent<PassiveButton>();
+                valueText.text = count.ToString();
+                component.SetNewAction(delegate
+                {
+                    if (count - 1 >= 0)
+                    {
+                        int count3 = count;
+                        count = count3 - 1;
+                        valueText.text = count.ToString();
+                        team.SetCount(count);
+                    }
+                });
+                component2.SetNewAction(delegate
+                {
+                    if ((count + 1) <= team.MaxCount)
+                    {
+                        int count2 = count;
+                        count = count2 + 1;
+                        valueText.text = count.ToString();
+                        team.SetCount(count);
+                    }
+                });
                 header.gameObject.SetActive(true);
             }
             menu.scrollBar.ContentYBounds.min = 0.7f;
@@ -226,68 +254,30 @@ namespace FungleAPI.Role
                 scrollMax = scrollMax + 0.15f;
                 currentVec.x = menu.RoleChancesSettings.transform.GetChild(2).localPosition.x;
                 ICustomRole role = roles[i].CustomRole();
-                RoleOptionSetting option = UnityEngine.Object.Instantiate(menu.RoleChancesSettings.transform.GetChild(2).GetComponent<RoleOptionSetting>(), menu.RoleChancesSettings.transform);
+                RoleOptionSetting option = UnityEngine.Object.Instantiate(menu.roleOptionSettingOrigin, menu.RoleChancesSettings.transform);
+                option.SetRole(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions, roles[i], 20);
+                option.OnValueChanged = new Action<OptionBehaviour>(delegate
+                {
+                    role.CachedConfiguration.localCount.Value = option.RoleMaxCount;
+                    role.CachedConfiguration.localChance.Value = option.RoleChance;
+                    option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
+                    if (AmongUsClient.Instance.AmHost)
+                    {
+                        RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
+                        pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
+                        pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true));
+                        pair.SendPair();
+                    }
+                });
+                option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
+                option.SetClickMask(menu.ButtonClickMask);
                 option.transform.localPosition = currentVec;
                 option.titleText.text = role.RoleName.GetString();
                 option.labelSprite.color = role.RoleColor;
-                int count = role.RoleCount.Value;
-                int chance = role.RoleChance.Value;
+                int count = role.RoleCount;
+                int chance = role.RoleChance;
                 option.countText.text = count.ToString();
                 option.chanceText.text = chance.ToString();
-                Action send = new Action(delegate
-                {
-                    string s = "<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName.GetString() + "</color>: " + count.ToString() + ", Chance: " + chance.ToString() + "%.";
-                    CustomRpcManager.GetInstance<RpcSyncCountAndChance>().Send((role, count, chance, s), PlayerControl.LocalPlayer.NetId);
-                });
-                option.CountMinusBtn.SetNewAction(delegate
-                {
-                    if (count - 1 >= 0)
-                    {
-                        count--;
-                        option.countText.text = count.ToString();
-                        role.RoleCount.Value = count;
-                        send();
-                    }
-                });
-                option.CountMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
-                {
-                    option.CountMinusBtn.SetInteractable(count > 0);
-                });
-                option.CountPlusBtn.SetNewAction(delegate
-                {
-                    count++;
-                    option.countText.text = count.ToString();
-                    role.RoleCount.Value = count;
-                    send();
-                });
-                option.ChanceMinusBtn.SetNewAction(delegate
-                {
-                    if (chance - 10 >= 0)
-                    {
-                        chance = chance - 10;
-                        option.chanceText.text = chance.ToString();
-                        role.RoleChance.Value = chance;
-                        send();
-                    }
-                });
-                option.ChanceMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
-                {
-                    option.ChanceMinusBtn.SetInteractable(chance > 0);
-                });
-                option.ChancePlusBtn.SetNewAction(delegate
-                {
-                    if (chance + 10 <= 100)
-                    {
-                        chance = chance + 10;
-                        option.chanceText.text = chance.ToString();
-                        role.RoleChance.Value = chance;
-                        send();
-                    }
-                });
-                option.ChanceMinusBtn.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
-                {
-                    option.ChanceMinusBtn.SetInteractable(chance < 100);
-                });
                 GameOptionButton cog = UnityEngine.Object.Instantiate(option.ChanceMinusBtn, option.transform);
                 cog.transform.GetChild(0).gameObject.SetActive(false);
                 cog.buttonSprite.sprite = Cog;
@@ -340,13 +330,26 @@ namespace FungleAPI.Role
         {
             NumberOption option = UnityEngine.Object.Instantiate(prefab, transform);
             float num = float.Parse(config.localValue.Value);
+            void update()
+            {
+                option.MinusBtn.SetInteractable(num > config.MinValue);
+                option.PlusBtn.SetInteractable(num < config.MaxValue);
+            }
+            void send()
+            {
+                RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", num.ToString()), false, true));
+                pair.SendPair();
+                update();
+            }
             option.MinusBtn.SetNewAction(delegate
             {
                 if ((num - config.ReduceValue) >= 0 && (num - config.ReduceValue) >= config.MinValue)
                 {
                     num -= config.ReduceValue;
                     config.SetValue(num.ToString());
-                    ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                    send();
                 }
             });
             option.PlusBtn.SetNewAction(delegate
@@ -355,7 +358,7 @@ namespace FungleAPI.Role
                 {
                     num += config.IncreceValue;
                     config.SetValue(num.ToString());
-                    ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                    send();
                 }
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
@@ -365,17 +368,25 @@ namespace FungleAPI.Role
                 option.ValueText.enabled = true;
                 option.ValueText.text = num.ToString();
             });
+            update();
             return option;
         }
         public static OptionBehaviour CreateOption(ToggleOption prefab, ICustomRole role, BoolConfig config, Transform transform)
         {
             ToggleOption option = UnityEngine.Object.Instantiate(prefab, transform);
             bool num = bool.Parse(config.localValue.Value);
+            void send()
+            {
+                RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", num.ToString()), false, true));
+                pair.SendPair();
+            }
             option.transform.GetChild(1).GetComponent<PassiveButton>().SetNewAction(delegate
             {
                 num = !num;
                 config.SetValue(num.ToString());
-                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + num.ToString() + ".");
+                send();
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
@@ -388,15 +399,22 @@ namespace FungleAPI.Role
         public static OptionBehaviour CreateOption(NumberOption prefab, ICustomRole role, EnumConfig config, Transform transform)
         {
             NumberOption option = UnityEngine.Object.Instantiate(prefab, transform);
+            void send()
+            {
+                RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
+                pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true));
+                pair.SendPair();
+            }
             option.MinusBtn.SetNewAction(delegate
             {
                 config.BackValue();
-                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
+                send();
             });
             option.PlusBtn.SetNewAction(delegate
             {
                 config.NextValue();
-                ConfigurationManager.RpcSyncSettings("<color=#" + ColorUtility.ToHtmlStringRGB(role.RoleColor) + ">" + role.RoleName + " (" + config.ConfigName + ")</color>: " + config.localValue.Value + ".");
+                send();
             });
             option.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
             {
@@ -420,6 +438,6 @@ namespace FungleAPI.Role
             header.gameObject.SetActive(false);
             return header;
         }
-        public static Sprite Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 100f);
+        public static Sprite Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 200f);
     }
 }

@@ -18,7 +18,6 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(GameManager))]
     public static class GameManagerPatch
     {
-        internal static MessageReader CustomEndGameReader => CustomRpcManager.CreateMessageReader(new List<object>() { (byte)GameOverReason.CrewmatesByVote, false });
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
         private static void OnAwake(GameManager __instance)

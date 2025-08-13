@@ -16,6 +16,7 @@
   <ItemGroup>
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="MCIPatches\MCIUtils.cs" />
     <Compile Include="MonoBehaviours\BodyComponent.cs" />
     <Compile Include="MonoBehaviours\CustomConsole.cs" />
     <Compile Include="MonoBehaviours\CustomVent.cs" />
@@ -28,7 +29,8 @@
     <Compile Include="Role\RoleEvent\EventTime.cs" />
     <Compile Include="Role\RoleEvent\MeetingEvent.cs" />
     <Compile Include="Role\RoleEvent\MurderEvent.cs" />
-    <Compile Include="Rpc\MessageReaderPatch.cs" />
+    <Compile Include="Rpc\RpcPair.cs" />
+    <Compile Include="Rpc\RpcSendNotification.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\CustomConfig.cs" />
@@ -49,8 +51,7 @@
     <Compile Include="Rpc\RpcCustomMurder.cs" />
     <Compile Include="Rpc\RpcHelper.cs" />
     <Compile Include="Rpc\MessageExtension.cs" />
-    <Compile Include="Rpc\RpcSyncAllRoleSettings.cs" />
-    <Compile Include="Rpc\RpcSyncCountAndChance.cs" />
+    <Compile Include="Rpc\RpcSyncSeetings.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Utilities\SpriteSheet.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
@@ -68,7 +69,6 @@
     <Compile Include="Role\RoleBehaviourPatch.cs" />
     <Compile Include="Role\RoleOptions.cs" />
     <Compile Include="Role\RolesSettingMenuPatch.cs" />
-    <Compile Include="Patches\ShipPatch.cs" />
     <Compile Include="Patches\TaskAdderGamePatch.cs" />
     <Compile Include="Patches\TaskPanelPatch.cs" />
     <Compile Include="Utilities\Utils.cs" />

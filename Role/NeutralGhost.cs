@@ -4,6 +4,7 @@ using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace FungleAPI.Role
             {
                 if (Player != null)
                 {
-                    return Player.GetComponent<PlayerPatches.PlayerHelper>().OldRole;
+                    return Player.GetComponent<PlayerHelper>().OldRole;
                 }
                 return null;
             }
@@ -92,11 +93,24 @@ namespace FungleAPI.Role
                 return Color.gray;
             }
         }
-        public RoleConfig Configuration => new RoleConfig(this) { IsGhostRole = true, HintType = RoleTaskHintType.None };
+        public RoleConfig Configuration => new RoleConfig(this) { IsGhostRole = true, HintType = RoleTaskHintType.None, Buttons = new CustomAbilityButton[] { CustomAbilityButton.GetInstance<HauntButton>() } };
         public override bool IsDead => true;
         public override bool DidWin(GameOverReason gameOverReason)
         {
             return CustomRoleManager.DidWin(this, gameOverReason);
+        }
+        public class HauntButton : CustomAbilityButton
+        {
+            public static Minigame HauntMenu;
+            public override string OverrideText => TranslationController.Instance.GetString(StringNames.HauntAbilityName);
+            public override Color32 TextOutlineColor => PlayerControl.LocalPlayer.Data.Role.CustomRole() == null ? PlayerControl.LocalPlayer.Data.Role.CustomRole().RoleColor : PlayerControl.LocalPlayer.cosmetics.nameText.color;
+            public override bool CanUse => !HauntMenu;
+            public override bool Active => PlayerControl.LocalPlayer.Data.IsDead;
+            public override void Click()
+            {
+                HauntMenu = GameObject.Instantiate<Minigame>(RoleManager.Instance.AllRoles.FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().HauntMenu, Button.transform);
+            }
+            public override Sprite ButtonSprite => RoleManager.Instance.AllRoles.FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().Ability.Image;
         }
     }
 }

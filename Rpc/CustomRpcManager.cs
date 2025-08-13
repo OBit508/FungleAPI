@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Rpc
@@ -17,7 +18,6 @@ namespace FungleAPI.Rpc
     public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
-        internal static Dictionary<MessageReader, List<object>> CustomReaders = new Dictionary<MessageReader, List<object>>();
         public static T GetInstance<T>() where T : RpcHelper
         {
             foreach (RpcHelper rpc in AllRpc)
@@ -29,18 +29,19 @@ namespace FungleAPI.Rpc
             }
             return null;
         }
+        public static RpcPair CreateRpcPair(uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        {
+            RpcPair rpcPair = ScriptableObject.CreateInstance<RpcPair>();
+            rpcPair.Writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
+            rpcPair.Writer.Write(true);
+            return rpcPair;
+        }
         internal static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
             AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
-        }
-        public static MessageReader CreateMessageReader(List<object> objects)
-        {
-            MessageReader reader = new MessageReader();
-            CustomReaders.Add(reader, objects);
-            return reader;
         }
         internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
         public static IEnumerable<MethodBase> TargetMethods()
@@ -50,20 +51,43 @@ namespace FungleAPI.Rpc
                    where m != null
                    select m;
         }
-        public static void Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+        public static bool Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
         {
-            if (callId == 70)
+            if (callId == byte.MaxValue)
             {
-                string rpcModName = reader.ReadString();
-                string rpcId = reader.ReadString();
-                foreach (RpcHelper rpc in AllRpc)
+                bool isPair = reader.ReadBoolean();
+                if (!isPair)
                 {
-                    if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
+                    string rpcModName = reader.ReadString();
+                    string rpcId = reader.ReadString();
+                    foreach (RpcHelper rpc in AllRpc)
                     {
-                        rpc.Read(reader);
+                        if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
+                        {
+                            rpc.Handle(reader.ReadMessage());
+                        }
                     }
                 }
+                else
+                {
+                    MessageReader messageReader = reader.ReadMessage();
+                    int count = messageReader.ReadInt32();
+                    for (int i = 0; i < count; i++)
+                    {
+                        string rpcModName = messageReader.ReadString();
+                        string rpcId = messageReader.ReadString();
+                        foreach (RpcHelper rpc in AllRpc)
+                        {
+                            if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
+                            {
+                                rpc.Handle(messageReader);
+                            }
+                        }
+                    }
+                }
+                return false;
             }
+            return true;
         }
     }
 }

@@ -89,9 +89,9 @@ namespace FungleAPI.Patches
             }
             return closest;
         }
-        public class PlayerHelper : PlayerComponent
-        {
-            public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
-        }
+    }
+    public class PlayerHelper : PlayerComponent
+    {
+        public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
     }
 }
