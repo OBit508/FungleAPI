@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,13 @@ namespace FungleAPI.Role.Teams
         public override bool KnowMembers => true;
         public override Color TeamColor => Palette.ImpostorRed;
         public override StringNames TeamName => StringNames.Impostor;
+        public override StringNames PluralName
+        {
+            get
+            {
+                return Translator.GetOrCreate(StringNames.ImpostorsRemainP.GetString().Replace(".", "").Split(" ")[2]).StringName;
+            }
+        }
         public override int MaxCount
         {
             get

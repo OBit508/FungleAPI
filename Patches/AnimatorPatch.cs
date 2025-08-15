@@ -14,7 +14,7 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(Animator __instance)
         {
-            SpriteAnimator animator = __instance.GetComponent<SpriteAnimator>();
+            GifAnimator animator = __instance.GetComponent<GifAnimator>();
             if (animator != null && animator.canPlay)
             {
                 __instance.enabled = false;

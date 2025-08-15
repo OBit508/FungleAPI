@@ -15,18 +15,12 @@ namespace FungleAPI.Roles
 {
     public class CustomAbilityButton
     {
-        internal static List<CustomAbilityButton> buttons = new List<CustomAbilityButton>();
-        internal static List<CustomAbilityButton> activeButton = new List<CustomAbilityButton>();
-        public static T GetInstance<T>() where T : CustomAbilityButton
+        internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
+        public static T Instance<T>() where T : CustomAbilityButton
         {
-            foreach (CustomAbilityButton button in buttons)
-            {
-                if (button.GetType() == typeof(T))
-                {
-                    return button.SimpleCast<T>();
-                }
-            }
-            return null;
+            CustomAbilityButton button;
+            Buttons.TryGetValue(typeof(T), out button);
+            return button.SimpleCast<T>();
         }
         public virtual bool Active => true;
         public AbilityButton Button;
@@ -70,64 +64,55 @@ namespace FungleAPI.Roles
         }
         public virtual void Update()
         {
-            if (Button != null && Button.isActiveAndEnabled)
+            Color color = Palette.DisabledClear;
+            int num = 1;
+            bool flag = true;
+            if (HaveUses)
             {
-                Color color = Palette.DisabledClear;
-                int num = 1;
-                bool flag = true;
-                if (HaveUses)
-                {
-                    flag = CurrentNumUses > 0;
-                }
+                flag = CurrentNumUses > 0;
+            }
 
-                if (flag && CanUse && !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null)
+            if (flag && CanUse && !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null)
+            {
+                color = Palette.EnabledColor;
+                num = 0;
+            }
+            Button.graphic.color = color;
+            Button.graphic.material.SetFloat("_Desat", num);
+            Button.usesRemainingSprite.color = color;
+            Button.usesRemainingSprite.material.SetFloat("_Desat", num);
+            Button.usesRemainingText.color = color;
+            Button.usesRemainingText.material.SetFloat("_Desat", num);
+            if (!Transformed)
+            {
+                if (!MeetingHud.Instance && !ExileController.Instance && Vent.currentVent == null && Timer > 0f)
                 {
-                    color = Palette.EnabledColor;
-                    num = 0;
-                }
-                Button.graphic.color = color;
-                Button.graphic.material.SetFloat("_Desat", num);
-                Button.usesRemainingSprite.color = color;
-                Button.usesRemainingSprite.material.SetFloat("_Desat", num);
-                Button.usesRemainingText.color = color;
-                Button.usesRemainingText.material.SetFloat("_Desat", num);
-                if (!Transformed)
-                {
-                    if (!MeetingHud.Instance && !ExileController.Instance && Vent.currentVent == null && Timer > 0f)
-                    {
-                        Timer -= Time.deltaTime;
-                        Button.SetCoolDown(Timer, Cooldown);
-                    }
-                }
-                else if (!MeetingHud.Instance && !ExileController.Instance && TransformTimer > 0f)
-                {
-                    TransformTimer -= Time.deltaTime;
-                    Button.SetFillUp(TransformTimer, TransformDuration);
-                    if (TransformTimer <= 0f)
-                    {
-                        TransformTimer = TransformDuration;
-                        Transformed = false;
-                        Destransform();
-                    }
+                    Timer -= Time.deltaTime;
+                    Button.SetCoolDown(Timer, Cooldown);
                 }
             }
-            else if (activeButton.Contains(this))
+            else if (!MeetingHud.Instance && !ExileController.Instance && TransformTimer > 0f)
             {
-                activeButton.Remove(this);
+                TransformTimer -= Time.deltaTime;
+                Button.SetFillUp(TransformTimer, TransformDuration);
+                if (TransformTimer <= 0f)
+                {
+                    TransformTimer = TransformDuration;
+                    Transformed = false;
+                    Destransform();
+                }
             }
         }
         public void Destroy()
         {
            if (Button != null)
             {
-                activeButton.Remove(this);
                 GameObject.Destroy(Button.gameObject);
                 Button = null;
             }
         }
         public void Reset()
         {
-            activeButton.Add(this);
             if (Button != null)
             {
                 Destroy();
@@ -205,7 +190,7 @@ namespace FungleAPI.Roles
             try
             {
                 CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
-                buttons.Add(button);
+                Buttons.Add(type, button);
                 plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
                 return button;
             }

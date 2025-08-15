@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RoleBehaviour))]
     public static class RoleBehaviourPatch
@@ -51,7 +51,7 @@ namespace FungleAPI.Role
     [HarmonyPatch]
     public static class RoleBehaviourDidWinPatch
     {
-        internal static List<Type> RoleBehaviourTypes { get; } = (from x in typeof(RoleBehaviour).Assembly.GetTypes() where x.IsSubclassOf(typeof(RoleBehaviour)) select x).ToList<Type>();
+        internal static List<Type> RoleBehaviourTypes { get; } = (from x in typeof(RoleBehaviour).Assembly.GetTypes() where x.IsSubclassOf(typeof(RoleBehaviour)) select x).ToList();
         public static IEnumerable<MethodBase> TargetMethods()
         {
             return from x in RoleBehaviourTypes

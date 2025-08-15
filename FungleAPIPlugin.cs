@@ -48,13 +48,13 @@ namespace FungleAPI
             if (Plugin != null)
             {
                 ClassInjector.RegisterTypeInIl2Cpp<CustomConsole>();
-                ClassInjector.RegisterTypeInIl2Cpp<SpriteAnimator>();
+                ClassInjector.RegisterTypeInIl2Cpp<GifAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomDeadBody>();
                 ClassInjector.RegisterTypeInIl2Cpp<Updater>();
                 ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
-                ClassInjector.RegisterTypeInIl2Cpp<RpcPair>();
+                ClassInjector.RegisterTypeInIl2Cpp<GifFile>();
             }
             Harmony.PatchAll();
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
@@ -69,7 +69,12 @@ namespace FungleAPI
                     RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
                     RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
                     RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
-                    MCIUtils.TryPatchSwitchTo();
+                    GifFile file = ResourceHelper.LoadGif(Plugin, "FungleAPI.Resources.among-us", 100);
+                    file.Loop = true;
+                    GifAnimator obj = new GameObject().AddComponent<GifAnimator>();
+                    obj.spriteRenderer = obj.gameObject.AddComponent<SpriteRenderer>();
+                    obj.SetAnimation(file);
+                    obj.PlayAnimation();
                     allLoadded = true;
                 }
             }));
@@ -87,26 +92,6 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                 }
                 return plugin;
-            }
-        }
-        [HarmonyPatch(typeof(AmongUsClient), "CreatePlayer")]
-        internal static class SyncOptions
-        {
-            public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
-            {
-                StackTrace trace = new StackTrace();
-                if (clientData.Id != __instance.HostId && __instance.AmHost && MCIUtils.GetClient(clientData.Id) == null && !trace.ToString().Contains("_CreatePlayerInstanceEnumerator"))
-                {
-                    RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
-                    foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
-                    {
-                        if (role.CustomRole() != null)
-                        {
-                            pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role.CustomRole());
-                        }
-                    }
-                    pair.SendPair();
-                }
             }
         }
 	}

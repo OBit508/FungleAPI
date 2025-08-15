@@ -36,10 +36,9 @@
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\CustomConfig.cs" />
     <Compile Include="Role\ICustomRole.cs" />
-    <Compile Include="Role\NameColorPatch.cs" />
+    <Compile Include="Role\Patches\NameColorPatch.cs" />
     <Compile Include="Role\NeutralGhost.cs" />
     <Compile Include="Role\RoleConfig.cs" />
-    <Compile Include="Role\RoleManagerPatch.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
     <Compile Include="Configuration\BoolConfig.cs" />
     <Compile Include="Configuration\EnumConfig.cs" />
@@ -54,7 +53,8 @@
     <Compile Include="Rpc\MessageExtension.cs" />
     <Compile Include="Rpc\RpcSyncSeetings.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
-    <Compile Include="Utilities\SpriteAnimation.cs" />
+    <Compile Include="Utilities\GifDecoder.cs" />
+    <Compile Include="Utilities\GifFile.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
     <Compile Include="Patches\AnimatorPatch.cs" />
     <Compile Include="Patches\ExileControllerPatch.cs" />
@@ -66,10 +66,10 @@
     <Compile Include="MonoBehaviours\PlayerAnimator.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Utilities\ResourceHelper.cs" />
-    <Compile Include="MonoBehaviours\SpriteAnimator.cs" />
-    <Compile Include="Role\RoleBehaviourPatch.cs" />
-    <Compile Include="Role\RoleOptions.cs" />
-    <Compile Include="Role\RolesSettingMenuPatch.cs" />
+    <Compile Include="MonoBehaviours\GifAnimator.cs" />
+    <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
+    <Compile Include="Role\Patches\RoleOptionsCollectionV09Patch.cs" />
+    <Compile Include="Role\Patches\RolesSettingMenuPatch.cs" />
     <Compile Include="Patches\TaskAdderGamePatch.cs" />
     <Compile Include="Patches\TaskPanelPatch.cs" />
     <Compile Include="Utilities\Utils.cs" />
@@ -80,11 +80,14 @@
     <Compile Include="FungleAPIPlugin.cs" />
     <Compile Include="ModPlugin.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
-    <Compile Include="Role\IntroCutscenePatch.cs" />
+    <Compile Include="Role\Patches\IntroCutscenePatch.cs" />
     <Compile Include="Role\Teams\ModdedTeam.cs" />
     <Compile Include="Rpc\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\among-us.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />

@@ -1,5 +1,4 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI;
 using FungleAPI.Assets;
 using FungleAPI.Configuration;
 using FungleAPI.MonoBehaviours;
@@ -20,7 +19,7 @@ using UnityEngine.ProBuilder;
 using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
 using static Rewired.UI.ControlMapper.ControlMapper;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RolesSettingsMenu))]
     internal class RolesSettingMenuPatch
@@ -50,13 +49,15 @@ namespace FungleAPI.Role
             if (SwitchButton == null)
             {
                 Reset();
-                SwitchButton = GameObject.Instantiate<PassiveButton>(__instance.transform.parent.parent.GetChild(4).GetChild(0).GetComponent<PassiveButton>(), __instance.transform.parent.parent.GetChild(4));
+                currentIndex = 0;
+                currentPlugin = FungleAPIPlugin.Plugin;
+                SwitchButton = UnityEngine.Object.Instantiate(__instance.transform.parent.parent.GetChild(4).GetChild(0).GetComponent<PassiveButton>(), __instance.transform.parent.parent.GetChild(4));
                 SwitchButton.transform.localPosition = new Vector3(-2.96f, 1.57f, -2);
                 SwitchButton.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
                 SwitchButton.OnClick.AddListener(new Action(delegate
                 {
                     Reset();
-                    if ((currentIndex + 1) >= ModPlugin.AllPlugins.Count)
+                    if (currentIndex + 1 >= ModPlugin.AllPlugins.Count)
                     {
                         currentIndex = 0;
                     }
@@ -211,7 +212,7 @@ namespace FungleAPI.Role
                 CategoryHeaderEditRole header = CreateHeader(menu, Utils.Light(team.TeamColor, 0.7f), team.TeamColor, Utils.Dark(team.TeamColor, 0.7f), Utils.Light(team.TeamColor, 0.9f), team.TeamName.GetString());
                 header.transform.localPosition = Pos;
                 Pos = OrganizeRoles(teamRoles, Pos, menu);
-                Transform transform = GameObject.Instantiate<GameObject>(menu.RoleChancesSettings.transform.GetChild(2).GetChild(1).gameObject, header.blankLabel.transform).transform;
+                Transform transform = UnityEngine.Object.Instantiate(menu.RoleChancesSettings.transform.GetChild(2).GetChild(1).gameObject, header.blankLabel.transform).transform;
                 transform.localPosition = new Vector3(0f, 0f, -10f);
                 int count = team.GetCount();
                 TextMeshPro valueText = transform.GetChild(0).GetComponent<TextMeshPro>();
@@ -230,7 +231,7 @@ namespace FungleAPI.Role
                 });
                 component2.SetNewAction(delegate
                 {
-                    if ((count + 1) <= team.MaxCount)
+                    if (count + 1 <= team.MaxCount)
                     {
                         int count2 = count;
                         count = count2 + 1;
@@ -345,7 +346,7 @@ namespace FungleAPI.Role
             }
             option.MinusBtn.SetNewAction(delegate
             {
-                if ((num - config.ReduceValue) >= 0 && (num - config.ReduceValue) >= config.MinValue)
+                if (num - config.ReduceValue >= 0 && num - config.ReduceValue >= config.MinValue)
                 {
                     num -= config.ReduceValue;
                     config.SetValue(num.ToString());
@@ -354,7 +355,7 @@ namespace FungleAPI.Role
             });
             option.PlusBtn.SetNewAction(delegate
             {
-                if ((num + config.IncreceValue) <= config.MaxValue)
+                if (num + config.IncreceValue <= config.MaxValue)
                 {
                     num += config.IncreceValue;
                     config.SetValue(num.ToString());

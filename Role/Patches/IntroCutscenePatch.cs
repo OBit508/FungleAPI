@@ -2,6 +2,7 @@
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
+using FungleAPI.Roles;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using LibCpp2IL.Elf;
@@ -15,7 +16,7 @@ using Unity.IL2CPP.Metadata;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
 
-namespace FungleAPI.Roles
+namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(IntroCutscene))]
     internal class IntroCutscenePatch

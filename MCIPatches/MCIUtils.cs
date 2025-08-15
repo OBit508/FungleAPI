@@ -39,18 +39,6 @@ namespace FungleAPI.MCIPatches
             }
             return "";
         }
-        public static void TryPatchSwitchTo()
-        {
-            Assembly mci = GetMCI();
-            if (mci != null)
-            {
-                MethodInfo method = mci.GetType("MCI.InstanceControl").GetMethod("SwitchTo");
-                if (method != null)
-                {
-                    FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(MCIUtils).GetMethod("Postfix", BindingFlags.Static | BindingFlags.Public)));
-                }
-            }
-        }
         public static ClientData GetClient(int clientId)
         {
             Assembly mci = GetMCI();
@@ -65,11 +53,6 @@ namespace FungleAPI.MCIPatches
                 }
             }
             return null;
-        }
-        public static void Postfix()
-        {
-            FungleAPIPlugin.Instance.Log.LogInfo("Updated Custom Buttons for MCI");
-            RoleManagerPatch.LoadButtons(PlayerControl.LocalPlayer.Data.Role);
         }
     }
 }

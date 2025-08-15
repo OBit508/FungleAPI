@@ -8,12 +8,10 @@ using UnityEngine;
 
 namespace FungleAPI.Assets
 {
-    public class SpriteAnimation : ScriptableObject
+    public class GifFile : ScriptableObject
     {
-        public string AnimName;
+        public GifFile(IntPtr ptr) : base(ptr) { }
         public bool Loop;
-        public Dictionary<Sprite, ChangeableValue<float>> Frames;
-        public Action StartAnim;
-        public Action EndAnim;
+        public Dictionary<ChangeableValue<float>, Sprite> Frames = new Dictionary<ChangeableValue<float>, Sprite>();
     }
 }

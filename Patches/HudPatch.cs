@@ -26,12 +26,21 @@ namespace FungleAPI.Patches
                 MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
                 MapBehaviour.Instance.gameObject.SetActive(false);
             }
+            if (AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
+            {
+                __instance.StartCoroutine(__instance.CoShowIntro());
+            }
+            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            {
+                button.CreateButton();
+                button.Button.ToggleVisible(false);
+            }
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
         public static void OnUpdate(HudManager __instance)
         {
-            foreach (CustomAbilityButton button in CustomAbilityButton.activeButton)
+            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
                 if (button.Button != null && button.Button.isActiveAndEnabled)
                 {
@@ -48,14 +57,14 @@ namespace FungleAPI.Patches
         })]
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
-            HudManager.Instance.ImpostorVentButton.gameObject.SetActive(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
-            HudManager.Instance.KillButton.gameObject.SetActive(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
-            HudManager.Instance.SabotageButton.gameObject.SetActive(role.CanSabotage() && isActive);
-            foreach (CustomAbilityButton button in CustomAbilityButton.buttons)
+            __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
+            __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
+            __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
+            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
-                if (button.Button != null && button.Button.isActiveAndEnabled)
+                if (button.Button != null)
                 {
-                    button.Button.gameObject.SetActive(button.Active && isActive);
+                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().CachedConfiguration.Buttons != null && role.CustomRole().CachedConfiguration.Buttons.Contains(button));
                 }
             }
         }

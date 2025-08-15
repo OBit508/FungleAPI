@@ -13,5 +13,6 @@ namespace FungleAPI.Role.Teams
         public override bool KnowMembers => false;
         public override Color TeamColor => Palette.CrewmateBlue;
         public override StringNames TeamName => StringNames.Crewmate;
+        public override StringNames PluralName => StringNames.Crewmates;
     }
 }

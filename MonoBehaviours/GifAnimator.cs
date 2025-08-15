@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Assets;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +9,10 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
-    public class SpriteAnimator : MonoBehaviour
+    public class GifAnimator : MonoBehaviour
     {
         public SpriteRenderer spriteRenderer;
-        public SpriteAnimation anim;
+        public GifFile anim;
         public bool canPlay;
         public int currentSprite;
         public float timer;
@@ -38,18 +39,13 @@ namespace FungleAPI.MonoBehaviours
             }
             canPlay = false;
         }
-        public void SetAnimation(SpriteAnimation animation, bool playStartEvent = true, bool setAnimEvents = true)
+        public void SetAnimation(GifFile animation, bool playStartEvent = true)
         {
             if (anim != animation)
             {
                 anim = animation;
                 currentSprite = 0;
                 timer = 0;
-                if (setAnimEvents)
-                {
-                    StartAnim = animation.StartAnim;
-                    EndAnim = animation.EndAnim;
-                }
                 if (canPlay && playStartEvent)
                 {
                     StartAnim?.Invoke();
@@ -60,10 +56,10 @@ namespace FungleAPI.MonoBehaviours
         {
             if (anim != null && canPlay && spriteRenderer != null)
             {
-                Sprite sprite = anim.Frames.Keys.ToArray()[currentSprite];
-                spriteRenderer.sprite = sprite;
+                ChangeableValue<float> duration = anim.Frames.Keys.ToArray()[currentSprite];
+                spriteRenderer.sprite = anim.Frames[duration];
                 timer += Time.deltaTime;
-                if (timer >= anim.Frames[sprite].Value)
+                if (timer >= duration.Value)
                 {
                     if (currentSprite + 1 >= anim.Frames.Count())
                     {
@@ -78,7 +74,7 @@ namespace FungleAPI.MonoBehaviours
                     {
                         currentSprite++;
                     }
-                    timer = anim.Frames.Values.ToArray()[currentSprite].Value;
+                    timer = 0;
                 }
             }
         }

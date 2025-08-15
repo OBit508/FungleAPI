@@ -54,69 +54,53 @@ namespace FungleAPI.Patches
                 __instance.Manager.ReviveEveryoneFreeplay();
                 return false;
             }
-            if (!GameData.Instance)
+            Dictionary<ModdedTeam, ChangeableValue<int>> teamsCount = new Dictionary<ModdedTeam, ChangeableValue<int>>();
+            int neutralKillerCount = 0;
+            int crewmateCount = 0;
+            foreach (NetworkedPlayerInfo player in GameData.Instance.AllPlayers)
             {
-                return false;
-            }
-            Dictionary<ModdedTeam, ChangeableValue<int>> pair = new Dictionary<ModdedTeam, ChangeableValue<int>>();
-            int crewmates = 0;
-            List<PlayerControl> neutralKillers = new List<PlayerControl>();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                if (!player.Data.IsDead)
+                if (!player.IsDead)
                 {
-                    ModdedTeam team = player.Data.Role.GetTeam();
+                    ModdedTeam team = player.Role.GetTeam();
                     if (team == ModdedTeam.Crewmates)
                     {
-                        crewmates++;
+                        crewmateCount++;
                     }
-                    else if (team == ModdedTeam.Neutrals && player.Data.Role.CanKill())
+                    else if (team == ModdedTeam.Neutrals && player.Role.CanKill())
                     {
-                        neutralKillers.Add(player);
+                        neutralKillerCount++;
                     }
                     else
                     {
-                        if (!pair.Keys.Contains(team))
+                        if (!teamsCount.ContainsKey(team))
                         {
-                            pair.Add(team, new ChangeableValue<int>(1));
+                            teamsCount.Add(team, new ChangeableValue<int>(1));
                         }
                         else
                         {
-                            foreach (KeyValuePair<ModdedTeam, ChangeableValue<int>> pair2 in pair)
-                            {
-                                if (pair2.Key == team)
-                                {
-                                    pair2.Value.Value++;
-                                }
-                            }
+                            teamsCount[team].Value++;
                         }
                     }
                 }
             }
-            bool freeplay = AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
-            if (pair.Count == 1 && pair.Values.ToArray()[0].Value >= crewmates && neutralKillers.Count == 0)
+            if (teamsCount.Count <= 0)
             {
-                if (!freeplay)
-                {
-                    __instance.Manager.RpcCustomEndGame(pair.Keys.ToArray()[0]);
-                }
-                __instance.Manager.ReviveEveryoneFreeplay();
-            }
-            else if (pair.Count == 0 && neutralKillers.Count == 1 && neutralKillers.Count >= crewmates)
-            {
-                if (!freeplay)
+                if (neutralKillerCount == 1 && neutralKillerCount == crewmateCount)
                 {
                     __instance.Manager.RpcCustomEndGame(ModdedTeam.Neutrals);
                 }
-                __instance.Manager.ReviveEveryoneFreeplay();
-            }
-            else if (pair.Count == 0 && neutralKillers.Count == 0)
-            {
-                if (!freeplay)
+                if (neutralKillerCount <= 0 && !TutorialManager.InstanceExists)
                 {
                     __instance.Manager.RpcCustomEndGame(ModdedTeam.Crewmates);
                 }
-                __instance.Manager.ReviveEveryoneFreeplay();
+            }
+            else if (teamsCount.Count == 1 && neutralKillerCount == 0)
+            {
+                ModdedTeam team = teamsCount.Keys.ToArray()[0];
+                if (teamsCount[team].Value >= crewmateCount)
+                {
+                    __instance.Manager.RpcCustomEndGame(team);
+                }
             }
             ISystemType systemType;
             if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.LifeSupp, out systemType))

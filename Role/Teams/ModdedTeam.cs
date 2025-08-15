@@ -49,6 +49,7 @@ namespace FungleAPI.Role.Teams
         public ModPlugin TeamPlugin => ModPlugin.GetModPlugin(GetType().Assembly);
         public virtual Color TeamColor => Palette.CrewmateBlue;
         public virtual StringNames TeamName => StringNames.None;
+        public virtual StringNames PluralName => StringNames.None;
         public virtual bool FriendlyFire => true;
         public virtual bool KnowMembers => false;
         public virtual int MaxCount => int.MaxValue;

@@ -12,14 +12,14 @@ namespace FungleAPI.MonoBehaviours
     public class PlayerAnimator : PlayerComponent
     {
         public PlayerControl Player => GetComponent<PlayerControl>();
-        public SpriteAnimation RunAnim;
-        public SpriteAnimation Idle;
-        public SpriteAnimation CustomAnimation;
-        public SpriteAnimator Animator;
+        public GifFile RunAnim;
+        public GifFile Idle;
+        public GifFile CustomAnimation;
+        public GifAnimator Animator;
         internal bool play;
         public void Start()
         {
-            Animator = Player.gameObject.AddComponent<SpriteAnimator>();
+            Animator = Player.gameObject.AddComponent<GifAnimator>();
             Animator.spriteRenderer = Player.cosmetics.currentBodySprite.BodySprite;
         }
         public void Play()
@@ -32,7 +32,7 @@ namespace FungleAPI.MonoBehaviours
             play = false;
             Player.MyPhysics.Animations.PlayIdleAnimation();
         }
-        public void PlayAnimation(Assets.SpriteAnimation anim)
+        public void PlayAnimation(Assets.GifFile anim)
         {
             play = false;
             CustomAnimation = anim;
@@ -40,7 +40,7 @@ namespace FungleAPI.MonoBehaviours
         }
         public void Update()
         {
-            SpriteAnimation anim = null;
+            GifFile anim = null;
             Action EndAnim = null;
             if (CustomAnimation != null)
             {
@@ -62,7 +62,7 @@ namespace FungleAPI.MonoBehaviours
             if (Animator.spriteRenderer != Player.cosmetics.currentBodySprite.BodySprite)
             {
                 Animator.spriteRenderer = Player.cosmetics.currentBodySprite.BodySprite;
-                Animator.SetAnimation(anim, false, false);
+                Animator.SetAnimation(anim, false);
                 Animator.EndAnim = EndAnim;
             }
         }

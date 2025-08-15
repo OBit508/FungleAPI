@@ -6,6 +6,7 @@ using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.IO;
 using Il2CppSystem.Runtime.Serialization;
+using Mono.Cecil;
 using Rewired.UI;
 using System;
 using System.Collections.Generic;
@@ -61,7 +62,7 @@ namespace FungleAPI.Assets
             }
             return audioClip;
         }
-        public static List<Sprite> LoadSprites(ModPlugin plugin, string resource, float PixelPerUnit, int tileWidth, bool dontUnload = true)
+        public static List<Sprite> LoadSpriteSheet(ModPlugin plugin, string resource, float PixelPerUnit, int tileWidth, bool dontUnload = true)
         {
             List<Sprite> sprites = new List<Sprite>();
             resource += ".png";
@@ -87,6 +88,32 @@ namespace FungleAPI.Assets
                 sprites.Add(sprite);
             }
             return sprites;
+        }
+        public static GifFile ToGif(Sprite[] sprites, float delay)
+        {
+            GifFile animation = ScriptableObject.CreateInstance<GifFile>().DontUnload();
+            animation.Frames = new Dictionary<ChangeableValue<float>, Sprite>();
+            foreach (Sprite sprite in sprites)
+            {
+                animation.Frames.Add(new ChangeableValue<float>(delay), sprite);
+            }
+            return animation;
+        }
+        public static GifFile LoadGif(ModPlugin plugin, string resource, float PixelPerUnit, bool loop = true)
+        {
+            resource += ".gif";
+            GifDecoder decoder = new GifDecoder();
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
+            plugin.ModAssembly.GetManifestResourceStream(resource).CopyTo(stream);
+            decoder.LoadGif(stream.ToArray());
+            GifFile gif = ScriptableObject.CreateInstance<GifFile>().DontUnload();
+            gif.Loop = loop;
+            for (int i = 0; i < decoder.Frames.Count; i++)
+            {
+                Texture2D texture = decoder.Frames[i];
+                gif.Frames.Add(new ChangeableValue<float>(decoder.FrameDelays[i]), Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), PixelPerUnit).DontUnload());
+            }
+            return gif;
         }
         public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)
         {

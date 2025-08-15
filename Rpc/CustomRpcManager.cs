@@ -31,7 +31,7 @@ namespace FungleAPI.Rpc
         }
         public static RpcPair CreateRpcPair(uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            RpcPair rpcPair = ScriptableObject.CreateInstance<RpcPair>();
+            RpcPair rpcPair = new RpcPair();
             rpcPair.Writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
             rpcPair.Writer.Write(true);
             return rpcPair;

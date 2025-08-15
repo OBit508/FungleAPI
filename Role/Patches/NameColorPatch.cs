@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(PlayerNameColor), "Get", new Type[] { typeof(RoleBehaviour) })]
     public static class NameColorPatch

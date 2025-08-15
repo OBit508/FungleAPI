@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace FungleAPI.Rpc
 {
-    public class RpcPair : ScriptableObject
+    public class RpcPair
     {
         public MessageWriter Writer;
         internal int id;
@@ -32,7 +32,6 @@ namespace FungleAPI.Rpc
             Writer.Write(id);
             SendAll();
             AmongUsClient.Instance.FinishRpcImmediately(Writer);
-            GameObject.Destroy(this);
         }
     }
 }
