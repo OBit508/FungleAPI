@@ -1,10 +1,10 @@
-﻿using System;
+﻿using FungleAPI.Utilities;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.MonoBehaviours;
-using HarmonyLib;
 using UnityEngine;
 
 namespace FungleAPI.Patches
@@ -14,14 +14,15 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(Animator __instance)
         {
-            GifAnimator animator = __instance.GetComponent<GifAnimator>();
-            if (animator != null && animator.canPlay)
+            ChangeableValue<bool> flag;
+            PlayerHelper.Animators.TryGetValue(__instance, out flag);
+            bool update = true;
+            if (flag != null && flag.Value)
             {
-                __instance.enabled = false;
-                return false;
+                update = false;
             }
-            __instance.enabled = true;
-            return true;
+            __instance.enabled = update;
+            return update;
         }
     }
 }

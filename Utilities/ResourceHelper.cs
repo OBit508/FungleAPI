@@ -1,6 +1,7 @@
 ﻿using AsmResolver.PE.DotNet.ReadyToRun;
 using AsmResolver.PE.Win32Resources;
 using FungleAPI.MonoBehaviours;
+using FungleAPI.Patches;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -8,6 +9,7 @@ using Il2CppSystem.IO;
 using Il2CppSystem.Runtime.Serialization;
 using Mono.Cecil;
 using Rewired.UI;
+using Rewired.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -92,10 +94,11 @@ namespace FungleAPI.Assets
         public static GifFile ToGif(Sprite[] sprites, float delay)
         {
             GifFile animation = ScriptableObject.CreateInstance<GifFile>().DontUnload();
-            animation.Frames = new Dictionary<ChangeableValue<float>, Sprite>();
-            foreach (Sprite sprite in sprites)
+            animation.Sprites = sprites;
+            animation.Delays = new float[sprites.Count()];
+            for (int i = 0; i < animation.Delays.Count(); i++)
             {
-                animation.Frames.Add(new ChangeableValue<float>(delay), sprite);
+                animation.Delays[i] = delay;
             }
             return animation;
         }
@@ -108,11 +111,14 @@ namespace FungleAPI.Assets
             decoder.LoadGif(stream.ToArray());
             GifFile gif = ScriptableObject.CreateInstance<GifFile>().DontUnload();
             gif.Loop = loop;
+            List<Sprite> sprites = new List<Sprite>();
             for (int i = 0; i < decoder.Frames.Count; i++)
             {
                 Texture2D texture = decoder.Frames[i];
-                gif.Frames.Add(new ChangeableValue<float>(decoder.FrameDelays[i]), Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), PixelPerUnit).DontUnload());
+                sprites.Add(Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), PixelPerUnit).DontUnload());
             }
+            gif.Sprites = sprites.ToArray();
+            gif.Delays = decoder.FrameDelays.ToArray();
             return gif;
         }
         public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)

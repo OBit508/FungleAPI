@@ -1,16 +1,21 @@
 ﻿using AmongUs.GameOptions;
 using AsmResolver.PE.DotNet.ReadyToRun;
 using Epic.OnlineServices.Presence;
+using FungleAPI.Assets;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Rpc;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppInterop.Runtime.Runtime;
 using Il2CppSystem.Net;
 using Rewired;
+using Rewired.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,10 +59,6 @@ namespace FungleAPI.Patches
             }
             return true;
         }
-        public static PlayerAnimator CustomAnimator(this PlayerControl player)
-        {
-            return player.cosmetics.currentBodySprite.BodySprite.GetComponent<PlayerAnimator>();
-        }
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             CustomRpcManager.GetInstance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
@@ -86,6 +87,150 @@ namespace FungleAPI.Patches
     }
     public class PlayerHelper : PlayerComponent
     {
+        internal static Dictionary<Animator, ChangeableValue<bool>> anims = new Dictionary<Animator, ChangeableValue<bool>>();
+        internal static Dictionary<Animator, ChangeableValue<bool>> Animators
+        {
+            get
+            {
+                Animator[] keys = new Animator[anims.Count];
+                anims.Keys.CopyTo(keys, 0);
+                for (int i = 0; i < keys.Length; i++)
+                {
+                    if (keys[i].IsNullOrDestroyed())
+                    {
+                        anims.Remove(keys[i]);
+                    }
+                }
+                return anims;
+            }
+        }
         public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
+        public GifFile IdleAnim;
+        public GifFile RunAnim;
+        public GifFile GhostIdleAnim;
+        public GifFile EnterVentAnim;
+        public GifFile ExitVentAnim;
+        public GifFile SpawnAnim;
+        public GifFile SpawnGlowAnim;
+        public GifFile ClimbUpAnim;
+        public GifFile ClimbDownAnim;
+        public GifFile GhostGuardianAngelAnim;
+        public GifFile Custom;
+        public GifFile Current;
+        public bool CanPlay;
+        internal Action EndCustom;
+        internal float timer;
+        internal int currentSprite;
+        public PlayerControl Player => GetComponent<PlayerControl>();
+        public PlayerAnimationGroup Group => Player.MyPhysics.Animations.group;
+        public void Reset()
+        {
+            currentSprite = 0;
+            timer = 0;
+        }
+        public void Play()
+        {
+            CanPlay = true;
+            Reset();
+            Player.MyPhysics.Animations.PlayIdleAnimation();
+        }
+        public void Stop()
+        {
+            CanPlay = false;
+            Player.MyPhysics.Animations.PlayIdleAnimation();
+        }
+        public void PlayCustom(GifFile custom, Action onEnd = null)
+        {
+            Custom = custom;
+            EndCustom = onEnd;
+            CanPlay = true;
+            Player.MyPhysics.Animations.PlayIdleAnimation();
+        }
+        public void Update()
+        {
+            Animator animator = Player.MyPhysics.Animations.Animator.m_animator;
+            if (!Animators.ContainsKey(animator))
+            {
+                Animators.Add(animator, new ChangeableValue<bool>(false));
+            }
+            Animators[animator].Value = CanPlay && Current != null;
+            GifFile Current2 = TryGetCurrentAnimation();
+            if (Current2 != Current)
+            {
+                Current = Current2;
+                Reset();
+            }
+            if (Current != null && CanPlay)
+            {
+                Group.SpriteAnimator.m_nodes.m_spriteRenderer.sprite = Current.Sprites[currentSprite];
+                timer += Time.deltaTime;
+                if (timer >= Current.Delays[currentSprite])
+                {
+                    if (currentSprite + 1 >= Current.Sprites.Count())
+                    {
+                        currentSprite = 0;
+                        if (Custom == Current && EndCustom != null)
+                        {
+                            EndCustom?.Invoke();
+                            CanPlay = false;
+                            Custom = null;
+                        }
+                    }
+                    else
+                    {
+                        currentSprite++;
+                    }
+                    timer = 0;
+                }
+            }
+        }
+        public GifFile TryGetCurrentAnimation()
+        {
+            GifFile Current = Custom;
+            if (Current == null)
+            {
+                if (Group.SpriteAnimator.m_currAnim == Group.RunAnim)
+                {
+                    Current = RunAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.IdleAnim)
+                {
+                    Current = IdleAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.GhostIdleAnim)
+                {
+                    Current = GhostIdleAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.EnterVentAnim)
+                {
+                    Current = EnterVentAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.ExitVentAnim)
+                {
+                    Current = ExitVentAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.SpawnAnim)
+                {
+                    Current = SpawnAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.SpawnGlowAnim)
+                {
+                    Current = SpawnGlowAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.ClimbUpAnim)
+                {
+                    Current = ClimbUpAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.ClimbDownAnim)
+                {
+                    Current = ClimbDownAnim;
+                }
+                else if (Group.SpriteAnimator.m_currAnim == Group.GhostGuardianAngelAnim)
+                {
+                    Current = GhostGuardianAngelAnim;
+                }
+            }
+            return Current;
+        }
     }
 }

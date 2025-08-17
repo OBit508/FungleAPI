@@ -22,6 +22,7 @@
     <Compile Include="MonoBehaviours\CustomVent.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerComponent.cs" />
+    <Compile Include="Patches\AnimatorPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />
     <Compile Include="Patches\LogicGameFlowPatch.cs" />
@@ -56,14 +57,12 @@
     <Compile Include="Utilities\GifDecoder.cs" />
     <Compile Include="Utilities\GifFile.cs" />
     <Compile Include="MonoBehaviours\Updater.cs" />
-    <Compile Include="Patches\AnimatorPatch.cs" />
     <Compile Include="Patches\ExileControllerPatch.cs" />
     <Compile Include="Patches\GameManagerPatch.cs" />
     <Compile Include="Role\CustomAbilityButton.cs" />
     <Compile Include="MonoBehaviours\CustomDeadBody.cs" />
     <Compile Include="Patches\HudPatch.cs" />
     <Compile Include="Patches\KillButtonPatch.cs" />
-    <Compile Include="MonoBehaviours\PlayerAnimator.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Utilities\ResourceHelper.cs" />
     <Compile Include="MonoBehaviours\GifAnimator.cs" />

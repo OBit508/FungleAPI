@@ -51,7 +51,6 @@ namespace FungleAPI
                 ClassInjector.RegisterTypeInIl2Cpp<GifAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomDeadBody>();
                 ClassInjector.RegisterTypeInIl2Cpp<Updater>();
-                ClassInjector.RegisterTypeInIl2Cpp<PlayerAnimator>();
                 ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
                 ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
                 ClassInjector.RegisterTypeInIl2Cpp<GifFile>();
@@ -69,12 +68,6 @@ namespace FungleAPI
                     RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
                     RoleManager.Instance.GetRole(RoleTypes.CrewmateGhost).StringName = Translator.GetOrCreate("Crewmate Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma inocente").StringName;
                     RoleManager.Instance.GetRole(RoleTypes.ImpostorGhost).StringName = Translator.GetOrCreate("Impostor Ghost").AddTranslation(SupportedLangs.Brazilian, "Fantasma impostor").StringName;
-                    GifFile file = ResourceHelper.LoadGif(Plugin, "FungleAPI.Resources.among-us", 100);
-                    file.Loop = true;
-                    GifAnimator obj = new GameObject().AddComponent<GifAnimator>();
-                    obj.spriteRenderer = obj.gameObject.AddComponent<SpriteRenderer>();
-                    obj.SetAnimation(file);
-                    obj.PlayAnimation();
                     allLoadded = true;
                 }
             }));

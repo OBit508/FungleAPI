@@ -12,6 +12,7 @@ namespace FungleAPI.Assets
     {
         public GifFile(IntPtr ptr) : base(ptr) { }
         public bool Loop;
-        public Dictionary<ChangeableValue<float>, Sprite> Frames = new Dictionary<ChangeableValue<float>, Sprite>();
+        public float[] Delays;
+        public Sprite[] Sprites;
     }
 }

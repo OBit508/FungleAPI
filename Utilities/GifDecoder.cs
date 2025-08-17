@@ -36,6 +36,7 @@ namespace FungleAPI.Utilities
                     prevFramePixels[i] = new Color32(0, 0, 0, 0);
                 }
                 int transparentIndex = -1;
+                int disposalMethod = 0;
                 while (reader.BaseStream.Position < reader.BaseStream.Length)
                 {
                     switch (reader.ReadByte())
@@ -43,11 +44,16 @@ namespace FungleAPI.Utilities
                         case 0x21:
                             if (reader.ReadByte() == 0xF9)
                             {
-                                reader.ReadByte();
-                                reader.ReadByte();
+                                reader.ReadByte(); // block size (sempre 4)
+                                byte packedGCE = reader.ReadByte();
+
+                                disposalMethod = (packedGCE >> 2) & 0x07; // <- extrair disposal method
+                                bool transparencyFlag = (packedGCE & 0x01) != 0;
+
                                 int delay = reader.ReadUInt16();
                                 transparentIndex = reader.ReadByte();
-                                reader.ReadByte();
+                                reader.ReadByte(); // terminator
+
                                 FrameDelays.Add(delay / 100f);
                             }
                             else
@@ -68,6 +74,23 @@ namespace FungleAPI.Utilities
                             byte[] decodedPixels = LzwDecode(imageData, lzwMinCodeSize, imgW * imgH);
                             Color32[] framePixels = new Color32[width * height];
                             Array.Copy(prevFramePixels, framePixels, prevFramePixels.Length);
+
+                            // 2. Aplica disposal antes de desenhar
+                            if (disposalMethod == 2) // Restore to background
+                            {
+                                for (int y = 0; y < imgH; y++)
+                                {
+                                    for (int x = 0; x < imgW; x++)
+                                    {
+                                        int globalIndex = (height - 1 - (imgY + y)) * width + (imgX + x);
+                                        if (globalIndex >= 0 && globalIndex < framePixels.Length)
+                                            framePixels[globalIndex] = new Color32(0, 0, 0, 0); // limpa
+                                    }
+                                }
+                            }
+                            // (disposalMethod == 3) exigiria salvar um backup de prevFramePixels de antes, se quiser suportar)
+
+                            // 3. Agora desenha os pixels do frame atual
                             for (int y = 0; y < imgH; y++)
                             {
                                 for (int x = 0; x < imgW; x++)
@@ -76,14 +99,19 @@ namespace FungleAPI.Utilities
                                     if (pixelIndex == transparentIndex) continue;
 
                                     int globalIndex = (height - 1 - (imgY + y)) * width + (imgX + x);
-                                    framePixels[globalIndex] = new Color32(
-                                        colorTable[pixelIndex * 3],
-                                        colorTable[pixelIndex * 3 + 1],
-                                        colorTable[pixelIndex * 3 + 2],
-                                        255
-                                    );
+                                    if (globalIndex >= 0 && globalIndex < framePixels.Length)
+                                    {
+                                        framePixels[globalIndex] = new Color32(
+                                            colorTable[pixelIndex * 3],
+                                            colorTable[pixelIndex * 3 + 1],
+                                            colorTable[pixelIndex * 3 + 2],
+                                            255
+                                        );
+                                    }
                                 }
                             }
+
+                            // Atualiza o buffer do próximo frame
                             prevFramePixels = framePixels;
                             Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
                             tex.SetPixels32(framePixels);

@@ -195,6 +195,7 @@ namespace FungleAPI.Patches
                         taskAddButton2.Text.text = "Be_" + roleBehaviour.NiceName + ".exe";
                         __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
                         taskAddButton2.Role = roleBehaviour;
+                        taskAddButton2.GetComponent<SpriteRenderer>().color = taskAddButton2.Role.TeamColor;
                         taskAddButton2.RolloverHandler.OutColor = taskAddButton2.Role.TeamColor;
                         if (taskAddButton2 != null && taskAddButton2.Button != null)
                         {

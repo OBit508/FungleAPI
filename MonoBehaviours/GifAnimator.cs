@@ -56,12 +56,11 @@ namespace FungleAPI.MonoBehaviours
         {
             if (anim != null && canPlay && spriteRenderer != null)
             {
-                ChangeableValue<float> duration = anim.Frames.Keys.ToArray()[currentSprite];
-                spriteRenderer.sprite = anim.Frames[duration];
+                spriteRenderer.sprite = anim.Sprites[currentSprite];
                 timer += Time.deltaTime;
-                if (timer >= duration.Value)
+                if (timer >= anim.Delays[currentSprite])
                 {
-                    if (currentSprite + 1 >= anim.Frames.Count())
+                    if (currentSprite + 1 >= anim.Sprites.Count())
                     {
                         currentSprite = 0;
                         if (!anim.Loop)
