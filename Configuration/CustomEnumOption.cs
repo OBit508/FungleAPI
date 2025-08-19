@@ -1,6 +1,10 @@
 ﻿using BepInEx.Configuration;
+using Epic.OnlineServices;
+using Epic.OnlineServices.RTC;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using FungleAPI.Roles;
+using FungleAPI.Rpc;
 using FungleAPI.Utilities;
 using Il2CppSystem.Web;
 using System;
@@ -10,14 +14,16 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
+using static Rewired.UI.ControlMapper.ControlMapper;
 
 namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class EnumConfig : CustomConfig
+    public class CustomEnumOption : CustomOption
     {
-        public EnumConfig(string configName, string[] defaultValue)
+        public CustomEnumOption(string configName, string[] defaultValue)
         {
             ConfigName = configName;
             Enum = defaultValue;
@@ -32,6 +38,28 @@ namespace FungleAPI.Configuration
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
+        }
+        public override OptionBehaviour CreateOption(Transform transform)
+        {
+            StringOption option = UnityEngine.Object.Instantiate(Prefab<StringOption>(), transform);
+            SetUpFromData(option);
+            option.TitleText.text = ConfigName;
+            option.ValueText.text = localValue.Value;
+            option.MinusBtn.SetNewAction(delegate
+            {
+                BackValue();
+                option.ValueText.text = localValue.Value;
+                option.OnValueChanged?.Invoke(option);
+            });
+            option.PlusBtn.SetNewAction(delegate
+            {
+                NextValue();
+                option.ValueText.text = localValue.Value;
+                option.OnValueChanged?.Invoke(option);
+            });
+            option.gameObject.SetActive(true);
+            option.enabled = false;
+            return option;
         }
         internal int currentIndex;
         internal string[] Enum;

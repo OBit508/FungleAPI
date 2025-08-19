@@ -20,7 +20,7 @@ namespace FungleAPI.Role.Patches
             {
                 if (otherPlayerRole.CustomRole() != null)
                 {
-                    if (otherPlayerRole.CustomRole().CachedConfiguration.ShowTeamColor)
+                    if (otherPlayerRole.CustomRole().Configuration.ShowTeamColor)
                     {
                         __result = otherPlayerRole.GetTeam().TeamColor;
                     }

@@ -35,15 +35,15 @@
     <Compile Include="Rpc\RpcSendNotification.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
-    <Compile Include="Configuration\CustomConfig.cs" />
+    <Compile Include="Configuration\CustomOption.cs" />
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\Patches\NameColorPatch.cs" />
     <Compile Include="Role\NeutralGhost.cs" />
     <Compile Include="Role\RoleConfig.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
-    <Compile Include="Configuration\BoolConfig.cs" />
-    <Compile Include="Configuration\EnumConfig.cs" />
-    <Compile Include="Configuration\NumConfig.cs" />
+    <Compile Include="Configuration\CustomToggleOption.cs" />
+    <Compile Include="Configuration\CustomEnumOption.cs" />
+    <Compile Include="Configuration\CustomNumberOption.cs" />
     <Compile Include="Role\RoleTaskHintType.cs" />
     <Compile Include="Role\Teams\CrewmateTeam.cs" />
     <Compile Include="Role\Teams\ImpostorTeam.cs" />
@@ -84,9 +84,6 @@
     <Compile Include="Rpc\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\among-us.gif" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />

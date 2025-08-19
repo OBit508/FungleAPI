@@ -24,7 +24,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = __instance.CustomRole();
             if (role != null)
             {
-                if (role.CachedConfiguration.ShowTeamColor)
+                if (role.Configuration.ShowTeamColor)
                 {
                     __result = role.Team.TeamColor;
                 }
@@ -41,7 +41,7 @@ namespace FungleAPI.Role.Patches
         public static bool OnAppendTaskHint(RoleBehaviour __instance)
         {
             ICustomRole role = __instance.CustomRole();
-            if (role != null && role.CachedConfiguration.HintType != RoleTaskHintType.Normal)
+            if (role != null && role.Configuration.HintType != RoleTaskHintType.Normal)
             {
                 return false;
             }

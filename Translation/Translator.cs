@@ -8,17 +8,6 @@ namespace FungleAPI.Translation
 {
     public class Translator
     {
-        public static Translator GetOrCreate(string defaultText)
-        {
-            foreach (Translator t in All)
-            {
-                if (t.Default == defaultText)
-                {
-                    return t;
-                }
-            }
-            return new Translator(defaultText);
-        }
         internal Translator(string defaultText)
         {
             Default = defaultText;
@@ -29,7 +18,7 @@ namespace FungleAPI.Translation
         internal string Default;
         public StringNames StringName;
         internal Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
-        public static Translator None = GetOrCreate("STRMISS");
+        public static Translator None = new Translator("STRMISS");
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
             if (!Strings.Keys.Contains(lang))

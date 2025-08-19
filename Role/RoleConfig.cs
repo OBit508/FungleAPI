@@ -45,7 +45,7 @@ namespace FungleAPI.Role
         public bool CanSabotage;
         public bool TasksCountForProgress;
         public bool IsGhostRole;
-        internal List<CustomConfig> Configs;
+        internal List<CustomOption> Configs;
         public CustomAbilityButton[] Buttons;
         public RoleTypes GhostRole;
         public RoleTaskHintType HintType;

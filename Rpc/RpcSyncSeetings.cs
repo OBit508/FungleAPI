@@ -16,12 +16,12 @@ namespace FungleAPI.Rpc
         public override void Handle(MessageReader reader)
         {
             ICustomRole role = CustomRoleManager.GetRole((RoleTypes)reader.ReadByte());
-            role.CachedConfiguration.onlineCount = reader.ReadInt32();
-            role.CachedConfiguration.onlineChance = reader.ReadInt32();
+            role.Configuration.onlineCount = reader.ReadInt32();
+            role.Configuration.onlineChance = reader.ReadInt32();
             int count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
             {
-                CustomConfig config = reader.ReadConfig();
+                CustomOption config = reader.ReadConfig();
                 if (config != null)
                 {
                     config.SetValue(reader.ReadString());
@@ -33,10 +33,10 @@ namespace FungleAPI.Rpc
             writer.Write((byte)value.Role);
             writer.Write(value.RoleCount);
             writer.Write(value.RoleChance);
-            writer.Write(value.CachedConfiguration.Configs.Count);
-            for (int i = 0; i < value.CachedConfiguration.Configs.Count; i++)
+            writer.Write(value.Configuration.Configs.Count);
+            for (int i = 0; i < value.Configuration.Configs.Count; i++)
             {
-                CustomConfig config = value.CachedConfiguration.Configs[i];
+                CustomOption config = value.Configuration.Configs[i];
                 writer.WriteConfig(config);
                 writer.Write(config.GetValue());
             }

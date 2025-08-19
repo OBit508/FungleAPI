@@ -8,19 +8,21 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.Role;
 
 namespace FungleAPI.Configuration
 {
     public static class ConfigurationManager
     {
-        public static Dictionary<MethodBase, CustomConfig> Configs = new Dictionary<MethodBase, CustomConfig>();
-        public static List<CustomConfig> InitializeConfigs(object obj)
+        public static Dictionary<MethodBase, CustomOption> Configs = new Dictionary<MethodBase, CustomOption>();
+        internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
+        public static List<CustomOption> InitializeConfigs(object obj)
         {
             Type type = obj.GetType();
-            List<CustomConfig> configs = new List<CustomConfig>();
+            List<CustomOption> configs = new List<CustomOption>();
             foreach (PropertyInfo property in type.GetProperties())
             {
-                CustomConfig att = (CustomConfig)property.GetCustomAttribute(typeof(CustomConfig));
+                CustomOption att = (CustomOption)property.GetCustomAttribute(typeof(CustomOption));
                 if (att != null)
                 {
                     att.Initialize(type, property, obj);
@@ -48,6 +50,20 @@ namespace FungleAPI.Configuration
         public static bool GetPrefix(MethodBase __originalMethod, ref string __result)
         {
             __result = Configs[__originalMethod].GetValue();
+            return false;
+        }
+        internal static void PatchRoleConfig(Type type, RoleConfig config)
+        {
+            PropertyInfo property = type.GetProperty("Configuration");
+            if (property != null && property.PropertyType == typeof(RoleConfig))
+            {
+                RoleConfigs.Add(property.GetGetMethod(), config);
+                FungleAPIPlugin.Harmony.Patch(property.GetGetMethod(), new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetRoleConfigPrefix", BindingFlags.Static | BindingFlags.Public)));
+            }
+        }
+        public static bool GetRoleConfigPrefix(MethodBase __originalMethod, ref RoleConfig __result)
+        {
+            __result = RoleConfigs[__originalMethod];
             return false;
         }
     }

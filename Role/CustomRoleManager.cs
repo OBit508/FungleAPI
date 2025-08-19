@@ -87,13 +87,13 @@ namespace FungleAPI.Roles
         {
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            ICustomRole.cachedConfigs.Add(type, customRole.Configuration);
-            RoleConfig config = customRole.CachedConfiguration;
+            RoleConfig config = customRole.Configuration;
             config.localCount = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Count", 1);
             config.onlineCount = config.localCount.Value;
             config.localChance = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Chance", 100);
             config.onlineChance = config.localChance.Value;
             config.Configs = ConfigurationManager.InitializeConfigs(role);
+            ConfigurationManager.PatchRoleConfig(type, config);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;
@@ -109,7 +109,7 @@ namespace FungleAPI.Roles
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);
-            if (customRole.CachedConfiguration.IsGhostRole)
+            if (customRole.Configuration.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }
@@ -147,7 +147,7 @@ namespace FungleAPI.Roles
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().CachedConfiguration.CanSabotage;
+                return roleBehaviour.CustomRole().Configuration.CanSabotage;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
@@ -155,7 +155,7 @@ namespace FungleAPI.Roles
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().CachedConfiguration.CanKill;
+                return roleBehaviour.CustomRole().Configuration.CanKill;
             }
             bool flag = roleBehaviour.CanUseKillButton;
             if (roleBehaviour.Role == RoleTypes.Phantom)
@@ -168,7 +168,7 @@ namespace FungleAPI.Roles
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().CachedConfiguration.UseVanillaKillButton;
+                return roleBehaviour.CustomRole().Configuration.UseVanillaKillButton;
             }
             return roleBehaviour.CanUseKillButton;
         }
@@ -176,7 +176,7 @@ namespace FungleAPI.Roles
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().CachedConfiguration.CanVent;
+                return roleBehaviour.CustomRole().Configuration.CanVent;
             }
             return roleBehaviour.CanVent;
         }
@@ -184,7 +184,7 @@ namespace FungleAPI.Roles
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().CachedConfiguration.CanDoTasks;
+                return roleBehaviour.CustomRole().Configuration.CanDoTasks;
             }
             return roleBehaviour.GetTeam() == ModdedTeam.Crewmates;
         }

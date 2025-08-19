@@ -28,7 +28,7 @@ namespace FungleAPI.Patches
                 if (on)
                 {
                     __instance.myRend.material.SetFloat("_Outline", 1f);
-                    __instance.myRend.material.SetColor("_OutlineColor", role.CachedConfiguration.OutlineColor);
+                    __instance.myRend.material.SetColor("_OutlineColor", role.Configuration.OutlineColor);
                 }
                 else
                 {
@@ -36,9 +36,9 @@ namespace FungleAPI.Patches
                 }
                 if (mainTarget)
                 {
-                    float num = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.r * 0.5f);
-                    float num2 = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.g * 0.5f);
-                    float num3 = Mathf.Clamp01(role.CachedConfiguration.OutlineColor.b * 0.5f);
+                    float num = Mathf.Clamp01(role.Configuration.OutlineColor.r * 0.5f);
+                    float num2 = Mathf.Clamp01(role.Configuration.OutlineColor.g * 0.5f);
+                    float num3 = Mathf.Clamp01(role.Configuration.OutlineColor.b * 0.5f);
                     __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
                 }
                 else

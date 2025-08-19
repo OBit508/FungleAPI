@@ -14,15 +14,13 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(Animator __instance)
         {
-            ChangeableValue<bool> flag;
-            PlayerHelper.Animators.TryGetValue(__instance, out flag);
-            bool update = true;
-            if (flag != null && flag.Value)
+            PlayerHelper helper;
+            if (PlayerHelper.Animators.TryGetValue(__instance, out helper) && helper.Current != null)
             {
-                update = false;
+                helper.Group.SpriteAnimator.m_nodes.m_spriteRenderer.sprite = helper.Current.Sprites[helper.currentSprite];
+                return false;
             }
-            __instance.enabled = update;
-            return update;
+            return true;
         }
     }
 }

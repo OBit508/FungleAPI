@@ -64,7 +64,7 @@ namespace FungleAPI.Patches
             {
                 if (button.Button != null)
                 {
-                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().CachedConfiguration.Buttons != null && role.CustomRole().CachedConfiguration.Buttons.Contains(button));
+                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Configuration.Buttons != null && role.CustomRole().Configuration.Buttons.Contains(button));
                 }
             }
         }

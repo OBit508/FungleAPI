@@ -54,7 +54,7 @@ namespace FungleAPI.Patches
             if (__instance.Data.Role.CustomRole() != null && active)
             {
                 __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", __instance.Data.Role.CustomRole().CachedConfiguration.OutlineColor);
+                __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", __instance.Data.Role.CustomRole().Configuration.OutlineColor);
                 return false;
             }
             return true;
@@ -87,8 +87,8 @@ namespace FungleAPI.Patches
     }
     public class PlayerHelper : PlayerComponent
     {
-        internal static Dictionary<Animator, ChangeableValue<bool>> anims = new Dictionary<Animator, ChangeableValue<bool>>();
-        internal static Dictionary<Animator, ChangeableValue<bool>> Animators
+        internal static Dictionary<Animator, PlayerHelper> anims = new Dictionary<Animator, PlayerHelper>();
+        internal static Dictionary<Animator, PlayerHelper> Animators
         {
             get
             {
@@ -132,59 +132,60 @@ namespace FungleAPI.Patches
         {
             CanPlay = true;
             Reset();
-            Player.MyPhysics.Animations.PlayIdleAnimation();
+            Player.MyPhysics.ResetAnimState();
         }
         public void Stop()
         {
             CanPlay = false;
-            Player.MyPhysics.Animations.PlayIdleAnimation();
+            Player.MyPhysics.ResetAnimState();
         }
         public void PlayCustom(GifFile custom, Action onEnd = null)
         {
             Custom = custom;
             EndCustom = onEnd;
             CanPlay = true;
-            Player.MyPhysics.Animations.PlayIdleAnimation();
+            Reset();
+            Player.MyPhysics.ResetAnimState();
         }
         public void Update()
         {
             Animator animator = Player.MyPhysics.Animations.Animator.m_animator;
             if (!Animators.ContainsKey(animator))
             {
-                Animators.Add(animator, new ChangeableValue<bool>(false));
+                Animators.Add(animator, this);
             }
-            Animators[animator].Value = CanPlay && Current != null;
-            GifFile Current2 = TryGetCurrentAnimation();
-            if (Current2 != Current)
+            if (CanPlay)
             {
-                Current = Current2;
-                Reset();
-            }
-            if (Current != null && CanPlay)
-            {
-                Group.SpriteAnimator.m_nodes.m_spriteRenderer.sprite = Current.Sprites[currentSprite];
-                timer += Time.deltaTime;
-                if (timer >= Current.Delays[currentSprite])
+                TryGetCurrentAnimation();
+                if (Current != null)
                 {
-                    if (currentSprite + 1 >= Current.Sprites.Count())
+                    if (!Current.Sprites.Contains(Group.SpriteAnimator.m_nodes.m_spriteRenderer.sprite))
                     {
-                        currentSprite = 0;
-                        if (Custom == Current && EndCustom != null)
+                        Player.MyPhysics.ResetAnimState();
+                    }
+                    timer += Time.deltaTime;
+                    if (timer >= Current.Delays[currentSprite])
+                    {
+                        if (currentSprite + 1 >= Current.Sprites.Count())
                         {
-                            EndCustom?.Invoke();
-                            CanPlay = false;
-                            Custom = null;
+                            currentSprite = 0;
+                            if (Custom == Current && EndCustom != null)
+                            {
+                                Stop();
+                                Custom = null;
+                                EndCustom?.Invoke();
+                            }
                         }
+                        else
+                        {
+                            currentSprite++;
+                        }
+                        timer = 0;
                     }
-                    else
-                    {
-                        currentSprite++;
-                    }
-                    timer = 0;
                 }
             }
         }
-        public GifFile TryGetCurrentAnimation()
+        public void TryGetCurrentAnimation()
         {
             GifFile Current = Custom;
             if (Current == null)
@@ -230,7 +231,11 @@ namespace FungleAPI.Patches
                     Current = GhostGuardianAngelAnim;
                 }
             }
-            return Current;
+            if (Current != this.Current)
+            {
+                this.Current = Current;
+                Reset();
+            }
         }
     }
 }

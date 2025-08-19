@@ -85,11 +85,11 @@ namespace FungleAPI.Role.Patches
                 writer.Write((byte)value.Role);
                 writer.Write(value.RoleCount);
                 writer.Write(value.RoleChance);
-                writer.Write(value.CachedConfiguration.Configs.Count);
+                writer.Write(value.Configuration.Configs.Count);
                 int t = 0;
-                while (t < value.CachedConfiguration.Configs.Count)
+                while (t < value.Configuration.Configs.Count)
                 {
-                    CustomConfig config = value.CachedConfiguration.Configs[i];
+                    CustomOption config = value.Configuration.Configs[i];
                     writer.WriteConfig(config);
                     writer.Write(config.GetValue());
                     t++;
@@ -128,13 +128,13 @@ namespace FungleAPI.Role.Patches
             for (int i = 0; i < count; i++)
             {
                 ICustomRole role = CustomRoleManager.GetRole((RoleTypes)message.ReadByte());
-                role.CachedConfiguration.onlineCount = message.ReadInt32();
-                role.CachedConfiguration.onlineChance = message.ReadInt32();
+                role.Configuration.onlineCount = message.ReadInt32();
+                role.Configuration.onlineChance = message.ReadInt32();
                 int count2 = message.ReadInt32();
                 int t = 0;
                 while (t < count)
                 {
-                    CustomConfig config = message.ReadConfig();
+                    CustomOption config = message.ReadConfig();
                     if (config != null)
                     {
                         config.SetValue(message.ReadString());

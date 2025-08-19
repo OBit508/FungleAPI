@@ -35,7 +35,7 @@ namespace FungleAPI.Rpc
             Writer.Write(vector.y);
             Writer.Write(vector.z);
         }
-        public static void WriteConfig(this MessageWriter Writer, CustomConfig config)
+        public static void WriteConfig(this MessageWriter Writer, CustomOption config)
         {
             Writer.Write(config.FullConfigName);
         }
@@ -60,10 +60,10 @@ namespace FungleAPI.Rpc
         {
             return Utils.GetBodyById(Reader.ReadByte());
         }
-        public static CustomConfig ReadConfig(this MessageReader Reader)
+        public static CustomOption ReadConfig(this MessageReader Reader)
         {
             string fullConfigName = Reader.ReadString();
-            foreach (CustomConfig config in ConfigurationManager.Configs.Values)
+            foreach (CustomOption config in ConfigurationManager.Configs.Values)
             {
                 if (config.FullConfigName == fullConfigName)
                 {
