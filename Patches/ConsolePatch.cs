@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(Console))]
-    public static class ConsolePatch
+    internal static class ConsolePatch
     {
         [HarmonyPatch("AllowImpostor", MethodType.Getter)]
         [HarmonyPrefix]

@@ -5,16 +5,17 @@ using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
-using FungleAPI.Assets;
 using FungleAPI.Configuration;
 using FungleAPI.MCIPatches;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
+using FungleAPI.Role.Patches;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.Injection;
@@ -45,20 +46,19 @@ namespace FungleAPI
 		public override void Load()
 		{
             Instance = this;
-            if (Plugin != null)
+            if (Plugin == null)
             {
-                ClassInjector.RegisterTypeInIl2Cpp<CustomConsole>();
-                ClassInjector.RegisterTypeInIl2Cpp<GifAnimator>();
-                ClassInjector.RegisterTypeInIl2Cpp<CustomDeadBody>();
-                ClassInjector.RegisterTypeInIl2Cpp<Updater>();
-                ClassInjector.RegisterTypeInIl2Cpp<CustomVent>();
-                ClassInjector.RegisterTypeInIl2Cpp<HerePointBehaviour>();
-                ClassInjector.RegisterTypeInIl2Cpp<GifFile>();
+                Log.LogError("Failed creating ModPlugin from API");
             }
             Harmony.PatchAll();
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
             {
-                if (!allLoadded && scene.name == "MainMenu")
+                if (!loaddedAssets)
+                {
+                    loadAssets();
+                    loaddedAssets = true;
+                }
+                if (!rolesRegistered && scene.name == "MainMenu")
                 {
                     Plugin.Roles = RoleManager.Instance.AllRoles.Concat(Plugin.Roles).ToList();
                     foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
@@ -66,11 +66,12 @@ namespace FungleAPI
                         CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value);
                     }
                     RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
-                    allLoadded = true;
+                    rolesRegistered = true;
                 }
             }));
         }
-        private static bool allLoadded;
+        private static bool rolesRegistered;
+        internal static bool loaddedAssets;
         internal static ModPlugin plugin;
 		public static ModPlugin Plugin 
         {
@@ -83,6 +84,18 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                 }
                 return plugin;
+            }
+        }
+        internal static Action loadAssets = new Action(delegate
+        {
+            RolesSettingMenuPatch.Cog = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.cog", 200f);
+            ResourceHelper.EmptySprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.empty", 100);
+        });
+        public static void LoadAssets(Action action)
+        {
+            if (action != null)
+            {
+                loadAssets += action;
             }
         }
 	}

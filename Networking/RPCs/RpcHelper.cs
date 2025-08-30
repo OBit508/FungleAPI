@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking.RPCs
 {
     public class RpcHelper
     {

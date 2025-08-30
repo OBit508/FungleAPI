@@ -2,6 +2,7 @@
 using FungleAPI.Configuration;
 using FungleAPI.Role;
 using FungleAPI.Roles;
+using FungleAPI.Networking;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking.RPCs
 {
     public class RpcSyncSeetings : CustomRpc<ICustomRole>
     {
@@ -21,7 +22,7 @@ namespace FungleAPI.Rpc
             int count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
             {
-                CustomOption config = reader.ReadConfig();
+                ModdedOption config = reader.ReadConfig();
                 if (config != null)
                 {
                     config.SetValue(reader.ReadString());
@@ -36,7 +37,7 @@ namespace FungleAPI.Rpc
             writer.Write(value.Configuration.Configs.Count);
             for (int i = 0; i < value.Configuration.Configs.Count; i++)
             {
-                CustomOption config = value.Configuration.Configs[i];
+                ModdedOption config = value.Configuration.Configs[i];
                 writer.WriteConfig(config);
                 writer.Write(config.GetValue());
             }

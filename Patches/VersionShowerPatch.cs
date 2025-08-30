@@ -10,7 +10,7 @@ using FungleAPI.MCIPatches;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(VersionShower), "Start")]
-    class VersionShowerPatch
+    internal static class VersionShowerPatch
     {
         public static void Postfix(VersionShower __instance)
         {

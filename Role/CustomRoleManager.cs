@@ -5,7 +5,7 @@ using FungleAPI.Configuration;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -29,13 +29,13 @@ namespace FungleAPI.Roles
 {
     public static class CustomRoleManager
     {
-        public static RoleBehaviour NeutralGhost => GetInstance<NeutralGhost>();
+        public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
         internal static int id = Enum.GetNames<RoleTypes>().Length;
         internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
-        public static T GetInstance<T>() where T : RoleBehaviour
+        public static T Instance<T>() where T : RoleBehaviour
         {
             foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
             {

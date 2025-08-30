@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-namespace FungleAPI.Utilities
+namespace FungleAPI.Utilities.Assets
 {
-    public class GifDecoder
+    internal class GifDecoder
     {
         public List<Texture2D> Frames = new List<Texture2D>();
         public List<float> FrameDelays = new List<float>();
@@ -47,7 +47,7 @@ namespace FungleAPI.Utilities
                                 reader.ReadByte(); // block size (sempre 4)
                                 byte packedGCE = reader.ReadByte();
 
-                                disposalMethod = (packedGCE >> 2) & 0x07; // <- extrair disposal method
+                                disposalMethod = packedGCE >> 2 & 0x07; // <- extrair disposal method
                                 bool transparencyFlag = (packedGCE & 0x01) != 0;
 
                                 int delay = reader.ReadUInt16();
@@ -82,7 +82,7 @@ namespace FungleAPI.Utilities
                                 {
                                     for (int x = 0; x < imgW; x++)
                                     {
-                                        int globalIndex = (height - 1 - (imgY + y)) * width + (imgX + x);
+                                        int globalIndex = (height - 1 - (imgY + y)) * width + imgX + x;
                                         if (globalIndex >= 0 && globalIndex < framePixels.Length)
                                             framePixels[globalIndex] = new Color32(0, 0, 0, 0); // limpa
                                     }
@@ -98,7 +98,7 @@ namespace FungleAPI.Utilities
                                     int pixelIndex = decodedPixels[y * imgW + x];
                                     if (pixelIndex == transparentIndex) continue;
 
-                                    int globalIndex = (height - 1 - (imgY + y)) * width + (imgX + x);
+                                    int globalIndex = (height - 1 - (imgY + y)) * width + imgX + x;
                                     if (globalIndex >= 0 && globalIndex < framePixels.Length)
                                     {
                                         framePixels[globalIndex] = new Color32(
@@ -164,13 +164,13 @@ namespace FungleAPI.Utilities
                 while (bitsRead < codeSize)
                 {
                     if (dataPos >= data.Length) return -1;
-                    rawCode |= (data[dataPos] >> bitPos) << bitsRead;
+                    rawCode |= data[dataPos] >> bitPos << bitsRead;
                     int bitsFromThisByte = Math.Min(8 - bitPos, codeSize - bitsRead);
                     bitPos += bitsFromThisByte;
                     bitsRead += bitsFromThisByte;
                     if (bitPos >= 8) { bitPos = 0; dataPos++; }
                 }
-                return rawCode & ((1 << codeSize) - 1);
+                return rawCode & (1 << codeSize) - 1;
             };
             int prevCode = -1;
             while (true)
@@ -203,7 +203,7 @@ namespace FungleAPI.Utilities
                     newEntry.Add(entry[0]);
                     dictionary.Add(newEntry);
                     dictSize++;
-                    if (dictSize == (1 << codeSize) && codeSize < 12)
+                    if (dictSize == 1 << codeSize && codeSize < 12)
                         codeSize++;
                 }
                 prevCode = code;

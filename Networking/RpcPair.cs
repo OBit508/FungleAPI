@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using FungleAPI.Networking.RPCs;
+using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking
 {
     public class RpcPair
     {

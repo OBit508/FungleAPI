@@ -8,12 +8,14 @@ namespace FungleAPI.Translation
 {
     public class Translator
     {
-        internal Translator(string defaultText)
+        public Translator(string defaultText)
         {
             Default = defaultText;
-            StringName = (StringNames)1000000 + All.Count + 100;
+            StringName = (StringNames)validId;
+            validId--;
             All.Add(this);
         }
+        internal static int validId = -99999;
         internal static List<Translator> All = new List<Translator>();
         internal string Default;
         public StringNames StringName;

@@ -1,4 +1,5 @@
-﻿using FungleAPI.Utilities;
+﻿using FungleAPI.Attributes;
+using FungleAPI.Utilities;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -9,11 +10,12 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
-    public class CustomDeadBody : DeadBody
+    [RegisterTypeInIl2Cpp]
+    public class ModdedDeadBody : DeadBody
     {
-        public CustomDeadBody(IntPtr ptr) : base(ptr) { }
+        public ModdedDeadBody(IntPtr ptr) : base(ptr) { }
         internal static List<Il2CppSystem.Type> AllBodyComponents = new List<Il2CppSystem.Type>();
-        public static List<CustomDeadBody> AllBodies = new List<CustomDeadBody>();
+        public static List<ModdedDeadBody> AllBodies = new List<ModdedDeadBody>();
         public PlayerControl Carring;
         public PlayerControl Owner;
         public void Destroy()
@@ -23,7 +25,7 @@ namespace FungleAPI.MonoBehaviours
         }
         public void Start()
         {
-            Owner = Utils.GetPlayerById(ParentId);
+            Owner = Helpers.GetPlayerById(ParentId);
             GetComponent<BoxCollider2D>().isTrigger = false;
             if (this != GameManager.Instance.deadBodyPrefab)
             {
@@ -62,7 +64,7 @@ namespace FungleAPI.MonoBehaviours
             material.SetFloat("_Outline", num);
             material.SetColor("_OutlineColor", color);
         }
-        public static CustomDeadBody CreateCustomBody(PlayerControl from)
+        public static ModdedDeadBody CreateCustomBody(PlayerControl from)
         {
             DeadBody body = Instantiate(GameManager.Instance.deadBodyPrefab);
             body.enabled = false;
@@ -71,7 +73,7 @@ namespace FungleAPI.MonoBehaviours
             vector.z = vector.y / 1000f;
             body.transform.position = vector;
             body.enabled = true;
-            return body.SafeCast<CustomDeadBody>();
+            return body.SafeCast<ModdedDeadBody>();
         }
     }
 }

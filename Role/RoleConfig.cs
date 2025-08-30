@@ -45,7 +45,7 @@ namespace FungleAPI.Role
         public bool CanSabotage;
         public bool TasksCountForProgress;
         public bool IsGhostRole;
-        internal List<CustomOption> Configs;
+        internal List<ModdedOption> Configs;
         public CustomAbilityButton[] Buttons;
         public RoleTypes GhostRole;
         public RoleTaskHintType HintType;
@@ -53,6 +53,7 @@ namespace FungleAPI.Role
         public bool ShowTeamColor;
         public bool CanDoTasks;
         public GameOverReason WinReason;
+        public Sprite Screenshot;
         public int GetCount()
         {
             if (AmongUsClient.Instance.AmHost)

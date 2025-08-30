@@ -1,4 +1,5 @@
-﻿using FungleAPI.MonoBehaviours;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.MonoBehaviours;
 using FungleAPI.Roles;
 using HarmonyLib;
 using Hazel;
@@ -17,7 +18,7 @@ using UnityEngine;
 
 namespace FungleAPI.Utilities
 {
-    public static class Utils
+    public static class Helpers
     {
         public static void ClearAndDestroy<T>(this List<T> list) where T : UnityEngine.Object
         {
@@ -48,9 +49,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
-        public static CustomDeadBody GetBodyById(byte id)
+        public static ModdedDeadBody GetBodyById(byte id)
         {
-            foreach (CustomDeadBody body in CustomDeadBody.AllBodies)
+            foreach (ModdedDeadBody body in ModdedDeadBody.AllBodies)
             {
                 if (body.ParentId == id)
                 {
@@ -59,9 +60,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
-        public static CustomDeadBody GetBody(this PlayerControl player)
+        public static ModdedDeadBody GetBody(this PlayerControl player)
         {
-            foreach (CustomDeadBody body in CustomDeadBody.AllBodies)
+            foreach (ModdedDeadBody body in ModdedDeadBody.AllBodies)
             {
                 if (body.Owner == player)
                 {
@@ -188,6 +189,19 @@ namespace FungleAPI.Utilities
             {
                 return null;
             }
+        }
+        public static T Prefab<T>() where T : UnityEngine.Object
+        {
+            return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T)))[0].SafeCast<T>();
+        }
+        public static Il2CppSystem.Collections.Generic.List<T> ToIl2CppList<T>(this List<T> list)
+        {
+            Il2CppSystem.Collections.Generic.List<T> values = new Il2CppSystem.Collections.Generic.List<T>();
+            foreach (T item in list)
+            {
+                values.Add(item);
+            }
+            return values;
         }
     }
 }

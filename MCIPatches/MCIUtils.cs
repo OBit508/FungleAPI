@@ -45,7 +45,7 @@ namespace FungleAPI.MCIPatches
             if (mci != null)
             {
                 FieldInfo field = mci.GetType("MCI.InstanceControl").GetField("Clients");
-                if (field != null && field.FieldType == typeof(Dictionary<int, ClientData>))
+                if (field != null && field.GetValue(null).SimpleCast<Dictionary<int, ClientData>>() != null)
                 {
                     ClientData client;
                     field.GetValue(null).SimpleCast<Dictionary<int, ClientData>>().TryGetValue(clientId, out client);

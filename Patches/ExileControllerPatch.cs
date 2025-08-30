@@ -11,7 +11,7 @@ using HarmonyLib;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(ExileController))]
-    internal class ExileControllerPatchPatch
+    internal static class ExileControllerPatchPatch
     {
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
@@ -21,33 +21,6 @@ namespace FungleAPI.Patches
             {
                 string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
                 __instance.completeString = __instance.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + __instance.initData.networkedPlayer.Role.NiceName;
-                Dictionary<ModdedTeam, ChangeableValue<int>> teams = new Dictionary<ModdedTeam, ChangeableValue<int>>();
-                foreach (NetworkedPlayerInfo player in GameData.Instance.AllPlayers)
-                {
-                    if (!player.IsDead)
-                    {
-                        ModdedTeam team = player.Role.GetTeam();
-                        if (teams.ContainsKey(team))
-                        {
-                            teams[team].Value++;
-                        }
-                        else
-                        {
-                            teams.Add(team, new ChangeableValue<int>(1));
-                        }
-                    }
-                }
-                __instance.ImpostorText.text = "Remain: ";
-                int count = 0;
-                foreach (KeyValuePair<ModdedTeam, ChangeableValue<int>> pair in teams)
-                {
-                    __instance.ImpostorText.text += pair.Value.ToString() + " " + (pair.Value.Value <= 1 ? pair.Key.TeamName.GetString() : pair.Key.PluralName.GetString());
-                    if (count != teams.Count - 1)
-                    {
-                        __instance.ImpostorText.text += ",";
-                    }
-                    count++;
-                }
             }
         }
         [HarmonyPatch("ReEnableGameplay")]

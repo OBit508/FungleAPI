@@ -11,7 +11,7 @@ using UnityEngine.TextCore.Text;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(ImportantTextTask), "AppendTaskText")]
-    public static class ImportantTextPatch
+    internal static class ImportantTextPatch
     {
         public static bool Prefix(ImportantTextTask __instance, [HarmonyArgument(0)] Il2CppSystem.Text.StringBuilder sb)
         {

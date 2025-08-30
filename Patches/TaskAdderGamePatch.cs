@@ -1,11 +1,11 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.Assets;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using MS.Internal.Xml.XPath;
 using System;
@@ -21,10 +21,8 @@ using xCloud;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(TaskAdderGame))]
-    public static class TaskAdderGamePatch
+    internal static class TaskAdderGamePatch
     {
-        public static int index;
-        public static ModPlugin LastPlugin;
         public static Scroller scroller;
         public static Dictionary<TaskFolder, List<RoleBehaviour>> Folders = new Dictionary<TaskFolder, List<RoleBehaviour>>();
         [HarmonyPatch("Begin")]

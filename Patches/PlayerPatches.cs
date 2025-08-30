@@ -1,12 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using AsmResolver.PE.DotNet.ReadyToRun;
 using Epic.OnlineServices.Presence;
-using FungleAPI.Assets;
+using FungleAPI.Utilities.Assets;
 using FungleAPI.MonoBehaviours;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -28,13 +29,20 @@ using static UnityEngine.GraphicsBuffer;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(PlayerControl))]
-    public static class PlayerPatches
+    internal static class PlayerPatches
     {
         internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         public static void OnStart(PlayerControl __instance)
         {
+            __instance.myTasks.Add(new GameObject("RoleHintText")
+            {
+                transform =
+                {
+                    parent = __instance.transform
+                }
+            }.AddComponent<RoleHintText>());
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 __instance.gameObject.AddComponent(type);
@@ -51,17 +59,12 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static bool OnToggleHighlight(PlayerControl __instance, [HarmonyArgument(0)] bool active)
         {
-            if (__instance.Data.Role.CustomRole() != null && active)
-            {
-                __instance.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                __instance.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", __instance.Data.Role.CustomRole().Configuration.OutlineColor);
-                return false;
-            }
-            return true;
+            __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().Configuration.OutlineColor));
+            return false;
         }
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
-            CustomRpcManager.GetInstance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
+            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
         }
         public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
         {
@@ -85,157 +88,5 @@ namespace FungleAPI.Patches
             return closest;
         }
     }
-    public class PlayerHelper : PlayerComponent
-    {
-        internal static Dictionary<Animator, PlayerHelper> anims = new Dictionary<Animator, PlayerHelper>();
-        internal static Dictionary<Animator, PlayerHelper> Animators
-        {
-            get
-            {
-                Animator[] keys = new Animator[anims.Count];
-                anims.Keys.CopyTo(keys, 0);
-                for (int i = 0; i < keys.Length; i++)
-                {
-                    if (keys[i].IsNullOrDestroyed())
-                    {
-                        anims.Remove(keys[i]);
-                    }
-                }
-                return anims;
-            }
-        }
-        public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
-        public GifFile IdleAnim;
-        public GifFile RunAnim;
-        public GifFile GhostIdleAnim;
-        public GifFile EnterVentAnim;
-        public GifFile ExitVentAnim;
-        public GifFile SpawnAnim;
-        public GifFile SpawnGlowAnim;
-        public GifFile ClimbUpAnim;
-        public GifFile ClimbDownAnim;
-        public GifFile GhostGuardianAngelAnim;
-        public GifFile Custom;
-        public GifFile Current;
-        public bool CanPlay;
-        internal Action EndCustom;
-        internal float timer;
-        internal int currentSprite;
-        public PlayerControl Player => GetComponent<PlayerControl>();
-        public PlayerAnimationGroup Group => Player.MyPhysics.Animations.group;
-        public void Reset()
-        {
-            currentSprite = 0;
-            timer = 0;
-        }
-        public void Play()
-        {
-            CanPlay = true;
-            Reset();
-            Player.MyPhysics.ResetAnimState();
-        }
-        public void Stop()
-        {
-            CanPlay = false;
-            Player.MyPhysics.ResetAnimState();
-        }
-        public void PlayCustom(GifFile custom, Action onEnd = null)
-        {
-            Custom = custom;
-            EndCustom = onEnd;
-            CanPlay = true;
-            Reset();
-            Player.MyPhysics.ResetAnimState();
-        }
-        public void Update()
-        {
-            Animator animator = Player.MyPhysics.Animations.Animator.m_animator;
-            if (!Animators.ContainsKey(animator))
-            {
-                Animators.Add(animator, this);
-            }
-            if (CanPlay)
-            {
-                TryGetCurrentAnimation();
-                if (Current != null)
-                {
-                    if (!Current.Sprites.Contains(Group.SpriteAnimator.m_nodes.m_spriteRenderer.sprite))
-                    {
-                        Player.MyPhysics.ResetAnimState();
-                    }
-                    timer += Time.deltaTime;
-                    if (timer >= Current.Delays[currentSprite])
-                    {
-                        if (currentSprite + 1 >= Current.Sprites.Count())
-                        {
-                            currentSprite = 0;
-                            if (Custom == Current && EndCustom != null)
-                            {
-                                Stop();
-                                Custom = null;
-                                EndCustom?.Invoke();
-                            }
-                        }
-                        else
-                        {
-                            currentSprite++;
-                        }
-                        timer = 0;
-                    }
-                }
-            }
-        }
-        public void TryGetCurrentAnimation()
-        {
-            GifFile Current = Custom;
-            if (Current == null)
-            {
-                if (Group.SpriteAnimator.m_currAnim == Group.RunAnim)
-                {
-                    Current = RunAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.IdleAnim)
-                {
-                    Current = IdleAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.GhostIdleAnim)
-                {
-                    Current = GhostIdleAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.EnterVentAnim)
-                {
-                    Current = EnterVentAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.ExitVentAnim)
-                {
-                    Current = ExitVentAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.SpawnAnim)
-                {
-                    Current = SpawnAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.SpawnGlowAnim)
-                {
-                    Current = SpawnGlowAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.ClimbUpAnim)
-                {
-                    Current = ClimbUpAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.ClimbDownAnim)
-                {
-                    Current = ClimbDownAnim;
-                }
-                else if (Group.SpriteAnimator.m_currAnim == Group.GhostGuardianAngelAnim)
-                {
-                    Current = GhostGuardianAngelAnim;
-                }
-            }
-            if (Current != this.Current)
-            {
-                this.Current = Current;
-                Reset();
-            }
-        }
-    }
+    
 }

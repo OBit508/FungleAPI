@@ -1,4 +1,4 @@
-﻿using AsmResolver.Shims;
+﻿
 using FungleAPI;
 using FungleAPI.Role;
 using FungleAPI.Roles;
@@ -13,7 +13,7 @@ using UnityEngine;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(HudManager))]
-    public static class HudPatch
+    internal static class HudPatch
     {
         [HarmonyPatch("Start")]
         [HarmonyPostfix]

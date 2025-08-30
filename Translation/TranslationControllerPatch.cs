@@ -14,7 +14,7 @@ namespace FungleAPI.Translation
         typeof(StringNames),
         typeof(Il2CppReferenceArray<Il2CppSystem.Object>)
    })]
-    public class TranslationControllerPatch
+    internal static class TranslationControllerPatch
     {
         public static bool Prefix(ref string __result, [HarmonyArgument(0)] StringNames name)
         {

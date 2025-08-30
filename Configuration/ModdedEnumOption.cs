@@ -4,7 +4,7 @@ using Epic.OnlineServices.RTC;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Patches;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using Il2CppSystem.Web;
 using System;
@@ -21,11 +21,11 @@ using static Rewired.UI.ControlMapper.ControlMapper;
 namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class CustomEnumOption : CustomOption
+    public class ModdedEnumOption : ModdedOption
     {
-        public CustomEnumOption(string configName, string[] defaultValue)
+        public ModdedEnumOption(string configName, string[] defaultValue)
+            : base(configName)
         {
-            ConfigName = configName;
             Enum = defaultValue;
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
@@ -34,16 +34,19 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 string value = (string)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            StringOption option = UnityEngine.Object.Instantiate(Prefab<StringOption>(), transform);
+            StringOption option = UnityEngine.Object.Instantiate(Helpers.Prefab<StringOption>(), transform);
+            option.enabled = false;
             SetUpFromData(option);
-            option.TitleText.text = ConfigName;
+            option.TitleText.enabled = false;
+            option.TitleText.text = ConfigName.GetString();
+            option.TitleText.enabled = true;
             option.ValueText.text = localValue.Value;
             option.MinusBtn.SetNewAction(delegate
             {
@@ -58,7 +61,6 @@ namespace FungleAPI.Configuration
                 option.OnValueChanged?.Invoke(option);
             });
             option.gameObject.SetActive(true);
-            option.enabled = false;
             return option;
         }
         internal int currentIndex;

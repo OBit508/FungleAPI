@@ -85,7 +85,7 @@ namespace FungleAPI.Roles
             Button.usesRemainingText.material.SetFloat("_Desat", num);
             if (!Transformed)
             {
-                if (!MeetingHud.Instance && !ExileController.Instance && Vent.currentVent == null && Timer > 0f)
+                if (!MeetingHud.Instance && !ExileController.Instance && Timer > 0f)
                 {
                     Timer -= Time.deltaTime;
                     Button.SetCoolDown(Timer, Cooldown);

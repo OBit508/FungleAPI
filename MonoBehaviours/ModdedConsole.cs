@@ -1,4 +1,6 @@
-﻿using FungleAPI.Utilities;
+﻿using Cpp2IL.Core.Attributes;
+using FungleAPI.Attributes;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,8 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
-    public class CustomConsole : SystemConsole
+    [RegisterTypeInIl2Cpp]
+    public class ModdedConsole : SystemConsole
     {
         public override float CanUse(NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
@@ -67,9 +70,9 @@ namespace FungleAPI.MonoBehaviours
         public Action OnUse;
         public bool DeadsCanUse;
         public Color OutlineColor;
-        public static CustomConsole CreateConsole(float distance, bool deadsCanUse, Action onUse, Sprite sprite)
+        public static ModdedConsole CreateConsole(float distance, bool deadsCanUse, Action onUse, Sprite sprite)
         {
-            CustomConsole console = new GameObject("CustomConsole").AddComponent<CustomConsole>();
+            ModdedConsole console = new GameObject("CustomConsole").AddComponent<ModdedConsole>();
             console.gameObject.layer = 12;
             console.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
             console.Image = console.gameObject.AddComponent<SpriteRenderer>();

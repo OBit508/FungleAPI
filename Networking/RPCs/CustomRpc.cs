@@ -1,5 +1,6 @@
 ﻿using FungleAPI.MCIPatches;
 using FungleAPI.Patches;
+using FungleAPI.Networking;
 using Hazel;
 using InnerNet;
 using System;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking.RPCs
 {
     public class CustomRpc<DataT> : RpcHelper
     {
@@ -25,6 +26,17 @@ namespace FungleAPI.Rpc
                 writer.EndMessage();
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
+        }
+        public void CustomSend(DataT data, SendOption sendOption = SendOption.Reliable)
+        {
+            MessageWriter writer = AmongUsClient.Instance.CustomStartRpcImmediately(sendOption);
+            writer.Write(false);
+            writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
+            writer.Write(GetType().FullName);
+            writer.StartMessage(0);
+            Write(writer, data);
+            writer.EndMessage();
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
         public virtual void Write(MessageWriter writer, DataT value)
         {

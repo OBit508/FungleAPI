@@ -1,6 +1,6 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -14,15 +14,15 @@ namespace FungleAPI.Configuration
 {
     public static class ConfigurationManager
     {
-        public static Dictionary<MethodBase, CustomOption> Configs = new Dictionary<MethodBase, CustomOption>();
+        public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
         internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
-        public static List<CustomOption> InitializeConfigs(object obj)
+        public static List<ModdedOption> InitializeConfigs(object obj)
         {
             Type type = obj.GetType();
-            List<CustomOption> configs = new List<CustomOption>();
+            List<ModdedOption> configs = new List<ModdedOption>();
             foreach (PropertyInfo property in type.GetProperties())
             {
-                CustomOption att = (CustomOption)property.GetCustomAttribute(typeof(CustomOption));
+                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
                 if (att != null)
                 {
                     att.Initialize(type, property, obj);

@@ -1,4 +1,4 @@
-﻿using FungleAPI.Rpc;
+﻿using FungleAPI.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +8,31 @@ using UnityEngine;
 
 namespace FungleAPI.MonoBehaviours
 {
+    [RegisterTypeInIl2Cpp]
     public class Updater : MonoBehaviour
     {
-        public Action onUpdate;
+        public Action update;
+        public Action fixedUpdate;
+        public Action lateUpdate;
         public void Update()
         {
-            if (onUpdate != null)
+            if (update != null)
             {
-                onUpdate();
+                update();
+            }
+        }
+        public void FixedUpdate()
+        {
+            if (fixedUpdate != null)
+            {
+                fixedUpdate();
+            }
+        }
+        public void LateUpdate()
+        {
+            if (lateUpdate != null)
+            {
+                lateUpdate();
             }
         }
     }

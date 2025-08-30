@@ -9,7 +9,7 @@ using HarmonyLib;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(SabotageButton), "DoClick")]
-    public class SabotageButtonPatch
+    internal static class SabotageButtonPatch
     {
         public static bool Prefix()
         {

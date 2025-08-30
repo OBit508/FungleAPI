@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking.RPCs
 {
     public class RpcSendNotification : CustomRpc<(string text, bool playSound, bool handlePlaySound)>
     {

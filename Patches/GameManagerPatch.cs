@@ -2,7 +2,7 @@
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -16,7 +16,7 @@ using UnityEngine;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(GameManager))]
-    public static class GameManagerPatch
+    internal static class GameManagerPatch
     {
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
@@ -28,7 +28,7 @@ namespace FungleAPI.Patches
                 SpriteRenderer[] renderers = __instance.deadBodyPrefab.bodyRenderers;
                 SpriteRenderer renderer = __instance.deadBodyPrefab.bloodSplatter;
                 GameObject.Destroy(__instance.deadBodyPrefab);
-                CustomDeadBody body = bodyPrefab.AddComponent<CustomDeadBody>();
+                ModdedDeadBody body = bodyPrefab.AddComponent<ModdedDeadBody>();
                 body.bodyRenderers = renderers;
                 body.bloodSplatter = renderer;
                 body.myCollider = body.GetComponent<Collider2D>();

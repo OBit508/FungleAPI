@@ -24,11 +24,11 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using xCloud;
 
-namespace FungleAPI.Assets
+namespace FungleAPI.Utilities.Assets
 {
     public static class ResourceHelper
     {
-        public static Sprite EmptySprite = LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
+        public static Sprite EmptySprite ;
         public static string ReadText(ModPlugin plugin, string resource)
         {
             return new System.IO.StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)).ReadToEnd();

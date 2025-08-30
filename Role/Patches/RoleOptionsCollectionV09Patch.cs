@@ -2,9 +2,9 @@
 using BepInEx.Configuration;
 using FungleAPI.Configuration;
 using FungleAPI.MCIPatches;
+using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
@@ -82,14 +82,14 @@ namespace FungleAPI.Role.Patches
             for (int i = 0; i < CustomRoleManager.AllCustomRoles.Count; i++)
             {
                 ICustomRole value = CustomRoleManager.AllCustomRoles[i];
-                writer.Write((byte)value.Role);
-                writer.Write(value.RoleCount);
-                writer.Write(value.RoleChance);
-                writer.Write(value.Configuration.Configs.Count);
+                writer.WritePacked((int)value.Role);
+                writer.WritePacked(value.RoleCount);
+                writer.WritePacked(value.RoleChance);
+                writer.WritePacked(value.Configuration.Configs.Count);
                 int t = 0;
                 while (t < value.Configuration.Configs.Count)
                 {
-                    CustomOption config = value.Configuration.Configs[i];
+                    ModdedOption config = value.Configuration.Configs[i];
                     writer.WriteConfig(config);
                     writer.Write(config.GetValue());
                     t++;
@@ -127,14 +127,14 @@ namespace FungleAPI.Role.Patches
             MessageReader message = reader.ReadMessage();
             for (int i = 0; i < count; i++)
             {
-                ICustomRole role = CustomRoleManager.GetRole((RoleTypes)message.ReadByte());
-                role.Configuration.onlineCount = message.ReadInt32();
-                role.Configuration.onlineChance = message.ReadInt32();
-                int count2 = message.ReadInt32();
+                ICustomRole role = CustomRoleManager.GetRole((RoleTypes)message.ReadPackedInt32());
+                role.Configuration.onlineCount = message.ReadPackedInt32();
+                role.Configuration.onlineChance = message.ReadPackedInt32();
+                int count2 = message.ReadPackedInt32();
                 int t = 0;
                 while (t < count)
                 {
-                    CustomOption config = message.ReadConfig();
+                    ModdedOption config = message.ReadConfig();
                     if (config != null)
                     {
                         config.SetValue(message.ReadString());

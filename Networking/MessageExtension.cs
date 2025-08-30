@@ -12,7 +12,7 @@ using UnityEngine;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking
 {
     public static class MessageExtension
     {
@@ -20,7 +20,7 @@ namespace FungleAPI.Rpc
         {
             Writer.Write(value.PlayerId);
         }
-        public static void WriteDeadBody(this MessageWriter Writer, CustomDeadBody value)
+        public static void WriteDeadBody(this MessageWriter Writer, ModdedDeadBody value)
         {
             Writer.Write(value.ParentId);
         }
@@ -35,7 +35,7 @@ namespace FungleAPI.Rpc
             Writer.Write(vector.y);
             Writer.Write(vector.z);
         }
-        public static void WriteConfig(this MessageWriter Writer, CustomOption config)
+        public static void WriteConfig(this MessageWriter Writer, ModdedOption config)
         {
             Writer.Write(config.FullConfigName);
         }
@@ -54,16 +54,16 @@ namespace FungleAPI.Rpc
         }
         public static PlayerControl ReadPlayer(this MessageReader Reader)
         {
-            return Utils.GetPlayerById(Reader.ReadByte());
+            return Helpers.GetPlayerById(Reader.ReadByte());
         }
-        public static CustomDeadBody ReadBody(this MessageReader Reader)
+        public static ModdedDeadBody ReadBody(this MessageReader Reader)
         {
-            return Utils.GetBodyById(Reader.ReadByte());
+            return Helpers.GetBodyById(Reader.ReadByte());
         }
-        public static CustomOption ReadConfig(this MessageReader Reader)
+        public static ModdedOption ReadConfig(this MessageReader Reader)
         {
             string fullConfigName = Reader.ReadString();
-            foreach (CustomOption config in ConfigurationManager.Configs.Values)
+            foreach (ModdedOption config in ConfigurationManager.Configs.Values)
             {
                 if (config.FullConfigName == fullConfigName)
                 {

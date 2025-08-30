@@ -4,6 +4,7 @@ using Assets.CoreScripts;
 using FungleAPI.MonoBehaviours;
 using FungleAPI.Role.RoleEvent;
 using FungleAPI.Roles;
+using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using Hazel;
 using MS.Internal.Xml.XPath;
@@ -18,7 +19,7 @@ using static Il2CppSystem.Globalization.CultureInfo;
 using static Rewired.Demos.CustomPlatform.MyPlatformControllerExtension;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.Rpc
+namespace FungleAPI.Networking.RPCs
 {
     public class RpcCustomMurder : CustomRpc<(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)>
     {
@@ -90,7 +91,7 @@ namespace FungleAPI.Rpc
                     KillAnimation.SetMovement(target, true);
                     if (createDeadBody)
                     {
-                        CustomDeadBody.CreateCustomBody(target);
+                        ModdedDeadBody.CreateCustomBody(target);
                     }
                     if (playKillSound && Constants.ShouldPlaySfx() && flag2)
                     {

@@ -1,12 +1,14 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Discord;
 using Epic.OnlineServices;
-using FungleAPI.Assets;
+using FungleAPI.Utilities.Assets;
 using FungleAPI.Configuration;
 using FungleAPI.MonoBehaviours;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -18,29 +20,23 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.ProBuilder;
+using static Rewired.Controller;
 using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
 using static Rewired.UI.ControlMapper.ControlMapper;
 
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RolesSettingsMenu))]
-    internal class RolesSettingMenuPatch
+    internal static class RolesSettingMenuPatch
     {
         public static ModPlugin currentPlugin;
         public static ModPlugin chanceTabPlugin;
-        public static ToggleOption togglePrefab;
-        public static NumberOption numberPrefab;
-        public static SpriteRenderer labelSprite;
-        public static TextMeshPro labelText;
-        public static GameObject AdvancedTab;
-        public static List<OptionBehaviour> options = new List<OptionBehaviour>();
         public static PassiveButton SwitchButton;
         public static int currentIndex;
         public static void Reset()
         {
             currentPlugin = FungleAPIPlugin.Plugin;
             chanceTabPlugin = null;
-            options.Clear();
         }
         public static void SetBoundsY(RolesSettingsMenu menu)
         {
@@ -57,7 +53,7 @@ namespace FungleAPI.Role.Patches
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
-        public static void OnUpdate(RolesSettingsMenu __instance)
+        public static void UpdatePrefix(RolesSettingsMenu __instance)
         {
             if (SwitchButton == null)
             {
@@ -80,39 +76,12 @@ namespace FungleAPI.Role.Patches
                         currentPlugin = ModPlugin.AllPlugins[currentIndex];
                     }
                 }));
-                SwitchButton.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                SwitchButton.gameObject.AddComponent<Updater>().update = new Action(delegate
                 {
                     __instance.transform.parent.parent.GetChild(2).gameObject.SetActive(!__instance.RoleChancesSettings.active);
                     SwitchButton.gameObject.SetActive(__instance.RoleChancesSettings.active);
                     SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
                 });
-            }
-            if (togglePrefab == null)
-            {
-                __instance.roleTabs[2].ReceiveClickDown();
-                togglePrefab = UnityEngine.Object.Instantiate(__instance.AdvancedRolesSettings.transform.GetChild(9).GetComponent<ToggleOption>(), __instance.transform);
-                numberPrefab = UnityEngine.Object.Instantiate(__instance.AdvancedRolesSettings.transform.GetChild(8).GetComponent<NumberOption>(), __instance.transform);
-                togglePrefab.gameObject.SetActive(false);
-                numberPrefab.gameObject.SetActive(false);
-                __instance.roleTabs[0].ReceiveClickDown();
-            }
-            if (AdvancedTab == null)
-            {
-                AdvancedTab = UnityEngine.Object.Instantiate(__instance.AdvancedRolesSettings, __instance.AdvancedRolesSettings.transform.parent);
-                for (int i = 1; i < AdvancedTab.transform.GetChildCount(); i++)
-                {
-                    Transform t = AdvancedTab.transform.GetChild(i);
-                    if (i == 2)
-                    {
-                        labelSprite = t.GetChild(0).GetComponent<SpriteRenderer>();
-                        labelText = t.GetChild(1).GetComponent<TextMeshPro>();
-                    }
-                    else
-                    {
-                        t.gameObject.SetActive(false);
-                    }
-                }
-                AdvancedTab.SetActive(false);
             }
             if (currentPlugin != chanceTabPlugin)
             {
@@ -136,39 +105,83 @@ namespace FungleAPI.Role.Patches
                         __instance.RoleChancesSettings.transform.GetChild(i).gameObject.SetActive(true);
                     }
                     __instance.AllButton.transform.parent.gameObject.SetActive(true);
-                    __instance.scrollBar.transform.localPosition = new Vector3(-1.4957f, 0.657f, -4);
-                    __instance.scrollBar.transform.GetChild(1).localScale = new Vector3(6.6811f, 3.5563f, 0.5598f);
                     SetBoundsY(__instance);
                     __instance.scrollBar.ScrollToTop();
+                    Vector3 vec = __instance.scrollBar.transform.GetChild(1).localPosition;
+                    vec.y = -0.5734f;
+                    __instance.scrollBar.transform.GetChild(1).localPosition = vec;
                 }
-            }
-            if (__instance.RoleChancesSettings.active)
-            {
-                if (options.Count > 0)
-                {
-                    foreach (OptionBehaviour op in options)
-                    {
-                        UnityEngine.Object.Destroy(op.gameObject);
-                    }
-                    options.Clear();
-                }
-                AdvancedTab.SetActive(false);
             }
             SwitchButton.GetComponent<Updater>().Update();
         }
+        public static void ChangeTab(RolesSettingsMenu menu, ICustomRole role)
+        {
+            Transform imgBg = menu.AdvancedRolesSettings.transform.FindChild("Imagebackground");
+            Transform labelBg = menu.AdvancedRolesSettings.transform.FindChild("InfoLabelBackground");
+            if (role.Configuration.Screenshot == null)
+            {
+                imgBg.gameObject.SetActive(false);
+                menu.roleScreenshot.gameObject.SetActive(false);
+                menu.roleDescriptionText.transform.parent.localPosition = new Vector3(1.5f, -0.2731f, -1f);
+                menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.09f, 0.2f, 0.5687f);
+                labelBg.localPosition = new Vector3(-0.7f, 0.1054f, -2.5f);
+            }
+            else
+            {
+                imgBg.gameObject.SetActive(true);
+                menu.roleScreenshot.gameObject.SetActive(true);
+                menu.roleDescriptionText.transform.parent.localPosition = new Vector3(2.5176f, -0.2731f, -1f);
+                menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.0675f, 0.1494f, 0.5687f);
+                labelBg.transform.localPosition = new Vector3(1.082f, 0.1054f, -2.5f);
+                menu.roleScreenshot.sprite = Sprite.Create(role.Configuration.Screenshot.texture, new UnityEngine.Rect(0f, 0f, 370f, 230f), Vector2.one / 2f, 100f);
+                menu.roleScreenshot.drawMode = SpriteDrawMode.Sliced;
+            }
+            Transform transform = menu.AdvancedRolesSettings.transform.Find("Background");
+            transform.localPosition = new Vector3(1.4041f, -7.08f, 0f);
+            transform.GetComponent<SpriteRenderer>().size = new Vector2(89.4628f, 100f);
+            for (int i = 0; i < menu.advancedSettingChildren.Count; i++)
+            {
+                GameObject.Destroy(menu.advancedSettingChildren[i].gameObject);
+            }
+            menu.ControllerSelectable.Clear();
+            menu.advancedSettingChildren.Clear();
+            menu.roleDescriptionText.text = role.RoleBlurLong.GetString();
+            menu.roleTitleText.text = role.RoleName.GetString();
+            menu.roleScreenshot.sprite = role.Configuration.Screenshot;
+            float num = -0.872f;
+            menu.roleHeaderSprite.color = Helpers.Light(role.RoleColor);
+            menu.roleHeaderText.color = role.RoleColor;
+            menu.roleHeaderText.text = role.RoleName.GetString();
+            foreach (ModdedOption config in role.Configuration.Configs)
+            {
+                OptionBehaviour op = config.CreateOption(menu.AdvancedRolesSettings.transform);
+                op.SetClickMask(menu.ButtonClickMask);
+                op.OnValueChanged = new Action<OptionBehaviour>(delegate
+                {
+                    RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
+                    pair.AddRpc(CustomRpcManager.Instance<RpcSyncSeetings>(), role);
+                    pair.AddRpc(CustomRpcManager.Instance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true));
+                    pair.SendPair();
+                });
+                op.transform.localPosition = new Vector3(2.17f, num, -2f);
+                menu.advancedSettingChildren.Add(op);
+                num += -0.45f;
+            }
+            menu.scrollBar.CalculateAndSetYBounds(menu.AdvancedRolesSettings.transform.GetChildCount(), 1f, 6f, 0.45f);
+            menu.scrollBar.ScrollToTop();
+            menu.RoleChancesSettings.SetActive(false);
+            menu.AdvancedRolesSettings.SetActive(true);
+            menu.RefreshChildren();
+            menu.InitializeControllerNavigation();
+        }
         public static void LoadChanceTab(ModPlugin plugin, RolesSettingsMenu menu)
         {
-            Vector3 Pos = new Vector3(4.986f, 0.662f, -2);
+            Vector3 Pos = new Vector3(4.986f, 1.162f, -2);
             menu.AllButton.transform.parent.gameObject.SetActive(false);
-            menu.scrollBar.transform.localPosition = new Vector3(-1.4957f, 1.057f, -4);
-            menu.scrollBar.transform.GetChild(1).localScale = new Vector3(6.6811f, 4.2563f, 0.5598f);
-            Vector3 vec = menu.scrollBar.Inner.transform.localPosition;
-            vec.y = 0.7f;
-            menu.scrollBar.Inner.transform.localPosition = vec;
             CategoryHeaderEditRole crewHeader = CreateHeader(menu, new Color(0.4706f, 0.8f, 0.925f), new Color(0.0392f, 0.3412f, 0.451f), new Color(0.0392f, 0.3412f, 0.451f, 0.498f), new Color(0.0549f, 0.3569f, 0.4667f), StringNames.CrewmateRolesHeader.GetString());
             CategoryHeaderEditRole impHeader = CreateHeader(menu, new Color(0.8f, 0.3255f, 0.3255f), new Color(0.5373f, 0.0863f, 0.0863f), new Color(0.5373f, 0.0863f, 0.0863f, 0.498f), new Color(0.3451f, 0.1373f, 0.1373f), StringNames.ImpostorRolesHeader.GetString());
             string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
-            CategoryHeaderEditRole neutralHeader = CreateHeader(menu, Utils.Light(Color.gray, 0.7f), Color.gray, Utils.Dark(Color.gray, 0.7f), Utils.Light(Color.gray, 0.9f), names[0] + " " + names[1] + " " + ModdedTeam.Neutrals.TeamName.GetString());
+            CategoryHeaderEditRole neutralHeader = CreateHeader(menu, Helpers.Light(Color.gray, 0.7f), Color.gray, Helpers.Dark(Color.gray, 0.7f), Helpers.Light(Color.gray, 0.9f), names[0] + " " + names[1] + " " + ModdedTeam.Neutrals.TeamName.GetString());
             List<RoleBehaviour> crewmateRoles = new List<RoleBehaviour>();
             List<RoleBehaviour> impostorRoles = new List<RoleBehaviour>();
             List<RoleBehaviour> neutralRoles = new List<RoleBehaviour>();
@@ -220,7 +233,7 @@ namespace FungleAPI.Role.Patches
                         teamRoles.Add(role);
                     }
                 }
-                CategoryHeaderEditRole header = CreateHeader(menu, Utils.Light(team.TeamColor, 0.7f), team.TeamColor, Utils.Dark(team.TeamColor, 0.7f), Utils.Light(team.TeamColor, 0.9f), names[0] + " " + names[1] + " " + team.TeamName.GetString());
+                CategoryHeaderEditRole header = CreateHeader(menu, Helpers.Light(team.TeamColor, 0.7f), team.TeamColor, Helpers.Dark(team.TeamColor, 0.7f), Helpers.Light(team.TeamColor, 0.9f), names[0] + " " + names[1] + " " + team.TeamName.GetString());
                 header.transform.localPosition = Pos;
                 Pos = OrganizeRoles(teamRoles, Pos, menu);
                 Transform transform = UnityEngine.Object.Instantiate(menu.RoleChancesSettings.transform.GetChild(2).GetChild(1).gameObject, header.blankLabel.transform).transform;
@@ -254,8 +267,9 @@ namespace FungleAPI.Role.Patches
             }
             SetBoundsY(menu);
             menu.scrollBar.ScrollToTop();
-            menu.AdvancedRolesSettings.transform.GetChild(0).localPosition = new Vector3(1.4041f, -1.3688f, 0);
-            menu.AdvancedRolesSettings.transform.GetChild(0).localScale = new Vector3(0.0675f, 0.2094f, 0.5687f);
+            Vector3 vec = menu.scrollBar.transform.GetChild(1).localPosition;
+            vec.y = 0.2266f;
+            menu.scrollBar.transform.GetChild(1).localPosition = vec;
         }
         public static Vector3 OrganizeRoles(List<RoleBehaviour> roles, Vector3 currentVec, RolesSettingsMenu menu)
         {
@@ -275,8 +289,8 @@ namespace FungleAPI.Role.Patches
                     if (AmongUsClient.Instance.AmHost)
                     {
                         RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
-                        pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
-                        pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true));
+                        pair.AddRpc(CustomRpcManager.Instance<RpcSyncSeetings>(), role);
+                        pair.AddRpc(CustomRpcManager.Instance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true));
                         pair.SendPair();
                     }
                 });
@@ -296,32 +310,9 @@ namespace FungleAPI.Role.Patches
                 cog.transform.localScale = new Vector3(1, 1, 1);
                 cog.SetNewAction(delegate
                 {
-                    if (role.Configuration.Configs.Count() > 0)
-                    {
-                        GameSettingMenu.Instance.MenuDescriptionText.text = role.RoleBlurLong.GetString();
-                        menu.AdvancedRolesSettings.gameObject.SetActive(false);
-                        menu.RoleChancesSettings.gameObject.SetActive(false);
-                        AdvancedTab.SetActive(true);
-                        labelSprite.color = Utils.Light(role.RoleColor);
-                        labelText.text = role.RoleName.GetString();
-                        labelText.color = role.RoleColor;
-                        for (int i = 0; i < role.Configuration.Configs.Count(); i++)
-                        {
-                            CustomOption config = role.Configuration.Configs[i];
-                            OptionBehaviour op = config.CreateOption(AdvancedTab.transform);
-                            op.OnValueChanged = new Action<OptionBehaviour>(delegate
-                            {
-                                RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
-                                pair.AddRpc(CustomRpcManager.GetInstance<RpcSyncSeetings>(), role);
-                                pair.AddRpc(CustomRpcManager.GetInstance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true));
-                                pair.SendPair();
-                            });
-                            op.transform.localPosition = new Vector3(0.5f, 0.1f - 0.4f * i, -10f);
-                            options.Add(op);
-                        }
-                    }
+                    ChangeTab(menu, role);
                 });
-                cog.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+                cog.gameObject.AddComponent<Updater>().update = new Action(delegate
                 {
                     cog.SetInteractable(role.Configuration.Configs.Count() > 0);
                 });
@@ -346,6 +337,6 @@ namespace FungleAPI.Role.Patches
             header.gameObject.SetActive(false);
             return header;
         }
-        public static Sprite Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 200f);
+        public static Sprite Cog;
     }
 }

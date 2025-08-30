@@ -2,12 +2,14 @@
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
+using FungleAPI.Attributes;
 using FungleAPI.MonoBehaviours;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
-using FungleAPI.Rpc;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
@@ -35,6 +37,10 @@ namespace FungleAPI
             {
                 try
                 {
+                    if (type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                    }
                     if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
                     {
                         CustomAbilityButton.RegisterButton(type, plugin);
@@ -59,7 +65,7 @@ namespace FungleAPI
                     else if (typeof(BodyComponent).IsAssignableFrom(type) && type != typeof(BodyComponent))
                     {
                         ClassInjector.RegisterTypeInIl2Cpp(type);
-                        CustomDeadBody.AllBodyComponents.Add(Il2CppType.From(type));
+                        ModdedDeadBody.AllBodyComponents.Add(Il2CppType.From(type));
                     }
                 }
                 catch (Exception ex)

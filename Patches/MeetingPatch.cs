@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(MeetingHud))]
-    public static class MeetingPatch
+    internal static class MeetingPatch
     {
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
@@ -18,7 +18,10 @@ namespace FungleAPI.Patches
         {
             foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
-                button.MeetingStart(__instance);
+                if (button.Button != null)
+                {
+                    button.MeetingStart(__instance);
+                }
             }
             __instance.InvokeMeetingEvent(false);
         }

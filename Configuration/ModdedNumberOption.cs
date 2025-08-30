@@ -1,4 +1,5 @@
-﻿using BepInEx.Configuration;
+﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
 using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
 using FungleAPI.Patches;
@@ -18,15 +19,17 @@ using UnityEngine;
 namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class CustomNumberOption : CustomOption
+    public class ModdedNumberOption : ModdedOption
     {
-        public CustomNumberOption(string configName, float minValue, float maxValue, float reduceValue = 1, float increceValue = 1)
+        public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
+            : base(configName)
         {
-            ReduceValue = reduceValue;
-            IncreceValue = increceValue;
-            ConfigName = configName;
+            Increment = increment;
             MaxValue = maxValue;
             MinValue = minValue;
+            FormatString = formatString;
+            ZeroIsInfinity = zeroIsInfinity;
+            SuffixType = suffixType;
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
         {
@@ -34,41 +37,25 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 float value = (float)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            Option = GameObject.Instantiate<NumberOption>(Prefab<NumberOption>(), transform);
-            float value = float.Parse(GetValue());
+            Option = GameObject.Instantiate<NumberOption>(Helpers.Prefab<NumberOption>(), transform);
             SetUpFromData(Option);
-            Option.TitleText.text = ConfigName;
-            Option.ValueText.text = value.ToString();
-            Option.MinusBtn.SetNewAction(delegate
-            {
-                if (value - ReduceValue >= 0 && value - ReduceValue >= MinValue)
-                {
-                    value -= ReduceValue;
-                    SetValue(value.ToString());
-                    Update(value);
-                    Option.OnValueChanged?.Invoke(Option);
-                }
-            });
-            Option.PlusBtn.SetNewAction(delegate
-            {
-                if (value + IncreceValue <= MaxValue)
-                {
-                    value += IncreceValue;
-                    SetValue(value.ToString());
-                    Update(value);
-                    Option.OnValueChanged?.Invoke(Option);
-                }
-            });
-            Update(value);
+            Option.Title = ConfigName;
+            Option.Value = float.Parse(GetValue());
+            Option.Increment = Increment;
+            Option.ValidRange = new FloatRange(MinValue, MaxValue);
+            Option.FormatString = FormatString != null ? FormatString : "0";
+            Option.ZeroIsInfinity = ZeroIsInfinity;
+            Option.SuffixType = SuffixType;
+            Option.floatOptionName = FloatOptionNames.Invalid;
+            Option.ValueText.text = GetValue();
             Option.gameObject.SetActive(true);
-            Option.enabled = false;
             return Option;
         }
         public void Update(float value)
@@ -78,8 +65,10 @@ namespace FungleAPI.Configuration
             Option.ValueText.text = value.ToString();
         }
         public NumberOption Option;
-        public float ReduceValue;
-        public float IncreceValue;
+        public float Increment;
+        public string FormatString;
+        public bool ZeroIsInfinity;
+        public NumberSuffixes SuffixType;
         public float MinValue;
         public float MaxValue;
     }

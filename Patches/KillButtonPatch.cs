@@ -11,13 +11,13 @@ using UnityEngine;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(KillButton), "Start")]
-    internal class KillButtonPatch
+    internal static class KillButtonPatch
     {
         public static float timer;
         public static PlayerControl target;
         public static void Postfix(KillButton __instance)
         {
-            __instance.gameObject.AddComponent<Updater>().onUpdate = new Action(delegate
+            __instance.gameObject.AddComponent<Updater>().update = new Action(delegate
             {
                 target = null;
                 if (PlayerControl.LocalPlayer.Data.Role.CanKill())

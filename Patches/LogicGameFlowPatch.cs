@@ -12,7 +12,7 @@ using System.Text;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch]
-    public static class LogicGameFlowPatch
+    internal static class LogicGameFlowPatch
     {
         internal static List<Type> LogicGameFlowTypes { get; } = (from x in typeof(LogicGameFlow).Assembly.GetTypes() where x.IsSubclassOf(typeof(LogicGameFlow)) select x).ToList<Type>();
         public static IEnumerable<MethodBase> TargetMethods()

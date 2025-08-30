@@ -10,20 +10,21 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using FungleAPI.Translation;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Configuration
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class CustomOption : Attribute
+    public class ModdedOption : Attribute
     {
-        public string ConfigName;
+        public StringNames ConfigName;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
-        public T Prefab<T>() where T : OptionBehaviour
+        protected ModdedOption(string configName)
         {
-            return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T)))[0].SafeCast<T>();
+            ConfigName = new Translator(configName).StringName;
         }
         public string GetValue()
         {
@@ -58,7 +59,9 @@ namespace FungleAPI.Configuration
             {
                 textMeshPro.fontMaterial.SetFloat("_StencilComp", 3f);
                 textMeshPro.fontMaterial.SetFloat("_Stencil", (float)maskLayer);
+                textMeshPro.enabled = true;
             }
+            option.enabled = false;
         }
         public virtual OptionBehaviour CreateOption(Transform transform)
         {
