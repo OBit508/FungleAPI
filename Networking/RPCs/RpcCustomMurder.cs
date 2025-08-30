@@ -2,7 +2,6 @@
 using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using FungleAPI.MonoBehaviours;
-using FungleAPI.Role.RoleEvent;
 using FungleAPI.Roles;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
@@ -49,90 +48,87 @@ namespace FungleAPI.Networking.RPCs
         }
         public static void CustomMurder(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {
-            if (killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags, false))
+            if (resultFlags == MurderResultFlags.FailedError || resultFlags == MurderResultFlags.NULL)
             {
-                if (resultFlags == MurderResultFlags.FailedError || resultFlags == MurderResultFlags.NULL)
+                return;
+            }
+            bool hostCanKill = killer.Data.Role.CanKill() && target.protectedByGuardianId == -1;
+            bool flag = target.protectedByGuardianId == PlayerControl.LocalPlayer.PlayerId;
+            bool flag2 = killer == PlayerControl.LocalPlayer;
+            bool flag3 = target == PlayerControl.LocalPlayer;
+            if (resultFlags == MurderResultFlags.FailedProtected || resultFlags == MurderResultFlags.DecisionByHost && !hostCanKill)
+            {
+                target.protectedByGuardianThisRound = true;
+                if (flag)
                 {
-                    return;
+                    DataManager.Player.Stats.IncrementStat(StatID.Role_GuardianAngel_CrewmatesProtected);
+                    AchievementManager.Instance.OnProtectACrewmate();
                 }
-                bool hostCanKill = killer.Data.Role.CanKill() && target.protectedByGuardianId == -1;
-                bool flag = target.protectedByGuardianId == PlayerControl.LocalPlayer.PlayerId;
-                bool flag2 = killer == PlayerControl.LocalPlayer;
-                bool flag3 = target == PlayerControl.LocalPlayer;
-                if (resultFlags == MurderResultFlags.FailedProtected || resultFlags == MurderResultFlags.DecisionByHost && !hostCanKill)
+                if (flag2 || flag)
                 {
-                    target.protectedByGuardianThisRound = true;
-                    if (flag)
+                    target.ShowFailedMurder();
+                    if (flag2 && resetKillTimer)
                     {
-                        DataManager.Player.Stats.IncrementStat(StatID.Role_GuardianAngel_CrewmatesProtected);
-                        AchievementManager.Instance.OnProtectACrewmate();
+                        killer.SetKillTimer(GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown) / 2f);
                     }
-                    if (flag2 || flag)
-                    {
-                        target.ShowFailedMurder();
-                        if (flag2 && resetKillTimer)
-                        {
-                            killer.SetKillTimer(GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown) / 2f);
-                        }
-                    }
-                    target.RemoveProtection();
                 }
-                else if (resultFlags == MurderResultFlags.Succeeded || resultFlags == MurderResultFlags.DecisionByHost && hostCanKill)
+                target.RemoveProtection();
+            }
+            else if (resultFlags == MurderResultFlags.Succeeded || resultFlags == MurderResultFlags.DecisionByHost && hostCanKill)
+            {
+                killer.isKilling = true;
+                FollowerCamera cam = Camera.main?.GetComponent<FollowerCamera>();
+                if (teleportMurderer)
                 {
-                    killer.isKilling = true;
-                    FollowerCamera cam = Camera.main?.GetComponent<FollowerCamera>();
-                    if (teleportMurderer)
-                    {
-                        killer.MyPhysics.Animations.PlayIdleAnimation();
-                        killer.NetTransform.SnapTo(target.GetTruePosition());
-                        killer.NetTransform.SnapTo(target.transform.position);
-                        KillAnimation.SetMovement(killer, true);
-                    }
-                    KillAnimation.SetMovement(target, true);
-                    if (createDeadBody)
-                    {
-                        ModdedDeadBody.CreateCustomBody(target);
-                    }
-                    if (playKillSound && Constants.ShouldPlaySfx() && flag2)
-                    {
-                        SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
-                    }
-                    if (flag2 || flag3)
-                    {
-                        ConsoleJoystick.SetMode_Task();
-                        cam.Locked = true;
-                        if (flag2)
-                        {
-                            if (PlayerControl.LocalPlayer.Data.RoleType == RoleTypes.Shapeshifter)
-                            {
-                                DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);
-                            }
-                            DataManager.Player.Stats.IncrementStat(GameManager.Instance.IsHideAndSeek() ? StatID.HideAndSeek_ImpostorKills : StatID.ImpostorKills);
-                        }
-                        else if (flag3)
-                        {
-                            if (showKillAnim)
-                            {
-                                HudManager.Instance.KillOverlay.ShowKillAnimation(killer.Data, target.Data);
-                            }
-                            DataManager.Player.Stats.IncrementStat(StatID.TimesMurdered);
-                            PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled = true;
-                        }
-                    }
-                    DestroyableSingleton<UnityTelemetry>.Instance.WriteMurder();
-                    target.gameObject.layer = LayerMask.NameToLayer("Ghost");
-                    target.cosmetics.SetNameMask(false);
-                    target.RpcSetScanner(false);
-                    DestroyableSingleton<AchievementManager>.Instance.OnMurder(flag2, target.AmOwner, killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted, killer.shapeshiftTargetPlayerId, target.PlayerId);
-                    target.Die(DeathReason.Kill, true);
-                    if (flag2 || flag3)
-                    {
-                        cam.Locked = false;
-                    }
-                    killer.isKilling = false;
+                    killer.MyPhysics.Animations.PlayIdleAnimation();
+                    killer.NetTransform.SnapTo(target.GetTruePosition());
+                    killer.NetTransform.SnapTo(target.transform.position);
+                    KillAnimation.SetMovement(killer, true);
                 }
-                killer.Data.Role.InvokeMurderPlayerEvent(target, resultFlags, true);
+                KillAnimation.SetMovement(target, true);
+                if (createDeadBody)
+                {
+                    ModdedDeadBody.CreateCustomBody(target);
+                }
+                if (playKillSound && Constants.ShouldPlaySfx() && flag2)
+                {
+                    SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f);
+                }
+                if (flag2 || flag3)
+                {
+                    ConsoleJoystick.SetMode_Task();
+                    cam.Locked = true;
+                    if (flag2)
+                    {
+                        if (PlayerControl.LocalPlayer.Data.RoleType == RoleTypes.Shapeshifter)
+                        {
+                            DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);
+                        }
+                        DataManager.Player.Stats.IncrementStat(GameManager.Instance.IsHideAndSeek() ? StatID.HideAndSeek_ImpostorKills : StatID.ImpostorKills);
+                    }
+                    else if (flag3)
+                    {
+                        if (showKillAnim)
+                        {
+                            HudManager.Instance.KillOverlay.ShowKillAnimation(killer.Data, target.Data);
+                        }
+                        DataManager.Player.Stats.IncrementStat(StatID.TimesMurdered);
+                        PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled = true;
+                    }
+                }
+                DestroyableSingleton<UnityTelemetry>.Instance.WriteMurder();
+                target.gameObject.layer = LayerMask.NameToLayer("Ghost");
+                target.cosmetics.SetNameMask(false);
+                target.RpcSetScanner(false);
+                DestroyableSingleton<AchievementManager>.Instance.OnMurder(flag2, target.AmOwner, killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted, killer.shapeshiftTargetPlayerId, target.PlayerId);
+                target.Die(DeathReason.Kill, true);
+                if (flag2 || flag3)
+                {
+                    cam.Locked = false;
+                }
+                killer.isKilling = false;
             }
         }
+
     }
 }

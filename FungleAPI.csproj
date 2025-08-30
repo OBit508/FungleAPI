@@ -25,17 +25,10 @@
     <Compile Include="MonoBehaviours\PlayerComponent.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
     <Compile Include="MonoBehaviours\RoleHintText.cs" />
-    <Compile Include="Networking\RPCs\RpcAmModdedClient.cs" />
-    <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />
-    <Compile Include="Patches\InnerNetClientPatch.cs" />
     <Compile Include="Patches\LogicGameFlowPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
-    <Compile Include="Role\RoleEvent\EventManager.cs" />
-    <Compile Include="Role\RoleEvent\EventTime.cs" />
-    <Compile Include="Role\RoleEvent\MeetingEvent.cs" />
-    <Compile Include="Role\RoleEvent\MurderEvent.cs" />
     <Compile Include="Networking\RpcPair.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />

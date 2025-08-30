@@ -1,5 +1,4 @@
-﻿using FungleAPI.Role.RoleEvent;
-using FungleAPI.Roles;
+﻿using FungleAPI.Roles;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -23,13 +22,6 @@ namespace FungleAPI.Patches
                     button.MeetingStart(__instance);
                 }
             }
-            __instance.InvokeMeetingEvent(false);
-        }
-        [HarmonyPatch("OnDestroy")]
-        [HarmonyPrefix]
-        public static void OnDestroyPrefix(MeetingHud __instance)
-        {
-            __instance.InvokeMeetingEvent(true);
         }
     }
 }
