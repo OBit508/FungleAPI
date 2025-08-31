@@ -60,6 +60,7 @@ namespace FungleAPI.Configuration
                 option.ValueText.text = localValue.Value;
                 option.OnValueChanged?.Invoke(option);
             });
+            option.Initialize();
             option.gameObject.SetActive(true);
             return option;
         }

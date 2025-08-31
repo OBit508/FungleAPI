@@ -236,33 +236,6 @@ namespace FungleAPI.Role.Patches
                 CategoryHeaderEditRole header = CreateHeader(menu, Helpers.Light(team.TeamColor, 0.7f), team.TeamColor, Helpers.Dark(team.TeamColor, 0.7f), Helpers.Light(team.TeamColor, 0.9f), names[0] + " " + names[1] + " " + team.TeamName.GetString());
                 header.transform.localPosition = Pos;
                 Pos = OrganizeRoles(teamRoles, Pos, menu);
-                Transform transform = UnityEngine.Object.Instantiate(menu.RoleChancesSettings.transform.GetChild(2).GetChild(1).gameObject, header.blankLabel.transform).transform;
-                transform.localPosition = new Vector3(0f, 0f, -10f);
-                int count = team.GetCount();
-                TextMeshPro valueText = transform.GetChild(0).GetComponent<TextMeshPro>();
-                PassiveButton component = transform.GetChild(1).GetComponent<PassiveButton>();
-                PassiveButton component2 = transform.GetChild(2).GetComponent<PassiveButton>();
-                valueText.text = count.ToString();
-                component.SetNewAction(delegate
-                {
-                    if (count - 1 >= 0)
-                    {
-                        int count3 = count;
-                        count = count3 - 1;
-                        valueText.text = count.ToString();
-                        team.SetCount(count);
-                    }
-                });
-                component2.SetNewAction(delegate
-                {
-                    if (count + 1 <= team.MaxCount)
-                    {
-                        int count2 = count;
-                        count = count2 + 1;
-                        valueText.text = count.ToString();
-                        team.SetCount(count);
-                    }
-                });
                 header.gameObject.SetActive(true);
             }
             SetBoundsY(menu);

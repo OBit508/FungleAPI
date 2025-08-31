@@ -27,17 +27,6 @@ namespace FungleAPI.Networking.RPCs
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
         }
-        public void CustomSend(DataT data, SendOption sendOption = SendOption.Reliable)
-        {
-            MessageWriter writer = AmongUsClient.Instance.CustomStartRpcImmediately(sendOption);
-            writer.Write(false);
-            writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
-            writer.Write(GetType().FullName);
-            writer.StartMessage(0);
-            Write(writer, data);
-            writer.EndMessage();
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-        }
         public virtual void Write(MessageWriter writer, DataT value)
         {
         }

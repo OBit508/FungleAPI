@@ -50,6 +50,7 @@ namespace FungleAPI.Configuration
                 option.CheckMark.gameObject.SetActive(value);
             });
             option.CheckMark.gameObject.SetActive(value);
+            option.Initialize();
             option.gameObject.SetActive(true);
             return option;
         }

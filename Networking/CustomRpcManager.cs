@@ -37,62 +37,12 @@ namespace FungleAPI.Networking
             rpcPair.Writer.Write(true);
             return rpcPair;
         }
-        public static RpcPair CreateCustomRpcPair(SendOption sendOption = SendOption.Reliable)
-        {
-            RpcPair rpcPair = new RpcPair();
-            rpcPair.Writer = AmongUsClient.Instance.CustomStartRpcImmediately(sendOption);
-            rpcPair.Writer.Write(true);
-            return rpcPair;
-        }
         internal static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
             AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
-        }
-        public static MessageWriter CustomStartRpcImmediately(this AmongUsClient amongUsClient, SendOption option)
-        {
-            MessageWriter messageWriter = MessageWriter.Get(option);
-            messageWriter.StartMessage(5);
-            messageWriter.Write(amongUsClient.GameId);
-            messageWriter.StartMessage(2);
-            messageWriter.WritePacked(uint.MaxValue);
-            messageWriter.Write(byte.MaxValue);
-            return messageWriter;
-        }
-        public static void CustomRead(MessageReader reader)
-        {
-            bool isPair = reader.ReadBoolean();
-            if (!isPair)
-            {
-                string rpcModName = reader.ReadString();
-                string rpcId = reader.ReadString();
-                foreach (RpcHelper rpc in AllRpc)
-                {
-                    if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
-                    {
-                        rpc.Handle(reader.ReadMessage());
-                    }
-                }
-            }
-            else
-            {
-                MessageReader messageReader = reader.ReadMessage();
-                int count = messageReader.ReadInt32();
-                for (int i = 0; i < count; i++)
-                {
-                    string rpcModName = messageReader.ReadString();
-                    string rpcId = messageReader.ReadString();
-                    foreach (RpcHelper rpc in AllRpc)
-                    {
-                        if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
-                        {
-                            rpc.Handle(messageReader);
-                        }
-                    }
-                }
-            }
         }
         internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
         public static IEnumerable<MethodBase> TargetMethods()

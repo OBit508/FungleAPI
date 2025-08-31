@@ -55,14 +55,9 @@ namespace FungleAPI.Configuration
             Option.SuffixType = SuffixType;
             Option.floatOptionName = FloatOptionNames.Invalid;
             Option.ValueText.text = GetValue();
+            Option.Initialize();
             Option.gameObject.SetActive(true);
             return Option;
-        }
-        public void Update(float value)
-        {
-            Option.MinusBtn.SetInteractable(value > MinValue);
-            Option.PlusBtn.SetInteractable(value < MaxValue);
-            Option.ValueText.text = value.ToString();
         }
         public NumberOption Option;
         public float Increment;
