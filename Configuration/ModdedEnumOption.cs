@@ -41,7 +41,7 @@ namespace FungleAPI.Configuration
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            StringOption option = UnityEngine.Object.Instantiate(Helpers.Prefab<StringOption>(), transform);
+            StringOption option = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<StringOption>(), transform);
             option.enabled = false;
             SetUpFromData(option);
             option.TitleText.enabled = false;

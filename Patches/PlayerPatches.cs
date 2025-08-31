@@ -52,7 +52,7 @@ namespace FungleAPI.Patches
         [HarmonyPatch("RpcMurderPlayer")]
         public static bool PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
         {
-            RpcCustomMurderPlayer(__instance, target, MurderResultFlags.Succeeded);
+            __instance.RpcCustomMurderPlayer(target, MurderResultFlags.Succeeded);
             return false;
         }
         [HarmonyPatch("ToggleHighlight")]
@@ -62,31 +62,5 @@ namespace FungleAPI.Patches
             __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().Configuration.OutlineColor));
             return false;
         }
-        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
-        {
-            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
-        }
-        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
-        {
-            return player.GetComponent<T>();
-        }
-        public static PlayerControl GetClosest(this PlayerControl target)
-        {
-            PlayerControl closest = null;
-            float dis = target.Data.Role.GetAbilityDistance();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                Vector3 center = target.Collider.bounds.center;
-                Vector3 position = player.transform.position;
-                float num = Vector2.Distance(center, position);
-                if (player != target && !player.Data.IsDead && !PhysicsHelpers.AnythingBetween(target.Collider, center, position, Constants.ShipOnlyMask, false) && num < dis)
-                {
-                    closest = player;
-                    dis = num;
-                }
-            }
-            return closest;
-        }
     }
-    
 }

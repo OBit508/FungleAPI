@@ -1,8 +1,11 @@
 ﻿using FungleAPI.MonoBehaviours;
 using FungleAPI.Role;
 using FungleAPI.Roles;
+using FungleAPI.Utilities;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using PowerTools;
+using Rewired.Utils.Classes.Data;
 using Sentry.Unity.NativeUtils;
 using System;
 using System.Collections.Generic;
@@ -18,6 +21,7 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(Vent))]
     internal static class VentPatch
     {
+        public static List<Il2CppSystem.Type> AllVentComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("SetOutline")]
         [HarmonyPrefix]
         public static bool OnSetOutline(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
@@ -49,137 +53,78 @@ namespace FungleAPI.Patches
             }
             return true;
         }
-        [HarmonyPatch("Start")]
-        [HarmonyPostfix]
-        public static void OnStart(Vent __instance)
-        {
-            List<Vent> list = __instance.gameObject.AddComponent<ModdedVent>().NearbyVents;
-            if (__instance.Right != null)
-            {
-                list.Add(__instance.Right);
-            }
-            if (__instance.Center != null)
-            {
-                list.Add(__instance.Center);
-            }
-            if (__instance.Left != null)
-            {
-                list.Add(__instance.Left);
-            }
-        }
-        public static void ConnectVent(this Vent v, Vent vent)
-        {
-            ButtonBehavior prefab = UnityEngine.Object.Instantiate(v.Buttons[0], v.Buttons[0].transform.parent);
-            foreach (ButtonBehavior b in v.Buttons)
-            {
-                UnityEngine.Object.Destroy(b.gameObject);
-            }
-            float d = Vector2.Distance(v.Buttons[0].transform.position, v.transform.position);
-            v.Buttons = new ButtonBehavior[] { };
-            v.CleaningIndicators = new GameObject[] { };
-            foreach (Vent v1 in v.NearbyVents)
-            {
-                CreateArrow(v, v1, prefab, d);
-            }
-            CreateArrow(v, vent, prefab, d);
-            v.GetComponent<ModdedVent>().NearbyVents.Add(vent);
-            UnityEngine.Object.Destroy(prefab.gameObject);
-            v.SetButtons(Vent.currentVent == v);
-        }
-        public static void UnconnectVent(this Vent v, Vent vent)
-        {
-            ButtonBehavior prefab = UnityEngine.Object.Instantiate(v.Buttons[0], v.Buttons[0].transform.parent);
-            foreach (ButtonBehavior b in v.Buttons)
-            {
-                UnityEngine.Object.Destroy(b.gameObject);
-            }
-            float d = Vector2.Distance(v.Buttons[0].transform.position, v.transform.position);
-            v.Buttons = new ButtonBehavior[] { };
-            v.CleaningIndicators = new GameObject[] { };
-            v.GetComponent<ModdedVent>().NearbyVents.Remove(vent);
-            foreach (Vent v1 in v.NearbyVents)
-            {
-                CreateArrow(v, v1, prefab, d);
-            }
-            UnityEngine.Object.Destroy(prefab.gameObject);
-            v.SetButtons(Vent.currentVent == v);
-        }
         [HarmonyPatch("CanUse")]
-        [HarmonyPostfix]
-        public static void OnCanUse(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
+        [HarmonyPrefix]
+        public static bool OnCanUse(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
         {
-            if (!PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.Data.RoleType != AmongUs.GameOptions.RoleTypes.Engineer)
+            float num = float.MaxValue;
+            PlayerControl @object = pc.Object;
+            couldUse = pc.Role.CanVent() && GameManager.Instance.LogicUsables.CanUse(__instance.SafeCast<IUsable>(), @object) && pc.Role.CanUse(__instance.SafeCast<IUsable>()) && (!@object.MustCleanVent(__instance.Id) || (@object.inVent && Vent.currentVent == __instance)) && !pc.IsDead && (@object.CanMove || @object.inVent);
+            ISystemType systemType;
+            if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out systemType))
             {
-                PlayerControl @object = pc.Object;
+                VentilationSystem ventilationSystem = systemType.SafeCast<VentilationSystem>();
+                if (ventilationSystem != null && ventilationSystem.IsVentCurrentlyBeingCleaned(__instance.Id))
+                {
+                    couldUse = false;
+                }
+            }
+            canUse = couldUse;
+            if (canUse)
+            {
                 Vector3 center = @object.Collider.bounds.center;
                 Vector3 position = __instance.transform.position;
-                float num = Vector2.Distance(center, position);
-                canUse = num <= __instance.UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false) && PlayerControl.LocalPlayer.Data.Role.CanVent;
-                couldUse = PlayerControl.LocalPlayer.Data.Role.CanVent;
-                __result = num;
+                num = Vector2.Distance(center, position);
+                canUse &= num <= __instance.UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false);
             }
+            __result = num;
+            return false;
         }
         [HarmonyPatch("NearbyVents", MethodType.Getter)]
         [HarmonyPrefix]
-        public static bool OnGetVents(Vent __instance, ref Il2CppInterop.Runtime.InteropTypes.Arrays.Il2CppReferenceArray<Vent> __result)
+        public static bool NearbyVentsPrefix(Vent __instance, ref Il2CppReferenceArray<Vent> __result)
         {
-            __result = __instance.GetNearbyVents().ToArray();
+            try
+            {
+                __result = VentHelper.ShipVents[__instance].Vents.ToArray();
+            }
+            catch
+            {
+                __result = new Vent[0];
+            }
             return false;
         }
-        public static Vent CreateVent()
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        public static void StartPostfix(Vent __instance)
         {
-            int id = 0;
-            while (ShipStatus.Instance.AllVents.Any((Vent v) => v.Id == id))
+            foreach (Il2CppSystem.Type type in AllVentComponents)
             {
-                int id2 = id;
-                id = id2 + 1;
+                __instance.gameObject.AddComponent(type);
             }
-            Vent v = ShipStatus.Instance.AllVents[0];
-            Vent vent2 = GameObject.Instantiate<Vent>(v, v.transform.parent);
-            vent2.Id = id;
-            vent2.Left = null;
-            vent2.Center = null;
-            vent2.Right = null;
-            vent2.gameObject.SetActive(true);
-            List<Vent> list = ShipStatus.Instance.AllVents.ToList<Vent>();
-            list.Add(vent2);
-            ShipStatus.Instance.AllVents = list.ToArray();
-            return vent2;
-        }
-        public static List<Vent> GetNearbyVents(this Vent vent)
-        {
-            if (vent.GetComponent<ModdedVent>() != null)
+            ButtonBehavior buttonPrefab = GameObject.Instantiate<ButtonBehavior>(__instance.Buttons[0], __instance.transform);
+            VentHelper helper = __instance.GetComponent<VentHelper>();
+            VentHelper.ShipVents.Add(__instance, helper);
+            helper.vent = __instance;
+            helper.ArrowPrefab = buttonPrefab;
+            if (__instance.Right != null)
             {
-                return vent.GetComponent<ModdedVent>().NearbyVents;
+                helper.Vents.Add(__instance.Right);
             }
-            return new List<Vent>();
-        }
-        internal static void Organize(Transform button, Transform vent, Transform target, float d)
-        {
-            button.position = vent.position + (target.position - vent.position).normalized * d;
-            Vector2 vec = (target.position - button.position).normalized;
-            button.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(vec.y, vec.x) * Mathf.Rad2Deg);
-            Vector3 vec2 = button.localPosition;
-            vec2.z = -3;
-            button.localPosition = vec2;
-        }
-        internal static ButtonBehavior CreateArrow(this Vent v, Vent vent, ButtonBehavior prefab, float distance)
-        {
-            ButtonBehavior button = UnityEngine.Object.Instantiate(prefab, prefab.transform.parent);
-            button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-            button.OnClick.AddListener(new Action(delegate
+            if (__instance.Center != null)
             {
-                string error = "F";
-                v.TryMoveToVent(vent, out error);
-            }));
-            List<ButtonBehavior> l = v.Buttons.ToList();
-            List<GameObject> l2 = v.CleaningIndicators.ToList();
-            l.Add(button);
-            l2.Add(button.transform.GetChild(0).gameObject);
-            v.Buttons = l.ToArray();
-            v.CleaningIndicators = l2.ToArray();
-            Organize(button.transform, v.transform, vent.transform, distance);
-            return button;
+                helper.Vents.Add(__instance.Center);
+            }
+            if (__instance.Left != null)
+            {
+                helper.Vents.Add(__instance.Left);
+            }
+        }
+        [HarmonyPatch("UpdateArrows")]
+        [HarmonyPostfix]
+        public static void UpdateArrowsPostfix(Vent __instance, [HarmonyArgument(0)] VentilationSystem ventSystem)
+        {
+            VentHelper.ShipVents[__instance].LastUpdate = ventSystem;
         }
     }
 }

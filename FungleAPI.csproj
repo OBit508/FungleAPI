@@ -17,10 +17,12 @@
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
-    <Compile Include="MCIPatches\MCIUtils.cs" />
+    <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
+    <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="MonoBehaviours\BodyComponent.cs" />
     <Compile Include="MonoBehaviours\ModdedConsole.cs" />
-    <Compile Include="MonoBehaviours\ModdedVent.cs" />
+    <Compile Include="MonoBehaviours\VentComponent.cs" />
+    <Compile Include="MonoBehaviours\VentHelper.cs" />
     <Compile Include="MonoBehaviours\HerePointBehaviour.cs" />
     <Compile Include="MonoBehaviours\PlayerComponent.cs" />
     <Compile Include="MonoBehaviours\PlayerHelper.cs" />
@@ -31,6 +33,7 @@
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RpcPair.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
+    <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
     <Compile Include="Configuration\ModdedOption.cs" />
@@ -81,6 +84,7 @@
     <Compile Include="Networking\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
+    <Compile Include="Utilities\PrefabUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />

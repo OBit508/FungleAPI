@@ -67,6 +67,11 @@ namespace FungleAPI
                         ClassInjector.RegisterTypeInIl2Cpp(type);
                         ModdedDeadBody.AllBodyComponents.Add(Il2CppType.From(type));
                     }
+                    else if (typeof(VentComponent).IsAssignableFrom(type) && type != typeof(VentComponent))
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                        VentPatch.AllVentComponents.Add(Il2CppType.From(type));
+                    }
                 }
                 catch (Exception ex)
                 {

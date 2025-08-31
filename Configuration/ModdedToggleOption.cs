@@ -36,7 +36,7 @@ namespace FungleAPI.Configuration
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            ToggleOption option = GameObject.Instantiate(Helpers.Prefab<ToggleOption>(), transform);
+            ToggleOption option = GameObject.Instantiate(PrefabUtils.Prefab<ToggleOption>(), transform);
             option.enabled = false;
             bool value = bool.Parse(localValue.Value);
             SetUpFromData(option);

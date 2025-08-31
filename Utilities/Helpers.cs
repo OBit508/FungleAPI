@@ -1,5 +1,7 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.MonoBehaviours;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Roles;
 using HarmonyLib;
 using Hazel;
@@ -20,7 +22,40 @@ namespace FungleAPI.Utilities
 {
     public static class Helpers
     {
+        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
+        }
+        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
+        {
+            return player.GetComponent<T>();
+        }
+        public static PlayerControl GetClosest(this PlayerControl target)
+        {
+            PlayerControl closest = null;
+            float dis = target.Data.Role.GetAbilityDistance();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                Vector3 center = target.Collider.bounds.center;
+                Vector3 position = player.transform.position;
+                float num = Vector2.Distance(center, position);
+                if (player != target && !player.Data.IsDead && !PhysicsHelpers.AnythingBetween(target.Collider, center, position, Constants.ShipOnlyMask, false) && num < dis)
+                {
+                    closest = player;
+                    dis = num;
+                }
+            }
+            return closest;
+        }
         public static void ClearAndDestroy<T>(this List<T> list) where T : UnityEngine.Object
+        {
+            foreach (T t in list)
+            {
+                UnityEngine.Object.Destroy(t);
+            }
+            list.Clear();
+        }
+        public static void ClearAndDestroy<T>(this Il2CppSystem.Collections.Generic.List<T> list) where T : UnityEngine.Object
         {
             foreach (T t in list)
             {
@@ -189,10 +224,6 @@ namespace FungleAPI.Utilities
             {
                 return null;
             }
-        }
-        public static T Prefab<T>() where T : UnityEngine.Object
-        {
-            return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T)))[0].SafeCast<T>();
         }
         public static Il2CppSystem.Collections.Generic.List<T> ToIl2CppList<T>(this List<T> list)
         {

@@ -44,7 +44,7 @@ namespace FungleAPI.Configuration
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            Option = GameObject.Instantiate<NumberOption>(Helpers.Prefab<NumberOption>(), transform);
+            Option = GameObject.Instantiate<NumberOption>(PrefabUtils.Prefab<NumberOption>(), transform);
             SetUpFromData(Option);
             Option.Title = ConfigName;
             Option.Value = float.Parse(GetValue());
