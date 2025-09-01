@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace FungleAPI.Utilities
+namespace FungleAPI.Utilities.Prefab
 {
     public static class PrefabUtils
     {

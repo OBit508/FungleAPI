@@ -91,12 +91,5 @@ namespace FungleAPI
             RolesSettingMenuPatch.Cog = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.cog", 200f);
             ResourceHelper.EmptySprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.empty", 100);
         });
-        public static void LoadAssets(Action action)
-        {
-            if (action != null)
-            {
-                loadAssets += action;
-            }
-        }
 	}
 }

@@ -10,6 +10,7 @@ using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
+using FungleAPI.Utilities.Assets;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
@@ -91,7 +92,7 @@ namespace FungleAPI
             }
             return null;
         }
-        public static ModPlugin RegisterMod(BasePlugin basePlugin, string ModName = null)
+        public static ModPlugin RegisterMod(BasePlugin basePlugin, Action loadAssets = null, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
@@ -101,6 +102,10 @@ namespace FungleAPI
                 {
                     plugin.ModName = ModName;
                 }
+            }
+            if (loadAssets != null)
+            {
+                FungleAPIPlugin.loadAssets += loadAssets;
             }
             return plugin;
         }

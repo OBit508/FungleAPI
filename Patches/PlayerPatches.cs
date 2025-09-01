@@ -59,8 +59,12 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static bool OnToggleHighlight(PlayerControl __instance, [HarmonyArgument(0)] bool active)
         {
-            __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().Configuration.OutlineColor));
-            return false;
+            if (__instance.Data.Role.CustomRole() != null)
+            {
+                __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().Configuration.OutlineColor));
+                return false;
+            }
+            return true;
         }
     }
 }

@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
+using FungleAPI.Utilities.Prefab;
 
 namespace FungleAPI.Configuration
 {

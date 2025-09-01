@@ -63,7 +63,6 @@
     <Compile Include="Role\CustomAbilityButton.cs" />
     <Compile Include="MonoBehaviours\ModdedDeadBody.cs" />
     <Compile Include="Patches\HudPatch.cs" />
-    <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="MonoBehaviours\GifAnimator.cs" />
@@ -84,7 +83,8 @@
     <Compile Include="Networking\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
-    <Compile Include="Utilities\PrefabUtils.cs" />
+    <Compile Include="Utilities\Prefabs\Prefab.cs" />
+    <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />
