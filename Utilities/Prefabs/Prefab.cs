@@ -32,7 +32,7 @@ namespace FungleAPI.Utilities.Prefabs
         }
         public T Instantiate(Vector3 position, Quaternion rotation, Transform parent)
         {
-            return GameObject.Instantiate<T>(prefab, position, rotation, parent);
+            return GameObject.Instantiate<T>(prefab, position, rotation);
         }
     }
 }
