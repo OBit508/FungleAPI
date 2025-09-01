@@ -34,7 +34,7 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 string value = (string)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
@@ -45,7 +45,7 @@ namespace FungleAPI.Configuration
             option.enabled = false;
             SetUpFromData(option);
             option.TitleText.enabled = false;
-            option.TitleText.text = ConfigName.GetString();
+            option.TitleText.text = ConfigName;
             option.TitleText.enabled = true;
             option.ValueText.text = localValue.Value;
             option.MinusBtn.SetNewAction(delegate

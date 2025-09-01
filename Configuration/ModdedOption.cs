@@ -1,4 +1,6 @@
 ﻿using BepInEx.Configuration;
+using Epic.OnlineServices.RTC;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Mono.Cecil;
@@ -10,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using FungleAPI.Translation;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Configuration
@@ -18,13 +19,14 @@ namespace FungleAPI.Configuration
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedOption : Attribute
     {
-        public StringNames ConfigName;
+        public BaseGameSetting Data;
+        public string ConfigName;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
         protected ModdedOption(string configName)
         {
-            ConfigName = new Translator(configName).StringName;
+            ConfigName = configName;
         }
         public string GetValue()
         {
@@ -62,6 +64,24 @@ namespace FungleAPI.Configuration
                 textMeshPro.enabled = true;
             }
             option.enabled = false;
+        }
+        public void FixOption(OptionBehaviour option)
+        {
+            foreach (TextMeshPro textMeshPro in option.GetComponentsInChildren<TextMeshPro>(true))
+            {
+                textMeshPro.enabled = true;
+            }
+            foreach (GameOptionButton gameOptionButton in option.GetComponentsInChildren<GameOptionButton>(true))
+            {
+                gameOptionButton.enabled = true;
+            }
+            foreach (BoxCollider2D boxCollider2D in option.GetComponentsInChildren<BoxCollider2D>(true))
+            {
+                boxCollider2D.enabled = true;
+            }
+            option.GetComponent<UIScrollbarHelper>().enabled = true;
+            option.LabelBackground.enabled = false;
+            option.name = "ModdedOption";
         }
         public virtual OptionBehaviour CreateOption(Transform transform)
         {

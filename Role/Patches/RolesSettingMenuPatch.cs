@@ -116,26 +116,14 @@ namespace FungleAPI.Role.Patches
         }
         public static void ChangeTab(RolesSettingsMenu menu, ICustomRole role)
         {
-            Transform imgBg = menu.AdvancedRolesSettings.transform.FindChild("Imagebackground");
-            Transform labelBg = menu.AdvancedRolesSettings.transform.FindChild("InfoLabelBackground");
-            if (role.Configuration.Screenshot == null)
+            menu.roleDescriptionText.transform.parent.localPosition = new Vector3(2.5176f, -0.2731f, -1f);
+            menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.0675f, 0.1494f, 0.5687f);
+            menu.AdvancedRolesSettings.transform.FindChild("InfoLabelBackground").transform.localPosition = new Vector3(1.082f, 0.1054f, -2.5f);
+            if (role.Configuration.Screenshot != null)
             {
-                imgBg.gameObject.SetActive(false);
-                menu.roleScreenshot.gameObject.SetActive(false);
-                menu.roleDescriptionText.transform.parent.localPosition = new Vector3(1.5f, -0.2731f, -1f);
-                menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.09f, 0.2f, 0.5687f);
-                labelBg.localPosition = new Vector3(-0.7f, 0.1054f, -2.5f);
-            }
-            else
-            {
-                imgBg.gameObject.SetActive(true);
-                menu.roleScreenshot.gameObject.SetActive(true);
-                menu.roleDescriptionText.transform.parent.localPosition = new Vector3(2.5176f, -0.2731f, -1f);
-                menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.0675f, 0.1494f, 0.5687f);
-                labelBg.transform.localPosition = new Vector3(1.082f, 0.1054f, -2.5f);
                 menu.roleScreenshot.sprite = Sprite.Create(role.Configuration.Screenshot.texture, new UnityEngine.Rect(0f, 0f, 370f, 230f), Vector2.one / 2f, 100f);
-                menu.roleScreenshot.drawMode = SpriteDrawMode.Sliced;
             }
+            menu.roleScreenshot.drawMode = SpriteDrawMode.Sliced;
             Transform transform = menu.AdvancedRolesSettings.transform.Find("Background");
             transform.localPosition = new Vector3(1.4041f, -7.08f, 0f);
             transform.GetComponent<SpriteRenderer>().size = new Vector2(89.4628f, 100f);
@@ -156,7 +144,7 @@ namespace FungleAPI.Role.Patches
             {
                 OptionBehaviour op = config.CreateOption(menu.AdvancedRolesSettings.transform);
                 op.SetClickMask(menu.ButtonClickMask);
-                op.OnValueChanged = new Action<OptionBehaviour>(delegate
+                op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
                     RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
                     pair.AddRpc(CustomRpcManager.Instance<RpcSyncSeetings>(), role);
