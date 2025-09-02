@@ -17,51 +17,71 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Utilities
 {
     public static class Helpers
     {
+        private static List<DeadBody> allDeadBodies = new List<DeadBody>();
+        public static List<DeadBody> AllDeadBodies
+        {
+            get
+            {
+                allDeadBodies.RemoveAll(body => body == null || body.IsDestroyedOrNull());
+                return allDeadBodies;
+            }
+        }
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
         }
-        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
+        public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
         {
-            return player.GetComponent<T>();
-        }
-        public static PlayerControl GetClosest(this PlayerControl target)
-        {
-            PlayerControl closest = null;
-            float dis = target.Data.Role.GetAbilityDistance();
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            List<DeadBody> bodies = new List<DeadBody>();
+            foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(target.GetTruePosition(), distance, Constants.PlayersOnlyMask))
             {
-                Vector3 center = target.Collider.bounds.center;
-                Vector3 position = player.transform.position;
-                float num = Vector2.Distance(center, position);
-                if (player != target && !player.Data.IsDead && !PhysicsHelpers.AnythingBetween(target.Collider, center, position, Constants.ShipOnlyMask, false) && num < dis)
+                if (collider2D.tag == "DeadBody")
                 {
-                    closest = player;
-                    dis = num;
+                    DeadBody component = collider2D.GetComponent<DeadBody>();
+                    if (component && (!component.Reported || includeReporteds))
+                    {
+                        bodies.Add(component);
+                    }
+                }
+            }
+            return bodies;
+        }
+        public static DeadBody CreateCustomBody(PlayerControl from)
+        {
+            DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab);
+            body.enabled = false;
+            body.ParentId = from.PlayerId;
+            body.bodyRenderers.ToList().ForEach(delegate (SpriteRenderer b)
+            {
+                from.SetPlayerMaterialColors(b);
+            });
+            from.SetPlayerMaterialColors(body.bloodSplatter);
+            Vector3 vector = from.transform.position + from.KillAnimations[0].BodyOffset;
+            vector.z = vector.y / 1000f;
+            body.transform.position = vector;
+            body.enabled = true;
+            return body;
+        }
+        public static DeadBody GetClosestDeadBody(this PlayerControl target, float distance, bool includeReporteds = false)
+        {
+            DeadBody closest = null;
+            float dis = distance;
+            foreach (DeadBody body in GetClosestsDeadBodies(target, distance, includeReporteds))
+            {
+                float d = Vector2.Distance(target.GetTruePosition(), body.TruePosition);
+                if (dis > d)
+                {
+                    dis = d;
+                    closest = body;
                 }
             }
             return closest;
-        }
-        public static void ClearAndDestroy<T>(this List<T> list) where T : UnityEngine.Object
-        {
-            foreach (T t in list)
-            {
-                UnityEngine.Object.Destroy(t);
-            }
-            list.Clear();
-        }
-        public static void ClearAndDestroy<T>(this Il2CppSystem.Collections.Generic.List<T> list) where T : UnityEngine.Object
-        {
-            foreach (T t in list)
-            {
-                UnityEngine.Object.Destroy(t);
-            }
-            list.Clear();
         }
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
         {
@@ -84,9 +104,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
-        public static ModdedDeadBody GetBodyById(byte id)
+        public static DeadBody GetBodyById(byte id)
         {
-            foreach (ModdedDeadBody body in ModdedDeadBody.AllBodies)
+            foreach (DeadBody body in AllDeadBodies)
             {
                 if (body.ParentId == id)
                 {
@@ -95,16 +115,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
-        public static ModdedDeadBody GetBody(this PlayerControl player)
+        public static DeadBody GetBody(this PlayerControl player)
         {
-            foreach (ModdedDeadBody body in ModdedDeadBody.AllBodies)
-            {
-                if (body.Owner == player)
-                {
-                    return body;
-                }
-            }
-            return null;
+            return GetBodyById(player.PlayerId);
         }
         public static string GetString(this StringNames s)
         {
@@ -196,38 +209,18 @@ namespace FungleAPI.Utilities
             }
             return obj.Cast<T>();
         }
-        public static void InvokeMethod(this object obj, string methodName, Type[] types, object[] arguments)
-        {
-            MethodInfo method = obj.GetType().GetMethod(methodName, types);
-            try
-            {
-                if (method != null)
-                {
-                    method.Invoke(obj, arguments);
-                }
-            }
-            catch
-            {
-            }
-        }
-        public static object InvokeMethod(this object obj, MethodInfo method, object[] arguments)
-        {
-            try
-            {
-                if (method != null)
-                {
-                    return method.Invoke(obj, arguments);
-                }
-                return null;
-            }
-            catch
-            {
-                return null;
-            }
-        }
         public static Il2CppSystem.Collections.Generic.List<T> ToIl2CppList<T>(this List<T> list)
         {
             Il2CppSystem.Collections.Generic.List<T> values = new Il2CppSystem.Collections.Generic.List<T>();
+            foreach (T item in list)
+            {
+                values.Add(item);
+            }
+            return values;
+        }
+        public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> list)
+        {
+            List<T> values = new List<T>();
             foreach (T item in list)
             {
                 values.Add(item);

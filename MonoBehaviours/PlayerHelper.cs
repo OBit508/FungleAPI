@@ -59,6 +59,7 @@ namespace FungleAPI.MonoBehaviours
             if (Renderer == null)
             {
                 Renderer = new GameObject("CustomAnimation Renderer").AddComponent<SpriteRenderer>();
+                Renderer.material = Player.cosmetics.currentBodySprite.BodySprite.material;
                 Renderer.transform.SetParent(Player.cosmetics.currentBodySprite.BodySprite.transform.parent);
             }
         }

@@ -20,6 +20,7 @@
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="MonoBehaviours\BodyComponent.cs" />
+    <Compile Include="MonoBehaviours\DeadBodyHelper.cs" />
     <Compile Include="MonoBehaviours\ModdedConsole.cs" />
     <Compile Include="MonoBehaviours\VentComponent.cs" />
     <Compile Include="MonoBehaviours\VentHelper.cs" />
@@ -61,7 +62,6 @@
     <Compile Include="Patches\ExileControllerPatch.cs" />
     <Compile Include="Patches\GameManagerPatch.cs" />
     <Compile Include="Role\CustomAbilityButton.cs" />
-    <Compile Include="MonoBehaviours\ModdedDeadBody.cs" />
     <Compile Include="Patches\HudPatch.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />

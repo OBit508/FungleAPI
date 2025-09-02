@@ -20,7 +20,7 @@ namespace FungleAPI.Networking
         {
             Writer.Write(value.PlayerId);
         }
-        public static void WriteDeadBody(this MessageWriter Writer, ModdedDeadBody value)
+        public static void WriteDeadBody(this MessageWriter Writer, DeadBody value)
         {
             Writer.Write(value.ParentId);
         }
@@ -56,7 +56,7 @@ namespace FungleAPI.Networking
         {
             return Helpers.GetPlayerById(Reader.ReadByte());
         }
-        public static ModdedDeadBody ReadBody(this MessageReader Reader)
+        public static DeadBody ReadBody(this MessageReader Reader)
         {
             return Helpers.GetBodyById(Reader.ReadByte());
         }

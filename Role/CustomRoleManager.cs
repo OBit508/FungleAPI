@@ -105,7 +105,6 @@ namespace FungleAPI.Roles
             role.CanVent = config.CanVent;
             role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.Role = roleType;
-            role.InvokeMethod("Register", new Type[] { }, new object[] { });
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);
