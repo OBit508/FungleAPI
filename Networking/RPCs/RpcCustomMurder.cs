@@ -100,6 +100,10 @@ namespace FungleAPI.Networking.RPCs
                     cam.Locked = true;
                     if (flag2)
                     {
+                        if (resetKillTimer)
+                        {
+                            killer.SetKillTimer(GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown));
+                        }
                         if (PlayerControl.LocalPlayer.Data.RoleType == RoleTypes.Shapeshifter)
                         {
                             DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);

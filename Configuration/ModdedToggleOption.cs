@@ -17,16 +17,18 @@ using UnityEngine;
 using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
 using FungleAPI.Utilities.Prefab;
+using HarmonyLib;
 
 namespace FungleAPI.Configuration
 {
+    [HarmonyPatch(typeof(ToggleOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedToggleOption : ModdedOption
     {
         public ModdedToggleOption(string configName)
             : base(configName) 
         {
-            Data = ScriptableObject.CreateInstance<CheckboxGameSetting>();
+            Data = ScriptableObject.CreateInstance<CheckboxGameSetting>().DontUnload();
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
             checkboxGameSetting.Title = new Translator(ConfigName).StringName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
@@ -48,13 +50,31 @@ namespace FungleAPI.Configuration
             toggleOption.SetUpFromData(Data, 20);
             toggleOption.Title = Data.Title;
             toggleOption.TitleText.text = Data.Title.GetString();
-            toggleOption.CheckMark.enabled = bool.Parse(localValue.Value);
+            toggleOption.oldValue = bool.Parse(localValue.Value);
+            toggleOption.CheckMark.enabled = toggleOption.oldValue;
             toggleOption.OnValueChanged = new Action<OptionBehaviour>(delegate
             {
                 SetValue(toggleOption.CheckMark.enabled);
             });
             FixOption(toggleOption);
             return toggleOption;
+        }
+        [HarmonyPatch("Initialize")]
+        [HarmonyPrefix]
+        public static bool InitializePrefix(ToggleOption __instance)
+        {
+            if (__instance.name == "ModdedOption")
+            {
+                __instance.TitleText.text = DestroyableSingleton<TranslationController>.Instance.GetString(__instance.Title);
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPatch("UpdateValue")]
+        [HarmonyPrefix]
+        public static bool UpdateValuePrefix(ToggleOption __instance)
+        {
+            return __instance.name != "ModdedOption";
         }
     }
 }

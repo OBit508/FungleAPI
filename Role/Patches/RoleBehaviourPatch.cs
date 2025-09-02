@@ -47,18 +47,6 @@ namespace FungleAPI.Role.Patches
             }
             return true;
         }
-        [HarmonyPatch("FindClosestTarget")]
-        [HarmonyPrefix]
-        public static bool FindClosestTargetPrefix(RoleBehaviour __instance, ref PlayerControl __result)
-        {
-            Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = __instance.GetPlayersInAbilityRangeSorted(RoleBehaviour.GetTempPlayerList());
-            if (playersInAbilityRangeSorted.Count <= 0)
-            {
-                __result = null;
-            }
-            __result = playersInAbilityRangeSorted[0];
-            return false;
-        }
     }
     [HarmonyPatch]
     public static class RoleBehaviourDidWinPatch

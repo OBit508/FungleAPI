@@ -20,16 +20,18 @@ using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using FungleAPI.Utilities.Prefab;
+using HarmonyLib;
 
 namespace FungleAPI.Configuration
 {
+    [HarmonyPatch(typeof(StringOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedEnumOption : ModdedOption
     {
         public ModdedEnumOption(string configName, string[] defaultValue)
             : base(configName)
         {
-            Data = ScriptableObject.CreateInstance<StringGameSetting>();
+            Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
             stringGameSetting.Title = new Translator(configName).StringName;
             stringGameSetting.Type = OptionTypes.String;
@@ -65,6 +67,25 @@ namespace FungleAPI.Configuration
             stringOption.Values = stringGameSetting.Values;
             stringOption.Value = stringGameSetting.Index;
             return stringOption;
+        }
+        [HarmonyPatch("Initialize")]
+        [HarmonyPrefix]
+        public static bool InitializePrefix(StringOption __instance)
+        {
+            if (__instance.name == "ModdedOption")
+            {
+                __instance.TitleText.text = DestroyableSingleton<TranslationController>.Instance.GetString(__instance.Title);
+                __instance.ValueText.text = DestroyableSingleton<TranslationController>.Instance.GetString(__instance.Values[__instance.Value]);
+                __instance.AdjustButtonsActiveState();
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPatch("UpdateValue")]
+        [HarmonyPrefix]
+        public static bool UpdateValuePrefix(StringOption __instance)
+        {
+            return __instance.name != "ModdedOption";
         }
     }
 }
