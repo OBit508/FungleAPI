@@ -1,4 +1,4 @@
-﻿using FungleAPI.MCIPatches;
+﻿
 using FungleAPI.Patches;
 using FungleAPI.Networking;
 using Hazel;
@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.Networking.RPCs
 {

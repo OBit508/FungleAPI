@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Configuration;
-using FungleAPI.MCIPatches;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Roles;

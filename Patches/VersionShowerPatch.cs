@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using HarmonyLib;
 using FungleAPI;
-using FungleAPI.MCIPatches;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.Patches
 {
