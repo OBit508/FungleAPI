@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.MCIPatches
+namespace FungleAPI.ModCompatibility
 {
     public static class MCIUtils
     {
