@@ -7,7 +7,7 @@ using FungleAPI.Utilities;
 using UnityEngine;
 using FungleAPI.Attributes;
 
-namespace FungleAPI.MonoBehaviours
+namespace FungleAPI.Components
 {
     [RegisterTypeInIl2Cpp]
     public class DeadBodyHelper : MonoBehaviour

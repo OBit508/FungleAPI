@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.MonoBehaviours
+namespace FungleAPI.Components
 {
     [RegisterTypeInIl2Cpp]
     public class RoleHintText : PlayerTask

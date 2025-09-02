@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.Configuration;
 
-namespace FungleAPI.MonoBehaviours
+namespace FungleAPI.Components
 {
-    public class BodyComponent : MonoBehaviour
+    public class PlayerComponent : MonoBehaviour
     {
     }
 }

@@ -7,7 +7,7 @@ using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Configuration;
 using FungleAPI.MCIPatches;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Patches;
 using FungleAPI.Role.Teams;

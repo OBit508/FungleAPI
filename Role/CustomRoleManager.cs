@@ -2,7 +2,7 @@
 using BepInEx.Core.Logging.Interpolation;
 using FungleAPI;
 using FungleAPI.Configuration;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Networking;

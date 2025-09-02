@@ -1,4 +1,4 @@
-﻿using FungleAPI.MonoBehaviours;
+﻿using FungleAPI.Components;
 using Hazel;
 using Il2CppInterop.Generator.Extensions;
 using System;

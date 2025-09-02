@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Utilities;

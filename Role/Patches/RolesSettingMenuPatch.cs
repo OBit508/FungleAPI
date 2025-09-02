@@ -4,7 +4,7 @@ using Discord;
 using Epic.OnlineServices;
 using FungleAPI.Utilities.Assets;
 using FungleAPI.Configuration;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;

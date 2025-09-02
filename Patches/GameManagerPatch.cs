@@ -1,5 +1,5 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
 using FungleAPI.Networking;

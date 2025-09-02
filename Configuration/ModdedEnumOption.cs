@@ -1,7 +1,7 @@
 ﻿using BepInEx.Configuration;
 using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Patches;
 using FungleAPI.Roles;
 using FungleAPI.Networking;

@@ -2,7 +2,7 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using Epic.OnlineServices.Presence;
 using FungleAPI.Utilities.Assets;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;

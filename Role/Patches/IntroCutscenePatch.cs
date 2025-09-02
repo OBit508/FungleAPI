@@ -1,5 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;

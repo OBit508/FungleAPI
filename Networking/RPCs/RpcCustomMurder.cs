@@ -1,7 +1,7 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
 using Assets.CoreScripts;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Roles;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;

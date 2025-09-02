@@ -3,7 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
 using FungleAPI.Attributes;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
