@@ -104,6 +104,7 @@ namespace FungleAPI.Roles
             role.CanUseKillButton = config.UseVanillaKillButton;
             role.CanVent = config.CanVent;
             role.TasksCountTowardProgress = config.TasksCountForProgress;
+            role.RoleScreenshot = config.Screenshot;
             role.Role = roleType;
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
