@@ -19,7 +19,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using FungleAPI.Utilities.Prefab;
+using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 
 namespace FungleAPI.Configuration

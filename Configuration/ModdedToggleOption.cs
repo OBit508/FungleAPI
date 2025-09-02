@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
-using FungleAPI.Utilities.Prefab;
+using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 
 namespace FungleAPI.Configuration
