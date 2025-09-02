@@ -28,6 +28,7 @@
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="Components\RoleHintText.cs" />
+    <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />
     <Compile Include="Patches\LogicGameFlowPatch.cs" />

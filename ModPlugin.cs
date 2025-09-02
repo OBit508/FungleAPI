@@ -29,6 +29,7 @@ namespace FungleAPI
         internal ModPlugin()
         {
         }
+        public bool UseShipReference;
         internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
         {
             plugin.ModAssembly = basePlugin.GetType().Assembly;

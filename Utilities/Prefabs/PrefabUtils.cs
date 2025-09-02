@@ -9,11 +9,21 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-namespace FungleAPI.Utilities.Prefab
+namespace FungleAPI.Utilities.Prefabs
 {
     public static class PrefabUtils
     {
-        public static bool AnyModUseShipPrefabs;
+        internal static void ChangePrefab(AssetReference shipRef)
+        {
+            switch (shipRef.Asset.name)
+            {
+                case "SkeldShip": SkeldPrefab = shipRef.Asset.SafeCast<SkeldShipStatus>(); break;
+                case "MiraShip": MiraPrefab = shipRef.Asset.SafeCast<MiraShipStatus>(); break;
+                case "PolusShip": PolusPrefab = shipRef.Asset.SafeCast<PolusShipStatus>(); break;
+                case "Airship": AirshipPrefab = shipRef.Asset.SafeCast<AirshipStatus>(); break;
+                case "FungleShip": FunglePrefab = shipRef.Asset.SafeCast<FungleShipStatus>(); break;
+            }
+        }
         public static System.Collections.IEnumerator CoLoadShipPrefabs()
         {
             if (LevelImpostorUtils.GetLevelImpostor() == null)
@@ -29,17 +39,20 @@ namespace FungleAPI.Utilities.Prefab
                             yield return new WaitForSeconds(1);
                         }
                     }
-                    switch (shipRef.Asset.name)
+                    ChangePrefab(shipRef);
+                }
+            }
+            else
+            {
+                while (!SkeldPrefab && !MiraPrefab && !PolusPrefab & !AirshipPrefab && !FunglePrefab)
+                {
+                    foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
                     {
-                        case "SkeldShip": SkeldPrefab = shipRef.Asset.SafeCast<SkeldShipStatus>(); break;
-                        case "MiraShip": MiraPrefab = shipRef.Asset.SafeCast<MiraShipStatus>(); break;
-                        case "PolusShip": PolusPrefab = shipRef.Asset.SafeCast<PolusShipStatus>(); break;
-                        case "Airship": AirshipPrefab = shipRef.Asset.SafeCast<AirshipStatus>(); break;
-                        case "FungleShip": FunglePrefab = shipRef.Asset.SafeCast<FungleShipStatus>(); break;
+                        ChangePrefab(shipRef);
                     }
                 }
             }
-        }
+        } 
         public static T Prefab<T>(int index = 0) where T : UnityEngine.Object
         {
             return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T)))[index].SafeCast<T>();
