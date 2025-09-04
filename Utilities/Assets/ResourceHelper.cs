@@ -93,7 +93,7 @@ namespace FungleAPI.Utilities.Assets
         }
         public static GifFile ToGif(Sprite[] sprites, float delay)
         {
-            GifFile animation = ScriptableObject.CreateInstance<GifFile>().DontUnload();
+            GifFile animation = new GifFile();
             animation.Sprites = sprites;
             animation.Delays = new float[sprites.Count()];
             for (int i = 0; i < animation.Delays.Count(); i++)
@@ -109,7 +109,7 @@ namespace FungleAPI.Utilities.Assets
             System.IO.MemoryStream stream = new System.IO.MemoryStream();
             plugin.ModAssembly.GetManifestResourceStream(resource).CopyTo(stream);
             decoder.LoadGif(stream.ToArray());
-            GifFile gif = ScriptableObject.CreateInstance<GifFile>().DontUnload();
+            GifFile gif = new GifFile();
             gif.Loop = loop;
             List<Sprite> sprites = new List<Sprite>();
             for (int i = 0; i < decoder.Frames.Count; i++)
