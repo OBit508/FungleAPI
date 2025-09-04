@@ -15,21 +15,28 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using FungleAPI.Translation;
+using HarmonyLib;
 
 namespace FungleAPI.Configuration
 {
+    [HarmonyPatch(typeof(NumberOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedNumberOption : ModdedOption
     {
         public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
             : base(configName)
         {
-            Increment = increment;
-            MaxValue = maxValue;
-            MinValue = minValue;
-            FormatString = formatString;
-            ZeroIsInfinity = zeroIsInfinity;
-            SuffixType = suffixType;
+            Data = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
+            FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
+            floatGameSetting.Type = OptionTypes.Float;
+            floatGameSetting.Title = new Translator(configName).StringName;
+            floatGameSetting.Increment = increment;
+            floatGameSetting.ValidRange = new FloatRange(minValue, maxValue);
+            floatGameSetting.FormatString = formatString;
+            floatGameSetting.ZeroIsInfinity = zeroIsInfinity;
+            floatGameSetting.SuffixType = suffixType;
+            floatGameSetting.OptionName = FloatOptionNames.Invalid;
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
         {
@@ -37,34 +44,56 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 float value = (float)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
+                Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);
             }
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            Option = GameObject.Instantiate<NumberOption>(PrefabUtils.Prefab<NumberOption>(), transform);
-            SetUpFromData(Option);
-            Option.Title = ConfigName;
-            Option.Value = float.Parse(GetValue());
-            Option.Increment = Increment;
-            Option.ValidRange = new FloatRange(MinValue, MaxValue);
-            Option.FormatString = FormatString != null ? FormatString : "0";
-            Option.ZeroIsInfinity = ZeroIsInfinity;
-            Option.SuffixType = SuffixType;
-            Option.floatOptionName = FloatOptionNames.Invalid;
-            Option.ValueText.text = GetValue();
-            Option.Initialize();
-            Option.gameObject.SetActive(true);
-            return Option;
+            NumberOption numberOption = GameObject.Instantiate<NumberOption>(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
+            FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
+            numberOption.SetUpFromData(Data, 20);
+            numberOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            {
+                SetValue(numberOption.Value);
+                floatGameSetting.Value = numberOption.Value;
+            });
+            numberOption.Title = floatGameSetting.Title;
+            numberOption.Value = float.Parse(localValue.Value);
+            numberOption.oldValue = numberOption.oldValue;
+            numberOption.Increment = floatGameSetting.Increment;
+            numberOption.ValidRange = new FloatRange(floatGameSetting.ValidRange.min, floatGameSetting.ValidRange.max);
+            numberOption.FormatString = floatGameSetting.FormatString;
+            numberOption.ZeroIsInfinity = floatGameSetting.ZeroIsInfinity;
+            numberOption.SuffixType = floatGameSetting.SuffixType;
+            numberOption.floatOptionName = FloatOptionNames.Invalid;
+            FixOption(numberOption);
+            return numberOption;
         }
-        public NumberOption Option;
-        public float Increment;
-        public string FormatString;
-        public bool ZeroIsInfinity;
-        public NumberSuffixes SuffixType;
-        public float MinValue;
-        public float MaxValue;
+        [HarmonyPatch("Initialize")]
+        [HarmonyPrefix]
+        public static bool InitializePrefix(NumberOption __instance)
+        {
+            if (__instance.name == "ModdedOption")
+            {
+                __instance.AdjustButtonsActiveState();
+                __instance.TitleText.text = DestroyableSingleton<TranslationController>.Instance.GetString(__instance.Title);
+                NumberOption numberOption = __instance.data.SafeCast<NumberOption>();
+                if (numberOption != null)
+                {
+                    __instance.Value = numberOption.Value;
+                }
+                return false;
+            }
+            return true;
+        }
+        [HarmonyPatch("UpdateValue")]
+        [HarmonyPrefix]
+        public static bool UpdateValuePrefix(NumberOption __instance)
+        {
+            return __instance.name != "ModdedOption";
+        }
     }
 }

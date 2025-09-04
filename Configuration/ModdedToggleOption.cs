@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Rewired.UI.ControlMapper.ControlMapper;
+using FungleAPI.Translation;
 
 namespace FungleAPI.Configuration
 {
@@ -22,37 +23,37 @@ namespace FungleAPI.Configuration
     public class ModdedToggleOption : ModdedOption
     {
         public ModdedToggleOption(string configName)
-            : base(configName) { }
+            : base(configName) 
+        {
+            Data = ScriptableObject.CreateInstance<CheckboxGameSetting>();
+            CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
+            checkboxGameSetting.Title = new Translator(ConfigName).StringName;
+            checkboxGameSetting.Type = OptionTypes.Checkbox;
+        }
         public override void Initialize(Type type, PropertyInfo property, object obj)
         {
             if (property.PropertyType == typeof(bool))
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 bool value = (bool)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.GetString(), value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            ToggleOption option = GameObject.Instantiate(PrefabUtils.Prefab<ToggleOption>(), transform);
-            option.enabled = false;
-            bool value = bool.Parse(localValue.Value);
-            SetUpFromData(option);
-            option.TitleText.enabled = false;
-            option.TitleText.text = ConfigName.GetString();
-            option.TitleText.enabled = true;
-            option.transform.GetChild(1).GetComponent<PassiveButton>().SetNewAction(delegate
+            ToggleOption toggleOption = GameObject.Instantiate<ToggleOption>(PrefabUtils.Prefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
+            toggleOption.SetUpFromData(Data, 20);
+            toggleOption.Title = Data.Title;
+            toggleOption.TitleText.text = Data.Title.GetString();
+            toggleOption.CheckMark.enabled = bool.Parse(localValue.Value);
+            toggleOption.OnValueChanged = new Action<OptionBehaviour>(delegate
             {
-                value = !value;
-                SetValue(value.ToString());
-                option.CheckMark.gameObject.SetActive(value);
+                SetValue(toggleOption.CheckMark.enabled);
             });
-            option.CheckMark.gameObject.SetActive(value);
-            option.Initialize();
-            option.gameObject.SetActive(true);
-            return option;
+            FixOption(toggleOption);
+            return toggleOption;
         }
     }
 }
