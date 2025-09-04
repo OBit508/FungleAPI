@@ -3,13 +3,14 @@ using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI;
 using FungleAPI.Attributes;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
+using FungleAPI.Utilities.Assets;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using System;
@@ -28,6 +29,7 @@ namespace FungleAPI
         internal ModPlugin()
         {
         }
+        public bool UseShipReference;
         internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
         {
             plugin.ModAssembly = basePlugin.GetType().Assembly;
@@ -65,7 +67,7 @@ namespace FungleAPI
                     else if (typeof(BodyComponent).IsAssignableFrom(type) && type != typeof(BodyComponent))
                     {
                         ClassInjector.RegisterTypeInIl2Cpp(type);
-                        ModdedDeadBody.AllBodyComponents.Add(Il2CppType.From(type));
+                        DeadBodyHelper.AllBodyComponents.Add(Il2CppType.From(type));
                     }
                     else if (typeof(VentComponent).IsAssignableFrom(type) && type != typeof(VentComponent))
                     {
@@ -91,7 +93,7 @@ namespace FungleAPI
             }
             return null;
         }
-        public static ModPlugin RegisterMod(BasePlugin basePlugin, string ModName = null)
+        public static ModPlugin RegisterMod(BasePlugin basePlugin, Action loadAssets = null, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
@@ -101,6 +103,10 @@ namespace FungleAPI
                 {
                     plugin.ModName = ModName;
                 }
+            }
+            if (loadAssets != null)
+            {
+                FungleAPIPlugin.loadAssets += loadAssets;
             }
             return plugin;
         }

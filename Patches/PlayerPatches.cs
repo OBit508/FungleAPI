@@ -2,7 +2,7 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using Epic.OnlineServices.Presence;
 using FungleAPI.Utilities.Assets;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
@@ -34,7 +34,7 @@ namespace FungleAPI.Patches
         internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
-        public static void OnStart(PlayerControl __instance)
+        public static void StartPostfix(PlayerControl __instance)
         {
             __instance.myTasks.Add(new GameObject("RoleHintText")
             {
@@ -53,13 +53,6 @@ namespace FungleAPI.Patches
         public static bool PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
         {
             __instance.RpcCustomMurderPlayer(target, MurderResultFlags.Succeeded);
-            return false;
-        }
-        [HarmonyPatch("ToggleHighlight")]
-        [HarmonyPrefix]
-        public static bool OnToggleHighlight(PlayerControl __instance, [HarmonyArgument(0)] bool active)
-        {
-            __instance.cosmetics.SetOutline(active, new Il2CppSystem.Nullable<Color>(__instance.Data.Role.CustomRole().Configuration.OutlineColor));
             return false;
         }
     }

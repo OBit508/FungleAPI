@@ -83,6 +83,7 @@ namespace FungleAPI.Roles
             Button.usesRemainingSprite.material.SetFloat("_Desat", num);
             Button.usesRemainingText.color = color;
             Button.usesRemainingText.material.SetFloat("_Desat", num);
+            Button.buttonLabelText.color = color;
             if (!Transformed)
             {
                 if (!MeetingHud.Instance && !ExileController.Instance && Timer > 0f)

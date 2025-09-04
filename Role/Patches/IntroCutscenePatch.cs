@@ -1,5 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Roles;
@@ -19,7 +19,7 @@ using UnityEngine.UIElements.UIR;
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(IntroCutscene))]
-    internal class IntroCutscenePatch
+    internal static class IntroCutscenePatch
     {
         [HarmonyPatch("BeginCrewmate")]
         [HarmonyPrefix]

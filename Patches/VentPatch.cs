@@ -1,4 +1,4 @@
-﻿using FungleAPI.MonoBehaviours;
+﻿using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Roles;
 using FungleAPI.Utilities;

@@ -17,6 +17,7 @@ using TMPro;
 using UnityEngine;
 using FungleAPI.Translation;
 using HarmonyLib;
+using FungleAPI.Utilities.Prefabs;
 
 namespace FungleAPI.Configuration
 {

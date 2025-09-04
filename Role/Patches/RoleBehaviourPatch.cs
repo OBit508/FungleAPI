@@ -15,7 +15,7 @@ using UnityEngine;
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RoleBehaviour))]
-    public static class RoleBehaviourPatch
+    internal static class RoleBehaviourPatch
     {
         [HarmonyPrefix]
         [HarmonyPatch("TeamColor", MethodType.Getter)]
@@ -49,7 +49,7 @@ namespace FungleAPI.Role.Patches
         }
     }
     [HarmonyPatch]
-    public static class RoleBehaviourDidWinPatch
+    internal static class RoleBehaviourDidWinPatch
     {
         internal static List<Type> RoleBehaviourTypes { get; } = (from x in typeof(RoleBehaviour).Assembly.GetTypes() where x.IsSubclassOf(typeof(RoleBehaviour)) select x).ToList();
         public static IEnumerable<MethodBase> TargetMethods()

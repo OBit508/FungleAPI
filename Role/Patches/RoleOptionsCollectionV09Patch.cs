@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Configuration;
-using FungleAPI.MCIPatches;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Roles;
@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 using xCloud;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 

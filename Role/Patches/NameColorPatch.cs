@@ -11,7 +11,7 @@ using UnityEngine;
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(PlayerNameColor), "Get", new Type[] { typeof(RoleBehaviour) })]
-    public static class NameColorPatch
+    internal static class NameColorPatch
     {
         public static bool Prefix([HarmonyArgument(0)] RoleBehaviour otherPlayerRole, ref Color __result)
         {

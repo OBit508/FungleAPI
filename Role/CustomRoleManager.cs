@@ -2,7 +2,7 @@
 using BepInEx.Core.Logging.Interpolation;
 using FungleAPI;
 using FungleAPI.Configuration;
-using FungleAPI.MonoBehaviours;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Networking;
@@ -104,8 +104,8 @@ namespace FungleAPI.Roles
             role.CanUseKillButton = config.UseVanillaKillButton;
             role.CanVent = config.CanVent;
             role.TasksCountTowardProgress = config.TasksCountForProgress;
+            role.RoleScreenshot = config.Screenshot;
             role.Role = roleType;
-            role.InvokeMethod("Register", new Type[] { }, new object[] { });
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);

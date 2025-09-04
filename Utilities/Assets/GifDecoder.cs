@@ -44,15 +44,15 @@ namespace FungleAPI.Utilities.Assets
                         case 0x21:
                             if (reader.ReadByte() == 0xF9)
                             {
-                                reader.ReadByte(); // block size (sempre 4)
+                                reader.ReadByte();
                                 byte packedGCE = reader.ReadByte();
 
-                                disposalMethod = packedGCE >> 2 & 0x07; // <- extrair disposal method
+                                disposalMethod = packedGCE >> 2 & 0x07;
                                 bool transparencyFlag = (packedGCE & 0x01) != 0;
 
                                 int delay = reader.ReadUInt16();
                                 transparentIndex = reader.ReadByte();
-                                reader.ReadByte(); // terminator
+                                reader.ReadByte();
 
                                 FrameDelays.Add(delay / 100f);
                             }
@@ -74,9 +74,7 @@ namespace FungleAPI.Utilities.Assets
                             byte[] decodedPixels = LzwDecode(imageData, lzwMinCodeSize, imgW * imgH);
                             Color32[] framePixels = new Color32[width * height];
                             Array.Copy(prevFramePixels, framePixels, prevFramePixels.Length);
-
-                            // 2. Aplica disposal antes de desenhar
-                            if (disposalMethod == 2) // Restore to background
+                            if (disposalMethod == 2)
                             {
                                 for (int y = 0; y < imgH; y++)
                                 {
@@ -84,13 +82,10 @@ namespace FungleAPI.Utilities.Assets
                                     {
                                         int globalIndex = (height - 1 - (imgY + y)) * width + imgX + x;
                                         if (globalIndex >= 0 && globalIndex < framePixels.Length)
-                                            framePixels[globalIndex] = new Color32(0, 0, 0, 0); // limpa
+                                            framePixels[globalIndex] = new Color32(0, 0, 0, 0);
                                     }
                                 }
                             }
-                            // (disposalMethod == 3) exigiria salvar um backup de prevFramePixels de antes, se quiser suportar)
-
-                            // 3. Agora desenha os pixels do frame atual
                             for (int y = 0; y < imgH; y++)
                             {
                                 for (int x = 0; x < imgW; x++)
@@ -110,8 +105,6 @@ namespace FungleAPI.Utilities.Assets
                                     }
                                 }
                             }
-
-                            // Atualiza o buffer do próximo frame
                             prevFramePixels = framePixels;
                             Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
                             tex.SetPixels32(framePixels);

@@ -75,6 +75,10 @@ namespace FungleAPI.Configuration
             {
                 gameOptionButton.enabled = true;
             }
+            foreach (PassiveButton passiveButton in option.GetComponentsInChildren<PassiveButton>(true))
+            {
+                passiveButton.enabled = true;
+            }
             foreach (BoxCollider2D boxCollider2D in option.GetComponentsInChildren<BoxCollider2D>(true))
             {
                 boxCollider2D.enabled = true;
