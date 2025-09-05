@@ -13,13 +13,9 @@ namespace FungleAPI.Utilities.Assets
         public bool Loop;
         public float[] Delays;
         public Sprite[] Sprites;
+        public float maxTime;
         public Sprite GetSprite(float time)
         {
-            float maxTime = 0;
-            foreach (float delay in Delays)
-            {
-                maxTime += delay;
-            }
             if (!Loop && time >= maxTime)
             {
                 return Sprites[Sprites.Length - 1];
@@ -33,6 +29,15 @@ namespace FungleAPI.Utilities.Assets
                     return Sprites[i];
             }
             return Sprites[Sprites.Length - 1];
+        }
+        public void SetGif(Sprite[] sprites, float[] delays)
+        {
+            foreach (float delay in delays)
+            {
+                maxTime += delay;
+            }
+            Sprites = sprites;
+            Delays = delays;
         }
     }
 }
