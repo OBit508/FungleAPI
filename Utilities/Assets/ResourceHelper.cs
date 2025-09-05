@@ -100,6 +100,7 @@ namespace FungleAPI.Utilities.Assets
             {
                 animation.Delays[i] = delay;
             }
+            animation.SetGif(animation.Sprites, animation.Delays);
             return animation;
         }
         public static GifFile LoadGif(ModPlugin plugin, string resource, float PixelPerUnit, bool loop = true)
@@ -117,8 +118,7 @@ namespace FungleAPI.Utilities.Assets
                 Texture2D texture = decoder.Frames[i];
                 sprites.Add(Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), PixelPerUnit).DontUnload());
             }
-            gif.Sprites = sprites.ToArray();
-            gif.Delays = decoder.FrameDelays.ToArray();
+            gif.SetGif(sprites.ToArray(), decoder.FrameDelays.ToArray());
             return gif;
         }
         public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)
