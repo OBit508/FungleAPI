@@ -14,69 +14,29 @@ namespace FungleAPI.Components
     public class GifAnimator : MonoBehaviour
     {
         public SpriteRenderer spriteRenderer;
-        public GifFile anim;
-        public bool canPlay;
-        public int currentSprite;
+        public GifFile Gif;
+        public float speed = 1;
         public float timer;
-        public Action EndAnim;
-        public Action StartAnim;
-        public void PlayAnimation(bool reset = true, bool playStartEvent = true)
+        public bool stoped;
+        public void Play(float speed = 1)
         {
-            if (playStartEvent)
-            {
-                StartAnim?.Invoke();
-            }
-            if (reset)
-            {
-                currentSprite = 0;
-                timer = 0;
-            }
-            canPlay = true;
+            this.speed = speed;
         }
-        public void StopAnimation(bool playEndEvent = true)
+        public void Pause()
         {
-            if (playEndEvent)
-            {
-                EndAnim?.Invoke();
-            }
-            canPlay = false;
+            speed = 0;
         }
-        public void SetAnimation(GifFile animation, bool playStartEvent = true)
+        public void Stop()
         {
-            if (anim != animation)
-            {
-                anim = animation;
-                currentSprite = 0;
-                timer = 0;
-                if (canPlay && playStartEvent)
-                {
-                    StartAnim?.Invoke();
-                }
-            }
+            stoped = true;
+            timer = 0;
         }
         public void Update()
         {
-            if (anim != null && canPlay && spriteRenderer != null)
+            if (Gif != null && !stoped)
             {
-                spriteRenderer.sprite = anim.Sprites[currentSprite];
-                timer += Time.deltaTime;
-                if (timer >= anim.Delays[currentSprite])
-                {
-                    if (currentSprite + 1 >= anim.Sprites.Count())
-                    {
-                        currentSprite = 0;
-                        if (!anim.Loop)
-                        {
-                            canPlay = false;
-                            EndAnim?.Invoke();
-                        }
-                    }
-                    else
-                    {
-                        currentSprite++;
-                    }
-                    timer = 0;
-                }
+                timer += Time.deltaTime * speed;
+                spriteRenderer.sprite = Gif.GetSprite(timer);
             }
         }
     }

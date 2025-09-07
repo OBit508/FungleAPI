@@ -12,27 +12,40 @@ namespace FungleAPI.Utilities.Prefabs
         public T prefab;
         public Prefab(T prefab)
         {
-            this.prefab = prefab;
+            this.prefab = prefab.DontUnload();
+            if (prefab.SafeCast<Component>() != null)
+            {
+                prefab.SafeCast<Component>().gameObject.SetActive(false);
+                prefab.SafeCast<Component>().DontDestroy();
+            }
+        }
+        private T Enable(T p)
+        {
+            if (p.SafeCast<Component>() != null)
+            {
+                p.SafeCast<Component>().gameObject.SetActive(true);
+            }
+            return p;
         }
         public T Instantiate()
         {
-            return GameObject.Instantiate<T>(prefab);
+            return Enable(GameObject.Instantiate<T>(prefab));
         }
         public T Instantiate(Transform parent)
         {
-            return GameObject.Instantiate<T>(prefab, parent);
+            return Enable(GameObject.Instantiate<T>(prefab, parent));
         }
         public T Instantiate(Vector3 position, Quaternion rotation)
         {
-            return GameObject.Instantiate<T>(prefab, position, rotation);
+            return Enable(GameObject.Instantiate<T>(prefab, position, rotation));
         }
         public T Instantiate(Transform parent, bool worldPositionStays)
         {
-            return GameObject.Instantiate<T>(prefab, parent, worldPositionStays);
+            return Enable(GameObject.Instantiate<T>(prefab, parent, worldPositionStays));
         }
         public T Instantiate(Vector3 position, Quaternion rotation, Transform parent)
         {
-            return GameObject.Instantiate<T>(prefab, position, rotation, parent);
+            return Enable(GameObject.Instantiate<T>(prefab, position, rotation, parent));
         }
     }
 }
