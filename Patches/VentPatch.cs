@@ -100,7 +100,10 @@ namespace FungleAPI.Patches
         {
             foreach (Il2CppSystem.Type type in AllVentComponents)
             {
-                __instance.gameObject.AddComponent(type);
+                if (__instance.gameObject.GetComponent(type) == null)
+                {
+                    __instance.gameObject.AddComponent(type);
+                }
             }
             ButtonBehavior buttonPrefab = GameObject.Instantiate<ButtonBehavior>(__instance.Buttons[0], __instance.transform);
             VentHelper helper = __instance.GetComponent<VentHelper>();

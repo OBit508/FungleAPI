@@ -31,6 +31,7 @@
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />
+    <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\LogicGameFlowPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RpcPair.cs" />
@@ -63,7 +64,7 @@
     <Compile Include="Patches\ExileControllerPatch.cs" />
     <Compile Include="Patches\GameManagerPatch.cs" />
     <Compile Include="Role\CustomAbilityButton.cs" />
-    <Compile Include="Patches\HudPatch.cs" />
+    <Compile Include="Patches\HudManagerPatch.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="Components\GifAnimator.cs" />

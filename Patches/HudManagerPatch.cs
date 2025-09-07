@@ -13,7 +13,7 @@ using UnityEngine;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(HudManager))]
-    internal static class HudPatch
+    internal static class HudManagerPatch
     {
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
