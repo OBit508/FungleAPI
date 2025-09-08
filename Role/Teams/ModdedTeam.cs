@@ -13,20 +13,19 @@ namespace FungleAPI.Role.Teams
 {
     public class ModdedTeam
     {
-        public static ModdedTeam Crewmates => GetInstance<CrewmateTeam>();
-        public static ModdedTeam Impostors => GetInstance<ImpostorTeam>();
-        public static ModdedTeam Neutrals => GetInstance<NeutralTeam>();
+        public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
+        public static ModdedTeam Impostors => Instance<ImpostorTeam>();
+        public static ModdedTeam Neutrals => Instance<NeutralTeam>();
         internal static ModdedTeam RegisterTeam(Type type, ModPlugin plugin)
         {
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
             team.count = plugin.BasePlugin.Config.Bind<int>(plugin.ModName + "-" + type.FullName, "Count", 0);
-            team.WinReason = CustomRoleManager.GetValidGameOver();
-            plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name);
+            plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name + " WinReason Count: " + team.WinReason.Count);
             Teams.Add(team);
             plugin.Teams.Add(team);
             return team;
         }
-        public static T GetInstance<T>() where T : ModdedTeam
+        public static T Instance<T>() where T : ModdedTeam
         {
             foreach (ModdedTeam team in Teams)
             {
@@ -45,7 +44,7 @@ namespace FungleAPI.Role.Teams
         {
             count.Value = value;
         }
-        public GameOverReason WinReason;
+        public virtual List<GameOverReason> WinReason { get; }
         public ModPlugin TeamPlugin => ModPlugin.GetModPlugin(GetType().Assembly);
         public virtual Color TeamColor => Palette.CrewmateBlue;
         public virtual StringNames TeamName => StringNames.None;

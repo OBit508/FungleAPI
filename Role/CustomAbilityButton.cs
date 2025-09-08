@@ -11,7 +11,7 @@ using TMPro;
 using UnityEngine;
 using xCloud;
 using static Sentry.MeasurementUnit;
-namespace FungleAPI.Roles
+namespace FungleAPI.Role
 {
     public class CustomAbilityButton
     {
@@ -114,10 +114,6 @@ namespace FungleAPI.Roles
         }
         public void Reset()
         {
-            if (Button != null)
-            {
-                Destroy();
-            }
             Timer = Cooldown;
             CurrentNumUses = NumUses;
             Transformed = false;
@@ -125,6 +121,10 @@ namespace FungleAPI.Roles
         }
         public AbilityButton CreateButton()
         {
+            if (Button != null)
+            {
+                Destroy();
+            }
             Reset();
             Button = UnityEngine.Object.Instantiate(HudManagerPatch.prefab, DestroyableSingleton<HudManager>.Instance.AbilityButton.transform.parent);
             PassiveButton component = Button.GetComponent<PassiveButton>();

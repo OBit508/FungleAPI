@@ -39,7 +39,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.1.0";
+        public const string ModV = "0.1.3";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()

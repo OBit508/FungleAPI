@@ -25,7 +25,7 @@ using xCloud;
 using static Il2CppSystem.Reflection.RuntimePropertyInfo;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.Roles
+namespace FungleAPI.Role
 {
     public static class CustomRoleManager
     {
@@ -106,6 +106,7 @@ namespace FungleAPI.Roles
             role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.RoleScreenshot = config.Screenshot;
             role.Role = roleType;
+            role.TeamType = customRole.Team == ModdedTeam.Impostors ? RoleTeamTypes.Impostor : RoleTeamTypes.Crewmate;
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);
@@ -129,11 +130,15 @@ namespace FungleAPI.Roles
         }
         public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
         {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().Configuration.WinReason.Contains(gameOverReason) && (roleBehaviour.GetTeam() != ModdedTeam.Neutrals || roleBehaviour.GetTeam() == ModdedTeam.Neutrals && !roleBehaviour.Player.Data.IsDead);
+            }
             if (roleBehaviour.GetTeam() == ModdedTeam.Neutrals)
             {
-                return !roleBehaviour.IsDead && roleBehaviour.GetTeam().WinReason == gameOverReason;
+                return !roleBehaviour.Player.Data.IsDead && roleBehaviour.GetTeam().WinReason.Contains(gameOverReason);
             }
-            return roleBehaviour.GetTeam().WinReason == gameOverReason;
+            return roleBehaviour.GetTeam().WinReason.Contains(gameOverReason);
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {

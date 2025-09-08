@@ -14,5 +14,6 @@ namespace FungleAPI.Role.Teams
         public override Color TeamColor => Palette.CrewmateBlue;
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
+        public override List<GameOverReason> WinReason { get; } = new List<GameOverReason>() { GameOverReason.CrewmatesByVote, GameOverReason.CrewmatesByTask, GameOverReason.CrewmateDisconnect, GameOverReason.HideAndSeek_CrewmatesByTimer };
     }
 }

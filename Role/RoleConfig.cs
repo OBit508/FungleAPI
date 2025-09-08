@@ -52,7 +52,7 @@ namespace FungleAPI.Role
         public Color OutlineColor;
         public bool ShowTeamColor;
         public bool CanDoTasks;
-        public GameOverReason WinReason;
+        public List<GameOverReason> WinReason;
         public Sprite Screenshot;
         public int GetCount()
         {

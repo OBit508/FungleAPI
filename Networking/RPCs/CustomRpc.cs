@@ -19,10 +19,9 @@ namespace FungleAPI.Networking.RPCs
             if (MCIUtils.GetClient(targetClientId) == null)
             {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
-                writer.Write(false);
+                writer.StartMessage(0);
                 writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
                 writer.Write(GetType().FullName);
-                writer.StartMessage(0);
                 Write(writer, data);
                 writer.EndMessage();
                 AmongUsClient.Instance.FinishRpcImmediately(writer);

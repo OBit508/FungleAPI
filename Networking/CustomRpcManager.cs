@@ -49,34 +49,14 @@ namespace FungleAPI.Networking
         {
             if (callId == byte.MaxValue)
             {
-                bool isPair = reader.ReadBoolean();
-                if (!isPair)
+                MessageReader messageReader = reader.ReadMessage();
+                string rpcModName = messageReader.ReadString();
+                string rpcId = messageReader.ReadString();
+                foreach (RpcHelper rpc in AllRpc)
                 {
-                    string rpcModName = reader.ReadString();
-                    string rpcId = reader.ReadString();
-                    foreach (RpcHelper rpc in AllRpc)
+                    if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
                     {
-                        if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
-                        {
-                            rpc.Handle(reader.ReadMessage());
-                        }
-                    }
-                }
-                else
-                {
-                    MessageReader messageReader = reader.ReadMessage();
-                    int count = messageReader.ReadInt32();
-                    for (int i = 0; i < count; i++)
-                    {
-                        string rpcModName = messageReader.ReadString();
-                        string rpcId = messageReader.ReadString();
-                        foreach (RpcHelper rpc in AllRpc)
-                        {
-                            if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
-                            {
-                                rpc.Handle(messageReader);
-                            }
-                        }
+                        rpc.Handle(messageReader);
                     }
                 }
                 return false;

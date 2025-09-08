@@ -31,8 +31,8 @@
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />
+    <Compile Include="Patches\ImpostorRolePatch.cs" />
     <Compile Include="Patches\KillButtonPatch.cs" />
-    <Compile Include="Patches\LogicGameFlowPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />

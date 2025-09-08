@@ -24,37 +24,5 @@ namespace FungleAPI.Patches
         {
             __instance.deadBodyPrefab?.gameObject.AddComponent<DeadBodyHelper>();
         }
-        [HarmonyPatch("CheckEndGameViaTasks")]
-        [HarmonyPrefix]
-        private static bool CheckEndGameViaTasksPrefix(GameManager __instance, ref bool __result)
-        {
-            GameData.Instance.RecomputeTaskCounts();
-            bool flag = true;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                if (player.Data.Role.CanDoTasks())
-                {
-                    foreach (PlayerTask task in player.myTasks)
-                    {
-                        if (task.SafeCast<NormalPlayerTask>() != null && !task.SafeCast<NormalPlayerTask>().IsComplete)
-                        {
-                            flag = false;
-                        }
-                    }
-                }
-            }
-            if (flag)
-            {
-                RpcCustomEndGame(__instance, ModdedTeam.Crewmates);
-                __result = true;
-                return false;
-            }
-            __result = false;
-            return false;
-        }
-        public static void RpcCustomEndGame(this GameManager manager, ModdedTeam team)
-        {
-            manager.RpcEndGame(team.WinReason, false);
-        }
     }
 }
