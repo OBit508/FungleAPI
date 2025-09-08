@@ -3,7 +3,7 @@ using BepInEx.Configuration;
 using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
 using FungleAPI.Patches;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Utilities;
 using Rewired.Utils.Classes.Data;
 using System;

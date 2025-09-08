@@ -1,5 +1,5 @@
 ﻿using Epic.OnlineServices;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Networking;
 using HarmonyLib;
 using System;
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Role;
 
 namespace FungleAPI.Configuration
 {

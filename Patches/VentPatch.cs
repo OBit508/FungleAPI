@@ -1,6 +1,5 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Role;
-using FungleAPI.Roles;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;

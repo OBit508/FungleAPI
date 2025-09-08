@@ -9,7 +9,6 @@ using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
 using FungleAPI.Utilities.Assets;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;

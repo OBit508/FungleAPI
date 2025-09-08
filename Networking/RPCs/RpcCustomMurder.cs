@@ -2,7 +2,7 @@
 using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using FungleAPI.Components;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using Hazel;

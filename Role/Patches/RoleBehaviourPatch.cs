@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using HarmonyLib;
 using Il2CppSystem.Text;
 using InnerNet;

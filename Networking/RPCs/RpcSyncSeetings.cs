@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Configuration;
 using FungleAPI.Role;
-using FungleAPI.Roles;
 using FungleAPI.Networking;
 using Hazel;
 using System;

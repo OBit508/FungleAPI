@@ -3,7 +3,7 @@ using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;

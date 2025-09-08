@@ -7,7 +7,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Components;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using HarmonyLib;

@@ -10,7 +10,6 @@ using FungleAPI.Components;
 using FungleAPI.Role;
 using FungleAPI.Role.Patches;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
 using FungleAPI.Networking;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;

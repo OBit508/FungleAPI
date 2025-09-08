@@ -4,7 +4,7 @@ using FungleAPI.Configuration;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;

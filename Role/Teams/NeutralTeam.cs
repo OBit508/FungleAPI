@@ -15,7 +15,7 @@ namespace FungleAPI.Role.Teams
         public override Color TeamColor => Color.gray;
         public override StringNames TeamName { get; } = neutral;
         public override StringNames PluralName { get; } = neutrals;
-        public override List<GameOverReason> WinReason => new List<GameOverReason>() { FungleAPI.Roles.CustomRoleManager.GetValidGameOver() };
+        public override List<GameOverReason> WinReason => new List<GameOverReason>() { FungleAPI.Role.CustomRoleManager.GetValidGameOver() };
         internal static StringNames neutral
         {
             get

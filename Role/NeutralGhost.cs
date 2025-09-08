@@ -2,7 +2,7 @@
 using FungleAPI.Components;
 using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;

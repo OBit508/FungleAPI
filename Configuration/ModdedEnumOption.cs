@@ -3,7 +3,7 @@ using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
 using FungleAPI.Components;
 using FungleAPI.Patches;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using Il2CppSystem.Web;

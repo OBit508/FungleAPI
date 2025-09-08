@@ -1,7 +1,6 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;

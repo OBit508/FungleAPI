@@ -2,7 +2,7 @@
 using BepInEx.Configuration;
 using FungleAPI.Configuration;
 using FungleAPI.Role.Teams;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using System;
 using System.Collections.Generic;
 using System.Linq;

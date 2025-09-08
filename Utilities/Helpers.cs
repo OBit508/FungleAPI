@@ -2,7 +2,7 @@
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
-using FungleAPI.Roles;
+using FungleAPI.Role;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
