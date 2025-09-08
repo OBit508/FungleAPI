@@ -146,10 +146,7 @@ namespace FungleAPI.Role.Patches
                 op.SetClickMask(menu.ButtonClickMask);
                 op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
-                    RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
-                    pair.AddRpc(CustomRpcManager.Instance<RpcSyncSeetings>(), role);
-                    pair.AddRpc(CustomRpcManager.Instance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true));
-                    pair.SendPair();
+                    CustomRpcManager.Instance<RpcSyncSeetings>().Send((role, TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true), PlayerControl.LocalPlayer.NetId);
                 });
                 op.transform.localPosition = new Vector3(2.17f, num, -2f);
                 menu.advancedSettingChildren.Add(op);
@@ -249,10 +246,7 @@ namespace FungleAPI.Role.Patches
                     option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                     if (AmongUsClient.Instance.AmHost)
                     {
-                        RpcPair pair = CustomRpcManager.CreateRpcPair(PlayerControl.LocalPlayer.NetId);
-                        pair.AddRpc(CustomRpcManager.Instance<RpcSyncSeetings>(), role);
-                        pair.AddRpc(CustomRpcManager.Instance<RpcSendNotification>(), (TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true));
-                        pair.SendPair();
+                        CustomRpcManager.Instance<RpcSyncSeetings>().Send((role, TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true), PlayerControl.LocalPlayer.NetId);
                     }
                 });
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);

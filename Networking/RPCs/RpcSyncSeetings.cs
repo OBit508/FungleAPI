@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncSeetings : CustomRpc<ICustomRole>
+    public class RpcSyncSeetings : CustomRpc<(ICustomRole role, string text, bool playSound, bool handlePlaySound)>
     {
         public override void Handle(MessageReader reader)
         {
@@ -28,19 +28,25 @@ namespace FungleAPI.Networking.RPCs
                     config.SetValue(reader.ReadString());
                 }
             }
+            string text = reader.ReadString();
+            bool playSound = reader.ReadBoolean();
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, text, playSound);
         }
-        public override void Write(MessageWriter writer, ICustomRole value)
+        public override void Write(MessageWriter writer, (ICustomRole role, string text, bool playSound, bool handlePlaySound) value)
         {
-            writer.Write((byte)value.Role);
-            writer.Write(value.RoleCount);
-            writer.Write(value.RoleChance);
-            writer.Write(value.Configuration.Configs.Count);
-            for (int i = 0; i < value.Configuration.Configs.Count; i++)
+            writer.Write((byte)value.role.Role);
+            writer.Write(value.role.RoleCount);
+            writer.Write(value.role.RoleChance);
+            writer.Write(value.role.Configuration.Configs.Count);
+            for (int i = 0; i < value.role.Configuration.Configs.Count; i++)
             {
-                ModdedOption config = value.Configuration.Configs[i];
+                ModdedOption config = value.role.Configuration.Configs[i];
                 writer.WriteConfig(config);
                 writer.Write(config.GetValue());
             }
+            writer.Write(value.text);
+            writer.Write(value.handlePlaySound);
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, value.text, value.playSound);
         }
     }
 }

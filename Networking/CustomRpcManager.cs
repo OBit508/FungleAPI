@@ -30,13 +30,6 @@ namespace FungleAPI.Networking
             }
             return null;
         }
-        public static RpcPair CreateRpcPair(uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
-        {
-            RpcPair rpcPair = new RpcPair();
-            rpcPair.Writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
-            rpcPair.Writer.Write(true);
-            return rpcPair;
-        }
         internal static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);

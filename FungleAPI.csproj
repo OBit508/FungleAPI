@@ -34,7 +34,6 @@
     <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\LogicGameFlowPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
-    <Compile Include="Networking\RpcPair.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
