@@ -148,7 +148,7 @@ namespace FungleAPI.Networking.RPCs
             }
             if (createDeadBody)
             {
-                Helpers.CreateCustomBody(target, source.Data.RoleType != RoleTypes.Viper);
+                Helpers.CreateCustomBody(target, source.Data.RoleType == RoleTypes.Viper || source.Data.Role.CustomRole() != null && source.Data.Role.CustomRole().Configuration.CreatedBodyOnKill == DeadBodyType.Viper ? DeadBodyType.Viper : DeadBodyType.Normal);
             }
             if (isParticipant)
             {

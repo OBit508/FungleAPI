@@ -52,9 +52,9 @@ namespace FungleAPI.Utilities
             }
             return bodies;
         }
-        public static DeadBody CreateCustomBody(PlayerControl from, bool normalBody)
+        public static DeadBody CreateCustomBody(PlayerControl from, DeadBodyType deadBodyType)
         {
-            DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[normalBody ? 0 : 1]);
+            DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[deadBodyType == DeadBodyType.Normal ? 0 : 1]);
             body.enabled = false;
             body.ParentId = from.PlayerId;
             body.bodyRenderers.ToList().ForEach(delegate (SpriteRenderer b)

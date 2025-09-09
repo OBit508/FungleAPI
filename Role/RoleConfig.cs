@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
+using FungleAPI.Utilities;
 
 namespace FungleAPI.Role
 {
@@ -52,6 +53,7 @@ namespace FungleAPI.Role
         public Color OutlineColor;
         public bool ShowTeamColor;
         public bool CanDoTasks;
+        public DeadBodyType CreatedBodyOnKill;
         public List<GameOverReason> WinReason;
         public Sprite Screenshot;
         public RoleChance Chance;
