@@ -28,7 +28,7 @@ namespace FungleAPI.Patches
         public static Dictionary<TaskFolder, List<RoleBehaviour>> Folders = new Dictionary<TaskFolder, List<RoleBehaviour>>();
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
-        public static void BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
+        public static bool BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
         {
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_Stencil", 1f);
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_StencilComp", 4f);
@@ -59,6 +59,7 @@ namespace FungleAPI.Patches
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.ShortTasks);
             __instance.Root.SubFolders = Enumerable.ToList<TaskFolder>(Enumerable.OrderBy<TaskFolder, string>(__instance.Root.SubFolders.ToSystemList(), (TaskFolder f) => f.FolderName)).ToIl2CppList();
             __instance.ShowFolder(__instance.Root);
+            return false;
         }
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
