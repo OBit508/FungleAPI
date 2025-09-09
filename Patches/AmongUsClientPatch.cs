@@ -4,14 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
+using FungleAPI.Role;
 using HarmonyLib;
+using InnerNet;
+using UnityEngine;
+using FungleAPI.Translation;
+using FungleAPI.Components;
 
 namespace FungleAPI.Patches
 {
-    [HarmonyPatch(typeof(AmongUsClient), "Awake")]
+    [HarmonyPatch(typeof(AmongUsClient))]
     internal static class AmongUsClientPatch
     {
-        public static void Postfix(AmongUsClient __instance)
+        [HarmonyPatch("Awake")]
+        [HarmonyPostfix]
+        public static void AwakePostfix(AmongUsClient __instance)
         {
             bool flag = false;
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
@@ -26,5 +35,17 @@ namespace FungleAPI.Patches
                 __instance.StartCoroutine(Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs().WrapToIl2Cpp());
             }
         }
+        [HarmonyPatch("CreatePlayer")]
+        [HarmonyPostfix]
+        public static void CreatePlayerPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
+        {
+            if (!__instance.AmHost || clientData.Id == __instance.HostId)
+            {
+                return;
+            }
+            LobbyWarningText.nonModdedPlayers.Add(clientData, new Utilities.ChangeableValue<float>(5));
+            CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(null, PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, clientData.Id);
+        }
+        public static DisconnectReasons FailedToSyncOptionsError = (DisconnectReasons)(-100);
     }
 }

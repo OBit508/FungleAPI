@@ -11,6 +11,7 @@ using Unity.Services.Analytics.Internal;
 using UnityEngine;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration;
+using FungleAPI.Role;
 
 namespace FungleAPI.Networking
 {
@@ -38,6 +39,14 @@ namespace FungleAPI.Networking
         public static void WriteConfig(this MessageWriter Writer, ModdedOption config)
         {
             Writer.Write(config.FullConfigName);
+        }
+        public static void WriteCount(this MessageWriter Writer, RoleCount count)
+        {
+            Writer.Write(count.Name);
+        }
+        public static void WriteChance(this MessageWriter Writer, RoleChance count)
+        {
+            Writer.Write(count.Name);
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -71,6 +80,16 @@ namespace FungleAPI.Networking
                 }
             }
             return null;
+        }
+        public static RoleCount ReadCount(this MessageReader Reader)
+        {
+            string fullCountName = Reader.ReadString();
+            return ConfigurationManager.RoleCounts.FirstOrDefault(count => count.Name == fullCountName);
+        }
+        public static RoleChance ReadChance(this MessageReader Reader)
+        {
+            string fullChanceName = Reader.ReadString();
+            return ConfigurationManager.RoleChances.FirstOrDefault(count => count.Name == fullChanceName);
         }
     }
 }

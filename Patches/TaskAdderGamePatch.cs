@@ -138,14 +138,10 @@ namespace FungleAPI.Patches
                 if (taskFolder2 != null && taskFolder2.Button != null)
                 {
                     ControllerManager.Instance.AddSelectableUiElement(taskFolder2.Button, false);
-                    if (!string.IsNullOrEmpty(__instance.restorePreviousSelectionByFolderName) && taskFolder2.FolderName.Equals(__instance.restorePreviousSelectionByFolderName))
-                    {
-                        __instance.restorePreviousSelectionFound = taskFolder2.Button;
-                    }
                 }
             }
             bool flag = false;
-            List<PlayerTask> list = taskFolder.Children.ToArray().ToList().OrderBy((PlayerTask t) => t.TaskType).ToList<PlayerTask>();
+            List<PlayerTask> list = taskFolder.TaskChildren.ToArray().ToList().OrderBy((PlayerTask t) => t.TaskType).ToList<PlayerTask>();
             for (int l = 0; l < list.Count; l++)
             {
                 TaskAddButton taskAddButton = GameObject.Instantiate<TaskAddButton>(__instance.TaskPrefab);
@@ -173,7 +169,7 @@ namespace FungleAPI.Patches
                         TaskFolder component = ControllerManager.Instance.CurrentUiState.CurrentSelection.GetComponent<TaskFolder>();
                         if (component != null)
                         {
-                            __instance.restorePreviousSelectionByFolderName = component.FolderName;
+                            __instance.previouslySelectedFolderName = component.FolderName;
                         }
                         ControllerManager.Instance.SetDefaultSelection(taskAddButton.Button, null);
                         flag = true;
@@ -198,13 +194,7 @@ namespace FungleAPI.Patches
                         if (taskAddButton2 != null && taskAddButton2.Button != null)
                         {
                             ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);
-                            if (m == 0 && __instance.restorePreviousSelectionFound != null)
-                            {
-                                ControllerManager.Instance.SetDefaultSelection(__instance.restorePreviousSelectionFound, null);
-                                __instance.restorePreviousSelectionByFolderName = string.Empty;
-                                __instance.restorePreviousSelectionFound = null;
-                            }
-                            else if (m == 0)
+                            if (m == 0)
                             {
                                 ControllerManager.Instance.SetDefaultSelection(taskAddButton2.Button, null);
                             }

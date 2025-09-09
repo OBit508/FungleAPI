@@ -30,6 +30,7 @@ using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using FungleAPI.Patches;
 
 namespace FungleAPI
 {
@@ -38,7 +39,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.1.3";
+        public const string ModV = "0.1.4";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -58,15 +59,15 @@ namespace FungleAPI
                 }
                 if (!rolesRegistered && scene.name == "MainMenu")
                 {
-                    Plugin.Roles = RoleManager.Instance.AllRoles.Concat(Plugin.Roles).ToList();
+                    Plugin.Roles = RoleManager.Instance.DontDestroy().AllRoles.ToArray().Concat(Plugin.Roles).ToList();
                     foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
                     {
-                        CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value);
+                        RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value));
                     }
-                    RoleManager.Instance.DontDestroy().AllRoles = RoleManager.Instance.AllRoles.Concat(CustomRoleManager.AllRoles).ToArray();
                     rolesRegistered = true;
                 }
             }));
+            DisconnectPopup.ErrorMessages.Add(AmongUsClientPatch.FailedToSyncOptionsError, new Translator("Failed to sync mods.").StringName);
         }
         private static bool rolesRegistered;
         internal static bool loaddedAssets;
@@ -80,6 +81,8 @@ namespace FungleAPI
                     plugin = new ModPlugin();
                     ModPlugin.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
+                    plugin.ModVersion = ModV;
+                    ModPlugin.AllPlugins.Add(plugin);
                 }
                 return plugin;
             }

@@ -241,8 +241,8 @@ namespace FungleAPI.Role.Patches
                 option.SetRole(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions, roles[i], 20);
                 option.OnValueChanged = new Action<OptionBehaviour>(delegate
                 {
-                    role.Configuration.localCount.Value = option.RoleMaxCount;
-                    role.Configuration.localChance.Value = option.RoleChance;
+                    role.Configuration.Count.SetCount(option.RoleMaxCount);
+                    role.Configuration.Chance.SetChance(option.RoleChance);
                     option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                     if (AmongUsClient.Instance.AmHost)
                     {

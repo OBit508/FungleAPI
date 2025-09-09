@@ -17,6 +17,9 @@
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="Components\LobbyWarningText.cs" />
+    <Compile Include="Configuration\RoleChance.cs" />
+    <Compile Include="Configuration\RoleCount.cs" />
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="Components\BodyComponent.cs" />
@@ -28,6 +31,8 @@
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="Components\RoleHintText.cs" />
+    <Compile Include="Networking\RPCs\RpcAmModded.cs" />
+    <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\ImportantTextPatch.cs" />

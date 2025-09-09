@@ -16,7 +16,7 @@ namespace FungleAPI.Components
         public void Awake()
         {
             DeadBody body = GetComponent<DeadBody>();
-            if (GameManager.Instance && GameManager.Instance.DeadBodyPrefab == body || body == null)
+            if (GameManager.Instance && GameManager.Instance.deadBodyPrefab.Contains(body) || body == null)
             {
                 return;
             }

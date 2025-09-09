@@ -88,12 +88,9 @@ namespace FungleAPI.Role
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
             RoleConfig config = customRole.Configuration;
-            config.localCount = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Count", 1);
-            config.onlineCount = config.localCount.Value;
-            config.localChance = plugin.BasePlugin.Config.Bind(plugin.ModName + "-" + type.FullName, "Chance", 100);
-            config.onlineChance = config.localChance.Value;
             config.Configs = ConfigurationManager.InitializeConfigs(role);
             ConfigurationManager.PatchRoleConfig(type, config);
+            ConfigurationManager.InitializeRoleChanceAndCount(config, type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;

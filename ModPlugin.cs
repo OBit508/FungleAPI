@@ -33,6 +33,7 @@ namespace FungleAPI
         {
             plugin.ModAssembly = basePlugin.GetType().Assembly;
             plugin.ModName = plugin.ModAssembly.GetName().Name;
+            plugin.OriginalName = plugin.ModName;
             plugin.BasePlugin = basePlugin;
             foreach (Type type in plugin.ModAssembly.GetTypes())
             {
@@ -79,7 +80,6 @@ namespace FungleAPI
                     basePlugin.Log.LogError(ex);
                 }
             }
-            AllPlugins.Add(plugin);
         }
         public static ModPlugin GetModPlugin(Assembly assembly)
         {
@@ -92,16 +92,31 @@ namespace FungleAPI
             }
             return null;
         }
-        public static ModPlugin RegisterMod(BasePlugin basePlugin, Action loadAssets = null, string ModName = null)
+        public static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, Action loadAssets = null, string ModName = null)
         {
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
             {
                 Register(plugin, basePlugin);
+                List<ModPlugin> sameNamePlugins = new List<ModPlugin>();
                 if (ModName != null)
                 {
                     plugin.ModName = ModName;
+                    plugin.OriginalName = ModName;
                 }
+                AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
+                {
+                    if (pl.OriginalName == plugin.OriginalName)
+                    {
+                        sameNamePlugins.Add(pl);
+                    }
+                }));
+                if (sameNamePlugins.Count > 0)
+                {
+                    plugin.ModName += " (" + sameNamePlugins.Count + ")";
+                }
+                plugin.ModVersion = modVersion;
+                AllPlugins.Add(plugin);
             }
             if (loadAssets != null)
             {
@@ -113,7 +128,13 @@ namespace FungleAPI
         {
             return BasePlugin.Config.Bind(ModName + " - Configs", Name, value);
         }
+        public static ModPlugin GetByNameAndVersion(string modName, string modVersion)
+        {
+            return AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
+        }
+        private string OriginalName;
         public string ModName;
+        public string ModVersion;
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();

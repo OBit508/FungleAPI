@@ -110,8 +110,8 @@ namespace FungleAPI.Role
         public override bool Active => PlayerControl.LocalPlayer.Data.IsDead;
         public override void Click()
         {
-            HauntMenu = GameObject.Instantiate<Minigame>(RoleManager.Instance.AllRoles.FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().HauntMenu, Button.transform);
+            HauntMenu = GameObject.Instantiate<Minigame>(RoleManager.Instance.AllRoles.ToSystemList().FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().HauntMenu, Button.transform);
         }
-        public override Sprite ButtonSprite => RoleManager.Instance.AllRoles.FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().Ability.Image;
+        public override Sprite ButtonSprite => RoleManager.Instance.AllRoles.ToSystemList().FirstOrDefault(obj => obj.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>().Ability.Image;
     }
 }

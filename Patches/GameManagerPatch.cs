@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 
 namespace FungleAPI.Patches
 {
@@ -19,10 +20,13 @@ namespace FungleAPI.Patches
     internal static class GameManagerPatch
     {
         [HarmonyPatch("Awake")]
-        [HarmonyPostfix]
-        private static void OnAwake(GameManager __instance)
+        [HarmonyPrefix]
+        public static void AwakePrefix(GameManager __instance)
         {
-            __instance.deadBodyPrefab?.gameObject.AddComponent<DeadBodyHelper>();
+            foreach (DeadBody deadBody in __instance.deadBodyPrefab)
+            {
+                deadBody.gameObject.AddComponent<DeadBodyHelper>();
+            }
         }
     }
 }

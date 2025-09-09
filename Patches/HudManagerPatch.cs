@@ -1,5 +1,6 @@
 ﻿
 using FungleAPI;
+using FungleAPI.Components;
 using FungleAPI.Role;
 using HarmonyLib;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace FungleAPI.Patches
@@ -34,6 +36,11 @@ namespace FungleAPI.Patches
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
             }
+            TextMeshPro lobbyWarningText = GameObject.Instantiate<TextMeshPro>(prefab.buttonLabelText, __instance.transform);
+            lobbyWarningText.SetOutlineColor(Color.red);
+            lobbyWarningText.transform.localScale *= 3;
+            lobbyWarningText.transform.localPosition = new Vector3(0, 2, -0.1f);
+            lobbyWarningText.gameObject.AddComponent<LobbyWarningText>().Text = lobbyWarningText;
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]

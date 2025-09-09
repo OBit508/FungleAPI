@@ -77,7 +77,7 @@ namespace FungleAPI.Components
             console.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
             console.Image = console.gameObject.AddComponent<SpriteRenderer>();
             console.gameObject.AddComponent<PassiveButton>().SetNewAction(console.Use);
-            console.MinigamePrefab = RoleManager.Instance.AllRoles.FirstOrDefault(obj => obj.Role == AmongUs.GameOptions.RoleTypes.Scientist).SafeCast<ScientistRole>().VitalsPrefab;
+            console.MinigamePrefab = RoleManager.Instance.AllRoles.ToSystemList().FirstOrDefault(obj => obj.Role == AmongUs.GameOptions.RoleTypes.Scientist).SafeCast<ScientistRole>().VitalsPrefab;
             console.Image.material = new Material(Shader.Find("Sprites/Outline"));
             console.DeadsCanUse = deadsCanUse;
             console.OnUse = onUse;

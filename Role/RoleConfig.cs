@@ -54,31 +54,7 @@ namespace FungleAPI.Role
         public bool CanDoTasks;
         public List<GameOverReason> WinReason;
         public Sprite Screenshot;
-        public int GetCount()
-        {
-            if (AmongUsClient.Instance.AmHost)
-            {
-                return localCount.Value;
-            }
-            else
-            {
-                return onlineCount;
-            }
-        }
-        public int GetChance()
-        {
-            if (AmongUsClient.Instance.AmHost)
-            {
-                return localChance.Value;
-            }
-            else
-            {
-                return onlineChance;
-            }
-        }
-        internal ConfigEntry<int> localCount;
-        internal int onlineCount;
-        internal ConfigEntry<int> localChance;
-        internal int onlineChance;
+        public RoleChance Chance;
+        public RoleCount Count;
     }
 }

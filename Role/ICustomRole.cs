@@ -21,7 +21,7 @@ namespace FungleAPI.Role
         Color RoleColor { get; }
         RoleConfig Configuration { get; }
         public RoleTypes Role => CustomRoleManager.RolesToRegister[GetType()];
-        public int RoleCount => Configuration.GetCount();
-        public int RoleChance => Configuration.GetChance();
+        public int RoleCount => Configuration.Count.GetCount();
+        public int RoleChance => Configuration.Chance.GetChance();
     }
 }

@@ -15,6 +15,8 @@ namespace FungleAPI.Configuration
     {
         public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
         internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
+        internal static List<RoleChance> RoleChances = new List<RoleChance>();
+        internal static List<RoleCount> RoleCounts = new List<RoleCount>();
         public static List<ModdedOption> InitializeConfigs(object obj)
         {
             Type type = obj.GetType();
@@ -64,6 +66,15 @@ namespace FungleAPI.Configuration
         {
             __result = RoleConfigs[__originalMethod];
             return false;
+        }
+        public static void InitializeRoleChanceAndCount(RoleConfig roleConfig, Type roleType, ModPlugin plugin)
+        {
+            roleConfig.Chance = new RoleChance();
+            roleConfig.Chance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
+            RoleChances.Add(roleConfig.Chance);
+            roleConfig.Count = new RoleCount();
+            roleConfig.Count.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
+            RoleCounts.Add(roleConfig.Count);
         }
     }
 }

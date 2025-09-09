@@ -16,8 +16,8 @@ namespace FungleAPI.Networking.RPCs
         public override void Handle(MessageReader reader)
         {
             ICustomRole role = CustomRoleManager.GetRole((RoleTypes)reader.ReadByte());
-            role.Configuration.onlineCount = reader.ReadInt32();
-            role.Configuration.onlineChance = reader.ReadInt32();
+            role.Configuration.Count.SetCount(reader.ReadInt32());
+            role.Configuration.Chance.SetChance(reader.ReadInt32());
             int count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
             {
