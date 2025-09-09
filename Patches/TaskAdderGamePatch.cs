@@ -2,11 +2,12 @@
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
-using FungleAPI.Role.Teams;
 using FungleAPI.Role;
+using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;
+using Il2CppSystem.Threading.Tasks;
 using MS.Internal.Xml.XPath;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace FungleAPI.Patches
         public static Dictionary<TaskFolder, List<RoleBehaviour>> Folders = new Dictionary<TaskFolder, List<RoleBehaviour>>();
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
-        public static void BeginPrefix(TaskAdderGame __instance)
+        public static void BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
         {
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_Stencil", 1f);
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_StencilComp", 4f);
@@ -35,6 +36,29 @@ namespace FungleAPI.Patches
             __instance.TaskPrefab.Text.fontMaterial.SetFloat("_Stencil", 1f);
             __instance.TaskPrefab.Text.fontMaterial.SetFloat("_StencilComp", 4f);
             __instance.TaskPrefab.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            Minigame.Instance = __instance;
+            __instance.MyTask = t;
+            __instance.MyNormTask = t.SafeCast<NormalPlayerTask>();
+            __instance.timeOpened = Time.realtimeSinceStartup;
+            if (PlayerControl.LocalPlayer)
+            {
+                if (MapBehaviour.Instance)
+                {
+                    MapBehaviour.Instance.Close();
+                }
+                PlayerControl.LocalPlayer.MyPhysics.SetNormalizedVelocity(Vector2.zero);
+            }
+            __instance.logger.Info("Opening minigame " + __instance.GetType().Name, null);
+            __instance.StartCoroutine(__instance.CoAnimateOpen());
+            DestroyableSingleton<DebugAnalytics>.Instance.Analytics.MinigameOpened(PlayerControl.LocalPlayer.Data, __instance.TaskType);
+            __instance.Root = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
+            __instance.Root.gameObject.SetActive(false);
+            Il2CppSystem.Collections.Generic.Dictionary<string, TaskFolder> dictionary = new Il2CppSystem.Collections.Generic.Dictionary<string, TaskFolder>();
+            __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.CommonTasks);
+            __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.LongTasks);
+            __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.ShortTasks);
+            __instance.Root.SubFolders = Enumerable.ToList<TaskFolder>(Enumerable.OrderBy<TaskFolder, string>(__instance.Root.SubFolders.ToSystemList(), (TaskFolder f) => f.FolderName)).ToIl2CppList();
+            __instance.ShowFolder(__instance.Root);
         }
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
@@ -44,12 +68,14 @@ namespace FungleAPI.Patches
             TaskFolder RoleFolder = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
             RoleFolder.gameObject.SetActive(false);
             RoleFolder.FolderName = TranslationController.Instance.GetString(StringNames.Roles);
+            RoleFolder.SetFolderColor(TaskFolder.FolderColor.Tan);
             __instance.Root.SubFolders.Add(RoleFolder);
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 TaskFolder folder = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
                 folder.gameObject.SetActive(false);
                 folder.FolderName = plugin.ModName;
+                folder.SetFolderColor(TaskFolder.FolderColor.Tan);
                 Dictionary<ModdedTeam, List<RoleBehaviour>> roles = new Dictionary<ModdedTeam, List<RoleBehaviour>>();
                 foreach (RoleBehaviour role in plugin.Roles)
                 {
@@ -67,6 +93,7 @@ namespace FungleAPI.Patches
                     TaskFolder folder2 = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
                     folder2.gameObject.SetActive(false);
                     folder2.FolderName = pair.Key.TeamName.GetString();
+                    folder2.SetFolderColor(pair.Key.TeamColor);
                     Folders.Add(folder2, pair.Value);
                     folder.SubFolders.Add(folder2);
                 }
@@ -215,6 +242,13 @@ namespace FungleAPI.Patches
             }
             ControllerManager.Instance.SetBackButton(__instance.FolderBackButton);
             return false;
+        }
+        public static void SetFolderColor(this TaskFolder taskFolder, Color color)
+        {
+            taskFolder.currentFolderColor = color;
+            taskFolder.folderSpriteRenderer.color = taskFolder.currentFolderColor;
+            taskFolder.buttonRolloverHandler.OutColor = taskFolder.currentFolderColor;
+            taskFolder.buttonRolloverHandler.UnselectedColor = taskFolder.currentFolderColor;
         }
     }
 }
