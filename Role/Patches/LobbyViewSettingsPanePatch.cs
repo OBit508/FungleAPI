@@ -66,6 +66,7 @@ namespace FungleAPI.Role.Patches
             foreach (RoleBehaviour role in currentPlugin.Roles)
             {
                 if (!UsedTeams.Contains(role.GetTeam()) &&
+                    (role.CustomRole() == null || role.CustomRole() != null && !role.CustomRole().Configuration.HideRole) &&
                     (currentPlugin == FungleAPIPlugin.Plugin && role.GetTeam() != ModdedTeam.Neutrals ||
                      currentPlugin != FungleAPIPlugin.Plugin))
                 {

@@ -176,17 +176,17 @@ namespace FungleAPI.Patches
                 taskAddButton.MyTask = list[l];
                 if (taskAddButton.MyTask.TaskType == TaskTypes.DivertPower)
                 {
-                    SystemTypes targetSystem = ((DivertPowerTask)taskAddButton.MyTask).TargetSystem;
-                    taskAddButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.DivertPowerTo);
+                    SystemTypes targetSystem = taskAddButton.MyTask.SafeCast<DivertPowerTask>().TargetSystem;
+                    taskAddButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.DivertPowerTo, new Il2CppSystem.Object[] { TranslationController.Instance.GetString(targetSystem) });
                 }
                 else if (taskAddButton.MyTask.TaskType == TaskTypes.FixWeatherNode)
                 {
-                    int nodeId = ((WeatherNodeTask)taskAddButton.MyTask).NodeId;
-                    taskAddButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FixWeatherNode) + " " + DestroyableSingleton<TranslationController>.Instance.GetString(WeatherSwitchGame.ControlNames[nodeId]);
+                    int nodeId = taskAddButton.MyTask.SafeCast<WeatherNodeTask>().NodeId;
+                    taskAddButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FixWeatherNode) + " " + TranslationController.Instance.GetString(WeatherSwitchGame.ControlNames[nodeId]);
                 }
                 else
                 {
-                    taskAddButton.Text.text = DestroyableSingleton<TranslationController>.Instance.GetString(taskAddButton.MyTask.TaskType);
+                    taskAddButton.Text.text = TranslationController.Instance.GetString(taskAddButton.MyTask.TaskType);
                 }
                 __instance.AddFileAsChild(taskFolder, taskAddButton, ref num, ref num2, ref num3);
                 if (taskAddButton != null && taskAddButton.Button != null)

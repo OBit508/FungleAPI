@@ -256,7 +256,7 @@ namespace FungleAPI.Role.Patches
                 List<RoleBehaviour> teamRoles = new List<RoleBehaviour>();
                 foreach (RoleBehaviour role in plugin.Roles)
                 {
-                    if (role.GetTeam() == team)
+                    if (role.GetTeam() == team && !role.CustomRole().Configuration.HideRole)
                     {
                         teamRoles.Add(role);
                     }
