@@ -14,6 +14,7 @@ namespace FungleAPI.Role.Teams
         public override bool FriendlyFire => false;
         public override bool KnowMembers => true;
         public override Color TeamColor => Palette.ImpostorRed;
+        public override Color TeamHeaderColor => Palette.ImpostorRoleHeaderRed;
         public override StringNames TeamName => StringNames.Impostor;
         public override StringNames PluralName { get; } = impostors;
         public override List<GameOverReason> WinReason { get; } = new List<GameOverReason>() { GameOverReason.ImpostorsByVote, GameOverReason.ImpostorsByKill, GameOverReason.ImpostorsBySabotage, GameOverReason.ImpostorDisconnect, GameOverReason.HideAndSeek_ImpostorsByKills };

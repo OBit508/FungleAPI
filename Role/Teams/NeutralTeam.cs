@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using UnityEngine;
 
 namespace FungleAPI.Role.Teams
@@ -13,6 +14,7 @@ namespace FungleAPI.Role.Teams
         public override bool FriendlyFire => true;
         public override bool KnowMembers => false;
         public override Color TeamColor => Color.gray;
+        public override Color TeamHeaderColor { get; } = Helpers.Light(Color.gray, 0.7f);
         public override StringNames TeamName { get; } = neutral;
         public override StringNames PluralName { get; } = neutrals;
         public override List<GameOverReason> WinReason => new List<GameOverReason>() { FungleAPI.Role.CustomRoleManager.GetValidGameOver() };

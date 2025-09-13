@@ -47,6 +47,7 @@ namespace FungleAPI.Role.Teams
         public virtual List<GameOverReason> WinReason { get; }
         public ModPlugin TeamPlugin => ModPlugin.GetModPlugin(GetType().Assembly);
         public virtual Color TeamColor => Palette.CrewmateBlue;
+        public virtual Color TeamHeaderColor => Helpers.Light(TeamColor);
         public virtual StringNames TeamName => StringNames.None;
         public virtual StringNames PluralName => StringNames.None;
         public virtual bool FriendlyFire => true;
