@@ -36,7 +36,7 @@ namespace FungleAPI.Utilities.Prefabs
                         AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
                         if (!op.IsValid())
                         {
-                            yield return new WaitForSeconds(1);
+                            yield return new WaitForSeconds(3);
                         }
                     }
                     ChangePrefab(shipRef);
@@ -50,6 +50,7 @@ namespace FungleAPI.Utilities.Prefabs
                     {
                         ChangePrefab(shipRef);
                     }
+                    yield return new WaitForSeconds(1);
                 }
             }
         } 

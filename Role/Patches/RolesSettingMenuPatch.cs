@@ -145,6 +145,7 @@ namespace FungleAPI.Role.Patches
             foreach (KeyValuePair<ModPlugin, Transform> pair in Pages)
             {
                 pair.Value.gameObject.SetActive(currentPlugin == pair.Key && !__instance.AdvancedRolesSettings.active);
+                pair.Value.localScale = __instance.RoleChancesSettings.transform.localScale;
             }
             if (currentPlugin != chanceTabPlugin)
             {
@@ -280,14 +281,15 @@ namespace FungleAPI.Role.Patches
                 option.SetRole(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions, roles[i], 20);
                 option.OnValueChanged = new Action<OptionBehaviour>(delegate
                 {
-                    role.Configuration.Count.SetCount(option.RoleMaxCount);
-                    role.Configuration.Chance.SetChance(option.RoleChance);
+                    role.Configuration.CountAndChance.SetCount(option.RoleMaxCount);
+                    role.Configuration.CountAndChance.SetChance(option.RoleChance);
                     option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                     if (AmongUsClient.Instance.AmHost)
                     {
                         CustomRpcManager.Instance<RpcSyncSeetings>().Send((role, TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true), PlayerControl.LocalPlayer.NetId);
                     }
                 });
+                option.roleMaxCount = role.Configuration.MaxRoleCount;
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 option.SetClickMask(menu.ButtonClickMask);
                 option.transform.localPosition = currentVec;

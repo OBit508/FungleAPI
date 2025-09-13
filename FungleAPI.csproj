@@ -18,8 +18,7 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
-    <Compile Include="Configuration\RoleChance.cs" />
-    <Compile Include="Configuration\RoleCount.cs" />
+    <Compile Include="Configuration\RoleCountAndChance.cs" />
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="Components\BodyComponent.cs" />
@@ -76,7 +75,7 @@
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
-    <Compile Include="Role\Patches\RoleOptionsCollectionV09Patch.cs" />
+    <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
     <Compile Include="Role\Patches\RolesSettingMenuPatch.cs" />
     <Compile Include="Patches\TaskAdderGamePatch.cs" />
     <Compile Include="Utilities\Helpers.cs" />

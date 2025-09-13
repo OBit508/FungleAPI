@@ -40,11 +40,7 @@ namespace FungleAPI.Networking
         {
             Writer.Write(config.FullConfigName);
         }
-        public static void WriteCount(this MessageWriter Writer, RoleCount count)
-        {
-            Writer.Write(count.Name);
-        }
-        public static void WriteChance(this MessageWriter Writer, RoleChance count)
+        public static void WriteCountAndChance(this MessageWriter Writer, RoleCountAndChance count)
         {
             Writer.Write(count.Name);
         }
@@ -81,15 +77,10 @@ namespace FungleAPI.Networking
             }
             return null;
         }
-        public static RoleCount ReadCount(this MessageReader Reader)
+        public static RoleCountAndChance ReadCountAndChance(this MessageReader Reader)
         {
             string fullCountName = Reader.ReadString();
-            return ConfigurationManager.RoleCounts.FirstOrDefault(count => count.Name == fullCountName);
-        }
-        public static RoleChance ReadChance(this MessageReader Reader)
-        {
-            string fullChanceName = Reader.ReadString();
-            return ConfigurationManager.RoleChances.FirstOrDefault(count => count.Name == fullChanceName);
+            return ConfigurationManager.RoleCountsAndChances.FirstOrDefault(count => count.Name == fullCountName);
         }
     }
 }

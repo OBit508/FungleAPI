@@ -105,11 +105,6 @@ namespace FungleAPI.Role.Patches
                     {
                         int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
                         int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
-                        if (roleBehaviour.CustomRole() != null)
-                        {
-                            chancePerGame = roleBehaviour.CustomRole().Configuration.Chance.GetChance();
-                            numPerGame = roleBehaviour.CustomRole().Configuration.Count.GetCount();
-                        }
                         bool disabled = numPerGame == 0;
                         ViewSettingsInfoPanelRoleVariant viewPanel = GameObject.Instantiate<ViewSettingsInfoPanelRoleVariant>(__instance.infoPanelRoleOrigin);
                         viewPanel.transform.SetParent(__instance.settingsContainer);

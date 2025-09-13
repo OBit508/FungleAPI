@@ -56,7 +56,8 @@ namespace FungleAPI.Role
         public DeadBodyType CreatedBodyOnKill;
         public List<GameOverReason> WinReason;
         public Sprite Screenshot;
-        public RoleChance Chance;
-        public RoleCount Count;
+        public RoleCountAndChance CountAndChance;
+        public bool HideRole;
+        public int MaxRoleCount;
     }
 }

@@ -90,7 +90,7 @@ namespace FungleAPI.Role
             RoleConfig config = customRole.Configuration;
             config.Configs = ConfigurationManager.InitializeConfigs(role);
             ConfigurationManager.PatchRoleConfig(type, config);
-            ConfigurationManager.InitializeRoleChanceAndCount(config, type, plugin);
+            ConfigurationManager.InitializeRoleCountAndChances(config, type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;

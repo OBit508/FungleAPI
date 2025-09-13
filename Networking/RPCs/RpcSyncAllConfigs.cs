@@ -24,17 +24,12 @@ namespace FungleAPI.Networking.RPCs
                 writer.WriteConfig(ConfigurationManager.Configs.Values.ToArray()[i]);
                 writer.Write(ConfigurationManager.Configs.Values.ToArray()[i].GetValue());
             }
-            writer.Write(ConfigurationManager.RoleCounts.Count);
-            for (int i = 0; i < ConfigurationManager.RoleCounts.Count; i++)
+            writer.Write(ConfigurationManager.RoleCountsAndChances.Count);
+            for (int i = 0; i < ConfigurationManager.RoleCountsAndChances.Count; i++)
             {
-                writer.WriteCount(ConfigurationManager.RoleCounts[i]);
-                writer.Write(ConfigurationManager.RoleCounts[i].GetCount());
-            }
-            writer.Write(ConfigurationManager.RoleChances.Count);
-            for (int i = 0; i < ConfigurationManager.RoleChances.Count; i++)
-            {
-                writer.WriteChance(ConfigurationManager.RoleChances[i]);
-                writer.Write(ConfigurationManager.RoleChances[i].GetChance());
+                writer.WriteCountAndChance(ConfigurationManager.RoleCountsAndChances[i]);
+                writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetCount());
+                writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetChance());
             }
         }
         public override void Handle(MessageReader reader)
@@ -50,13 +45,8 @@ namespace FungleAPI.Networking.RPCs
                 int count2 = reader.ReadInt32();
                 for (int i = 0; i < count2; i++)
                 {
-                    RoleCount c = reader.ReadCount();
+                    RoleCountAndChance c = reader.ReadCountAndChance();
                     c.SetCount(reader.ReadInt32());
-                }
-                int count3 = reader.ReadInt32();
-                for (int i = 0; i < count2; i++)
-                {
-                    RoleChance c = reader.ReadChance();
                     c.SetChance(reader.ReadInt32());
                 }
             }

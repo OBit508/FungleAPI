@@ -23,7 +23,7 @@ namespace FungleAPI.Patches
         public static List<Il2CppSystem.Type> AllVentComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("SetOutline")]
         [HarmonyPrefix]
-        public static bool OnSetOutline(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
+        public static bool SetOutlinePrefix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
         {
             ICustomRole role = PlayerControl.LocalPlayer.Data.Role.CustomRole();
             if (role != null)
@@ -54,7 +54,7 @@ namespace FungleAPI.Patches
         }
         [HarmonyPatch("CanUse")]
         [HarmonyPrefix]
-        public static bool OnCanUse(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
+        public static bool CanUsePrefix(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
         {
             float num = float.MaxValue;
             PlayerControl @object = pc.Object;
