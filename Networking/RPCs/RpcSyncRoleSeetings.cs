@@ -1,5 +1,4 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.Configuration;
 using FungleAPI.Role;
 using FungleAPI.Networking;
 using Hazel;
@@ -8,10 +7,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.Configuration.Attributes;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncSeetings : CustomRpc<(ICustomRole role, string text, bool playSound, bool handlePlaySound)>
+    public class RpcSyncRoleSeetings : CustomRpc<(ICustomRole role, string text, bool playSound, bool handlePlaySound)>
     {
         public override void Handle(MessageReader reader)
         {

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using FungleAPI.Utilities;
+using FungleAPI.Configuration.Attributes;
 
 namespace FungleAPI.Role
 {

@@ -14,19 +14,21 @@ using TMPro;
 using UnityEngine;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Attributes
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedOption : Attribute
     {
         public BaseGameSetting Data;
-        public string ConfigName;
+        public Translator ConfigName;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
-        protected ModdedOption(string configName)
+        internal string GroupId;
+        protected ModdedOption(string configName, string groupId)
         {
-            ConfigName = configName;
+            ConfigName = new Translator(configName);
+            GroupId = groupId;
         }
         public string GetValue()
         {
@@ -60,7 +62,7 @@ namespace FungleAPI.Configuration
             foreach (TextMeshPro textMeshPro in option.GetComponentsInChildren<TextMeshPro>(true))
             {
                 textMeshPro.fontMaterial.SetFloat("_StencilComp", 3f);
-                textMeshPro.fontMaterial.SetFloat("_Stencil", (float)maskLayer);
+                textMeshPro.fontMaterial.SetFloat("_Stencil", maskLayer);
                 textMeshPro.enabled = true;
             }
             option.enabled = false;
@@ -86,6 +88,7 @@ namespace FungleAPI.Configuration
             option.GetComponent<UIScrollbarHelper>().enabled = true;
             option.LabelBackground.enabled = false;
             option.name = "ModdedOption";
+            option.enabled = true;
         }
         public virtual OptionBehaviour CreateOption(Transform transform)
         {

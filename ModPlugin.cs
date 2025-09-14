@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP;
 using FungleAPI;
 using FungleAPI.Attributes;
 using FungleAPI.Components;
+using FungleAPI.Configuration;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
@@ -43,7 +44,11 @@ namespace FungleAPI
                     {
                         ClassInjector.RegisterTypeInIl2Cpp(type);
                     }
-                    if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
+                    if (typeof(ModSettings).IsAssignableFrom(type) && type != typeof(ModSettings))
+                    {
+                        plugin.Settings = (ModSettings)Activator.CreateInstance(type);
+                    }
+                    else if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
                     {
                         CustomAbilityButton.RegisterButton(type, plugin);
                     }
@@ -140,5 +145,6 @@ namespace FungleAPI
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
+        public ModSettings Settings = new ModSettings();
     }
 }

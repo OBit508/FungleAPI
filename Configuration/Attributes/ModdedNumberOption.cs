@@ -19,19 +19,19 @@ using FungleAPI.Translation;
 using HarmonyLib;
 using FungleAPI.Utilities.Prefabs;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Attributes
 {
     [HarmonyPatch(typeof(NumberOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedNumberOption : ModdedOption
     {
-        public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
-            : base(configName)
+        public ModdedNumberOption(string configName, string groupId, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
+            : base(configName, groupId)
         {
             Data = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
             floatGameSetting.Type = OptionTypes.Float;
-            floatGameSetting.Title = new Translator(configName).StringName;
+            floatGameSetting.Title = ConfigName.StringName;
             floatGameSetting.Increment = increment;
             floatGameSetting.ValidRange = new FloatRange(minValue, maxValue);
             floatGameSetting.FormatString = formatString;
@@ -45,7 +45,7 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 float value = (float)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);
@@ -53,7 +53,7 @@ namespace FungleAPI.Configuration
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            NumberOption numberOption = GameObject.Instantiate<NumberOption>(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
+            NumberOption numberOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
             FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
             numberOption.SetUpFromData(Data, 20);
             numberOption.OnValueChanged = new Action<OptionBehaviour>(delegate

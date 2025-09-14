@@ -25,6 +25,7 @@ namespace FungleAPI.Patches
             bool flag = false;
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
+                plugin.Settings.Initialize();
                 if (plugin.UseShipReference)
                 {
                     flag = true;

@@ -22,18 +22,18 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Attributes
 {
     [HarmonyPatch(typeof(StringOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedEnumOption : ModdedOption
     {
-        public ModdedEnumOption(string configName, string[] defaultValue)
-            : base(configName)
+        public ModdedEnumOption(string configName, string groupId, string[] defaultValue)
+            : base(configName, groupId)
         {
             Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
-            stringGameSetting.Title = new Translator(configName).StringName;
+            stringGameSetting.Title = ConfigName.StringName;
             stringGameSetting.Type = OptionTypes.String;
             List<StringNames> stringNames = new List<StringNames>();
             foreach (string str in defaultValue)
@@ -48,7 +48,7 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 int value = (int)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<StringGameSetting>().Index = int.Parse(localValue.Value);
@@ -56,7 +56,7 @@ namespace FungleAPI.Configuration
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            StringOption stringOption = GameObject.Instantiate<StringOption>(PrefabUtils.Prefab<StringOption>(), transform);
+            StringOption stringOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<StringOption>(), transform);
             StringGameSetting stringGameSetting = Data as StringGameSetting;
             stringOption.SetUpFromData(Data, 20);
             stringOption.OnValueChanged = new Action<OptionBehaviour>(delegate
@@ -66,6 +66,7 @@ namespace FungleAPI.Configuration
             stringOption.Title = stringGameSetting.Title;
             stringOption.Values = stringGameSetting.Values;
             stringOption.Value = stringGameSetting.Index;
+            FixOption(stringOption);
             return stringOption;
         }
         [HarmonyPatch("Initialize")]

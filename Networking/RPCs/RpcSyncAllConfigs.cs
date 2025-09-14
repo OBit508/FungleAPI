@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Configuration;
+using FungleAPI.Configuration.Attributes;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using Hazel;

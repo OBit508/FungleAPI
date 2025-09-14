@@ -19,18 +19,18 @@ using FungleAPI.Translation;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Attributes
 {
     [HarmonyPatch(typeof(ToggleOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedToggleOption : ModdedOption
     {
-        public ModdedToggleOption(string configName)
-            : base(configName) 
+        public ModdedToggleOption(string configName, string groupId)
+            : base(configName, groupId) 
         {
             Data = ScriptableObject.CreateInstance<CheckboxGameSetting>().DontUnload();
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
-            checkboxGameSetting.Title = new Translator(ConfigName).StringName;
+            checkboxGameSetting.Title = ConfigName.StringName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
@@ -39,14 +39,14 @@ namespace FungleAPI.Configuration
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 bool value = (bool)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
             }
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            ToggleOption toggleOption = GameObject.Instantiate<ToggleOption>(PrefabUtils.Prefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
+            ToggleOption toggleOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
             toggleOption.SetUpFromData(Data, 20);
             toggleOption.Title = Data.Title;
             toggleOption.TitleText.text = Data.Title.GetString();

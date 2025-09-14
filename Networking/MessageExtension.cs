@@ -12,6 +12,7 @@ using UnityEngine;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration;
 using FungleAPI.Role;
+using FungleAPI.Configuration.Attributes;
 
 namespace FungleAPI.Networking
 {

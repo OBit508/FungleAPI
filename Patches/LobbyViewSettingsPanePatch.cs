@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.Configuration;
+using FungleAPI.Configuration.Attributes;
+using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -14,7 +15,7 @@ using UnityEngine;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.Role.Patches
+namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(LobbyViewSettingsPane))]
     internal static class LobbyViewSettingsPanePatch
@@ -28,7 +29,7 @@ namespace FungleAPI.Role.Patches
         {
             currentPlugin = FungleAPIPlugin.Plugin;
             currentIndex = 0;
-            SwitchButton = UnityEngine.Object.Instantiate(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
+            SwitchButton = GameObject.Instantiate(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
             SwitchButton.transform.localPosition = new Vector3(3.6f, 1.404f, 0);
             SwitchButton.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
             SwitchButton.OnClick.AddListener(new Action(delegate
@@ -49,6 +50,17 @@ namespace FungleAPI.Role.Patches
             SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextTranslatorTMP>().enabled = false;
             SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
         }
+        [HarmonyPatch("DrawNormalTab")]
+        [HarmonyPrefix]
+        public static bool DrawNormalTabPrefix(LobbyViewSettingsPane __instance)
+        {
+            if (currentPlugin != FungleAPIPlugin.Plugin)
+            {
+                DrawNormalTab(__instance);
+                return false;
+            }
+            return true;
+        }
         [HarmonyPatch("DrawRolesTab")]
         [HarmonyPrefix]
         public static bool DrawRolesTabPrefix(LobbyViewSettingsPane __instance)
@@ -57,7 +69,7 @@ namespace FungleAPI.Role.Patches
             float num2 = -6.53f;
             float minY = num;
             float lastItemHeight = 0f;
-            CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+            CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(__instance.categoryHeaderOrigin);
             categoryHeaderMasked.SetHeader(StringNames.RoleQuotaLabel, 61);
             categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
             categoryHeaderMasked.transform.localScale = Vector3.one;
@@ -77,9 +89,9 @@ namespace FungleAPI.Role.Patches
             List<RoleBehaviour> list = new List<RoleBehaviour>();
             for (int i = 0; i < UsedTeams.Count; i++)
             {
-                CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate<CategoryHeaderRoleVariant>(__instance.categoryHeaderRoleOrigin);
+                CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(__instance.categoryHeaderRoleOrigin);
                 categoryHeaderRoleVariant.SetHeader(
-                    (i == 0) ? StringNames.CrewmateRolesHeader : StringNames.ImpostorRolesHeader,
+                    i == 0 ? StringNames.CrewmateRolesHeader : StringNames.ImpostorRolesHeader,
                     61
                 );
                 if (currentPlugin != FungleAPIPlugin.Plugin)
@@ -108,7 +120,7 @@ namespace FungleAPI.Role.Patches
                         int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
                         int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
                         bool disabled = numPerGame == 0;
-                        ViewSettingsInfoPanelRoleVariant viewPanel = GameObject.Instantiate<ViewSettingsInfoPanelRoleVariant>(__instance.infoPanelRoleOrigin);
+                        ViewSettingsInfoPanelRoleVariant viewPanel = GameObject.Instantiate(__instance.infoPanelRoleOrigin);
                         viewPanel.transform.SetParent(__instance.settingsContainer);
                         viewPanel.transform.localScale = Vector3.one;
                         viewPanel.transform.localPosition = new Vector3(num2, num, -2f);
@@ -122,7 +134,7 @@ namespace FungleAPI.Role.Patches
                             chancePerGame,
                             61,
                             roleBehaviour.CustomRole() == null
-                                ? (i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed)
+                                ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed
                                 : roleBehaviour.CustomRole().RoleColor,
                             roleBehaviour.RoleIconSolid,
                             currentPlugin == FungleAPIPlugin.Plugin ? i == 0 : true,
@@ -142,7 +154,7 @@ namespace FungleAPI.Role.Patches
             }
             if (list.Count > 0)
             {
-                CategoryHeaderMasked categoryHeaderMasked2 = GameObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                CategoryHeaderMasked categoryHeaderMasked2 = GameObject.Instantiate(__instance.categoryHeaderOrigin);
                 categoryHeaderMasked2.SetHeader(StringNames.RoleSettingsLabel, 61);
                 categoryHeaderMasked2.transform.SetParent(__instance.settingsContainer);
                 categoryHeaderMasked2.transform.localScale = Vector3.one;
@@ -169,11 +181,11 @@ namespace FungleAPI.Role.Patches
                     {
                         posX = 0.14999962f;
                     }
-                    AdvancedRoleViewPanel advancedPanel = GameObject.Instantiate<AdvancedRoleViewPanel>(__instance.advancedRolePanelOrigin);
+                    AdvancedRoleViewPanel advancedPanel = GameObject.Instantiate(__instance.advancedRolePanelOrigin);
                     advancedPanel.transform.SetParent(__instance.settingsContainer);
                     advancedPanel.transform.localScale = Vector3.one;
                     advancedPanel.transform.localPosition = new Vector3(posX, num, -2f);
-                    float height = (currentPlugin == FungleAPIPlugin.Plugin)
+                    float height = currentPlugin == FungleAPIPlugin.Plugin
                         ? advancedPanel.SetUp(list[k], 0.85f, 61)
                         : advancedPanel.SetUp(list[k].CustomRole(), 0.85f, 61);
                     if (height > maxHeightInRow)
@@ -199,7 +211,7 @@ namespace FungleAPI.Role.Patches
             for (int i = 0; i < role.Configuration.Configs.Count; i++)
             {
                 ModdedOption baseGameSetting = role.Configuration.Configs[i];
-                ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(advancedRoleViewPanel.infoPanelOrigin);
+                ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;
                 viewSettingsInfoPanel.transform.localPosition = new Vector3(advancedRoleViewPanel.xPosStart, num, -2f);
@@ -218,6 +230,51 @@ namespace FungleAPI.Role.Patches
                 }
             }
             return num2;
+        }
+        public static void DrawNormalTab(LobbyViewSettingsPane menu)
+        {
+            float num = 1.44f;
+            foreach (SettingsGroup group in currentPlugin.Settings.Groups)
+            {
+                CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin);
+                categoryHeaderMasked.SetHeader(group.GroupName, 61);
+                categoryHeaderMasked.transform.SetParent(menu.settingsContainer);
+                categoryHeaderMasked.transform.localScale = Vector3.one;
+                categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                menu.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                num -= 1.05f;
+                for (int i = 0; i < group.Options.Count; i++)
+                {
+                    ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(menu.infoPanelOrigin);
+                    viewSettingsInfoPanel.transform.SetParent(menu.settingsContainer);
+                    viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                    float num2;
+                    if (i % 2 == 0)
+                    {
+                        num2 = -8.95f;
+                        if (i > 0)
+                        {
+                            num -= 0.85f;
+                        }
+                    }
+                    else
+                    {
+                        num2 = -3f;
+                    }
+                    viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                    if (group.Options[i].Data.Type == OptionTypes.Checkbox)
+                    {
+                        viewSettingsInfoPanel.SetInfoCheckbox(group.Options[i].Data.Title, 61, bool.Parse(group.Options[i].GetValue()));
+                    }
+                    else
+                    {
+                        viewSettingsInfoPanel.SetInfo(group.Options[i].Data.Title, group.Options[i].GetValue(), 61);
+                    }
+                    menu.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                }
+                num -= 0.85f;
+            }
+            menu.scrollBar.CalculateAndSetYBounds((float)(menu.settingsInfo.Count + 10), 2f, 6f, 0.85f);
         }
     }
 }
