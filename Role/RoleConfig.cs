@@ -26,7 +26,6 @@ namespace FungleAPI.Role
             CanSabotage = role.Team == ModdedTeam.Impostors;
             Buttons = new CustomAbilityButton[] { };
             OutlineColor = role.RoleColor;
-            HintType = RoleTaskHintType.Normal;
             if (role.Team == ModdedTeam.Crewmates)
             {
                 GhostRole = RoleTypes.CrewmateGhost;
@@ -49,7 +48,6 @@ namespace FungleAPI.Role
         internal List<ModdedOption> Configs;
         public CustomAbilityButton[] Buttons;
         public RoleTypes GhostRole;
-        public RoleTaskHintType HintType;
         public Color OutlineColor;
         public bool ShowTeamColor;
         public bool CanDoTasks;

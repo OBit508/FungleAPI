@@ -9,5 +9,6 @@ namespace FungleAPI.Components
 {
     public class PlayerComponent : MonoBehaviour
     {
+        public PlayerControl player;
     }
 }

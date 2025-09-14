@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.Components;
 
 namespace FungleAPI.Role.Patches
 {
@@ -19,7 +20,7 @@ namespace FungleAPI.Role.Patches
     {
         [HarmonyPrefix]
         [HarmonyPatch("TeamColor", MethodType.Getter)]
-        public static bool GetTeamColor(RoleBehaviour __instance, ref Color __result)
+        public static bool TeamColorPrefix(RoleBehaviour __instance, ref Color __result)
         { 
             ICustomRole role = __instance.CustomRole();
             if (role != null)
@@ -35,34 +36,6 @@ namespace FungleAPI.Role.Patches
                 return false;
             }
             return true;
-        }
-        [HarmonyPatch("AppendTaskHint", new Type[] { typeof(StringBuilder) })]
-        [HarmonyPrefix]
-        public static bool OnAppendTaskHint(RoleBehaviour __instance)
-        {
-            ICustomRole role = __instance.CustomRole();
-            if (role != null && role.Configuration.HintType != RoleTaskHintType.Normal)
-            {
-                return false;
-            }
-            return true;
-        }
-    }
-    [HarmonyPatch]
-    internal static class RoleBehaviourDidWinPatch
-    {
-        internal static List<Type> RoleBehaviourTypes { get; } = (from x in typeof(RoleBehaviour).Assembly.GetTypes() where x.IsSubclassOf(typeof(RoleBehaviour)) select x).ToList();
-        public static IEnumerable<MethodBase> TargetMethods()
-        {
-            return from x in RoleBehaviourTypes
-                   select x.GetMethod("DidWin", AccessTools.allDeclared) into m
-                   where m != null
-                   select m;
-        }
-        public static bool Prefix(RoleBehaviour __instance, [HarmonyArgument(0)] GameOverReason gameOverReason, ref bool __result)
-        {
-            __result = CustomRoleManager.DidWin(__instance, gameOverReason);
-            return false;
         }
     }
 }

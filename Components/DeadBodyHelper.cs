@@ -22,7 +22,7 @@ namespace FungleAPI.Components
             }
             foreach (Il2CppSystem.Type type in AllBodyComponents)
             {
-                gameObject.AddComponent(type);
+                gameObject.AddComponent(type).SafeCast<DeadBodyComponent>().deadBody = body;
             }
             Helpers.AllDeadBodies.Add(body);
         }

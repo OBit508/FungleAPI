@@ -21,7 +21,7 @@
     <Compile Include="Configuration\RoleCountAndChance.cs" />
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
-    <Compile Include="Components\BodyComponent.cs" />
+    <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
     <Compile Include="Components\ModdedConsole.cs" />
     <Compile Include="Components\VentComponent.cs" />
@@ -29,7 +29,6 @@
     <Compile Include="Components\HerePointBehaviour.cs" />
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
-    <Compile Include="Components\RoleHintText.cs" />
     <Compile Include="Networking\RPCs\RpcAmModded.cs" />
     <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
@@ -54,7 +53,6 @@
     <Compile Include="Configuration\ModdedToggleOption.cs" />
     <Compile Include="Configuration\ModdedEnumOption.cs" />
     <Compile Include="Configuration\ModdedNumberOption.cs" />
-    <Compile Include="Role\RoleTaskHintType.cs" />
     <Compile Include="Role\Teams\CrewmateTeam.cs" />
     <Compile Include="Role\Teams\ImpostorTeam.cs" />
     <Compile Include="Role\Teams\NeutralTeam.cs" />

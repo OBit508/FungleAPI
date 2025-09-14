@@ -9,5 +9,6 @@ namespace FungleAPI.Components
 {
     public class VentComponent : MonoBehaviour
     {
+        public Vent vent;
     }
 }

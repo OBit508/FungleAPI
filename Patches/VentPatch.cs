@@ -101,13 +101,12 @@ namespace FungleAPI.Patches
             {
                 if (__instance.gameObject.GetComponent(type) == null)
                 {
-                    __instance.gameObject.AddComponent(type);
+                    __instance.gameObject.AddComponent(type).SafeCast<VentComponent>().vent = __instance;
                 }
             }
             ButtonBehavior buttonPrefab = GameObject.Instantiate<ButtonBehavior>(__instance.Buttons[0], __instance.transform);
             VentHelper helper = __instance.GetComponent<VentHelper>();
             VentHelper.ShipVents.Add(__instance, helper);
-            helper.vent = __instance;
             helper.ArrowPrefab = buttonPrefab;
             if (__instance.Right != null)
             {

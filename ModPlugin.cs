@@ -64,7 +64,7 @@ namespace FungleAPI
                         ClassInjector.RegisterTypeInIl2Cpp(type);
                         PlayerPatches.AllPlayerComponents.Add(Il2CppType.From(type));
                     }
-                    else if (typeof(BodyComponent).IsAssignableFrom(type) && type != typeof(BodyComponent))
+                    else if (typeof(DeadBodyComponent).IsAssignableFrom(type) && type != typeof(DeadBodyComponent))
                     {
                         ClassInjector.RegisterTypeInIl2Cpp(type);
                         DeadBodyHelper.AllBodyComponents.Add(Il2CppType.From(type));

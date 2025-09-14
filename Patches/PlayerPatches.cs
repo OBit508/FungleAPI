@@ -38,16 +38,9 @@ namespace FungleAPI.Patches
         public static void StartPostfix(PlayerControl __instance)
         {
             __instance.StartCoroutine(TrySendCreateFungleAPIClient(__instance).WrapToIl2Cpp());
-            __instance.myTasks.Add(new GameObject("RoleHintText")
-            {
-                transform =
-                {
-                    parent = __instance.transform
-                }
-            }.AddComponent<RoleHintText>());
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
-                __instance.gameObject.AddComponent(type);
+                __instance.gameObject.AddComponent(type).SafeCast<PlayerComponent>().player = __instance;
             }
         }
         [HarmonyPrefix]

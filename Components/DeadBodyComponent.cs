@@ -8,7 +8,8 @@ using FungleAPI.Configuration;
 
 namespace FungleAPI.Components
 {
-    public class BodyComponent : MonoBehaviour
+    public class DeadBodyComponent : MonoBehaviour
     {
+        public DeadBody deadBody;
     }
 }

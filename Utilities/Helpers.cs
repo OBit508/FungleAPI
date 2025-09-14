@@ -245,5 +245,31 @@ namespace FungleAPI.Utilities
             }
             return vent;
         }
+        public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)
+        {
+            VentHelper helper = VentHelper.ShipVents[vent];
+            if (!helper.Vents.Contains(target))
+            {
+                helper.Vents.Add(target);
+            }
+            VentHelper helper2 = VentHelper.ShipVents[target];
+            if (connectBoth && !helper2.Vents.Contains(vent))
+            {
+                helper2.Vents.Add(vent);
+            }
+        }
+        public static void DisconnectVent(this Vent vent, Vent target, bool disconnectBoth = true)
+        {
+            VentHelper helper = VentHelper.ShipVents[vent];
+            if (helper.Vents.Contains(target))
+            {
+                helper.Vents.Remove(target);
+            }
+            VentHelper helper2 = VentHelper.ShipVents[target];
+            if (disconnectBoth && helper2.Vents.Contains(vent))
+            {
+                helper2.Vents.Remove(vent);
+            }
+        }
     }
 }

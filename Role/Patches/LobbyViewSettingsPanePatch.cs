@@ -44,6 +44,7 @@ namespace FungleAPI.Role.Patches
                 currentPlugin = ModPlugin.AllPlugins[currentIndex];
                 SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
                 __instance.RefreshTab();
+                __instance.scrollBar.ScrollToTop();
             }));
             SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextTranslatorTMP>().enabled = false;
             SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
