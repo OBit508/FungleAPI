@@ -69,7 +69,7 @@ namespace FungleAPI
             }));
             Translator errorMessage = new Translator("Failed to sync mods with the host. Please make sure you have the same mods and versions installed as the host.");
             errorMessage.AddTranslation(SupportedLangs.Latam, "Error al sincronizar los mods con el anfitrión. Asegúrate de tener los mismos mods y versiones que el anfitrión.");
-            errorMessage.AddTranslation(SupportedLangs.Brazilian, "Houve uma falha ao sincronizar os mods com o host. Certifique-se de ter os mesmos mods e versões instalados que o host.");
+            errorMessage.AddTranslation(SupportedLangs.Brazilian, "Houve uma falha ao sincronizar os mods com o host. Certifique-se de ter os mesmos mods e versões instaladas que o host.");
             errorMessage.AddTranslation(SupportedLangs.Portuguese, "Houve uma falha ao sincronizar os mods com o host. Certifique-se de ter os mesmos mods e versões instalados que o host.");
             errorMessage.AddTranslation(SupportedLangs.Korean, "호스트와 모드를 동기화하지 못했습니다. 동일한 모드와 버전을 설치했는지 확인하세요.");
             errorMessage.AddTranslation(SupportedLangs.Russian, "Не удалось синхронизировать моды с хостом. Убедитесь, что у вас установлены те же моды и версии, что и у хоста.");
