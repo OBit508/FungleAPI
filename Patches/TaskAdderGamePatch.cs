@@ -80,13 +80,16 @@ namespace FungleAPI.Patches
                 Dictionary<ModdedTeam, List<RoleBehaviour>> roles = new Dictionary<ModdedTeam, List<RoleBehaviour>>();
                 foreach (RoleBehaviour role in plugin.Roles)
                 {
-                    if (roles.ContainsKey(role.GetTeam()))
+                    if (role.CustomRole() != null && !role.CustomRole().Configuration.HideRole || role.CustomRole() == null)
                     {
-                        roles[role.GetTeam()].Add(role);
-                    }
-                    else
-                    {
-                        roles.Add(role.GetTeam(), new List<RoleBehaviour>() { role });
+                        if (roles.ContainsKey(role.GetTeam()))
+                        {
+                            roles[role.GetTeam()].Add(role);
+                        }
+                        else
+                        {
+                            roles.Add(role.GetTeam(), new List<RoleBehaviour>() { role });
+                        }
                     }
                 }
                 foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in roles)

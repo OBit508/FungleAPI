@@ -67,7 +67,23 @@ namespace FungleAPI
                     rolesRegistered = true;
                 }
             }));
-            DisconnectPopup.ErrorMessages.Add(AmongUsClientPatch.FailedToSyncOptionsError, new Translator("Failed to sync mods.").StringName);
+            Translator errorMessage = new Translator("Failed to sync mods with the host. Please make sure you have the same mods and versions installed as the host.");
+            errorMessage.AddTranslation(SupportedLangs.Latam, "Error al sincronizar los mods con el anfitrión. Asegúrate de tener los mismos mods y versiones que el anfitrión.");
+            errorMessage.AddTranslation(SupportedLangs.Brazilian, "Houve uma falha ao sincronizar os mods com o host. Certifique-se de ter os mesmos mods e versões instalados que o host.");
+            errorMessage.AddTranslation(SupportedLangs.Portuguese, "Houve uma falha ao sincronizar os mods com o host. Certifique-se de ter os mesmos mods e versões instalados que o host.");
+            errorMessage.AddTranslation(SupportedLangs.Korean, "호스트와 모드를 동기화하지 못했습니다. 동일한 모드와 버전을 설치했는지 확인하세요.");
+            errorMessage.AddTranslation(SupportedLangs.Russian, "Не удалось синхронизировать моды с хостом. Убедитесь, что у вас установлены те же моды и версии, что и у хоста.");
+            errorMessage.AddTranslation(SupportedLangs.Dutch, "Kan mods niet synchroniseren met de host. Zorg ervoor dat je dezelfde mods en versies hebt geïnstalleerd als de host.");
+            errorMessage.AddTranslation(SupportedLangs.Filipino, "Nabigong i-sync ang mga mod sa host. Siguraduhing pareho ang mods at bersyon na naka-install gaya ng sa host.");
+            errorMessage.AddTranslation(SupportedLangs.French, "Échec de la synchronisation des mods avec l’hôte. Veuillez vérifier que vous avez les mêmes mods et versions que l’hôte.");
+            errorMessage.AddTranslation(SupportedLangs.German, "Mods konnten nicht mit dem Host synchronisiert werden. Bitte stellen Sie sicher, dass Sie dieselben Mods und Versionen wie der Host installiert haben.");
+            errorMessage.AddTranslation(SupportedLangs.Italian, "Impossibile sincronizzare le mod con l'host. Assicurati di avere le stesse mod e versioni installate dell'host.");
+            errorMessage.AddTranslation(SupportedLangs.Japanese, "ホストとMODを同期できませんでした。ホストと同じMODとバージョンがインストールされているか確認してください。");
+            errorMessage.AddTranslation(SupportedLangs.Spanish, "Error al sincronizar los mods con el anfitrión. Asegúrate de tener los mismos mods y versiones que el anfitrión.");
+            errorMessage.AddTranslation(SupportedLangs.SChinese, "无法与主机同步模组。请确保您安装了与主机相同的模组和版本。");
+            errorMessage.AddTranslation(SupportedLangs.TChinese, "無法與主機同步模組。請確認您安裝的模組與主機相同且版本一致。");
+            errorMessage.AddTranslation(SupportedLangs.Irish, "Theip ar shioncronú na mods leis an óstach. Cinntigh go bhfuil na mods agus na leaganacha céanna agat leis an óstach.");
+            DisconnectPopup.ErrorMessages.Add(AmongUsClientPatch.FailedToSyncOptionsError, errorMessage.StringName);
         }
         private static bool rolesRegistered;
         internal static bool loaddedAssets;

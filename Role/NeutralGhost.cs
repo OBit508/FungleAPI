@@ -97,11 +97,11 @@ namespace FungleAPI.Role
         public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {
         }
-        public RoleConfig Configuration => new RoleConfig(this) { IsGhostRole = true, Buttons = new CustomAbilityButton[] { CustomAbilityButton.Instance<HauntButton>() } };
+        public RoleConfig Configuration => new RoleConfig(this) { IsGhostRole = true, Buttons = new CustomAbilityButton[] { CustomAbilityButton.Instance<HauntButton>() }, HideInFreeplayComputer = true, HideRole = true };
         public override bool IsDead => true;
         public override bool DidWin(GameOverReason gameOverReason)
         {
-            return CustomRoleManager.DidWin(this, gameOverReason);
+            return CustomRoleManager.DidWin(OldRole != null ? OldRole : this, gameOverReason);
         }
     }
     public class HauntButton : CustomAbilityButton

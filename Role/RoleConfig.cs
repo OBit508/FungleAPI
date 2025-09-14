@@ -57,6 +57,7 @@ namespace FungleAPI.Role
         public Sprite Screenshot;
         public RoleCountAndChance CountAndChance;
         public bool HideRole;
+        public bool HideInFreeplayComputer;
         public int MaxRoleCount;
     }
 }

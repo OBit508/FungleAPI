@@ -44,8 +44,10 @@
     <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
+    <Compile Include="Patches\ModManagerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Patches\LobbyViewSettingsPanePatch.cs" />
+    <Compile Include="Role\Patches\RoleManagerPatch.cs" />
     <Compile Include="Utilities\DeadBodyType.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
