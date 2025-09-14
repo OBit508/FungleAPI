@@ -43,6 +43,11 @@ namespace FungleAPI.Configuration
             __result = float.Parse(Configs[__originalMethod].GetValue());
             return false;
         }
+        public static bool GetPrefix(MethodBase __originalMethod, ref int __result)
+        {
+            __result = int.Parse(Configs[__originalMethod].GetValue());
+            return false;
+        }
         public static bool GetPrefix(MethodBase __originalMethod, ref bool __result)
         {
             __result = bool.Parse(Configs[__originalMethod].GetValue());

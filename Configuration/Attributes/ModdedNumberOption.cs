@@ -41,10 +41,10 @@ namespace FungleAPI.Configuration.Attributes
         }
         public override void Initialize(Type type, PropertyInfo property, object obj)
         {
-            if (property.PropertyType == typeof(float))
+            if (property.PropertyType == typeof(float) || property.PropertyType == typeof(int))
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
-                float value = (float)property.GetValue(obj);
+                float value = float.Parse(property.GetValue(obj).ToString());
                 localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
