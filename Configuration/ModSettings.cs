@@ -13,26 +13,31 @@ namespace FungleAPI.Configuration
     public class ModSettings
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
+        public bool initialized;
         public virtual void Initialize()
         {
-            Type type = GetType();
-            List<ModdedOption> configs = new List<ModdedOption>();
-            foreach (PropertyInfo property in type.GetProperties())
+            if (!initialized)
             {
-                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
-                if (att != null)
+                Type type = GetType();
+                List<ModdedOption> configs = new List<ModdedOption>();
+                foreach (PropertyInfo property in type.GetProperties())
                 {
-                    att.Initialize(type, property, this);
-                    MethodInfo method = property.GetGetMethod(true);
-                    if (method != null)
+                    ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
+                    if (att != null)
                     {
-                        ConfigurationManager.Configs.Add(method, att);
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
+                        att.Initialize(type, property, this);
+                        MethodInfo method = property.GetGetMethod(true);
+                        if (method != null)
+                        {
+                            ConfigurationManager.Configs.Add(method, att);
+                            FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
+                        }
+                        configs.Add(att);
                     }
-                    configs.Add(att);
                 }
+                InitializeGroups(configs);
+                initialized = true;
             }
-            InitializeGroups(configs);
         }
         public virtual void InitializeGroups(List<ModdedOption> options)
         {
