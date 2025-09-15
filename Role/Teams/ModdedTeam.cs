@@ -16,13 +16,12 @@ namespace FungleAPI.Role.Teams
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
-        internal static ModdedTeam RegisterTeam(Type type, ModPlugin plugin)
+        internal static object RegisterTeam(Type type, ModPlugin plugin)
         {
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
             team.count = plugin.BasePlugin.Config.Bind<int>(plugin.ModName + "-" + type.FullName, "Count", 0);
             plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name + " WinReason Count: " + team.WinReason.Count);
             Teams.Add(team);
-            plugin.Teams.Add(team);
             return team;
         }
         public static T Instance<T>() where T : ModdedTeam

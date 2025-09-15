@@ -31,6 +31,7 @@
     <Compile Include="Components\HerePointBehaviour.cs" />
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
+    <Compile Include="Networking\EndGameHelper.cs" />
     <Compile Include="Networking\RPCs\RpcAmModded.cs" />
     <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />

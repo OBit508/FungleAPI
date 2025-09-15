@@ -143,7 +143,6 @@ namespace FungleAPI
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
-        public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
         public ModSettings Settings = new ModSettings();
     }
