@@ -20,8 +20,6 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void OnStart(HudManager __instance)
         {
-            prefab = GameObject.Instantiate<AbilityButton>(__instance.AbilityButton, __instance.transform);
-            prefab.gameObject.SetActive(false);
             if (ShipStatus.Instance != null)
             {
                 MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
@@ -36,7 +34,7 @@ namespace FungleAPI.Patches
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
             }
-            TextMeshPro lobbyWarningText = GameObject.Instantiate<TextMeshPro>(prefab.buttonLabelText, __instance.transform);
+            TextMeshPro lobbyWarningText = GameObject.Instantiate<TextMeshPro>(__instance.AbilityButton.buttonLabelText, __instance.transform);
             lobbyWarningText.SetOutlineColor(Color.red);
             lobbyWarningText.transform.localScale *= 3;
             lobbyWarningText.transform.localPosition = new Vector3(0, 2, -0.1f);
@@ -74,6 +72,5 @@ namespace FungleAPI.Patches
                 }
             }
         }
-        public static AbilityButton prefab;
     }
 }

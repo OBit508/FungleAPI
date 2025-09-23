@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using AmongUs.Data;
+using HarmonyLib;
 using Hazel;
 using InnerNet;
 using System;
@@ -6,46 +7,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Unity.Services.Core.Threading.Internal;
+using UnityEngine;
 
 namespace FungleAPI.Networking
 {
-    [HarmonyPatch(typeof(EndGameResult), "Create")]
+    [HarmonyPatch(typeof(EndGameResult))]
     public static class EndGameHelper
     {
-        public static Dictionary<EndGameResult, List<NetworkedPlayerInfo>> Winners = new Dictionary<EndGameResult, List<NetworkedPlayerInfo>>();
-        public static void RpcCustomEndGame(this GameManager gameManager, List<NetworkedPlayerInfo> winners, bool showAd)
+        internal static GameOverReason CustomGameOverReason;
+        internal static List<CachedPlayerData> Winners = new List<CachedPlayerData>();
+        internal static Color NameColor;
+        public static void RpcCustomEndGame(List<NetworkedPlayerInfo> winners, Color nameColor)
         {
-            gameManager.ShouldCheckForGameEnd = false;
-            gameManager.logger.Info(string.Format("CustomEndGame for {0}", winners.Count.ToString()), null);
-            MessageWriter messageWriter = AmongUsClient.Instance.StartEndGame();
-            messageWriter.Write(true);
+            AmongUsClient amongUsClient = AmongUsClient.Instance;
+            MessageWriter messageWriter = amongUsClient.StartEndGame();
+            messageWriter.Write((int)CustomGameOverReason);
+            messageWriter.WriteColor(nameColor);
             messageWriter.Write(winners.Count);
             for (int i = 0; i < winners.Count; i++)
             {
                 messageWriter.WriteNetObject(winners[i]);
             }
-            messageWriter.Write(showAd);
-            AmongUsClient.Instance.FinishEndGame(messageWriter);
+            messageWriter.Write(false);
+            amongUsClient.FinishEndGame(messageWriter);
         }
-        private static bool Prefix([HarmonyArgument(0)] MessageReader reader, ref EndGameResult __result)
+        [HarmonyPatch("Create")]
+        [HarmonyPrefix]
+        private static bool CreatePrefix([HarmonyArgument(0)] MessageReader reader, ref EndGameResult __result)
         {
-            List<NetworkedPlayerInfo> winners = new List<NetworkedPlayerInfo>();
-            bool CustomGameOver = reader.ReadBoolean();
-            GameOverReason gameOverReason = (GameOverReason)(-1);
-            if (!CustomGameOver)
+            Winners.Clear();
+            GameOverReason gameOverReason = (GameOverReason)reader.ReadInt32();
+            if (gameOverReason == CustomGameOverReason)
             {
-                gameOverReason = (GameOverReason)reader.ReadByte();
-            }
-            else
-            {
+                NameColor = reader.ReadColor();
                 int count = reader.ReadInt32();
                 for (int i = 0; i < count; i++)
                 {
-                    winners.Add(reader.ReadNetObject<NetworkedPlayerInfo>());
+                    Winners.Add(new CachedPlayerData(reader.ReadNetObject<NetworkedPlayerInfo>()));
                 }
             }
-            bool flag = reader.ReadBoolean();
+            reader.ReadBoolean();
             if (reader.Position < reader.Length)
             {
                 MessageReader messageReader = reader.ReadMessage();
@@ -76,19 +77,11 @@ namespace FungleAPI.Networking
                     ProgressionManager.XpGrantResult xpGrantResult = new ProgressionManager.XpGrantResult(num2, num, num3, num11, flag2, num4, num5, num6);
                     ProgressionManager.CurrencyGrantResult currencyGrantResult = new ProgressionManager.CurrencyGrantResult(text, (uint)DestroyableSingleton<InventoryManager>.Instance.GetPodCount(text), num7, num9);
                     ProgressionManager.CurrencyGrantResult currencyGrantResult2 = new ProgressionManager.CurrencyGrantResult(Constants.Beans, (uint)DestroyableSingleton<InventoryManager>.Instance.UnusedBeans, num8, num10);
-                    __result = new EndGameResult(gameOverReason, flag, xpGrantResult, currencyGrantResult, currencyGrantResult2);
-                    if (CustomGameOver)
-                    {
-                        Winners.Add(__result, winners);
-                    }
+                    __result = new EndGameResult(gameOverReason, false, xpGrantResult, currencyGrantResult, currencyGrantResult2);
                     return false;
                 }
             }
-            __result = new EndGameResult(gameOverReason, flag, null, null, null);
-            if (CustomGameOver)
-            {
-                Winners.Add(__result, winners);
-            }
+            __result = new EndGameResult(gameOverReason, false, null, null, null);
             return false;
         }
     }

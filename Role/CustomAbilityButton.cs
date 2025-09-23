@@ -126,7 +126,8 @@ namespace FungleAPI.Role
                 Destroy();
             }
             Reset();
-            Button = UnityEngine.Object.Instantiate(HudManagerPatch.prefab, DestroyableSingleton<HudManager>.Instance.AbilityButton.transform.parent);
+            Button = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton, HudManager.Instance.AbilityButton.transform.parent);
+            Button.name = GetType().Name;
             PassiveButton component = Button.GetComponent<PassiveButton>();
             Button.graphic.sprite = ButtonSprite;
             Button.graphic.color = new Color(1f, 1f, 1f, 1f);

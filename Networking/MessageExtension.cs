@@ -13,6 +13,9 @@ using FungleAPI.Utilities;
 using FungleAPI.Configuration;
 using FungleAPI.Role;
 using FungleAPI.Configuration.Attributes;
+using Il2CppSystem.Runtime.Serialization;
+using Il2CppInterop.Runtime;
+using AmongUs.GameOptions;
 
 namespace FungleAPI.Networking
 {
@@ -44,6 +47,21 @@ namespace FungleAPI.Networking
         public static void WriteCountAndChance(this MessageWriter Writer, RoleCountAndChance count)
         {
             Writer.Write(count.Name);
+        }
+        public static void WriteCachedPlayerData(this MessageWriter Writer, CachedPlayerData cachedPlayerData, int clientId)
+        {
+            Writer.Write(cachedPlayerData.PlayerName);
+            cachedPlayerData.Outfit.Serialize(Writer);
+            Writer.Write(clientId);
+            Writer.Write(cachedPlayerData.IsDead);
+            Writer.Write((int)cachedPlayerData.RoleWhenAlive);
+        }
+        public static void WriteColor(this MessageWriter Writer, Color color)
+        {
+            Writer.Write(color.r);
+            Writer.Write(color.g);
+            Writer.Write(color.b);
+            Writer.Write(color.a);
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -82,6 +100,25 @@ namespace FungleAPI.Networking
         {
             string fullCountName = Reader.ReadString();
             return ConfigurationManager.RoleCountsAndChances.FirstOrDefault(count => count.Name == fullCountName);
+        }
+        public static CachedPlayerData ReadCachedPlayerData(this MessageReader Reader)
+        {
+            CachedPlayerData cachedPlayerData = new CachedPlayerData(PlayerControl.LocalPlayer.Data);
+            cachedPlayerData.PlayerName = Reader.ReadString();
+            cachedPlayerData.Outfit = new NetworkedPlayerInfo.PlayerOutfit();
+            cachedPlayerData.Outfit.Deserialize(Reader);
+            cachedPlayerData.IsYou = AmongUsClient.Instance.ClientId == Reader.ReadInt32();
+            cachedPlayerData.IsDead = Reader.ReadBoolean();
+            cachedPlayerData.RoleWhenAlive = (RoleTypes)Reader.ReadInt32();
+            return cachedPlayerData;
+        }
+        public static Color ReadColor(this MessageReader Reader)
+        {
+            float r = Reader.ReadSingle();
+            float g = Reader.ReadSingle();
+            float b = Reader.ReadSingle();
+            float a = Reader.ReadSingle();
+            return new Color(r, g, b, a);
         }
     }
 }

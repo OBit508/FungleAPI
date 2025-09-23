@@ -5,12 +5,15 @@ using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils;
-using FungleAPI.Configuration;
+using Epic.OnlineServices;
 using FungleAPI.Components;
+using FungleAPI.Configuration;
+using FungleAPI.Configuration.Attributes;
+using FungleAPI.Networking;
+using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Patches;
 using FungleAPI.Role.Teams;
-using FungleAPI.Networking;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
@@ -30,7 +33,6 @@ using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using FungleAPI.Patches;
 
 namespace FungleAPI
 {
@@ -49,6 +51,7 @@ namespace FungleAPI
             {
                 Log.LogError("Failed creating ModPlugin from API");
             }
+            EndGameHelper.CustomGameOverReason = CustomRoleManager.GetValidGameOver();
             Harmony.PatchAll();
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
             {

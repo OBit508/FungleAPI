@@ -37,6 +37,7 @@
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\ConsolePatch.cs" />
+    <Compile Include="Patches\EndGameManagerPatch.cs" />
     <Compile Include="Patches\GameOptionsMenuPatch.cs" />
     <Compile Include="Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />
@@ -99,6 +100,8 @@
     <Compile Include="Translation\Translator.cs" />
     <Compile Include="Utilities\Prefabs\Prefab.cs" />
     <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
+    <Compile Include="Utilities\Sound\DynamicSound.cs" />
+    <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />

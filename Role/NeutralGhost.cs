@@ -17,6 +17,7 @@ namespace FungleAPI.Role
 {
     public class NeutralGhost : RoleBehaviour, ICustomRole
     {
+        public EndGameResult end = new EndGameResult(GameOverReason.CrewmatesByVote, false);
         public RoleBehaviour OldRole 
         {
             get
