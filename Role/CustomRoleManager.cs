@@ -32,7 +32,7 @@ namespace FungleAPI.Role
         public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
-        internal static int id = Enum.GetNames<RoleTypes>().Length;
+        internal static int id = Enum.GetNames<RoleTypes>().Length + 20;
         internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
         public static T Instance<T>() where T : RoleBehaviour
@@ -129,11 +129,7 @@ namespace FungleAPI.Role
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().Configuration.WinReason.Contains(gameOverReason) && (roleBehaviour.GetTeam() != ModdedTeam.Neutrals || roleBehaviour.GetTeam() == ModdedTeam.Neutrals && !roleBehaviour.Player.Data.IsDead);
-            }
-            if (roleBehaviour.GetTeam() == ModdedTeam.Neutrals)
-            {
-                return !roleBehaviour.Player.Data.IsDead && roleBehaviour.GetTeam().WinReason.Contains(gameOverReason);
+                return roleBehaviour.CustomRole().Configuration.WinReason.Contains(gameOverReason);
             }
             return roleBehaviour.GetTeam().WinReason.Contains(gameOverReason);
         }

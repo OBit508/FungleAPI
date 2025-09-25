@@ -148,7 +148,13 @@ namespace FungleAPI.Networking.RPCs
             }
             if (createDeadBody)
             {
-                Helpers.CreateCustomBody(target, source.Data.RoleType == RoleTypes.Viper || source.Data.Role.CustomRole() != null && source.Data.Role.CustomRole().Configuration.CreatedBodyOnKill == DeadBodyType.Viper ? DeadBodyType.Viper : DeadBodyType.Normal);
+                DeadBody deadBody = Helpers.CreateCustomBody(target, source.Data.RoleType == RoleTypes.Viper || source.Data.Role.CustomRole() != null && source.Data.Role.CustomRole().Configuration.CreatedBodyOnKill == DeadBodyType.Viper ? DeadBodyType.Viper : DeadBodyType.Normal);
+                source.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
+                target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
+                if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)
+                {
+                    (PlayerControl.LocalPlayer.Data.Role as DetectiveRole).KillAnimSpecialSetup(deadBody, source, target);
+                }
             }
             if (isParticipant)
             {
