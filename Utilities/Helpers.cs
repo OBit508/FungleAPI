@@ -44,7 +44,7 @@ namespace FungleAPI.Utilities
                 if (collider2D.tag == "DeadBody")
                 {
                     DeadBody component = collider2D.GetComponent<DeadBody>();
-                    if (component && (!component.Reported || includeReporteds))
+                    if (component != null && PhysicsHelpers.AnythingBetween(target.GetTruePosition(), component.TruePosition, Constants.ShipAndObjectsMask, false) && (!component.Reported || includeReporteds))
                     {
                         bodies.Add(component);
                     }
