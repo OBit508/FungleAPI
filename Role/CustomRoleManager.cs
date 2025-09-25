@@ -178,13 +178,5 @@ namespace FungleAPI.Role
             }
             return roleBehaviour.CanVent;
         }
-        public static bool CanDoTasks(this RoleBehaviour roleBehaviour)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().Configuration.CanDoTasks;
-            }
-            return roleBehaviour.GetTeam() == ModdedTeam.Crewmates;
-        }
     }
 }

@@ -36,12 +36,10 @@
     <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
-    <Compile Include="Patches\ConsolePatch.cs" />
     <Compile Include="Patches\EndGameManagerPatch.cs" />
     <Compile Include="Patches\GameOptionsMenuPatch.cs" />
     <Compile Include="Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />
-    <Compile Include="Patches\ImportantTextPatch.cs" />
     <Compile Include="Patches\ImpostorRolePatch.cs" />
     <Compile Include="Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
