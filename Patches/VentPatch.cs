@@ -89,7 +89,14 @@ namespace FungleAPI.Patches
             }
             catch
             {
-                __result = new Vent[0];
+                try
+                {
+                    __result = __instance.GetComponent<VentHelper>().Vents.ToArray();
+                }
+                catch
+                {
+                    __result = new Vent[0];
+                }
             }
             return false;
         }
@@ -97,6 +104,11 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void StartPostfix(Vent __instance)
         {
+            if (Helpers.VentPrefab == null)
+            {
+                Helpers.VentPrefab = GameObject.Instantiate<Vent>(__instance);
+                Helpers.VentPrefab.gameObject.SetActive(false);
+            }
             foreach (Il2CppSystem.Type type in AllVentComponents)
             {
                 if (__instance.gameObject.GetComponent(type) == null)
@@ -121,11 +133,59 @@ namespace FungleAPI.Patches
                 helper.Vents.Add(__instance.Left);
             }
         }
-        [HarmonyPatch("UpdateArrows")]
-        [HarmonyPostfix]
-        public static void UpdateArrowsPostfix(Vent __instance, [HarmonyArgument(0)] VentilationSystem ventSystem)
+        [HarmonyPatch("SetButtons")]
+        [HarmonyPrefix]
+        public static bool SetButtonsPrefix(Vent __instance, [HarmonyArgument(0)] bool enabled)
         {
-            VentHelper.ShipVents[__instance].LastUpdate = ventSystem;
+            Vent[] nearbyVents = __instance.NearbyVents;
+            Vector2 vector;
+            if (nearbyVents.Count() > 0)
+            {
+                Vector3 positions = Vector3.zero;
+                foreach (Vent vent in nearbyVents)
+                {
+                    positions += vent.transform.position;
+                }
+                vector = positions / 2f - __instance.transform.position;
+            }
+            else
+            {
+                vector = Vector2.zero;
+            }
+            for (int i = 0; i < __instance.Buttons.Length; i++)
+            {
+                ButtonBehavior buttonBehavior = __instance.Buttons[i];
+                if (enabled)
+                {
+                    Vent vent = nearbyVents[i];
+                    if (vent != null)
+                    {
+                        VentilationSystem ventilationSystem = ShipStatus.Instance.Systems[SystemTypes.Ventilation].SafeCast<VentilationSystem>();
+                        bool flag = ventilationSystem != null && ventilationSystem.IsVentCurrentlyBeingCleaned(vent.Id);
+                        buttonBehavior.gameObject.SetActive(true);
+                        __instance.ToggleNeighborVentBeingCleaned(flag, buttonBehavior, __instance.CleaningIndicators[i]);
+                        Vector3 vector2 = vent.transform.position - __instance.transform.position;
+                        Vector3 vector3 = vector2.normalized * (0.7f + __instance.spreadShift);
+                        vector3.x *= Mathf.Sign(ShipStatus.Instance.transform.localScale.x);
+                        vector3.y -= 0.08f;
+                        vector3.z = -10f;
+                        buttonBehavior.transform.localPosition = vector3;
+                        buttonBehavior.transform.LookAt2d(vent.transform);
+                        vector3 = vector3.RotateZ((vector.AngleSigned(vector2) > 0f) ? __instance.spreadAmount : (-__instance.spreadAmount));
+                        buttonBehavior.transform.localPosition = vector3;
+                        buttonBehavior.transform.Rotate(0f, 0f, (vector.AngleSigned(vector2) > 0f) ? __instance.spreadAmount : (-__instance.spreadAmount));
+                    }
+                    else
+                    {
+                        buttonBehavior.gameObject.SetActive(enabled);
+                    }
+                }
+                else
+                {
+                    buttonBehavior.gameObject.SetActive(false);
+                }
+            }
+            return false;
         }
     }
 }

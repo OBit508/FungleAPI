@@ -22,8 +22,8 @@ namespace FungleAPI.Role
             Buttons.TryGetValue(typeof(T), out button);
             return button.SimpleCast<T>();
         }
-        public virtual bool Active => true;
         public AbilityButton Button;
+        public virtual bool Active => true;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
         public virtual float Cooldown { get; }
@@ -35,7 +35,11 @@ namespace FungleAPI.Role
         public virtual float TransformDuration { get; }
         public float TransformTimer;
         public bool Transformed;
-        public virtual void Destransform() { }
+        public virtual void Destransform() 
+        {
+            Transformed = false;
+            TransformTimer = TransformDuration;
+        }
         public virtual void Click() { }
         public virtual string OverrideText { get { return "Ability Button"; } }
         public virtual Sprite ButtonSprite { get; }
@@ -104,7 +108,8 @@ namespace FungleAPI.Role
                 }
             }
         }
-        public void Destroy()
+        public virtual void Start() { }
+        public virtual void Destroy()
         {
            if (Button != null)
             {
@@ -112,7 +117,7 @@ namespace FungleAPI.Role
                 Button = null;
             }
         }
-        public void Reset()
+        public virtual void Reset()
         {
             Timer = Cooldown;
             CurrentNumUses = NumUses;

@@ -17,21 +17,13 @@ namespace FungleAPI.Components
         public static Dictionary<Vent, VentHelper> ShipVents = new Dictionary<Vent, VentHelper>();
         internal ButtonBehavior ArrowPrefab;
         public List<Vent> Vents = new List<Vent>();
-        public VentilationSystem LastUpdate;
         public void Start()
         {
-            bool enabled = false;
-            foreach (ButtonBehavior button in vent.Buttons)
-            {
-                enabled = button.gameObject.active;
-                GameObject.Destroy(button.gameObject);
-            }
             List<ButtonBehavior> buttons = new List<ButtonBehavior>();
             List<GameObject> cleaningIndicators = new List<GameObject>();
             foreach (Vent vent in Vents)
             {
                 ButtonBehavior button = GameObject.Instantiate<ButtonBehavior>(ArrowPrefab, transform);
-                button.gameObject.SetActive(true);
                 buttons.Add(button);
                 cleaningIndicators.Add(button.transform.GetChild(0).gameObject);
                 button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
@@ -46,13 +38,7 @@ namespace FungleAPI.Components
             }
             vent.Buttons = buttons.ToArray();
             vent.CleaningIndicators = cleaningIndicators.ToArray();
-            vent.SetButtons(true);
-            vent.SetButtons(enabled);
-            if (LastUpdate != null)
-            {
-                vent.UpdateArrows(LastUpdate);
-                LastUpdate = null;
-            }
+            vent.SetButtons(Vent.currentVent == vent);
         }
         public void Update()
         {

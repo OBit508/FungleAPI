@@ -25,7 +25,6 @@ namespace FungleAPI.Patches
     internal static class TaskAdderGamePatch
     {
         public static Scroller scroller;
-        public static Dictionary<TaskFolder, List<RoleBehaviour>> Folders = new Dictionary<TaskFolder, List<RoleBehaviour>>();
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
         public static bool BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
@@ -58,14 +57,6 @@ namespace FungleAPI.Patches
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.LongTasks);
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.ShortTasks);
             __instance.Root.SubFolders = Enumerable.ToList<TaskFolder>(Enumerable.OrderBy<TaskFolder, string>(__instance.Root.SubFolders.ToSystemList(), (TaskFolder f) => f.FolderName)).ToIl2CppList();
-            __instance.ShowFolder(__instance.Root);
-            return false;
-        }
-        [HarmonyPatch("Begin")]
-        [HarmonyPostfix]
-        public static void BeginPostfix(TaskAdderGame __instance)
-        {
-            Folders.Clear();
             TaskFolder RoleFolder = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
             RoleFolder.gameObject.SetActive(false);
             RoleFolder.FolderName = TranslationController.Instance.GetString(StringNames.Roles);
@@ -77,28 +68,32 @@ namespace FungleAPI.Patches
                 folder.gameObject.SetActive(false);
                 folder.FolderName = plugin.ModName;
                 folder.SetFolderColor(TaskFolder.FolderColor.Tan);
-                Dictionary<ModdedTeam, List<RoleBehaviour>> roles = new Dictionary<ModdedTeam, List<RoleBehaviour>>();
+                Dictionary<ModdedTeam, List<RoleTypes>> roles = new Dictionary<ModdedTeam, List<RoleTypes>>();
                 foreach (RoleBehaviour role in plugin.Roles)
                 {
                     if (role.CustomRole() != null && !role.CustomRole().Configuration.HideRole || role.CustomRole() == null)
                     {
                         if (roles.ContainsKey(role.GetTeam()))
                         {
-                            roles[role.GetTeam()].Add(role);
+                            roles[role.GetTeam()].Add(role.Role);
                         }
                         else
                         {
-                            roles.Add(role.GetTeam(), new List<RoleBehaviour>() { role });
+                            roles.Add(role.GetTeam(), new List<RoleTypes>() { role.Role });
                         }
                     }
                 }
-                foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in roles)
+                foreach (KeyValuePair<ModdedTeam, List<RoleTypes>> pair in roles)
                 {
                     TaskFolder folder2 = GameObject.Instantiate<TaskFolder>(__instance.RootFolderPrefab, __instance.transform);
                     folder2.gameObject.SetActive(false);
                     folder2.FolderName = pair.Key.TeamName.GetString();
                     folder2.SetFolderColor(pair.Key.TeamColor);
-                    Folders.Add(folder2, pair.Value);
+                    folder2.name = "RoleFolder: ";
+                    foreach (RoleTypes type in pair.Value)
+                    {
+                        folder2.name += ((int)type).ToString() + (type == pair.Value[pair.Value.Count - 1] ? "" : "|");
+                    }
                     folder.SubFolders.Add(folder2);
                 }
                 RoleFolder.SubFolders.Add(folder);
@@ -124,6 +119,7 @@ namespace FungleAPI.Patches
             collider.enabled = true;
             scroller.ClickMask = collider;
             __instance.GoToRoot();
+            return false;
         }
         [HarmonyPatch("ShowFolder")]
         [HarmonyPrefix]
@@ -207,19 +203,19 @@ namespace FungleAPI.Patches
                     }
                 }
             }
-            List<RoleBehaviour> folderRoles;
-            if (__instance.Hierarchy.Count > 1 && Folders.TryGetValue(taskFolder, out folderRoles))
+            if (__instance.Hierarchy.Count > 1 && taskFolder.name.StartsWith("RoleFolder: "))
             {
-                for (int m = 0; m < folderRoles.Count; m++)
+                string[] roles = taskFolder.name.Replace("RoleFolder: ", "").Split("|");
+                for (int m = 0; m < roles.Count(); m++)
                 {
-                    RoleBehaviour roleBehaviour = folderRoles[m];
-                    if (roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour != CustomRoleManager.NeutralGhost)
+                    RoleTypes roleBehaviour = (RoleTypes)int.Parse(roles[m]);
+                    if (roleBehaviour != RoleTypes.ImpostorGhost && roleBehaviour != RoleTypes.CrewmateGhost && roleBehaviour != CustomRoleManager.NeutralGhost.Role)
                     {
                         TaskAddButton taskAddButton2 = GameObject.Instantiate<TaskAddButton>(__instance.RoleButton);
                         taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;
-                        taskAddButton2.Text.text = "Be_" + roleBehaviour.NiceName + ".exe";
+                        taskAddButton2.Text.text = "Be_" + RoleManager.Instance.GetRole(roleBehaviour).NiceName + ".exe";
                         __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
-                        taskAddButton2.Role = roleBehaviour;
+                        taskAddButton2.Role = RoleManager.Instance.GetRole(roleBehaviour);
                         taskAddButton2.GetComponent<SpriteRenderer>().color = taskAddButton2.Role.TeamColor;
                         taskAddButton2.RolloverHandler.OutColor = taskAddButton2.Role.TeamColor;
                         if (taskAddButton2 != null && taskAddButton2.Button != null)

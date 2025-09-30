@@ -2,6 +2,7 @@
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.Patches;
 using FungleAPI.Role;
 using HarmonyLib;
 using Hazel;
@@ -24,6 +25,7 @@ namespace FungleAPI.Utilities
     public static class Helpers
     {
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
+        public static Vent VentPrefab;
         public static List<DeadBody> AllDeadBodies
         {
             get
@@ -227,21 +229,36 @@ namespace FungleAPI.Utilities
             }
             return values;
         }
-        public static Vent CreateVent(Vector2 position, List<Vent> nearbyVents = null)
+        public static Vent CreateVent(Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
-            Vent vent = GameObject.Instantiate<Vent>(ShipStatus.Instance.AllVents[0], ShipStatus.Instance.transform);
+            Vent vent = GameObject.Instantiate<Vent>(VentPrefab, ShipStatus.Instance.transform);
+            vent.gameObject.SetActive(true);
             vent.Id = ShipStatus.Instance.AllVents.Count;
             ShipStatus.Instance.AllVents = ShipStatus.Instance.AllVents.Concat(new Vent[] { vent }).ToArray();
-            vent.EnterVentAnim = null;
-            vent.ExitVentAnim = null;
             vent.Right = null;
             vent.Center = null;
             vent.Left = null;
-            vent.myRend.enabled = false;
             vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
             if (nearbyVents != null)
             {
-                vent.gameObject.AddComponent<VentHelper>().Vents = nearbyVents;
+                System.Collections.IEnumerator CoConnectVents()
+                {
+                    float timer = 0;
+                    while (!VentHelper.ShipVents.ContainsKey(vent))
+                    {
+                        timer += Time.deltaTime;
+                        if (timer >= 2)
+                        {
+                            FungleAPIPlugin.Instance.Log.LogError("Failed to connect vents");
+                            yield break;
+                        }
+                    }
+                    foreach (Vent v in nearbyVents)
+                    {
+                        v.ConnectVent(vent, connectBoth);
+                    }
+                }
+                vent.StartCoroutine(CoConnectVents().WrapToIl2Cpp());
             }
             return vent;
         }
