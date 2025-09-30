@@ -1,6 +1,8 @@
 ﻿using Epic.OnlineServices;
-using FungleAPI.Role;
+using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
+using FungleAPI.Role;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -8,7 +10,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Configuration.Attributes;
 
 namespace FungleAPI.Configuration
 {

@@ -85,18 +85,11 @@ namespace FungleAPI.Patches
         {
             try
             {
-                __result = VentHelper.ShipVents[__instance].Vents.ToArray();
+                __result = __instance.TryGetHelper().Vents.ToArray();
             }
             catch
             {
-                try
-                {
-                    __result = __instance.GetComponent<VentHelper>().Vents.ToArray();
-                }
-                catch
-                {
-                    __result = new Vent[0];
-                }
+                __result = new Vent[0];
             }
             return false;
         }
@@ -131,6 +124,19 @@ namespace FungleAPI.Patches
             if (__instance.Left != null)
             {
                 helper.Vents.Add(__instance.Left);
+            }
+            (List<Vent>, bool) connected;
+            if (Helpers.Connecteds.TryGetValue(__instance, out connected))
+            {
+                helper.Vents = connected.Item1;
+                if (connected.Item2)
+                {
+                    foreach (Vent vent in connected.Item1)
+                    {
+                        vent.ConnectVent(__instance, false);
+                    }
+                }
+                Helpers.Connecteds.Remove(__instance);
             }
         }
         [HarmonyPatch("SetButtons")]

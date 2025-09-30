@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FungleAPI.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,7 +24,7 @@ namespace FungleAPI.Translation
         public static Translator None = new Translator("STRMISS");
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
-            if (!Strings.Keys.Contains(lang))
+            if (!Strings.ContainsKey(lang))
             {
                 Strings.Add(lang, text);
             }

@@ -24,6 +24,7 @@ namespace FungleAPI.Utilities
 {
     public static class Helpers
     {
+        internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
         public static Vent VentPrefab;
         public static List<DeadBody> AllDeadBodies
@@ -241,35 +242,18 @@ namespace FungleAPI.Utilities
             vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
             if (nearbyVents != null)
             {
-                System.Collections.IEnumerator CoConnectVents()
-                {
-                    float timer = 0;
-                    while (!VentHelper.ShipVents.ContainsKey(vent))
-                    {
-                        timer += Time.deltaTime;
-                        if (timer >= 2)
-                        {
-                            FungleAPIPlugin.Instance.Log.LogError("Failed to connect vents");
-                            yield break;
-                        }
-                    }
-                    foreach (Vent v in nearbyVents)
-                    {
-                        v.ConnectVent(vent, connectBoth);
-                    }
-                }
-                vent.StartCoroutine(CoConnectVents().WrapToIl2Cpp());
+                Connecteds.Add(vent, (nearbyVents, connectBoth));
             }
             return vent;
         }
         public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)
         {
-            VentHelper helper = VentHelper.ShipVents[vent];
+            VentHelper helper = vent.TryGetHelper();
             if (!helper.Vents.Contains(target))
             {
                 helper.Vents.Add(target);
             }
-            VentHelper helper2 = VentHelper.ShipVents[target];
+            VentHelper helper2 = target.TryGetHelper();
             if (connectBoth && !helper2.Vents.Contains(vent))
             {
                 helper2.Vents.Add(vent);
@@ -277,15 +261,33 @@ namespace FungleAPI.Utilities
         }
         public static void DisconnectVent(this Vent vent, Vent target, bool disconnectBoth = true)
         {
-            VentHelper helper = VentHelper.ShipVents[vent];
+            VentHelper helper = vent.TryGetHelper();
             if (helper.Vents.Contains(target))
             {
                 helper.Vents.Remove(target);
             }
-            VentHelper helper2 = VentHelper.ShipVents[target];
+            VentHelper helper2 = target.TryGetHelper();
             if (disconnectBoth && helper2.Vents.Contains(vent))
             {
                 helper2.Vents.Remove(vent);
+            }
+        }
+        public static VentHelper TryGetHelper(this Vent target)
+        {
+            try
+            {
+                return VentHelper.ShipVents[target];
+            }
+            catch
+            {
+                try
+                {
+                    return target.GetComponent<VentHelper>();
+                }
+                catch
+                {
+                    return null;
+                }
             }
         }
     }
