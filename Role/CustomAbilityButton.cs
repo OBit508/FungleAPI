@@ -27,6 +27,7 @@ namespace FungleAPI.Role
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
         public virtual float Cooldown { get; }
+        public virtual float InitialCooldown { get; }
         public float Timer;
         public virtual bool HaveUses { get; }
         public virtual int NumUses { get; }
@@ -117,9 +118,9 @@ namespace FungleAPI.Role
                 Button = null;
             }
         }
-        public virtual void Reset()
+        public virtual void Reset(bool creating = false)
         {
-            Timer = Cooldown;
+            Timer = !creating ? Cooldown : (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay ? 0 : InitialCooldown);
             CurrentNumUses = NumUses;
             Transformed = false;
             TransformTimer = TransformDuration;
@@ -130,7 +131,7 @@ namespace FungleAPI.Role
             {
                 Destroy();
             }
-            Reset();
+            Reset(true);
             Button = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton, HudManager.Instance.AbilityButton.transform.parent);
             Button.name = GetType().Name;
             PassiveButton component = Button.GetComponent<PassiveButton>();
