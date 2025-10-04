@@ -74,8 +74,8 @@ namespace FungleAPI.Role.Patches
             float num2 = -1.928f;
             __instance.roleTabs = new Il2CppSystem.Collections.Generic.List<PassiveButton>();
             __instance.roleTabs.Add(__instance.AllButton);
-            List<RoleBehaviour> list = DestroyableSingleton<RoleManager>.Instance.AllRoles.ToSystemList().FindAll((RoleBehaviour r) => r.TeamType == RoleTeamTypes.Crewmate && r.Role != RoleTypes.Crewmate && r.Role != RoleTypes.CrewmateGhost && r.CustomRole() == null);
-            List<RoleBehaviour> list2 = DestroyableSingleton<RoleManager>.Instance.AllRoles.ToSystemList().FindAll((RoleBehaviour r) => r.TeamType == RoleTeamTypes.Impostor && r.Role != RoleTypes.Impostor && r.Role != RoleTypes.ImpostorGhost && r.CustomRole() == null);
+            List<RoleBehaviour> list = DestroyableSingleton<RoleManager>.Instance.AllRoles.FindAll((RoleBehaviour r) => r.TeamType == RoleTeamTypes.Crewmate && r.Role != RoleTypes.Crewmate && r.Role != RoleTypes.CrewmateGhost && r.CustomRole() == null).ToSystemList();
+            List<RoleBehaviour> list2 = DestroyableSingleton<RoleManager>.Instance.AllRoles.FindAll((RoleBehaviour r) => r.TeamType == RoleTeamTypes.Impostor && r.Role != RoleTypes.Impostor && r.Role != RoleTypes.ImpostorGhost && r.CustomRole() == null).ToSystemList();
             for (int i = 0; i < list.Count; i++)
             {
                 __instance.AddRoleTab(list[i], ref num2);
@@ -278,7 +278,7 @@ namespace FungleAPI.Role.Patches
                 });
                 cog.gameObject.AddComponent<Updater>().update = new Action(delegate
                 {
-                    cog.SetInteractable(role.Configuration.Configs.Count() > 0);
+                    cog.SetInteractable(role.Configuration.Configs.Count > 0);
                 });
                 currentVec.y = currentVec.y - 0.43f;
                 option.gameObject.SetActive(true);

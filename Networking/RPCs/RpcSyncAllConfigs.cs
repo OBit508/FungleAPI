@@ -4,6 +4,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Patches;
 using FungleAPI.Role;
+using FungleAPI.Utilities;
 using Hazel;
 using Il2CppInterop.Generator.Extensions;
 using System;

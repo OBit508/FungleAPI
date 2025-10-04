@@ -36,8 +36,8 @@ namespace FungleAPI.Components
                     }
                 }));
             }
-            vent.Buttons = buttons.ToArray();
-            vent.CleaningIndicators = cleaningIndicators.ToArray();
+            vent.Buttons = (ButtonBehavior[])buttons.ToArray();
+            vent.CleaningIndicators = (GameObject[])cleaningIndicators.ToArray();
             vent.SetButtons(Vent.currentVent == vent);
         }
         public void Update()

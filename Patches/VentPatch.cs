@@ -85,7 +85,7 @@ namespace FungleAPI.Patches
         {
             try
             {
-                __result = __instance.TryGetHelper().Vents.ToArray();
+                __result = (Vent[])__instance.TryGetHelper().Vents.ToArray();
             }
             catch
             {

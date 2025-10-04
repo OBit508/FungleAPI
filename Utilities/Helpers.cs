@@ -42,15 +42,11 @@ namespace FungleAPI.Utilities
         public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             List<DeadBody> bodies = new List<DeadBody>();
-            foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(target.GetTruePosition(), distance, Constants.PlayersOnlyMask))
+            foreach (DeadBody body in AllDeadBodies)
             {
-                if (collider2D.tag == "DeadBody")
+                if (body != null && PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
                 {
-                    DeadBody component = collider2D.GetComponent<DeadBody>();
-                    if (component != null && PhysicsHelpers.AnythingBetween(target.GetTruePosition(), component.TruePosition, Constants.ShipAndObjectsMask, false) && (!component.Reported || includeReporteds))
-                    {
-                        bodies.Add(component);
-                    }
+                    bodies.Add(body);
                 }
             }
             return bodies;
@@ -211,24 +207,6 @@ namespace FungleAPI.Utilities
                 return null;
             }
             return obj.Cast<T>();
-        }
-        public static Il2CppSystem.Collections.Generic.List<T> ToIl2CppList<T>(this List<T> list)
-        {
-            Il2CppSystem.Collections.Generic.List<T> values = new Il2CppSystem.Collections.Generic.List<T>();
-            foreach (T item in list)
-            {
-                values.Add(item);
-            }
-            return values;
-        }
-        public static List<T> ToSystemList<T>(this Il2CppSystem.Collections.Generic.List<T> list)
-        {
-            List<T> values = new List<T>();
-            foreach (T item in list)
-            {
-                values.Add(item);
-            }
-            return values;
         }
         public static Vent CreateVent(Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {

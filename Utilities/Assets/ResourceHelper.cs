@@ -64,34 +64,45 @@ namespace FungleAPI.Utilities.Assets
             }
             return audioClip;
         }
-        public static List<Sprite> LoadSpriteSheet(ModPlugin plugin, string resource, float PixelPerUnit, int tileWidth, bool dontUnload = true)
+        public static List<Sprite> LoadSpriteSheet(ModPlugin plugin, string resource, float pixelsPerUnit, int columnsY, int columnsX, bool skipEmpty = true, bool dontUnload = true)
         {
             List<Sprite> sprites = new List<Sprite>();
             resource += ".png";
             System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
             if (stream == null)
+            {
                 return null;
-
+            }
             Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             stream.CopyTo(memoryStream);
-            LoadImage(texture, memoryStream.ToArray(), true);
-            int tileHeight = texture.height;
-            int totalTiles = texture.width / tileWidth;
-            for (int i = 0; i < totalTiles; i++)
+            LoadImage(texture, memoryStream.ToArray(), false);
+            float tileWidth = texture.width / columnsX;
+            float tileHeight = texture.height / columnsY;
+            FungleAPIPlugin.Instance.Log.LogWarning(resource + " Width : " + tileWidth.ToString() + " Height: " + tileHeight.ToString());
+            for (int y = 0; y < columnsY; y++)
             {
-                Rect rect = new Rect(i * tileWidth, 0, tileWidth, tileHeight);
-                Vector2 pivot = new Vector2(0.5f, 0.5f);
-                Sprite sprite = Sprite.Create(texture, rect, pivot, PixelPerUnit);
-                if (dontUnload)
+                for (int x = 0; x < columnsX; x++)
                 {
-                    sprite.DontUnload();
+                    float rectY = texture.height - ((y + 1) * tileHeight);
+                    Rect rect = new Rect(x * tileWidth, rectY, tileWidth, tileHeight);
+                    UnityEngine.Color[] pixels = texture.GetPixels((int)rect.x, (int)rect.y, (int)rect.width, (int)rect.height);
+                    if (skipEmpty && pixels.All(p => p.a == 0f))
+                    {
+                        continue;
+                    }
+                    Vector2 pivot = new Vector2(0.5f, 0.5f);
+                    Sprite sprite = Sprite.Create(texture, rect, pivot, pixelsPerUnit);
+                    if (dontUnload)
+                    {
+                        sprite.DontUnload();
+                    }
+                    sprites.Add(sprite);
                 }
-                sprites.Add(sprite);
             }
             return sprites;
         }
-        public static GifFile ToGif(Sprite[] sprites, float delay)
+        public static GifFile ToGif(Sprite[] sprites, float delay, bool loop = true)
         {
             GifFile animation = new GifFile();
             animation.Sprites = sprites;
@@ -101,6 +112,7 @@ namespace FungleAPI.Utilities.Assets
                 animation.Delays[i] = delay;
             }
             animation.SetGif(animation.Sprites, animation.Delays);
+            animation.Loop = loop;
             return animation;
         }
         public static GifFile LoadGif(ModPlugin plugin, string resource, float PixelPerUnit, bool loop = true)

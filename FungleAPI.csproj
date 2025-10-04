@@ -96,6 +96,7 @@
     <Compile Include="Networking\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
+    <Compile Include="Utilities\Il2CppUtils.cs" />
     <Compile Include="Utilities\Prefabs\Prefab.cs" />
     <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />

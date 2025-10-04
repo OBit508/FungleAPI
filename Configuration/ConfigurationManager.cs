@@ -15,8 +15,8 @@ namespace FungleAPI.Configuration
 {
     public static class ConfigurationManager
     {
-        public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
-        internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
+        public static Il2CppSystem.Collections.Generic.Dictionary<MethodBase, ModdedOption> Configs = new Il2CppSystem.Collections.Generic.Dictionary<MethodBase, ModdedOption>();
+        internal static Il2CppSystem.Collections.Generic.Dictionary<MethodBase, RoleConfig> RoleConfigs = new Il2CppSystem.Collections.Generic.Dictionary<MethodBase, RoleConfig>();
         internal static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         public static List<ModdedOption> InitializeConfigs(object obj)
         {
