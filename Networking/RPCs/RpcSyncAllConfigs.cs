@@ -16,9 +16,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncAllConfigs : CustomRpc<string>
+    public class RpcSyncAllConfigs : CustomRpc
     {
-        public override void Write(MessageWriter writer, string value)
+        public override void Write(MessageWriter writer)
         {
             writer.Write(ConfigurationManager.Configs.Count);
             for (int i = 0; i < ConfigurationManager.Configs.Count; i++)

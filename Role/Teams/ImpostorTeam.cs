@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Prefabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,23 +15,21 @@ namespace FungleAPI.Role.Teams
         public override bool FriendlyFire => false;
         public override bool KnowMembers => true;
         public override Color TeamColor => Palette.ImpostorRed;
-        public override Color TeamHeaderColor => Palette.ImpostorRoleHeaderRed;
         public override StringNames TeamName => StringNames.Impostor;
         public override StringNames PluralName { get; } = impostors;
         public override List<GameOverReason> WinReason { get; } = new List<GameOverReason>() { GameOverReason.ImpostorsByVote, GameOverReason.ImpostorsByKill, GameOverReason.ImpostorsBySabotage, GameOverReason.ImpostorDisconnect, GameOverReason.HideAndSeek_ImpostorsByKills };
-        public override int MaxCount
+        public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
-            get
-            {
-                try
-                {
-                    return GameOptionsManager.Instance.currentGameOptions.GetInt(AmongUs.GameOptions.Int32OptionNames.NumImpostors);
-                }
-                catch
-                {
-                    return 0;
-                }
-            }
+            CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate<CategoryHeaderEditRole>(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
+            categoryHeaderEditRole.SetHeader(StringNames.ImpostorRolesHeader, 20);
+            categoryHeaderEditRole.Title.enabled = true;
+            return categoryHeaderEditRole;
+        }
+        public override CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
+        {
+            CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
+            categoryHeaderRoleVariant.SetHeader(StringNames.ImpostorRolesHeader, 61);
+            return categoryHeaderRoleVariant;
         }
         internal static StringNames impostors
         {

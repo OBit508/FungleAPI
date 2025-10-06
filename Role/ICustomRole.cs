@@ -1,13 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Role.Teams;
-using FungleAPI.Role;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.Configuration;
 
 namespace FungleAPI.Role
 {

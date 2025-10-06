@@ -1,34 +1,28 @@
 ﻿using FungleAPI.Components;
-using FungleAPI.Patches;
 using FungleAPI.Utilities;
 using Hazel;
 using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcAmModded : CustomRpc<PlayerControl>
+    public class RpcSendMods : CustomRpc<ClientData>
     {
-        public override void Write(MessageWriter writer, PlayerControl value)
+        public override void Write(MessageWriter writer, ClientData value)
         {
             List<ModPlugin.Mod> mods = new List<ModPlugin.Mod>();
-            writer.Write(value.Data.ClientId);
+            writer.Write(value.Id);
             writer.Write(ModPlugin.AllPlugins.Count);
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 writer.WriteMod(plugin.LocalMod);
                 mods.Add(plugin.LocalMod);
             }
-            ClientData client = AmongUsClient.Instance.GetClient(value.Data.ClientId);
-            if (client != null && client.GetMods() == null)
-            {
-                Helpers.Mods.Add(client, mods);
-            }
+            Helpers.Mods.TryAdd(value, mods);
         }
         public override void Handle(MessageReader reader)
         {
@@ -42,12 +36,7 @@ namespace FungleAPI.Networking.RPCs
             ClientData client = AmongUsClient.Instance.GetClient(clientId);
             if (client != null)
             {
-                if (LobbyWarningText.nonModdedPlayers.ContainsKey(client))
-                {
-                    LobbyWarningText.nonModdedPlayers.Remove(client);
-                }
-                Helpers.Mods.Add(client, mods);
-                if (AmongUsClient.Instance.AmHost)
+                if (Helpers.Mods.TryAdd(client, mods) && AmongUsClient.Instance.AmHost)
                 {
                     ModPlugin.Mod.Update(client);
                 }

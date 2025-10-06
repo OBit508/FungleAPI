@@ -1,7 +1,6 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
-using FungleAPI.Role;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -15,8 +14,8 @@ namespace FungleAPI.Configuration
 {
     public static class ConfigurationManager
     {
-        public static Il2CppSystem.Collections.Generic.Dictionary<MethodBase, ModdedOption> Configs = new Il2CppSystem.Collections.Generic.Dictionary<MethodBase, ModdedOption>();
-        internal static Il2CppSystem.Collections.Generic.Dictionary<MethodBase, RoleConfig> RoleConfigs = new Il2CppSystem.Collections.Generic.Dictionary<MethodBase, RoleConfig>();
+        public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
+        internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
         internal static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         public static List<ModdedOption> InitializeConfigs(object obj)
         {
@@ -59,7 +58,7 @@ namespace FungleAPI.Configuration
             __result = Configs[__originalMethod].GetValue();
             return false;
         }
-        internal static void PatchRoleConfig(Type type, RoleConfig config)
+        public static void PatchRoleConfig(Type type, RoleConfig config)
         {
             PropertyInfo property = type.GetProperty("Configuration");
             if (property != null && property.PropertyType == typeof(RoleConfig))

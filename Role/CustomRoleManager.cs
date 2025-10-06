@@ -3,7 +3,6 @@ using BepInEx.Core.Logging.Interpolation;
 using FungleAPI;
 using FungleAPI.Configuration;
 using FungleAPI.Components;
-using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Networking;
 using FungleAPI.Translation;
@@ -102,6 +101,8 @@ namespace FungleAPI.Role
             role.CanVent = config.CanVent;
             role.TasksCountTowardProgress = config.TasksCountForProgress;
             role.RoleScreenshot = config.Screenshot;
+            role.RoleIconSolid = config.IconSolid;
+            role.RoleIconWhite = config.IconWhite;
             role.Role = roleType;
             role.TeamType = customRole.Team == ModdedTeam.Impostors ? RoleTeamTypes.Impostor : RoleTeamTypes.Crewmate;
             AllRoles.Add(role);

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Configuration.Patches
 {
     [HarmonyPatch(typeof(GameOptionsMenu))]
     internal static class GameOptionsMenuPatch
@@ -50,13 +50,13 @@ namespace FungleAPI.Patches
             {
                 foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
                 {
-                    GameObject.Destroy(categoryHeaderMasked.gameObject);
+                    UnityEngine.Object.Destroy(categoryHeaderMasked.gameObject);
                 }
                 foreach (OptionBehaviour op in __instance.Children)
                 {
                     if (op != __instance.MapPicker)
                     {
-                        GameObject.Destroy(op.gameObject);
+                        UnityEngine.Object.Destroy(op.gameObject);
                     }
                 }
                 __instance.Children.Clear();
@@ -78,7 +78,7 @@ namespace FungleAPI.Patches
             float num = 2;
             foreach (SettingsGroup group in GameSettingMenuPatch.currentPlugin.Settings.Groups)
             {
-                CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
+                CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                 categoryHeaderMasked.SetHeader(group.GroupName, 20);
                 categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                 categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);

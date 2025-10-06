@@ -1,6 +1,5 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
-using FungleAPI.Configuration;
 using FungleAPI.Role.Teams;
 using FungleAPI.Role;
 using System;
@@ -13,7 +12,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 using FungleAPI.Utilities;
 using FungleAPI.Configuration.Attributes;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Configuration
 {
     public class RoleConfig
     {
@@ -57,5 +56,7 @@ namespace FungleAPI.Role
         public bool HideRole;
         public bool HideInFreeplayComputer;
         public int MaxRoleCount;
+        public Sprite IconSolid;
+        public Sprite IconWhite;
     }
 }

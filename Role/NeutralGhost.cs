@@ -2,7 +2,6 @@
 using FungleAPI.Components;
 using FungleAPI.Patches;
 using FungleAPI.Role.Teams;
-using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
@@ -12,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.Configuration;
 
 namespace FungleAPI.Role
 {

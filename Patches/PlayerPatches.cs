@@ -37,7 +37,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void StartPostfix(PlayerControl __instance)
         {
-            __instance.StartCoroutine(TrySendCreateFungleAPIClient(__instance).WrapToIl2Cpp());
+            __instance.StartCoroutine(TrySendMods(__instance).WrapToIl2Cpp());
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 __instance.gameObject.AddComponent(type).SafeCast<PlayerComponent>().player = __instance;
@@ -50,15 +50,37 @@ namespace FungleAPI.Patches
             __instance.RpcCustomMurderPlayer(target, MurderResultFlags.Succeeded);
             return false;
         }
-        public static System.Collections.IEnumerator TrySendCreateFungleAPIClient(PlayerControl player)
+        public static System.Collections.IEnumerator TrySendMods(PlayerControl player)
         {
             while (player.Data == null && player.Data.ClientId == -1)
             {
                 yield return null;
             }
-            if (!player.isDummy && !player.notRealPlayer && player.AmOwner)
+            if (!player.isDummy && !player.notRealPlayer)
             {
-                CustomRpcManager.Instance<RpcAmModded>().Send(player, player.NetId);
+                if (player.AmOwner)
+                {
+                    CustomRpcManager.Instance<RpcAmModded>().Send(player, player.NetId);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(1);
+                    ClientData client = null;
+                    while (client == null)
+                    {
+                        client = AmongUsClient.Instance.GetClient(player.Data.ClientId);
+                        yield return new WaitForSeconds(0.1f);
+                        yield return null;
+                    }
+                    while (client.GetMods() == null)
+                    {
+                        if (PlayerControl.LocalPlayer != null)
+                        {
+                            CustomRpcManager.Instance<RpcRequestMods>().Send(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, player.Data.ClientId);
+                        }
+                        yield return new WaitForSeconds(1);
+                    }
+                }
             }
         }
     }

@@ -63,6 +63,13 @@ namespace FungleAPI.Networking
             Writer.Write(color.b);
             Writer.Write(color.a);
         }
+        public static void WriteMod(this MessageWriter Writer, ModPlugin.Mod mod)
+        {
+            Writer.Write(mod.Version);
+            Writer.Write(mod.Name);
+            Writer.Write(mod.RealName);
+            Writer.Write(mod.GUID);
+        }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
             float x = Reader.ReadSingle();
@@ -119,6 +126,16 @@ namespace FungleAPI.Networking
             float b = Reader.ReadSingle();
             float a = Reader.ReadSingle();
             return new Color(r, g, b, a);
+        }
+        public static ModPlugin.Mod ReadMod(this MessageReader Reader)
+        {
+            string Version = Reader.ReadString();
+            string Name = Reader.ReadString();
+            string RealName = Reader.ReadString();
+            string GUID = Reader.ReadString();
+            ModPlugin.Mod mod = new ModPlugin.Mod(Version, Name, RealName, GUID);
+            mod.Plugin = ModPlugin.AllPlugins.FirstOrDefault(pl => pl.LocalMod.Equals(mod));
+            return mod;
         }
     }
 }

@@ -21,6 +21,7 @@
     <Compile Include="Configuration\Attributes\SettingsGroup.cs" />
     <Compile Include="Configuration\ModSettings.cs" />
     <Compile Include="Configuration\RoleCountAndChance.cs" />
+    <Compile Include="Freeplay\ModFolderConfig.cs" />
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
@@ -33,12 +34,14 @@
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="Networking\EndGameHelper.cs" />
     <Compile Include="Networking\RPCs\RpcAmModded.cs" />
+    <Compile Include="Networking\RPCs\RpcRequestMods.cs" />
+    <Compile Include="Networking\RPCs\RpcSendMods.cs" />
     <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="Patches\EndGameManagerPatch.cs" />
-    <Compile Include="Patches\GameOptionsMenuPatch.cs" />
-    <Compile Include="Patches\GameSettingMenuPatch.cs" />
+    <Compile Include="Configuration\Patches\GameOptionsMenuPatch.cs" />
+    <Compile Include="Configuration\Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />
     <Compile Include="Patches\ImpostorRolePatch.cs" />
     <Compile Include="Patches\KillButtonPatch.cs" />
@@ -46,7 +49,7 @@
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Patches\ModManagerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
-    <Compile Include="Patches\LobbyViewSettingsPanePatch.cs" />
+    <Compile Include="Configuration\Patches\LobbyViewSettingsPanePatch.cs" />
     <Compile Include="Role\Patches\RoleManagerPatch.cs" />
     <Compile Include="Utilities\DeadBodyType.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
@@ -55,7 +58,7 @@
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\Patches\NameColorPatch.cs" />
     <Compile Include="Role\NeutralGhost.cs" />
-    <Compile Include="Role\RoleConfig.cs" />
+    <Compile Include="Configuration\RoleConfig.cs" />
     <Compile Include="Patches\SabotageButtonPatch.cs" />
     <Compile Include="Configuration\Attributes\ModdedToggleOption.cs" />
     <Compile Include="Configuration\Attributes\ModdedEnumOption.cs" />
@@ -81,8 +84,8 @@
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
     <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
-    <Compile Include="Role\Patches\RolesSettingMenuPatch.cs" />
-    <Compile Include="Patches\TaskAdderGamePatch.cs" />
+    <Compile Include="Configuration\Patches\RolesSettingMenuPatch.cs" />
+    <Compile Include="Freeplay\Patches\TaskAdderGamePatch.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <Compile Include="Patches\VentPatch.cs" />
     <Compile Include="Patches\VersionShowerPatch.cs" />
@@ -559,5 +562,8 @@
     <Reference Include="__Generated">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\__Generated.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GameOver\" />
   </ItemGroup>
 </Project>

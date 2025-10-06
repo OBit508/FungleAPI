@@ -9,6 +9,7 @@ using Hazel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ namespace FungleAPI.Utilities
 {
     public static class Helpers
     {
+        internal static Dictionary<ClientData, List<ModPlugin.Mod>> Mods = new Dictionary<ClientData, List<ModPlugin.Mod>>();
         internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
         public static Vent VentPrefab;
@@ -34,6 +36,22 @@ namespace FungleAPI.Utilities
                 allDeadBodies.RemoveAll(body => body == null || body.IsDestroyedOrNull());
                 return allDeadBodies;
             }
+        }
+        public static List<ModPlugin.Mod> GetMods(this ClientData client)
+        {
+            List<ModPlugin.Mod> mods = null;
+            foreach (KeyValuePair<ClientData, List<ModPlugin.Mod>> pair in Mods)
+            {
+                if (!AmongUsClient.Instance.allClients.Contains(pair.Key))
+                {
+                    Mods.Remove(pair.Key);
+                }
+                else if (pair.Key == client)
+                {
+                    mods = pair.Value;
+                }
+            }
+            return mods;
         }
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {

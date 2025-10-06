@@ -15,7 +15,7 @@ using UnityEngine;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Configuration.Patches
 {
     [HarmonyPatch(typeof(LobbyViewSettingsPane))]
     internal static class LobbyViewSettingsPanePatch
@@ -29,7 +29,7 @@ namespace FungleAPI.Patches
         {
             currentPlugin = FungleAPIPlugin.Plugin;
             currentIndex = 0;
-            SwitchButton = GameObject.Instantiate(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
+            SwitchButton = UnityEngine.Object.Instantiate(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
             SwitchButton.transform.localPosition = new Vector3(3.6f, 1.404f, 0);
             SwitchButton.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
             SwitchButton.OnClick.AddListener(new Action(delegate
@@ -69,58 +69,31 @@ namespace FungleAPI.Patches
             float num2 = -6.53f;
             float minY = num;
             float lastItemHeight = 0f;
-            CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(__instance.categoryHeaderOrigin);
+            CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(__instance.categoryHeaderOrigin);
             categoryHeaderMasked.SetHeader(StringNames.RoleQuotaLabel, 61);
             categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
             categoryHeaderMasked.transform.localScale = Vector3.one;
             categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, 1.26f, -2f);
             __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
-            List<ModdedTeam> UsedTeams = new List<ModdedTeam>();
-            foreach (RoleBehaviour role in currentPlugin.Roles)
-            {
-                if (!UsedTeams.Contains(role.GetTeam()) &&
-                    (role.CustomRole() == null || role.CustomRole() != null && !role.CustomRole().Configuration.HideRole) &&
-                    (currentPlugin == FungleAPIPlugin.Plugin && role.GetTeam() != ModdedTeam.Neutrals ||
-                     currentPlugin != FungleAPIPlugin.Plugin))
-                {
-                    UsedTeams.Add(role.GetTeam());
-                }
-            }
+            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = currentPlugin.GetTeamsAndRoles();
             List<RoleBehaviour> list = new List<RoleBehaviour>();
-            for (int i = 0; i < UsedTeams.Count; i++)
+            for (int i = 0; i < teams.Count; i++)
             {
-                CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(__instance.categoryHeaderRoleOrigin);
-                categoryHeaderRoleVariant.SetHeader(
-                    i == 0 ? StringNames.CrewmateRolesHeader : StringNames.ImpostorRolesHeader,
-                    61
-                );
-                if (currentPlugin != FungleAPIPlugin.Plugin)
-                {
-                    string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
-                    categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + UsedTeams[i].TeamName.GetString();
-                    categoryHeaderRoleVariant.Background.color = UsedTeams[i].TeamHeaderColor;
-                    categoryHeaderRoleVariant.Title.color = Helpers.Dark(categoryHeaderRoleVariant.Background.color);
-                }
-                categoryHeaderRoleVariant.transform.SetParent(__instance.settingsContainer);
+                CategoryHeaderRoleVariant categoryHeaderRoleVariant = teams.Keys.ToArray()[i].CreateCategoryHeaderRoleVariant(__instance.settingsContainer);
                 categoryHeaderRoleVariant.transform.localScale = Vector3.one;
                 categoryHeaderRoleVariant.transform.localPosition = new Vector3(0.09f, num, -2f);
                 __instance.settingsInfo.Add(categoryHeaderRoleVariant.gameObject);
                 lastItemHeight = 0.696f;
                 num -= lastItemHeight;
                 minY = Mathf.Min(minY, num);
-                foreach (RoleBehaviour roleBehaviour in currentPlugin.Roles)
+                foreach (RoleBehaviour roleBehaviour in teams[teams.Keys.ToArray()[i]])
                 {
-                    if (roleBehaviour.GetTeam() == UsedTeams[i] &&
-                        roleBehaviour.Role != RoleTypes.CrewmateGhost &&
-                        roleBehaviour.Role != RoleTypes.ImpostorGhost &&
-                        roleBehaviour.Role != RoleTypes.Crewmate &&
-                        roleBehaviour.Role != RoleTypes.Impostor &&
-                        roleBehaviour.Role != CustomRoleManager.NeutralGhost.Role)
+                    if (roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.Crewmate && roleBehaviour.Role != RoleTypes.Impostor && (roleBehaviour.CustomRole() == null || roleBehaviour.CustomRole() != null && !roleBehaviour.CustomRole().Configuration.HideRole))
                     {
                         int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
                         int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
                         bool disabled = numPerGame == 0;
-                        ViewSettingsInfoPanelRoleVariant viewPanel = GameObject.Instantiate(__instance.infoPanelRoleOrigin);
+                        ViewSettingsInfoPanelRoleVariant viewPanel = UnityEngine.Object.Instantiate(__instance.infoPanelRoleOrigin);
                         viewPanel.transform.SetParent(__instance.settingsContainer);
                         viewPanel.transform.localScale = Vector3.one;
                         viewPanel.transform.localPosition = new Vector3(num2, num, -2f);
@@ -154,7 +127,7 @@ namespace FungleAPI.Patches
             }
             if (list.Count > 0)
             {
-                CategoryHeaderMasked categoryHeaderMasked2 = GameObject.Instantiate(__instance.categoryHeaderOrigin);
+                CategoryHeaderMasked categoryHeaderMasked2 = UnityEngine.Object.Instantiate(__instance.categoryHeaderOrigin);
                 categoryHeaderMasked2.SetHeader(StringNames.RoleSettingsLabel, 61);
                 categoryHeaderMasked2.transform.SetParent(__instance.settingsContainer);
                 categoryHeaderMasked2.transform.localScale = Vector3.one;
@@ -181,7 +154,7 @@ namespace FungleAPI.Patches
                     {
                         posX = 0.14999962f;
                     }
-                    AdvancedRoleViewPanel advancedPanel = GameObject.Instantiate(__instance.advancedRolePanelOrigin);
+                    AdvancedRoleViewPanel advancedPanel = UnityEngine.Object.Instantiate(__instance.advancedRolePanelOrigin);
                     advancedPanel.transform.SetParent(__instance.settingsContainer);
                     advancedPanel.transform.localScale = Vector3.one;
                     advancedPanel.transform.localPosition = new Vector3(posX, num, -2f);
@@ -211,7 +184,7 @@ namespace FungleAPI.Patches
             for (int i = 0; i < role.Configuration.Configs.Count; i++)
             {
                 ModdedOption baseGameSetting = role.Configuration.Configs[i];
-                ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
+                ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;
                 viewSettingsInfoPanel.transform.localPosition = new Vector3(advancedRoleViewPanel.xPosStart, num, -2f);
@@ -236,7 +209,7 @@ namespace FungleAPI.Patches
             float num = 1.44f;
             foreach (SettingsGroup group in currentPlugin.Settings.Groups)
             {
-                CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin);
+                CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin);
                 categoryHeaderMasked.SetHeader(group.GroupName, 61);
                 categoryHeaderMasked.transform.SetParent(menu.settingsContainer);
                 categoryHeaderMasked.transform.localScale = Vector3.one;
@@ -245,7 +218,7 @@ namespace FungleAPI.Patches
                 num -= 1.05f;
                 for (int i = 0; i < group.Options.Count; i++)
                 {
-                    ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(menu.infoPanelOrigin);
+                    ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(menu.infoPanelOrigin);
                     viewSettingsInfoPanel.transform.SetParent(menu.settingsContainer);
                     viewSettingsInfoPanel.transform.localScale = Vector3.one;
                     float num2;
@@ -274,7 +247,7 @@ namespace FungleAPI.Patches
                 }
                 num -= 0.85f;
             }
-            menu.scrollBar.CalculateAndSetYBounds((float)(menu.settingsInfo.Count + 10), 2f, 6f, 0.85f);
+            menu.scrollBar.CalculateAndSetYBounds(menu.settingsInfo.Count + 10, 2f, 6f, 0.85f);
         }
     }
 }

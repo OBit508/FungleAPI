@@ -50,9 +50,9 @@ namespace FungleAPI.Configuration
         }
         public void Initialize(ConfigFile configFile, string name)
         {
-            localCount = configFile.Bind<int>(name, "Count", 1);
+            localCount = configFile.Bind<int>(name, "Count", 0);
             onlineCount = localCount.Value;
-            localChance = configFile.Bind<int>(name, "Chance", 100);
+            localChance = configFile.Bind<int>(name, "Chance", 0);
             onlineChance = localChance.Value;
             Name = name;
         }

@@ -9,10 +9,10 @@ using Epic.OnlineServices;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Patches;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Role;
-using FungleAPI.Role.Patches;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -41,7 +41,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.1.9";
+        public const string ModV = "2.0.0";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -101,6 +101,7 @@ namespace FungleAPI
                     ModPlugin.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
+                    plugin.LocalMod = new ModPlugin.Mod(plugin);
                     ModPlugin.AllPlugins.Add(plugin);
                 }
                 return plugin;

@@ -45,7 +45,7 @@ namespace FungleAPI.Configuration.Attributes
             {
                 ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
                 float value = float.Parse(property.GetValue(obj).ToString());
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName + " - Option", ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
                 FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);

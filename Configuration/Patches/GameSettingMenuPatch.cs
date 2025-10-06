@@ -1,5 +1,4 @@
-﻿using FungleAPI.Role.Patches;
-using FungleAPI.Utilities;
+﻿using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Configuration.Patches
 {
     [HarmonyPatch(typeof(GameSettingMenu), "Start")]
     internal static class GameSettingMenuPatch
@@ -19,7 +18,7 @@ namespace FungleAPI.Patches
         {
             currentIndex = 0;
             currentPlugin = FungleAPIPlugin.Plugin;
-            PassiveButton SwitchButton = GameObject.Instantiate(__instance.ControllerSelectable[0].SafeCast<PassiveButton>(), __instance.ControllerSelectable[0].transform.parent);
+            PassiveButton SwitchButton = UnityEngine.Object.Instantiate(__instance.ControllerSelectable[0].SafeCast<PassiveButton>(), __instance.ControllerSelectable[0].transform.parent);
             SwitchButton.transform.localPosition = new Vector3(-2.96f, 1.57f, -2);
             SwitchButton.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
             SwitchButton.OnClick.AddListener(new Action(delegate

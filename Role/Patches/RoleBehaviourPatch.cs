@@ -40,7 +40,8 @@ namespace FungleAPI.Role.Patches
                 }
                 return false;
             }
-            return true;
+            __result = __instance.GetTeam().TeamColor;
+            return false;
         }
     }
 }

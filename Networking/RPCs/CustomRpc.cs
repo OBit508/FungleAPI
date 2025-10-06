@@ -31,4 +31,23 @@ namespace FungleAPI.Networking.RPCs
         {
         }
     }
+    public class CustomRpc : RpcHelper
+    {
+        public void Send(uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        {
+            if (MCIUtils.GetClient(targetClientId) == null)
+            {
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
+                writer.StartMessage(0);
+                writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
+                writer.Write(GetType().FullName);
+                Write(writer);
+                writer.EndMessage();
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }
+        }
+        public virtual void Write(MessageWriter writer)
+        {
+        }
+    }
 }
