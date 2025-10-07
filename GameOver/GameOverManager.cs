@@ -48,6 +48,7 @@ namespace FungleAPI.GameOver
         public static void RpcEndGame(this GameManager gameManager, CustomGameOver gameOver)
         {
             gameManager.ShouldCheckForGameEnd = false;
+            gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.GetType().FullName), null);
             AmongUsClient amongUsClient = AmongUsClient.Instance;
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);

@@ -63,6 +63,7 @@
     <Compile Include="Patches\ModManagerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Configuration\Patches\LobbyViewSettingsPanePatch.cs" />
+    <Compile Include="Role\Patches\DetectiveNotesMinigamePatch.cs" />
     <Compile Include="Role\Patches\RoleManagerPatch.cs" />
     <Compile Include="Utilities\DeadBodyType.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />

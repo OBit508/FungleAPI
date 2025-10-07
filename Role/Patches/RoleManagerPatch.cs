@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.Utilities;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Role.Patches
 {
@@ -14,11 +16,11 @@ namespace FungleAPI.Role.Patches
     {
         [HarmonyPatch("SetRole")]
         [HarmonyPrefix]
-        public static void SetRolePrefix([HarmonyArgument(0)] PlayerControl targetPlayer)
+        public static void SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
         {
             if (targetPlayer.Data.Role != null)
             {
-                targetPlayer.GetComponent<PlayerHelper>().OldRole = targetPlayer.Data.Role;
+                targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(targetPlayer.Data.Role.Role);
             }
         }
         [HarmonyPatch("AssignRoleOnDeath")]
