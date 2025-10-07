@@ -194,6 +194,7 @@ namespace FungleAPI.Configuration.Patches
             menu.roleDescriptionText.transform.parent.localPosition = new Vector3(2.5176f, -0.2731f, -1f);
             menu.roleDescriptionText.transform.parent.localScale = new Vector3(0.0675f, 0.1494f, 0.5687f);
             menu.AdvancedRolesSettings.transform.FindChild("InfoLabelBackground").transform.localPosition = new Vector3(1.082f, 0.1054f, -2.5f);
+            menu.roleScreenshot.sprite = null;
             if (role.Configuration.Screenshot != null)
             {
                 menu.roleScreenshot.sprite = Sprite.Create(role.Configuration.Screenshot.texture, new UnityEngine.Rect(0f, 0f, 370f, 230f), Vector2.one / 2f, 100f);

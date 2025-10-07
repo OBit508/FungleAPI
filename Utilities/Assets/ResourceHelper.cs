@@ -79,7 +79,6 @@ namespace FungleAPI.Utilities.Assets
             LoadImage(texture, memoryStream.ToArray(), false);
             float tileWidth = texture.width / columnsX;
             float tileHeight = texture.height / columnsY;
-            FungleAPIPlugin.Instance.Log.LogWarning(resource + " Width : " + tileWidth.ToString() + " Height: " + tileHeight.ToString());
             for (int y = 0; y < columnsY; y++)
             {
                 for (int x = 0; x < columnsX; x++)

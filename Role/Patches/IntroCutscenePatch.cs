@@ -1,5 +1,6 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Components;
+using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
@@ -59,8 +60,29 @@ namespace FungleAPI.Role.Patches
                 __instance.BackgroundBar.material.color = customRole.Team.TeamColor;
                 __instance.TeamTitle.text = customRole.Team.TeamName.GetString();
                 __instance.impostorScale = 1f;
-                __instance.ImpostorText.text = null;
                 __instance.TeamTitle.color = customRole.Team.TeamColor;
+            }
+            __instance.ImpostorText.gameObject.SetActive(true);
+            __instance.ImpostorText.text = ExileControllerPatch.TeamsRemainText.GetString();
+            Dictionary<ModdedTeam, ChangeableValue<int>> teams = new Dictionary<ModdedTeam, ChangeableValue<int>>();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                if (!player.Data.IsDead)
+                {
+                    ModdedTeam team = player.Data.Role.GetTeam();
+                    if (teams.ContainsKey(team))
+                    {
+                        teams[team].Value++;
+                    }
+                    else
+                    {
+                        teams.Add(team, new ChangeableValue<int>(1));
+                    }
+                }
+            }
+            foreach (KeyValuePair<ModdedTeam, ChangeableValue<int>> pair in teams)
+            {
+                __instance.ImpostorText.text += pair.Value.Value.ToString() + " " + pair.Key.TeamColor.ToTextColor() + (pair.Value.Value == 1 ? pair.Key.TeamName.GetString() : pair.Key.PluralName.GetString()) + "</color>" + (pair.Key == teams.Last().Key ? "" : ", ");
             }
         }
     }

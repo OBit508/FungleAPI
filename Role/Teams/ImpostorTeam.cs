@@ -1,4 +1,6 @@
-﻿using FungleAPI.Translation;
+﻿using FungleAPI.GameOver;
+using FungleAPI.GameOver.Ends;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using System;
@@ -17,7 +19,7 @@ namespace FungleAPI.Role.Teams
         public override Color TeamColor => Palette.ImpostorRed;
         public override StringNames TeamName => StringNames.Impostor;
         public override StringNames PluralName { get; } = impostors;
-        public override List<GameOverReason> WinReason { get; } = new List<GameOverReason>() { GameOverReason.ImpostorsByVote, GameOverReason.ImpostorsByKill, GameOverReason.ImpostorsBySabotage, GameOverReason.ImpostorDisconnect, GameOverReason.HideAndSeek_ImpostorsByKills };
+        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<ImpostorsByKill>();
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate<CategoryHeaderEditRole>(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
@@ -29,6 +31,7 @@ namespace FungleAPI.Role.Teams
         {
             CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.ImpostorRolesHeader, 61);
+            categoryHeaderRoleVariant.Title.enabled = true;
             return categoryHeaderRoleVariant;
         }
         internal static StringNames impostors

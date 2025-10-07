@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.GameOver;
 
 namespace FungleAPI.Patches
 {
@@ -27,6 +28,13 @@ namespace FungleAPI.Patches
             {
                 deadBody.gameObject.AddComponent<DeadBodyHelper>();
             }
+        }
+        [HarmonyPatch("RpcEndGame")]
+        [HarmonyPrefix]
+        public static bool RpcEndGamePrefix(GameManager __instance, [HarmonyArgument(0)] GameOverReason endReason)
+        {
+            __instance.RpcEndGame(endReason.GetGameOver());
+            return false;
         }
     }
 }

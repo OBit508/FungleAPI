@@ -7,6 +7,7 @@ using FungleAPI.Attributes;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Freeplay;
+using FungleAPI.GameOver;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
@@ -53,7 +54,7 @@ namespace FungleAPI
                     {
                         plugin.Settings = (ModSettings)Activator.CreateInstance(type);
                     }
-                    if (typeof(ModFolderConfig).IsAssignableFrom(type) && type != typeof(ModFolderConfig))
+                    else if (typeof(ModFolderConfig).IsAssignableFrom(type) && type != typeof(ModFolderConfig))
                     {
                         plugin.FolderConfig = (ModFolderConfig)Activator.CreateInstance(type);
                     }
@@ -64,6 +65,10 @@ namespace FungleAPI
                     else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
                     {
                         CustomRoleManager.RegisterRole(type, plugin);
+                    }
+                    else if (typeof(CustomGameOver).IsAssignableFrom(type) && type != typeof(CustomGameOver))
+                    {
+                        GameOverManager.RegisterGameOver(type, plugin);
                     }
                     else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
                     {
@@ -188,34 +193,6 @@ namespace FungleAPI
         public Mod LocalMod;
         public class Mod
         {
-            public static void Update(ClientData client)
-            {
-                string reason = "";
-                ClientData myClient = AmongUsClient.Instance.GetClient(AmongUsClient.Instance.ClientId);
-                List<Mod> myMods = myClient.GetMods();
-                if (client != myClient)
-                {
-                    List<Mod> mods = client.GetMods();
-                    foreach (Mod mod in myMods)
-                    {
-                        if (!mods.Any(m => m.Equals(mod)))
-                        {
-                            reason += "Missing: " + mod.Name + " (" + mod.Version + ")";
-                        }
-                    }
-                    foreach (Mod mod in mods)
-                    {
-                        if (!myMods.Any(m => m.Equals(mod)))
-                        {
-                            reason += "Host are Missing: " + mod.Name + " (" + mod.Version + ")";
-                        }
-                    }
-                }
-                if (reason.Length > 0)
-                {
-                    AmongUsClient.Instance.HandleDisconnect(DisconnectReasons.Custom, reason);
-                }
-            }
             public Mod(ModPlugin plugin)
             {
                 Version = plugin.ModVersion;
@@ -245,7 +222,7 @@ namespace FungleAPI
             {
                 if (obj is Mod mod)
                 {
-                    return mod.Version == Version && mod.Name == Name && mod.GUID == GUID && mod.RealName == RealName;
+                    return mod.Version == Version && mod.Name == Name && mod.RealName == RealName;
                 }
                 return false;
             }

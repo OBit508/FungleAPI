@@ -16,6 +16,7 @@ using FungleAPI.Configuration.Attributes;
 using Il2CppSystem.Runtime.Serialization;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
+using FungleAPI.GameOver;
 
 namespace FungleAPI.Networking
 {
@@ -69,6 +70,10 @@ namespace FungleAPI.Networking
             Writer.Write(mod.Name);
             Writer.Write(mod.RealName);
             Writer.Write(mod.GUID);
+        }
+        public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
+        {
+            Writer.Write(customGameOver.GetType().FullName);
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -136,6 +141,18 @@ namespace FungleAPI.Networking
             ModPlugin.Mod mod = new ModPlugin.Mod(Version, Name, RealName, GUID);
             mod.Plugin = ModPlugin.AllPlugins.FirstOrDefault(pl => pl.LocalMod.Equals(mod));
             return mod;
+        }
+        public static CustomGameOver ReadGameOver(this MessageReader Reader)
+        {
+            string fullName = Reader.ReadString();
+            foreach (CustomGameOver gameOver in GameOverManager.AllCustomGameOver)
+            {
+                if (gameOver.GetType().FullName == fullName)
+                {
+                    return gameOver;
+                }
+            }
+            return null;
         }
     }
 }

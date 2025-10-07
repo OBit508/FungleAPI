@@ -32,7 +32,6 @@ namespace FungleAPI.Role
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
         internal static int id = Enum.GetNames<RoleTypes>().Length + 20;
-        internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
         public static T Instance<T>() where T : RoleBehaviour
         {
@@ -64,11 +63,6 @@ namespace FungleAPI.Role
         public static ICustomRole GetRole(RoleTypes type)
         {
             return RoleManager.Instance.GetRole(type).CustomRole();
-        }
-        public static GameOverReason GetValidGameOver()
-        {
-            gameOverId++;
-            return (GameOverReason)gameOverId;
         }
         public static int CaculeCountByChance(this RoleBehaviour role, IRoleOptionsCollection roleOptions)
         {
@@ -125,14 +119,6 @@ namespace FungleAPI.Role
                 }
             }
             return FungleAPIPlugin.Plugin;
-        }
-        public static bool DidWin(RoleBehaviour roleBehaviour, GameOverReason gameOverReason)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().Configuration.WinReason.Contains(gameOverReason);
-            }
-            return roleBehaviour.GetTeam().WinReason.Contains(gameOverReason);
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {

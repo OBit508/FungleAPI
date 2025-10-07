@@ -45,26 +45,15 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void CreatePlayerPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
         {
-            if (clientData.Id == __instance.HostId)
+            if (clientData.Id == __instance.HostId || !__instance.AmHost)
             {
                 return;
             }
-            LobbyWarningText.nonModdedPlayers.Add(clientData, new Utilities.ChangeableValue<float>(5));
-            if (__instance.AmHost)
+            LobbyWarningText.nonModdedPlayers.Add(clientData, (new ChangeableValue<float>(5), new ChangeableValue<float>(1.5f)));
+            __instance.StartCoroutine(SafeSend(new Action(delegate
             {
-                __instance.StartCoroutine(SafeSend(new Action(delegate
-                {
-                    CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, clientData.Id);
-                    CustomRpcManager.Instance<RpcSendMods>().Send(__instance.GetClient(__instance.ClientId), PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
-                })));
-            }
-            else
-            {
-                __instance.StartCoroutine(SafeSend(new Action(delegate
-                {
-                    CustomRpcManager.Instance<RpcSendMods>().Send(__instance.GetClient(__instance.ClientId), PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
-                })));
-            }
+                CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
+            })));
         }
         public static System.Collections.IEnumerator SafeSend(Action ac)
         {
@@ -75,5 +64,8 @@ namespace FungleAPI.Patches
             ac();
         }
         public static DisconnectReasons FailedToSyncOptionsError = (DisconnectReasons)(-100);
+        public static DisconnectReasons MissingMods = (DisconnectReasons)(-101);
+        public static DisconnectReasons MissingModsOnHost = (DisconnectReasons)(-102);
+        public static DisconnectReasons NotTheSameMods = (DisconnectReasons)(-103);
     }
 }

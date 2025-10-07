@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using FungleAPI.GameOver;
 using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -22,7 +23,6 @@ namespace FungleAPI.Role.Teams
         internal static object RegisterTeam(Type type, ModPlugin plugin)
         {
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
-            plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name + " WinReason Count: " + team.WinReason.Count);
             Teams.Add(team);
             return team;
         }
@@ -37,13 +37,14 @@ namespace FungleAPI.Role.Teams
             }
             return null;
         }
-        public virtual List<GameOverReason> WinReason { get; }
         public ModPlugin TeamPlugin => ModPlugin.GetModPlugin(GetType().Assembly);
         public virtual Color TeamColor => Palette.CrewmateBlue;
         public virtual StringNames TeamName => StringNames.None;
         public virtual StringNames PluralName => StringNames.None;
         public virtual bool FriendlyFire => true;
         public virtual bool KnowMembers => false;
+        public virtual CustomGameOver DefaultGameOver { get; }
+        public virtual string VictoryText { get; }
         public virtual CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
@@ -65,6 +66,7 @@ namespace FungleAPI.Role.Teams
             categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + TeamName.GetString();
             categoryHeaderRoleVariant.Background.color = Helpers.Light(TeamColor);
             categoryHeaderRoleVariant.Title.color = Helpers.Dark(categoryHeaderRoleVariant.Background.color);
+            categoryHeaderRoleVariant.Title.enabled = true;
             return categoryHeaderRoleVariant;
         }
         public static List<ModdedTeam> Teams = new List<ModdedTeam>();

@@ -10,13 +10,15 @@ using FungleAPI.Attributes;
 using InnerNet;
 using FungleAPI.Utilities;
 using FungleAPI.Translation;
+using FungleAPI.Networking.RPCs;
 
 namespace FungleAPI.Components
 {
     [RegisterTypeInIl2Cpp]
     public class LobbyWarningText : MonoBehaviour
     {
-        public static Dictionary<ClientData, ChangeableValue<float>> nonModdedPlayers = new Dictionary<ClientData, ChangeableValue<float>>();
+        public static List<int> moddedClients = new List<int>();
+        public static Dictionary<ClientData, (ChangeableValue<float>, ChangeableValue<float>)> nonModdedPlayers = new Dictionary<ClientData, (ChangeableValue<float>, ChangeableValue<float>)>();
         public TextMeshPro Text;
         private static Translator nonModdedText;
         private static Translator kickingText;
@@ -75,19 +77,26 @@ namespace FungleAPI.Components
         public void Update()
         {
             string clientText = "<size=2>" + NonModdedText.GetString() + "</size>";
-            foreach (KeyValuePair<ClientData, ChangeableValue<float>> client in nonModdedPlayers)
+            moddedClients.RemoveAll(c => !AmongUsClient.Instance.allClients.Any(cl => cl.Id == c));
+            foreach (KeyValuePair<ClientData, (ChangeableValue<float>, ChangeableValue<float>)> client in nonModdedPlayers)
             {
-                if (!AmongUsClient.Instance.allClients.Contains(client.Key))
+                if (!AmongUsClient.Instance.allClients.Contains(client.Key) || moddedClients.Contains(client.Key.Id))
                 {
                     nonModdedPlayers.Remove(client.Key);
                     return;
                 }
-                clientText += "\n" + client.Key.PlayerName + " - " + KickingText.GetString() + " " + client.Value.Value.ToString();
-                client.Value.Value -= Time.deltaTime;
-                if (client.Value.Value <= 0)
+                clientText += "\n" + client.Key.PlayerName + " - " + KickingText.GetString() + " " + client.Value.Item1.Value.ToString();
+                client.Value.Item1.Value -= Time.deltaTime;
+                client.Value.Item2.Value -= Time.deltaTime;
+                if (client.Value.Item1.Value <= 0)
                 {
                     AmongUsClient.Instance.KickPlayer(client.Key.Id, false);
                     nonModdedPlayers.Remove(client.Key);
+                }
+                else if (client.Value.Item2.Value <= 0 && AmongUsClient.Instance.AmHost)
+                {
+                    CustomRpcManager.Instance<RpcRequestForAmModded>().Send(PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, client.Key.Id);
+                    client.Value.Item2.Value = 1.5f;
                 }
             }
             Text.text = clientText;

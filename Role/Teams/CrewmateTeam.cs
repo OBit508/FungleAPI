@@ -1,4 +1,6 @@
-﻿using FungleAPI.Utilities;
+﻿using FungleAPI.GameOver;
+using FungleAPI.GameOver.Ends;
+using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using System;
 using System.Collections.Generic;
@@ -16,7 +18,7 @@ namespace FungleAPI.Role.Teams
         public override Color TeamColor => Palette.CrewmateBlue;
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
-        public override List<GameOverReason> WinReason { get; } = new List<GameOverReason>() { GameOverReason.CrewmatesByVote, GameOverReason.CrewmatesByTask, GameOverReason.CrewmateDisconnect, GameOverReason.HideAndSeek_CrewmatesByTimer };
+        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<CrewmatesByTask>();
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate<CategoryHeaderEditRole>(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
@@ -28,6 +30,7 @@ namespace FungleAPI.Role.Teams
         {
             CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
+            categoryHeaderRoleVariant.Title.enabled = true;
             return categoryHeaderRoleVariant;
         }
     }

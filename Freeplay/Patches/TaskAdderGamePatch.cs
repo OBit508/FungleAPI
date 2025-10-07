@@ -83,7 +83,14 @@ namespace FungleAPI.Freeplay.Patches
                             folder2.name += ((int)role.Role).ToString() + (role == pair.Value[pair.Value.Count - 1] ? "" : "|");
                         }
                     }
-                    folder.SubFolders.Add(folder2);
+                    if (folder2.name == "RoleFolder: ")
+                    {
+                        GameObject.Destroy(folder2.gameObject);
+                    }
+                    else
+                    {
+                        folder.SubFolders.Add(folder2);
+                    }
                 }
                 if (plugin.FolderConfig.GetType() != typeof(ModFolderConfig))
                 {

@@ -16,42 +16,11 @@ namespace FungleAPI.Networking.RPCs
     {
         public override void Write(MessageWriter writer, PlayerControl value)
         {
-            List<ModPlugin.Mod> mods = new List<ModPlugin.Mod>();
             writer.Write(value.Data.ClientId);
-            writer.Write(ModPlugin.AllPlugins.Count);
-            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
-            {
-                writer.WriteMod(plugin.LocalMod);
-                mods.Add(plugin.LocalMod);
-            }
-            ClientData client = AmongUsClient.Instance.GetClient(value.Data.ClientId);
-            if (client != null && client.GetMods() == null)
-            {
-                Helpers.Mods.Add(client, mods);
-            }
         }
         public override void Handle(MessageReader reader)
         {
-            List<ModPlugin.Mod> mods = new List<ModPlugin.Mod>();
-            int clientId = reader.ReadInt32();
-            int modCount = reader.ReadInt32();
-            for (int i = 0; i < modCount; i++)
-            {
-                mods.Add(reader.ReadMod());
-            }
-            ClientData client = AmongUsClient.Instance.GetClient(clientId);
-            if (client != null)
-            {
-                if (LobbyWarningText.nonModdedPlayers.ContainsKey(client))
-                {
-                    LobbyWarningText.nonModdedPlayers.Remove(client);
-                }
-                Helpers.Mods.Add(client, mods);
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    ModPlugin.Mod.Update(client);
-                }
-            }
+            LobbyWarningText.moddedClients.Add(reader.ReadInt32());
         }
     }
 }

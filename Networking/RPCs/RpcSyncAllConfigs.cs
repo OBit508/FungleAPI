@@ -13,6 +13,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Networking.RPCs
 {
@@ -20,6 +21,11 @@ namespace FungleAPI.Networking.RPCs
     {
         public override void Write(MessageWriter writer)
         {
+            writer.Write(ModPlugin.AllPlugins.Count);
+            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            {
+                writer.WriteMod(plugin.LocalMod);
+            }
             writer.Write(ConfigurationManager.Configs.Count);
             for (int i = 0; i < ConfigurationManager.Configs.Count; i++)
             {
@@ -38,6 +44,33 @@ namespace FungleAPI.Networking.RPCs
         {
             try
             {
+                List<ModPlugin.Mod> mods = new List<ModPlugin.Mod>();
+                int modCount = reader.ReadInt32();
+                for (int i = 0; i < modCount; i++)
+                {
+                    mods.Add(reader.ReadMod());
+                }
+                if (modCount > ModPlugin.AllPlugins.Count)
+                {
+                    AmongUsClient.Instance.ExitGame(AmongUsClientPatch.MissingMods);
+                    return;
+                }
+                else if (modCount < ModPlugin.AllPlugins.Count)
+                {
+                    AmongUsClient.Instance.ExitGame(AmongUsClientPatch.MissingModsOnHost);
+                    return;
+                }
+                else
+                {
+                    foreach (ModPlugin.Mod mod in mods)
+                    {
+                        if (!ModPlugin.AllPlugins.Any(m => m.LocalMod.Equals(mod)))
+                        {
+                            AmongUsClient.Instance.ExitGame(AmongUsClientPatch.NotTheSameMods);
+                            return;
+                        }
+                    }
+                }
                 int count = reader.ReadInt32();
                 for (int i = 0; i < count; i++)
                 {

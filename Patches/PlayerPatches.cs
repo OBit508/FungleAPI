@@ -56,31 +56,9 @@ namespace FungleAPI.Patches
             {
                 yield return null;
             }
-            if (!player.isDummy && !player.notRealPlayer)
+            if (!player.isDummy && !player.notRealPlayer && player.AmOwner)
             {
-                if (player.AmOwner)
-                {
-                    CustomRpcManager.Instance<RpcAmModded>().Send(player, player.NetId);
-                }
-                else
-                {
-                    yield return new WaitForSeconds(1);
-                    ClientData client = null;
-                    while (client == null)
-                    {
-                        client = AmongUsClient.Instance.GetClient(player.Data.ClientId);
-                        yield return new WaitForSeconds(0.1f);
-                        yield return null;
-                    }
-                    while (client.GetMods() == null)
-                    {
-                        if (PlayerControl.LocalPlayer != null)
-                        {
-                            CustomRpcManager.Instance<RpcRequestMods>().Send(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, player.Data.ClientId);
-                        }
-                        yield return new WaitForSeconds(1);
-                    }
-                }
+                CustomRpcManager.Instance<RpcAmModded>().Send(player, player.NetId);
             }
         }
     }

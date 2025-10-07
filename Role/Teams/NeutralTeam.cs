@@ -1,10 +1,12 @@
-﻿using System;
+﻿using FungleAPI.GameOver;
+using FungleAPI.GameOver.Ends;
+using FungleAPI.Translation;
+using FungleAPI.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Translation;
-using FungleAPI.Utilities;
 using UnityEngine;
 
 namespace FungleAPI.Role.Teams
@@ -16,7 +18,7 @@ namespace FungleAPI.Role.Teams
         public override Color TeamColor => Color.gray;
         public override StringNames TeamName { get; } = neutral;
         public override StringNames PluralName { get; } = neutrals;
-        public override List<GameOverReason> WinReason => new List<GameOverReason>() { FungleAPI.Role.CustomRoleManager.GetValidGameOver() };
+        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<NeutralGameOver>();
         internal static StringNames neutral
         {
             get

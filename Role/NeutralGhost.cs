@@ -102,7 +102,11 @@ namespace FungleAPI.Role
         public override bool IsDead => true;
         public override bool DidWin(GameOverReason gameOverReason)
         {
-            return CustomRoleManager.DidWin(OldRole != null ? OldRole : this, gameOverReason);
+            if (OldRole != null)
+            {
+                return OldRole.DidWin(gameOverReason);
+            }
+            return false;
         }
     }
     public class HauntButton : CustomAbilityButton
