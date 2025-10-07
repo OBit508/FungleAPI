@@ -20,7 +20,8 @@ namespace FungleAPI.Networking.RPCs
         }
         public override void Handle(MessageReader reader)
         {
-            LobbyWarningText.moddedClients.Add(reader.ReadInt32());
+            int clientId = reader.ReadInt32();
+            LobbyWarningText.nonModdedPlayers.Remove(LobbyWarningText.nonModdedPlayers.Keys.FirstOrDefault(c => c.Id == clientId));
         }
     }
 }

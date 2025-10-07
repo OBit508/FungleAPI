@@ -17,7 +17,6 @@ namespace FungleAPI.Components
     [RegisterTypeInIl2Cpp]
     public class LobbyWarningText : MonoBehaviour
     {
-        public static List<int> moddedClients = new List<int>();
         public static Dictionary<ClientData, (ChangeableValue<float>, ChangeableValue<float>)> nonModdedPlayers = new Dictionary<ClientData, (ChangeableValue<float>, ChangeableValue<float>)>();
         public TextMeshPro Text;
         private static Translator nonModdedText;
@@ -77,10 +76,9 @@ namespace FungleAPI.Components
         public void Update()
         {
             string clientText = "<size=2>" + NonModdedText.GetString() + "</size>";
-            moddedClients.RemoveAll(c => !AmongUsClient.Instance.allClients.Any(cl => cl.Id == c));
             foreach (KeyValuePair<ClientData, (ChangeableValue<float>, ChangeableValue<float>)> client in nonModdedPlayers)
             {
-                if (!AmongUsClient.Instance.allClients.Contains(client.Key) || moddedClients.Contains(client.Key.Id))
+                if (!AmongUsClient.Instance.allClients.Contains(client.Key))
                 {
                     nonModdedPlayers.Remove(client.Key);
                     return;
