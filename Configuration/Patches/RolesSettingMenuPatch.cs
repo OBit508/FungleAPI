@@ -35,22 +35,22 @@ namespace FungleAPI.Configuration.Patches
         [HarmonyPrefix]
         public static void UpdatePrefix(RolesSettingsMenu __instance)
         {
-            if (GameSettingMenuPatch.currentPlugin != chanceTabPlugin)
+            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin != chanceTabPlugin)
             {
                 __instance.SetQuotaTab();
-                chanceTabPlugin = GameSettingMenuPatch.currentPlugin;
-                __instance.scrollBar.CalculateAndSetYBounds(__instance.RoleChancesSettings.transform.GetChildCount() + (GameSettingMenuPatch.currentPlugin == FungleAPIPlugin.Plugin ? 3 : 0), 1f, 6f, 0.43f);
+                chanceTabPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
+                __instance.scrollBar.CalculateAndSetYBounds(__instance.RoleChancesSettings.transform.GetChildCount() + (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? 3 : 0), 1f, 6f, 0.43f);
                 __instance.scrollBar.ScrollToTop();
             }
             Transform mask = __instance.scrollBar.transform.GetChild(1);
             Vector3 localPosition = mask.localPosition;
-            localPosition.y = GameSettingMenuPatch.currentPlugin == FungleAPIPlugin.Plugin ? -0.5734f : -0.1734f;
+            localPosition.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? -0.5734f : -0.1734f;
             Vector3 localScale = mask.localScale;
-            localScale.y = GameSettingMenuPatch.currentPlugin == FungleAPIPlugin.Plugin ? 3.5563f : 4.3563f;
+            localScale.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? 3.5563f : 4.3563f;
             mask.localPosition = localPosition;
             mask.localScale = localScale;
-            __instance.AllButton.transform.parent.parent.gameObject.SetActive(GameSettingMenuPatch.currentPlugin == FungleAPIPlugin.Plugin);
-            __instance.RoleChancesSettings.transform.localPosition = new Vector3(0, GameSettingMenuPatch.currentPlugin == FungleAPIPlugin.Plugin ? 0 : 0.9f, -5);
+            __instance.AllButton.transform.parent.parent.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin);
+            __instance.RoleChancesSettings.transform.localPosition = new Vector3(0, GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? 0 : 0.9f, -5);
             __instance.AdvancedRolesSettings.transform.localPosition = __instance.RoleChancesSettings.transform.localPosition;
         }
         [HarmonyPatch("Awake")]
@@ -81,7 +81,7 @@ namespace FungleAPI.Configuration.Patches
                     }
                 }
             }
-            if (GameSettingMenuPatch.currentPlugin != FungleAPIPlugin.Plugin)
+            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
             {
                 SetQuotaTab(__instance);
             }
@@ -131,7 +131,7 @@ namespace FungleAPI.Configuration.Patches
             float num = 0.662f;
             menu.roleTabs = new Il2CppSystem.Collections.Generic.List<PassiveButton>();
             menu.roleTabs.Add(menu.AllButton);
-            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = GameSettingMenuPatch.currentPlugin.GetTeamsAndRoles();
+            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = GameSettingMenuPatch.pluginChanger.CurrentPlugin.GetTeamsAndRoles();
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in teams)
             {
                 CategoryHeaderEditRole categoryHeaderEditRole = pair.Key.CreatCategoryHeaderEditRole(menu.RoleChancesSettings.transform);
@@ -159,7 +159,7 @@ namespace FungleAPI.Configuration.Patches
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {
-                    CustomRpcManager.Instance<RpcSyncRoleSeetings>().Send((role, TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotificationRole).Replace("{0}", role.RoleColor.ToTextColor() + role.RoleName.GetString() + "</color>").Replace("{1}", role.RoleCount.ToString()).Replace("{2}", role.RoleChance.ToString()), false, true), PlayerControl.LocalPlayer.NetId);
+                    CustomRpcManager.Instance<RpcSyncRoleCountAndChance>().Send(role as RoleBehaviour, PlayerControl.LocalPlayer.NetId);
                 }
             });
             option.roleMaxCount = role.Configuration.MaxRoleCount;
@@ -220,7 +220,7 @@ namespace FungleAPI.Configuration.Patches
                 op.SetClickMask(menu.ButtonClickMask);
                 op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
-                    CustomRpcManager.Instance<RpcSyncRoleSeetings>().Send((role, TranslationController.Instance.GetString(StringNames.LobbyChangeSettingNotification).Replace("{0}", role.RoleColor.ToTextColor() + "(" + role.RoleName.GetString() + ") " + config.ConfigName + "</color>").Replace("{1}", config.GetValue()), false, true), PlayerControl.LocalPlayer.NetId);
+                    CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.RoleOption, config, role as RoleBehaviour, null), PlayerControl.LocalPlayer.NetId);
                 });
                 op.transform.localPosition = new Vector3(2.17f, num, -2f);
                 menu.advancedSettingChildren.Add(op);

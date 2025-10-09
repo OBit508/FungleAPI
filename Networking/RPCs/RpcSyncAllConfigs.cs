@@ -39,6 +39,13 @@ namespace FungleAPI.Networking.RPCs
                 writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetCount());
                 writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetChance());
             }
+            writer.Write(ConfigurationManager.TeamCountAndPriorities.Count);
+            for (int i = 0; i < ConfigurationManager.TeamCountAndPriorities.Count; i++)
+            {
+                writer.WriteCountAndPriority(ConfigurationManager.TeamCountAndPriorities[i]);
+                writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetCount());
+                writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetPriority());
+            }
         }
         public override void Handle(MessageReader reader)
         {
@@ -83,6 +90,13 @@ namespace FungleAPI.Networking.RPCs
                     RoleCountAndChance c = reader.ReadCountAndChance();
                     c.SetCount(reader.ReadInt32());
                     c.SetChance(reader.ReadInt32());
+                }
+                int count3 = reader.ReadInt32();
+                for (int i = 0; i < count3; i++)
+                {
+                    TeamCountAndPriority c = reader.ReadCountAndPriority();
+                    c.SetCount(reader.ReadInt32());
+                    c.SetPriority(reader.ReadInt32());
                 }
             }
             catch 

@@ -6,6 +6,7 @@ using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
+using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -31,10 +32,15 @@ namespace FungleAPI.Patches
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 plugin.Settings.Initialize();
+                
                 if (plugin.UseShipReference)
                 {
                     flag = true;
                 }
+            }
+            foreach (ModdedTeam team in ModdedTeam.Teams)
+            {
+                team.Initialize();
             }
             if (flag)
             {

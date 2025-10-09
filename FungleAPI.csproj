@@ -18,10 +18,11 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
+    <Compile Include="Components\PluginChanger.cs" />
     <Compile Include="Configuration\Attributes\SettingsGroup.cs" />
     <Compile Include="Configuration\ModSettings.cs" />
     <Compile Include="Configuration\RoleCountAndChance.cs" />
-    <Compile Include="Freeplay\Debugger.cs" />
+    <Compile Include="Configuration\TeamCountAndPriority.cs" />
     <Compile Include="Freeplay\ModFolderConfig.cs" />
     <Compile Include="GameOver\CustomGameOver.cs" />
     <Compile Include="GameOver\Ends\CrewmateDisconnect.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Networking\RPCs\RpcRequestForAmModded.cs" />
     <Compile Include="Networking\RPCs\RpcSyncAllConfigs.cs" />
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
+    <Compile Include="Networking\RPCs\SyncTextType.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
     <Compile Include="Configuration\Patches\GameOptionsMenuPatch.cs" />
@@ -84,7 +86,7 @@
     <Compile Include="Networking\RPCs\RpcCustomMurder.cs" />
     <Compile Include="Networking\RPCs\RpcHelper.cs" />
     <Compile Include="Networking\MessageExtension.cs" />
-    <Compile Include="Networking\RPCs\RpcSyncRoleSeetings.cs" />
+    <Compile Include="Networking\RPCs\RpcSyncRoleCountAndChance.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Utilities\Assets\GifDecoder.cs" />
     <Compile Include="Utilities\Assets\GifFile.cs" />
@@ -118,6 +120,10 @@
     <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\background.png" />
+    <EmbeddedResource Include="Resources\nextButton.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />

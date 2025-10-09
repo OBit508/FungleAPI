@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Components;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
@@ -12,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using xCloud;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
 
@@ -20,51 +22,148 @@ namespace FungleAPI.Configuration.Patches
     [HarmonyPatch(typeof(LobbyViewSettingsPane))]
     internal static class LobbyViewSettingsPanePatch
     {
-        public static ModPlugin currentPlugin;
-        public static int currentIndex;
-        public static PassiveButton SwitchButton;
+        public static Translator teams;
+        public static StringNames TeamsText 
+        {
+            get
+            {
+                if (teams == null)
+                {
+                    teams = new Translator("Teams");
+                    teams.AddTranslation(SupportedLangs.Latam, "Equipos");
+                    teams.AddTranslation(SupportedLangs.Brazilian, "Times");
+                    teams.AddTranslation(SupportedLangs.Portuguese, "Equipes");
+                    teams.AddTranslation(SupportedLangs.Korean, "팀");
+                    teams.AddTranslation(SupportedLangs.Russian, "Команды");
+                    teams.AddTranslation(SupportedLangs.Dutch, "Teams");
+                    teams.AddTranslation(SupportedLangs.Filipino, "Mga Koponan");
+                    teams.AddTranslation(SupportedLangs.French, "Équipes");
+                    teams.AddTranslation(SupportedLangs.German, "Teams");
+                    teams.AddTranslation(SupportedLangs.Italian, "Squadre");
+                    teams.AddTranslation(SupportedLangs.Japanese, "チーム");
+                    teams.AddTranslation(SupportedLangs.Spanish, "Equipos");
+                    teams.AddTranslation(SupportedLangs.SChinese, "队伍");
+                    teams.AddTranslation(SupportedLangs.TChinese, "隊伍");
+                    teams.AddTranslation(SupportedLangs.Irish, "Foirne");
+                }
+                return teams.StringName;
+            }
+        }
+        public static bool TeamsTab;
+        public static PassiveButton TeamsTabButton;
+        public static PluginChanger pluginChanger;
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
         public static void AwakePostfix(LobbyViewSettingsPane __instance)
         {
-            currentPlugin = FungleAPIPlugin.Plugin;
-            currentIndex = 0;
-            SwitchButton = UnityEngine.Object.Instantiate(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
-            SwitchButton.transform.localPosition = new Vector3(3.6f, 1.404f, 0);
-            SwitchButton.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-            SwitchButton.OnClick.AddListener(new Action(delegate
+            TeamsTab = false;
+            __instance.gameModeText.gameObject.SetActive(false);
+            pluginChanger = FungleAPIPlugin.PluginChangerPrefab.Instantiate(__instance.rolesTabButton.transform.parent);
+            pluginChanger.transform.localPosition = __instance.gameModeText.transform.localPosition;
+            pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            pluginChanger.OnChange = new Action<ModPlugin>(delegate
             {
-                if (currentIndex + 1 >= ModPlugin.AllPlugins.Count)
+                if (TeamsTab)
                 {
-                    currentIndex = 0;
+                    for (int i = 0; i < __instance.settingsInfo.Count; i++)
+                    {
+                        GameObject.Destroy(__instance.settingsInfo[i].gameObject);
+                    }
+                    __instance.settingsInfo.Clear();
+                    DrawTeamsTab(__instance);
                 }
                 else
                 {
-                    currentIndex++;
+                    __instance.RefreshTab();
                 }
-                currentPlugin = ModPlugin.AllPlugins[currentIndex];
-                SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
-                __instance.RefreshTab();
                 __instance.scrollBar.ScrollToTop();
+            });
+            pluginChanger.Initialize();
+            TeamsTabButton = GameObject.Instantiate<PassiveButton>(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
+            TeamsTabButton.transform.localPosition = new Vector3(2.071f, 1.404f, 0);
+            TeamsTabButton.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
+            TeamsTabButton.buttonText.text = TeamsText.GetString();
+            TeamsTabButton.SetNewAction(new Action(delegate
+            {
+                for (int i = 0; i < __instance.settingsInfo.Count; i++)
+                {
+                    GameObject.Destroy(__instance.settingsInfo[i].gameObject);
+                }
+                __instance.settingsInfo.Clear();
+                __instance.rolesTabButton.SelectButton(false);
+                __instance.taskTabButton.SelectButton(false);
+                TeamsTabButton.SelectButton(true);
+                TeamsTab = true;
+                DrawTeamsTab(__instance);
             }));
-            SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextTranslatorTMP>().enabled = false;
-            SwitchButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshPro>().text = currentPlugin.ModName;
         }
         [HarmonyPatch("DrawNormalTab")]
         [HarmonyPrefix]
         public static bool DrawNormalTabPrefix(LobbyViewSettingsPane __instance)
         {
-            if (currentPlugin != FungleAPIPlugin.Plugin)
+            TeamsTabButton.SelectButton(false);
+            TeamsTab = false;
+            if (pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
             {
                 DrawNormalTab(__instance);
                 return false;
             }
-            return true;
+            float num = 1.44f;
+            foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
+            {
+                CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                categoryHeaderMasked.SetHeader(rulesCategory.CategoryName, 61);
+                categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
+                categoryHeaderMasked.transform.localScale = Vector3.one;
+                categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                num -= 1.05f;
+                List<BaseGameSetting> list = rulesCategory.AllGameSettings.ToSystemList();
+                if (rulesCategory.CategoryName == StringNames.ImpostorsCategory)
+                {
+                    list.RemoveAt(0);
+                }
+                for (int i = 0; i < list.Count; i++)
+                {
+                    ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
+                    viewSettingsInfoPanel.transform.SetParent(__instance.settingsContainer);
+                    viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                    float num2;
+                    if (i % 2 == 0)
+                    {
+                        num2 = -8.95f;
+                        if (i > 0)
+                        {
+                            num -= 0.85f;
+                        }
+                    }
+                    else
+                    {
+                        num2 = -3f;
+                    }
+                    viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                    float value = GameOptionsManager.Instance.CurrentGameOptions.GetValue(list[i]);
+                    if (list[i].Type == OptionTypes.Checkbox)
+                    {
+                        viewSettingsInfoPanel.SetInfoCheckbox(list[i].Title, 61, value > 0f);
+                    }
+                    else
+                    {
+                        viewSettingsInfoPanel.SetInfo(list[i].Title, list[i].GetValueString(value), 61);
+                    }
+                    __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                }
+                num -= 0.85f;
+            }
+            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + 10), 2f, 6f, 0.85f);
+            return false;
         }
         [HarmonyPatch("DrawRolesTab")]
         [HarmonyPrefix]
         public static bool DrawRolesTabPrefix(LobbyViewSettingsPane __instance)
         {
+            TeamsTabButton.SelectButton(false);
+            TeamsTab = false;
             float num = 0.95f;
             float num2 = -6.53f;
             float minY = num;
@@ -75,7 +174,7 @@ namespace FungleAPI.Configuration.Patches
             categoryHeaderMasked.transform.localScale = Vector3.one;
             categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, 1.26f, -2f);
             __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
-            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = currentPlugin.GetTeamsAndRoles();
+            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = pluginChanger.CurrentPlugin.GetTeamsAndRoles();
             List<RoleBehaviour> list = new List<RoleBehaviour>();
             for (int i = 0; i < teams.Count; i++)
             {
@@ -110,10 +209,10 @@ namespace FungleAPI.Configuration.Patches
                                 ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed
                                 : roleBehaviour.CustomRole().RoleColor,
                             roleBehaviour.RoleIconSolid,
-                            currentPlugin == FungleAPIPlugin.Plugin ? i == 0 : true,
+                            pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? i == 0 : true,
                             disabled
                         );
-                        if (currentPlugin != FungleAPIPlugin.Plugin)
+                        if (pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
                         {
                             viewPanel.chanceBackground.color = Helpers.Dark(roleBehaviour.TeamColor);
                             viewPanel.background.color = viewPanel.chanceBackground.color;
@@ -158,7 +257,7 @@ namespace FungleAPI.Configuration.Patches
                     advancedPanel.transform.SetParent(__instance.settingsContainer);
                     advancedPanel.transform.localScale = Vector3.one;
                     advancedPanel.transform.localPosition = new Vector3(posX, num, -2f);
-                    float height = currentPlugin == FungleAPIPlugin.Plugin
+                    float height = pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin
                         ? advancedPanel.SetUp(list[k], 0.85f, 61)
                         : advancedPanel.SetUp(list[k].CustomRole(), 0.85f, 61);
                     if (height > maxHeightInRow)
@@ -207,7 +306,7 @@ namespace FungleAPI.Configuration.Patches
         public static void DrawNormalTab(LobbyViewSettingsPane menu)
         {
             float num = 1.44f;
-            foreach (SettingsGroup group in currentPlugin.Settings.Groups)
+            foreach (SettingsGroup group in pluginChanger.CurrentPlugin.Settings.Groups)
             {
                 CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin);
                 categoryHeaderMasked.SetHeader(group.GroupName, 61);
@@ -246,6 +345,66 @@ namespace FungleAPI.Configuration.Patches
                     menu.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
                 }
                 num -= 0.85f;
+            }
+            menu.scrollBar.CalculateAndSetYBounds(menu.settingsInfo.Count + 10, 2f, 6f, 0.85f);
+        }
+        public static void DrawTeamsTab(LobbyViewSettingsPane menu)
+        {
+            menu.scrollBar.ScrollToTop();
+            float num = 1.44f;
+            foreach (ModdedTeam group in pluginChanger.CurrentPlugin.Teams)
+            {
+                if (group != ModdedTeam.Crewmates)
+                {
+                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin);
+                    categoryHeaderMasked.SetHeader(group.TeamName, 61);
+                    categoryHeaderMasked.transform.SetParent(menu.settingsContainer);
+                    categoryHeaderMasked.transform.localScale = Vector3.one;
+                    categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                    menu.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                    num -= 1.05f;
+                    for (int i = 0; i < group.ExtraConfigs.Count + 2; i++)
+                    {
+                        ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(menu.infoPanelOrigin);
+                        viewSettingsInfoPanel.transform.SetParent(menu.settingsContainer);
+                        viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                        float num2;
+                        if (i % 2 == 0)
+                        {
+                            num2 = -8.95f;
+                            if (i > 0)
+                            {
+                                num -= 0.85f;
+                            }
+                        }
+                        else
+                        {
+                            num2 = -3f;
+                        }
+                        viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                        if (i > 1)
+                        {
+                            if (group.ExtraConfigs[i - 2].Data.Type == OptionTypes.Checkbox)
+                            {
+                                viewSettingsInfoPanel.SetInfoCheckbox(group.ExtraConfigs[i - 2].Data.Title, 61, bool.Parse(group.ExtraConfigs[i - 2].GetValue()));
+                            }
+                            else
+                            {
+                                viewSettingsInfoPanel.SetInfo(group.ExtraConfigs[i - 2].Data.Title, group.ExtraConfigs[i - 2].GetValue(), 61);
+                            }
+                        }
+                        else if (i == 0)
+                        {
+                            viewSettingsInfoPanel.SetInfo(group.CountData.Title, group.CountAndPriority.GetCount().ToString(), 61);
+                        }
+                        else if (i == 1)
+                        {
+                            viewSettingsInfoPanel.SetInfo(group.PriorityData.Title, group.CountAndPriority.GetPriority().ToString(), 61);
+                        }
+                        menu.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                    }
+                    num -= 0.85f;
+                }
             }
             menu.scrollBar.CalculateAndSetYBounds(menu.settingsInfo.Count + 10, 2f, 6f, 0.85f);
         }

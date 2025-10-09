@@ -1,4 +1,5 @@
-﻿using FungleAPI.GameOver;
+﻿using AmongUs.GameOptions;
+using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -34,6 +35,9 @@ namespace FungleAPI.Role.Teams
             categoryHeaderRoleVariant.Title.enabled = true;
             return categoryHeaderRoleVariant;
         }
+        public override RoleTypes DefaultRole => RoleTypes.Impostor;
+        public override uint DefaultPriority => 10;
+        public override bool AssignOnlyEnabledRoles => false;
         internal static StringNames impostors
         {
             get

@@ -14,15 +14,15 @@ namespace FungleAPI.Patches
         public static bool UsingCustomText;
         public static void Postfix(GameStartManager __instance)
         {
-            __instance.StartButton.SetButtonEnableState(__instance.LastPlayerCount >= __instance.MinPlayers && LobbyWarningText.nonModdedPlayers.Count <= 0);
-            ActionMapGlyphDisplay startButtonGlyph = __instance.StartButtonGlyph;
-            if (startButtonGlyph != null)
-            {
-                startButtonGlyph.SetColor((__instance.LastPlayerCount >= __instance.MinPlayers && LobbyWarningText.nonModdedPlayers.Count <= 0) ? Palette.EnabledColor : Palette.DisabledClear);
-            }
             if (LobbyWarningText.nonModdedPlayers.Count > 0)
             {
                 __instance.StartButton.ChangeButtonText("The game cannot start because certain players do not have the FungleAPI installed.");
+                ActionMapGlyphDisplay startButtonGlyph = __instance.StartButtonGlyph;
+                if (startButtonGlyph != null)
+                {
+                    startButtonGlyph.SetColor(Palette.DisabledClear);
+                }
+                __instance.StartButton.SetButtonEnableState(false);
                 UsingCustomText = true;
             }
             else if (UsingCustomText)
@@ -37,6 +37,12 @@ namespace FungleAPI.Patches
                     __instance.StartButton.ChangeButtonText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.WaitingForPlayers));
                     __instance.GameStartTextClient.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.WaitingForPlayers);
                 }
+                ActionMapGlyphDisplay startButtonGlyph = __instance.StartButtonGlyph;
+                if (startButtonGlyph != null)
+                {
+                    startButtonGlyph.SetColor(__instance.LastPlayerCount >= __instance.MinPlayers ? Palette.EnabledColor : Palette.DisabledClear);
+                }
+                __instance.StartButton.SetButtonEnableState(__instance.LastPlayerCount >= __instance.MinPlayers);
                 UsingCustomText = false;
             }
         }

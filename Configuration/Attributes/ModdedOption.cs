@@ -52,7 +52,7 @@ namespace FungleAPI.Configuration.Attributes
                 onlineValue = value.ToString();
             }
         }
-        public void SetUpFromData(OptionBehaviour option, int maskLayer = 20)
+        public static void SetUpFromData(OptionBehaviour option, int maskLayer = 20)
         {
             SpriteRenderer[] componentsInChildren = option.GetComponentsInChildren<SpriteRenderer>(true);
             for (int i = 0; i < componentsInChildren.Length; i++)
@@ -67,7 +67,7 @@ namespace FungleAPI.Configuration.Attributes
             }
             option.enabled = false;
         }
-        public void FixOption(OptionBehaviour option)
+        public static void FixOption(OptionBehaviour option)
         {
             foreach (TextMeshPro textMeshPro in option.GetComponentsInChildren<TextMeshPro>(true))
             {

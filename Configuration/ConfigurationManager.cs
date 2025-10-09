@@ -1,6 +1,7 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
+using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -17,6 +18,7 @@ namespace FungleAPI.Configuration
         public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
         internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
         internal static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
+        internal static List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
         public static List<ModdedOption> InitializeConfigs(object obj)
         {
             Type type = obj.GetType();
@@ -77,6 +79,12 @@ namespace FungleAPI.Configuration
             roleConfig.CountAndChance = new RoleCountAndChance();
             roleConfig.CountAndChance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
             RoleCountsAndChances.Add(roleConfig.CountAndChance);
+        }
+        public static void InitializeTeamCountAndPriority(ModdedTeam team, ModPlugin plugin)
+        {
+            team.CountAndPriority = new TeamCountAndPriority();
+            team.CountAndPriority.Initialize(plugin.BasePlugin.Config, team, plugin.ModName + " - " + team.GetType().FullName);
+            TeamCountAndPriorities.Add(team.CountAndPriority);
         }
     }
 }

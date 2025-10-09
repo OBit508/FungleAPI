@@ -19,6 +19,7 @@ namespace FungleAPI.Role.Teams
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
         public override CustomGameOver DefaultGameOver => GameOverManager.Instance<CrewmatesByTask>();
+        public override bool AssignOnlyEnabledRoles => false;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate<CategoryHeaderEditRole>(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);

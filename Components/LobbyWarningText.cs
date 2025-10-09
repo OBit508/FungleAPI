@@ -11,6 +11,7 @@ using InnerNet;
 using FungleAPI.Utilities;
 using FungleAPI.Translation;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.Components
 {
@@ -78,8 +79,13 @@ namespace FungleAPI.Components
             string clientText = "<size=2>" + NonModdedText.GetString() + "</size>";
             foreach (KeyValuePair<ClientData, (ChangeableValue<float>, ChangeableValue<float>)> client in nonModdedPlayers)
             {
-                if (!AmongUsClient.Instance.allClients.Contains(client.Key))
+                bool mciClient = FungleAPIPlugin.MCIActive && MCIUtils.ContainsClient(client.Key.Id);
+                if (!AmongUsClient.Instance.allClients.Contains(client.Key) || mciClient)
                 {
+                    if (mciClient)
+                    {
+                        FungleAPIPlugin.Instance.Log.LogInfo("MCI-created player found bypassing verification");
+                    }
                     nonModdedPlayers.Remove(client.Key);
                     return;
                 }

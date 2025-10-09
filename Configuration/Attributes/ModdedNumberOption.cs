@@ -65,7 +65,7 @@ namespace FungleAPI.Configuration.Attributes
             numberOption.Value = float.Parse(localValue.Value);
             numberOption.oldValue = numberOption.oldValue;
             numberOption.Increment = floatGameSetting.Increment;
-            numberOption.ValidRange = new FloatRange(floatGameSetting.ValidRange.min, floatGameSetting.ValidRange.max);
+            numberOption.ValidRange = floatGameSetting.ValidRange;
             numberOption.FormatString = floatGameSetting.FormatString;
             numberOption.ZeroIsInfinity = floatGameSetting.ZeroIsInfinity;
             numberOption.SuffixType = floatGameSetting.SuffixType;

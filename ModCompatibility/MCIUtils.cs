@@ -39,20 +39,18 @@ namespace FungleAPI.ModCompatibility
             }
             return "";
         }
-        public static ClientData GetClient(int clientId)
+        public static bool ContainsClient(int clientId)
         {
             Assembly mci = GetMCI();
             if (mci != null)
             {
-                FieldInfo field = mci.GetType("MCI.InstanceControl").GetField("Clients");
-                if (field != null && field.GetValue(null).SimpleCast<Dictionary<int, ClientData>>() != null)
+                FieldInfo field = mci.GetType("MCI.InstanceControl").GetField("PlayerClientIDs", BindingFlags.NonPublic | BindingFlags.Static);
+                if (field.FieldType == typeof(Dictionary<byte, int>))
                 {
-                    ClientData client;
-                    field.GetValue(null).SimpleCast<Dictionary<int, ClientData>>().TryGetValue(clientId, out client);
-                    return client;
+                    return field.GetValue(null).SimpleCast<Dictionary<byte, int>>().ContainsValue(clientId);
                 }
             }
-            return null;
+            return false;
         }
     }
 }

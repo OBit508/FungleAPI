@@ -73,7 +73,28 @@ namespace FungleAPI.Networking
         }
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
         {
-            Writer.Write(customGameOver.GetType().FullName);
+            Type type = customGameOver.GetType();
+            Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
+            Writer.Write(type.FullName);
+        }
+        public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
+        {
+            Writer.Write(count.Name);
+        }
+        public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
+        {
+            bool flag = FungleAPIPlugin.Plugin.Roles.Contains(role);
+            Writer.Write(flag);
+            if (flag)
+            {
+                Writer.Write((int)role.Role);
+            }
+            else
+            {
+                Type type = role.GetType();
+                Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
+                Writer.Write(type.FullName);
+            }
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -144,15 +165,25 @@ namespace FungleAPI.Networking
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {
+            string modName = Reader.ReadString();
             string fullName = Reader.ReadString();
-            foreach (CustomGameOver gameOver in GameOverManager.AllCustomGameOver)
+            return GameOverManager.AllCustomGameOver.FirstOrDefault(g => ModPlugin.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+        }
+        public static RoleBehaviour ReadRole(this MessageReader Reader)
+        {
+            bool flag = Reader.ReadBoolean();
+            if (flag)
             {
-                if (gameOver.GetType().FullName == fullName)
-                {
-                    return gameOver;
-                }
+                return RoleManager.Instance.GetRole((RoleTypes)Reader.ReadInt32());
             }
-            return null;
+            string modName = Reader.ReadString();
+            string fullName = Reader.ReadString();
+            return RoleManager.Instance.AllRoles.FirstOrDefault(g => ModPlugin.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+        }
+        public static TeamCountAndPriority ReadCountAndPriority(this MessageReader Reader)
+        {
+            string fullCountName = Reader.ReadString();
+            return ConfigurationManager.TeamCountAndPriorities.FirstOrDefault(count => count.Name == fullCountName);
         }
     }
 }

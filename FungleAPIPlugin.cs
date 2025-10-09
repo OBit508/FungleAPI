@@ -11,12 +11,14 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Patches;
 using FungleAPI.GameOver;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
+using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.Injection;
@@ -29,6 +31,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using TMPro;
 using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -41,7 +44,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "2.0.1";
+        public const string ModV = "2.0.2";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -58,6 +61,7 @@ namespace FungleAPI
                 {
                     loadAssets();
                     loaddedAssets = true;
+                    MCIActive = MCIUtils.GetMCI() != null;
                 }
                 if (!rolesRegistered && scene.name == "MainMenu")
                 {
@@ -71,6 +75,7 @@ namespace FungleAPI
             }));
             SetErrorMessages();
         }
+        internal static bool MCIActive;
         private static bool rolesRegistered;
         internal static bool loaddedAssets;
         internal static ModPlugin plugin;
@@ -90,10 +95,56 @@ namespace FungleAPI
                 return plugin;
             }
         }
+        public static Prefab<PluginChanger> PluginChangerPrefab;
         internal static Action loadAssets = new Action(delegate
         {
-            RolesSettingMenuPatch.Cog = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.cog", 200f);
-            ResourceHelper.EmptySprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.empty", 100);
+            try
+            {
+                RolesSettingMenuPatch.Cog = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.cog", 200f);
+                ResourceHelper.EmptySprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.empty", 100);
+                PluginChanger pluginChanger = new GameObject("PluginChanger").AddComponent<PluginChanger>();
+                pluginChanger.gameObject.layer = 5;
+                pluginChanger.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                pluginChanger.gameObject.AddComponent<SpriteRenderer>().sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.background", 100);
+                TextMeshPro text = new GameObject("Text").AddComponent<TextMeshPro>();
+                text.alignment = TextAlignmentOptions.Center;
+                text.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                text.transform.SetParent(pluginChanger.transform);
+                text.transform.localScale = new Vector3(0.28f, 0.28f, 0.28f);
+                text.gameObject.layer = 5;
+                PassiveButton rightButton = new GameObject("RightButton").AddComponent<PassiveButton>();
+                BoxCollider2D boxCollider2D = rightButton.gameObject.AddComponent<BoxCollider2D>();
+                boxCollider2D.isTrigger = true;
+                boxCollider2D.size *= 2;
+                SpriteRenderer rend = rightButton.gameObject.AddComponent<SpriteRenderer>();
+                rend.sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.nextButton", 100);
+                ButtonRolloverHandler buttonRolloverHandler = rightButton.gameObject.AddComponent<ButtonRolloverHandler>();
+                buttonRolloverHandler.Target = rend;
+                buttonRolloverHandler.OutColor = Color.white;
+                buttonRolloverHandler.OverColor = new Color32(44, 235, 198, byte.MaxValue);
+                rightButton.transform.SetParent(pluginChanger.transform);
+                rightButton.transform.localPosition = new Vector3(4, 0, 0);
+                rightButton.transform.localScale = Vector3.one;
+                rightButton.gameObject.layer = 5;
+                PassiveButton leftButton = new GameObject("LeftButton").AddComponent<PassiveButton>();
+                BoxCollider2D boxCollider2D2 = leftButton.gameObject.AddComponent<BoxCollider2D>();
+                boxCollider2D2.isTrigger = true;
+                boxCollider2D2.size *= 2;
+                SpriteRenderer rend2 = leftButton.gameObject.AddComponent<SpriteRenderer>();
+                rend2.sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.nextButton", 100);
+                ButtonRolloverHandler buttonRolloverHandler2 = leftButton.gameObject.AddComponent<ButtonRolloverHandler>();
+                buttonRolloverHandler2.Target = rend2;
+                buttonRolloverHandler2.OutColor = Color.white;
+                buttonRolloverHandler2.OverColor = new Color32(44, 235, 198, byte.MaxValue);
+                leftButton.transform.SetParent(pluginChanger.transform);
+                leftButton.transform.localScale = new Vector3(-1, 1, 1);
+                leftButton.transform.localPosition = new Vector3(-4, 0, 0);
+                leftButton.gameObject.layer = 5;
+                PluginChangerPrefab = new Prefab<PluginChanger>(pluginChanger);
+            }
+            catch
+            {
+            }
         });
         internal static void SetErrorMessages()
         {
