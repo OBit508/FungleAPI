@@ -142,12 +142,7 @@ namespace FungleAPI.Role
             {
                 return roleBehaviour.CustomRole().Configuration.CanKill;
             }
-            bool flag = roleBehaviour.CanUseKillButton;
-            if (roleBehaviour.Role == RoleTypes.Phantom)
-            {
-                flag = !roleBehaviour.SafeCast<PhantomRole>().IsInvisible;
-            }
-            return flag && !roleBehaviour.Player.shapeshifting;
+            return roleBehaviour.CanUseKillButton;
         }
         public static bool UseKillButton(this RoleBehaviour roleBehaviour)
         {

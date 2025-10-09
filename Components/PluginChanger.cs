@@ -32,9 +32,13 @@ namespace FungleAPI.Components
                 RightButton.GetComponent<ButtonRolloverHandler>().HoverSound = EOSManager.Instance.askToMergeAccount.NotRightNowButton.GetComponent<ButtonRolloverHandler>().HoverSound;
                 RightButton.SetNewAction(new Action(delegate
                 {
-                    if (CurrentIndex + 1 >= ModPlugin.AllPlugins.Count)
+                    if ((CurrentIndex + 1) >= ModPlugin.AllPlugins.Count)
                     {
                         CurrentIndex = 0;
+                    }
+                    else
+                    {
+                        CurrentIndex++;
                     }
                     CurrentPlugin = ModPlugin.AllPlugins[CurrentIndex];
                     Text.text = CurrentPlugin.ModName;
@@ -44,9 +48,13 @@ namespace FungleAPI.Components
                 LeftButton.GetComponent<ButtonRolloverHandler>().HoverSound = RightButton.GetComponent<ButtonRolloverHandler>().HoverSound;
                 LeftButton.SetNewAction(new Action(delegate
                 {
-                    if (CurrentIndex - 1 <= 0)
+                    if ((CurrentIndex - 1) <= -1)
                     {
                         CurrentIndex = ModPlugin.AllPlugins.Count - 1;
+                    }
+                    else
+                    {
+                        CurrentIndex--;
                     }
                     CurrentPlugin = ModPlugin.AllPlugins[CurrentIndex];
                     Text.text = CurrentPlugin.ModName;

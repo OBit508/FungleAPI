@@ -19,6 +19,7 @@ namespace FungleAPI.Role.Teams
         public override StringNames TeamName { get; } = neutral;
         public override StringNames PluralName { get; } = neutrals;
         public override CustomGameOver DefaultGameOver => GameOverManager.Instance<NeutralGameOver>();
+        public override uint MaxCount => 50;
         internal static StringNames neutral
         {
             get

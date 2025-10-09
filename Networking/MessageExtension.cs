@@ -17,6 +17,7 @@ using Il2CppSystem.Runtime.Serialization;
 using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
 using FungleAPI.GameOver;
+using FungleAPI.Role.Teams;
 
 namespace FungleAPI.Networking
 {
@@ -77,10 +78,6 @@ namespace FungleAPI.Networking
             Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
             Writer.Write(type.FullName);
         }
-        public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
-        {
-            Writer.Write(count.Name);
-        }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
         {
             bool flag = FungleAPIPlugin.Plugin.Roles.Contains(role);
@@ -95,6 +92,14 @@ namespace FungleAPI.Networking
                 Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
                 Writer.Write(type.FullName);
             }
+        }
+        public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
+        {
+            Writer.Write(count.Name);
+        }
+        public static void WriteTeam(this MessageWriter Writer, ModdedTeam team)
+        {
+            WriteCountAndPriority(Writer, team.CountAndPriority);
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -184,6 +189,10 @@ namespace FungleAPI.Networking
         {
             string fullCountName = Reader.ReadString();
             return ConfigurationManager.TeamCountAndPriorities.FirstOrDefault(count => count.Name == fullCountName);
+        }
+        public static ModdedTeam ReadTeam(this MessageReader Reader)
+        {
+            return ReadCountAndPriority(Reader).Team;
         }
     }
 }
