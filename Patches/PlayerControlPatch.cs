@@ -30,7 +30,7 @@ using static UnityEngine.GraphicsBuffer;
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(PlayerControl))]
-    internal static class PlayerPatches
+    internal static class PlayerControlPatch
     {
         internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("Start")]

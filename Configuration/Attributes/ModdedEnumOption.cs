@@ -21,6 +21,7 @@ using FungleAPI.Translation;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
+using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Configuration.Attributes
 {
@@ -46,7 +47,7 @@ namespace FungleAPI.Configuration.Attributes
         {
             if (property.PropertyType == typeof(int))
             {
-                ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
+                ModPlugin plugin = ModPluginManager.GetModPlugin(type.Assembly);
                 int value = (int)property.GetValue(obj);
                 localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();

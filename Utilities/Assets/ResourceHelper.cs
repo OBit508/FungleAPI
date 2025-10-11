@@ -2,6 +2,7 @@
 using AsmResolver.PE.Win32Resources;
 using FungleAPI.Components;
 using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -28,7 +29,6 @@ namespace FungleAPI.Utilities.Assets
 {
     public static class ResourceHelper
     {
-        public static Sprite EmptySprite ;
         public static string ReadText(ModPlugin plugin, string resource)
         {
             return new System.IO.StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)).ReadToEnd();

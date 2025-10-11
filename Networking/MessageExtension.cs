@@ -18,6 +18,7 @@ using Il2CppInterop.Runtime;
 using AmongUs.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Role.Teams;
+using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Networking
 {
@@ -75,7 +76,7 @@ namespace FungleAPI.Networking
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
         {
             Type type = customGameOver.GetType();
-            Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
+            Writer.Write(ModPluginManager.GetModPlugin(type.Assembly).ModName);
             Writer.Write(type.FullName);
         }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
@@ -89,7 +90,7 @@ namespace FungleAPI.Networking
             else
             {
                 Type type = role.GetType();
-                Writer.Write(ModPlugin.GetModPlugin(type.Assembly).ModName);
+                Writer.Write(ModPluginManager.GetModPlugin(type.Assembly).ModName);
                 Writer.Write(type.FullName);
             }
         }
@@ -172,7 +173,7 @@ namespace FungleAPI.Networking
         {
             string modName = Reader.ReadString();
             string fullName = Reader.ReadString();
-            return GameOverManager.AllCustomGameOver.FirstOrDefault(g => ModPlugin.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+            return GameOverManager.AllCustomGameOver.FirstOrDefault(g => ModPluginManager.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
         }
         public static RoleBehaviour ReadRole(this MessageReader Reader)
         {
@@ -183,7 +184,7 @@ namespace FungleAPI.Networking
             }
             string modName = Reader.ReadString();
             string fullName = Reader.ReadString();
-            return RoleManager.Instance.AllRoles.FirstOrDefault(g => ModPlugin.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+            return RoleManager.Instance.AllRoles.FirstOrDefault(g => ModPluginManager.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
         }
         public static TeamCountAndPriority ReadCountAndPriority(this MessageReader Reader)
         {

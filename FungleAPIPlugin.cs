@@ -13,6 +13,7 @@ using FungleAPI.Configuration.Patches;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
@@ -24,6 +25,7 @@ using Hazel;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.Text;
 using InnerNet;
+using Microsoft.VisualBasic;
 using Steamworks;
 using System;
 using System.Collections;
@@ -36,6 +38,8 @@ using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using static FungleAPI.PluginLoading.ModPlugin;
+using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruction;
 
 namespace FungleAPI
 {
@@ -44,7 +48,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.2.2";
+        public const string ModV = "0.2.3";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -55,6 +59,41 @@ namespace FungleAPI
                 Log.LogError("Failed creating ModPlugin from API");
             }
             Harmony.PatchAll();
+            IL2CPPChainloader.Instance.PluginLoad += new Action<PluginInfo, Assembly, BasePlugin>(delegate (PluginInfo pluginInfo, Assembly assembly, BasePlugin basePlugin)
+            {
+                IFungleBasePlugin fungleBasePlugin = basePlugin as IFungleBasePlugin;
+                if (fungleBasePlugin != null)
+                {
+                    ModPlugin plugin = new ModPlugin();
+                    if (Plugin != null)
+                    {
+                        ModPluginManager. Register(plugin, basePlugin);
+                        List<ModPlugin> sameNamePlugins = new List<ModPlugin>();
+                        if (fungleBasePlugin.ModName != null)
+                        {
+                            plugin.ModName = fungleBasePlugin.ModName;
+                            plugin.RealName = fungleBasePlugin.ModName;
+                        }
+                        AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
+                        {
+                            if (pl.RealName == plugin.RealName)
+                            {
+                                sameNamePlugins.Add(pl);
+                            }
+                        }));
+                        if (sameNamePlugins.Count > 0)
+                        {
+                            plugin.ModName += " (" + sameNamePlugins.Count + ")";
+                        }
+                        plugin.ModVersion = fungleBasePlugin.ModVersion;
+                        AllPlugins.Add(plugin);
+                    }
+                    loadAssets += new Action(fungleBasePlugin.LoadAssets);
+                    plugin.LocalMod = new Mod(plugin);
+                    plugin.UseShipReference = fungleBasePlugin.UseShipReference;
+                    fungleBasePlugin.OnRegisterInFungleAPI();
+                }
+            });
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
             {
                 if (!loaddedAssets)
@@ -63,12 +102,12 @@ namespace FungleAPI
                     loaddedAssets = true;
                     MCIActive = MCIUtils.GetMCI() != null;
                 }
-                if (!rolesRegistered && scene.name == "MainMenu")
+                if (scene.name == "MainMenu" && !rolesRegistered)
                 {
                     Plugin.Roles = RoleManager.Instance.DontDestroy().AllRoles.ToArray().Concat(Plugin.Roles).ToList();
                     foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
                     {
-                        RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPlugin.GetModPlugin(pair.Key.Assembly), pair.Value));
+                        RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPluginManager.GetModPlugin(pair.Key.Assembly), pair.Value));
                     }
                     rolesRegistered = true;
                 }
@@ -86,7 +125,7 @@ namespace FungleAPI
                 if (plugin == null)
                 {
                     plugin = new ModPlugin();
-                    ModPlugin.Register(plugin, Instance);
+                    ModPluginManager.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
@@ -95,57 +134,7 @@ namespace FungleAPI
                 return plugin;
             }
         }
-        public static Prefab<PluginChanger> PluginChangerPrefab;
-        internal static Action loadAssets = new Action(delegate
-        {
-            try
-            {
-                RolesSettingMenuPatch.Cog = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.cog", 200f);
-                ResourceHelper.EmptySprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.empty", 100);
-                PluginChanger pluginChanger = new GameObject("PluginChanger").AddComponent<PluginChanger>();
-                pluginChanger.gameObject.layer = 5;
-                pluginChanger.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-                pluginChanger.gameObject.AddComponent<SpriteRenderer>().sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.background", 100);
-                TextMeshPro text = new GameObject("Text").AddComponent<TextMeshPro>();
-                text.alignment = TextAlignmentOptions.Center;
-                text.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                text.transform.SetParent(pluginChanger.transform);
-                text.transform.localScale = new Vector3(0.28f, 0.28f, 0.28f);
-                text.gameObject.layer = 5;
-                PassiveButton rightButton = new GameObject("RightButton").AddComponent<PassiveButton>();
-                BoxCollider2D boxCollider2D = rightButton.gameObject.AddComponent<BoxCollider2D>();
-                boxCollider2D.isTrigger = true;
-                boxCollider2D.size *= 2;
-                SpriteRenderer rend = rightButton.gameObject.AddComponent<SpriteRenderer>();
-                rend.sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.nextButton", 100);
-                ButtonRolloverHandler buttonRolloverHandler = rightButton.gameObject.AddComponent<ButtonRolloverHandler>();
-                buttonRolloverHandler.Target = rend;
-                buttonRolloverHandler.OutColor = Color.white;
-                buttonRolloverHandler.OverColor = new Color32(44, 235, 198, byte.MaxValue);
-                rightButton.transform.SetParent(pluginChanger.transform);
-                rightButton.transform.localPosition = new Vector3(4, 0, 0);
-                rightButton.transform.localScale = Vector3.one;
-                rightButton.gameObject.layer = 5;
-                PassiveButton leftButton = new GameObject("LeftButton").AddComponent<PassiveButton>();
-                BoxCollider2D boxCollider2D2 = leftButton.gameObject.AddComponent<BoxCollider2D>();
-                boxCollider2D2.isTrigger = true;
-                boxCollider2D2.size *= 2;
-                SpriteRenderer rend2 = leftButton.gameObject.AddComponent<SpriteRenderer>();
-                rend2.sprite = ResourceHelper.LoadSprite(Plugin, "FungleAPI.Resources.nextButton", 100);
-                ButtonRolloverHandler buttonRolloverHandler2 = leftButton.gameObject.AddComponent<ButtonRolloverHandler>();
-                buttonRolloverHandler2.Target = rend2;
-                buttonRolloverHandler2.OutColor = Color.white;
-                buttonRolloverHandler2.OverColor = new Color32(44, 235, 198, byte.MaxValue);
-                leftButton.transform.SetParent(pluginChanger.transform);
-                leftButton.transform.localScale = new Vector3(-1, 1, 1);
-                leftButton.transform.localPosition = new Vector3(-4, 0, 0);
-                leftButton.gameObject.layer = 5;
-                PluginChangerPrefab = new Prefab<PluginChanger>(pluginChanger);
-            }
-            catch
-            {
-            }
-        });
+        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
         internal static void SetErrorMessages()
         {
             Translator errorMessage = new Translator("Failed to sync mods with the host. Please make sure you have the same mods and versions installed as the host.");

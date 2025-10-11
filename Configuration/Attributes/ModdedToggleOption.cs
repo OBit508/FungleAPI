@@ -18,6 +18,7 @@ using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Translation;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
+using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Configuration.Attributes
 {
@@ -37,7 +38,7 @@ namespace FungleAPI.Configuration.Attributes
         {
             if (property.PropertyType == typeof(bool))
             {
-                ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
+                ModPlugin plugin = ModPluginManager.GetModPlugin(type.Assembly);
                 bool value = (bool)property.GetValue(obj);
                 localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();

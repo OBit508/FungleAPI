@@ -1,10 +1,12 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -22,33 +24,7 @@ namespace FungleAPI.Configuration.Patches
     [HarmonyPatch(typeof(LobbyViewSettingsPane))]
     internal static class LobbyViewSettingsPanePatch
     {
-        public static Translator teams;
-        public static StringNames TeamsText 
-        {
-            get
-            {
-                if (teams == null)
-                {
-                    teams = new Translator("Teams");
-                    teams.AddTranslation(SupportedLangs.Latam, "Equipos");
-                    teams.AddTranslation(SupportedLangs.Brazilian, "Times");
-                    teams.AddTranslation(SupportedLangs.Portuguese, "Equipes");
-                    teams.AddTranslation(SupportedLangs.Korean, "팀");
-                    teams.AddTranslation(SupportedLangs.Russian, "Команды");
-                    teams.AddTranslation(SupportedLangs.Dutch, "Teams");
-                    teams.AddTranslation(SupportedLangs.Filipino, "Mga Koponan");
-                    teams.AddTranslation(SupportedLangs.French, "Équipes");
-                    teams.AddTranslation(SupportedLangs.German, "Teams");
-                    teams.AddTranslation(SupportedLangs.Italian, "Squadre");
-                    teams.AddTranslation(SupportedLangs.Japanese, "チーム");
-                    teams.AddTranslation(SupportedLangs.Spanish, "Equipos");
-                    teams.AddTranslation(SupportedLangs.SChinese, "队伍");
-                    teams.AddTranslation(SupportedLangs.TChinese, "隊伍");
-                    teams.AddTranslation(SupportedLangs.Irish, "Foirne");
-                }
-                return teams.StringName;
-            }
-        }
+        
         public static bool TeamsTab;
         public static PassiveButton TeamsTabButton;
         public static PluginChanger pluginChanger;
@@ -58,7 +34,7 @@ namespace FungleAPI.Configuration.Patches
         {
             TeamsTab = false;
             __instance.gameModeText.gameObject.SetActive(false);
-            pluginChanger = FungleAPIPlugin.PluginChangerPrefab.Instantiate(__instance.rolesTabButton.transform.parent);
+            pluginChanger = FungleAssets.PluginChangerPrefab.Instantiate(__instance.rolesTabButton.transform.parent).GetComponent<PluginChanger>();
             pluginChanger.transform.localPosition = __instance.gameModeText.transform.localPosition;
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             pluginChanger.OnChange = new Action<ModPlugin>(delegate
@@ -78,11 +54,10 @@ namespace FungleAPI.Configuration.Patches
                 }
                 __instance.scrollBar.ScrollToTop();
             });
-            pluginChanger.Initialize();
             TeamsTabButton = GameObject.Instantiate<PassiveButton>(__instance.rolesTabButton, __instance.rolesTabButton.transform.parent);
             TeamsTabButton.transform.localPosition = new Vector3(2.071f, 1.404f, 0);
             TeamsTabButton.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
-            TeamsTabButton.buttonText.text = TeamsText.GetString();
+            TeamsTabButton.buttonText.text = FungleTranslation.TeamsText.GetString();
             TeamsTabButton.SetNewAction(new Action(delegate
             {
                 for (int i = 0; i < __instance.settingsInfo.Count; i++)
@@ -187,7 +162,7 @@ namespace FungleAPI.Configuration.Patches
                 minY = Mathf.Min(minY, num);
                 foreach (RoleBehaviour roleBehaviour in teams[teams.Keys.ToArray()[i]])
                 {
-                    if (roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.Crewmate && roleBehaviour.Role != RoleTypes.Impostor && (roleBehaviour.CustomRole() == null || roleBehaviour.CustomRole() != null && !roleBehaviour.CustomRole().Configuration.HideRole))
+                    if (roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.Crewmate && roleBehaviour.Role != RoleTypes.Impostor && (roleBehaviour.CustomRole() == null || roleBehaviour.CustomRole() != null && !roleBehaviour.CustomRole().HideRole))
                     {
                         int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
                         int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
@@ -280,9 +255,9 @@ namespace FungleAPI.Configuration.Patches
             advancedRoleViewPanel.divider.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
             float num = advancedRoleViewPanel.yPosStart;
             float num2 = 1.08f;
-            for (int i = 0; i < role.Configuration.Configs.Count; i++)
+            for (int i = 0; i < role.Options.Count; i++)
             {
-                ModdedOption baseGameSetting = role.Configuration.Configs[i];
+                ModdedOption baseGameSetting = role.Options[i];
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;

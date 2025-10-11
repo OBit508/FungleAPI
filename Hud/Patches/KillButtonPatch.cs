@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Hud.Patches
 {
     [HarmonyPatch(typeof(KillButton), "SetTarget")]
     internal static class KillButtonPatch
@@ -30,7 +30,7 @@ namespace FungleAPI.Patches
             __instance.currentTarget = target;
             if (__instance.currentTarget)
             {
-                __instance.currentTarget.cosmetics.SetOutline(true, new Il2CppSystem.Nullable<Color>(customRole.Configuration.OutlineColor));
+                __instance.currentTarget.cosmetics.SetOutline(true, new Il2CppSystem.Nullable<Color>(customRole.OutlineColor));
                 __instance.SetEnabled();
                 return false;
             }

@@ -3,6 +3,7 @@ using Epic.OnlineServices.RTC;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;

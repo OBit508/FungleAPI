@@ -1,10 +1,13 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Core.Logging.Interpolation;
-using FungleAPI;
-using FungleAPI.Configuration;
+using Epic.OnlineServices;
 using FungleAPI.Components;
-using FungleAPI.Role.Teams;
+using FungleAPI.Configuration;
+using FungleAPI.Configuration.Attributes;
+using FungleAPI.Hud;
 using FungleAPI.Networking;
+using FungleAPI.PluginLoading;
+using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -48,14 +51,6 @@ namespace FungleAPI.Role
         {
             return RolesToRegister[typeof(T)];
         }
-        internal static RoleTypes RegisterRole(Type type, ModPlugin plugin)
-        {
-            id++;
-            RoleTypes role = (RoleTypes)id;
-            RolesToRegister.Add(type, role);
-            ClassInjector.RegisterTypeInIl2Cpp(type);
-            return role;
-        }
         public static ICustomRole CustomRole(this RoleBehaviour role)
         {
             return role as ICustomRole;
@@ -78,35 +73,56 @@ namespace FungleAPI.Role
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
+            (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance, ChangeableValue<List<CustomAbilityButton>> Buttons) pair = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            RoleConfig config = customRole.Configuration;
-            config.Configs = ConfigurationManager.InitializeConfigs(role);
-            ConfigurationManager.PatchRoleConfig(type, config);
-            ConfigurationManager.InitializeRoleCountAndChances(config, type, plugin);
+            InitializeRoleOptions(role);
+            ConfigurationManager.InitializeRoleCountAndChances(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;
             role.BlurbNameMed = customRole.RoleBlurMed;
             role.BlurbNameLong = customRole.RoleBlurLong;
             role.NameColor = customRole.RoleColor;
-            role.AffectedByLightAffectors = config.AffectedByLightOnAirship;
-            role.CanUseKillButton = config.UseVanillaKillButton;
-            role.CanVent = config.CanVent;
-            role.TasksCountTowardProgress = config.TasksCountForProgress;
-            role.RoleScreenshot = config.Screenshot;
-            role.RoleIconSolid = config.IconSolid;
-            role.RoleIconWhite = config.IconWhite;
+            role.AffectedByLightAffectors = customRole.IsAffectedByLightOnAirship;
+            role.CanUseKillButton = customRole.UseVanillaKillButton;
+            role.CanVent = customRole.CanUseVent;
+            role.TasksCountTowardProgress = customRole.CompletedTasksCountForProgress;
+            role.RoleScreenshot = customRole.Screenshot;
+            role.RoleIconSolid = customRole.IconSolid;
+            role.RoleIconWhite = customRole.IconWhite;
             role.Role = roleType;
             role.TeamType = customRole.Team == ModdedTeam.Impostors ? RoleTeamTypes.Impostor : RoleTeamTypes.Crewmate;
             AllRoles.Add(role);
             AllCustomRoles.Add(customRole);
             plugin.Roles.Add(role);
-            if (customRole.Configuration.IsGhostRole)
+            if (customRole.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }
             return role;
+        }
+        internal static void InitializeRoleOptions(RoleBehaviour obj)
+        {
+            Type type = obj.GetType();
+            foreach (PropertyInfo property in type.GetProperties())
+            {
+                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
+                if (att != null)
+                {
+                    att.Initialize(type, property, obj);
+                    MethodInfo method = property.GetGetMethod(true);
+                    if (method != null)
+                    {
+                        ConfigurationManager.Configs.Add(method, att);
+                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
+                    }
+                    if (obj.CustomRole() != null)
+                    {
+                        obj.CustomRole().Options.Add(att);
+                    }
+                }
+            }
         }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {
@@ -132,7 +148,7 @@ namespace FungleAPI.Role
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().Configuration.CanSabotage;
+                return roleBehaviour.CustomRole().CanSabotage;
             }
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
@@ -140,7 +156,7 @@ namespace FungleAPI.Role
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().Configuration.CanKill;
+                return roleBehaviour.CustomRole().CanKill;
             }
             return roleBehaviour.CanUseKillButton;
         }
@@ -148,7 +164,7 @@ namespace FungleAPI.Role
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().Configuration.UseVanillaKillButton;
+                return roleBehaviour.CustomRole().UseVanillaKillButton;
             }
             return roleBehaviour.CanUseKillButton;
         }
@@ -156,7 +172,7 @@ namespace FungleAPI.Role
         {
             if (roleBehaviour.CustomRole() != null)
             {
-                return roleBehaviour.CustomRole().Configuration.CanVent;
+                return roleBehaviour.CustomRole().CanUseVent;
             }
             return roleBehaviour.CanVent;
         }

@@ -1,6 +1,4 @@
-﻿
-using FungleAPI;
-using FungleAPI.Components;
+﻿using FungleAPI.Components;
 using FungleAPI.Role;
 using HarmonyLib;
 using System;
@@ -11,7 +9,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Hud.Patches
 {
     [HarmonyPatch(typeof(HudManager))]
     internal static class HudManagerPatch
@@ -22,7 +20,7 @@ namespace FungleAPI.Patches
         {
             if (ShipStatus.Instance != null)
             {
-                MapBehaviour.Instance = GameObject.Instantiate<MapBehaviour>(ShipStatus.Instance.MapPrefab, __instance.transform);
+                MapBehaviour.Instance = UnityEngine.Object.Instantiate(ShipStatus.Instance.MapPrefab, __instance.transform);
                 MapBehaviour.Instance.gameObject.SetActive(false);
             }
             if (AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
@@ -34,11 +32,13 @@ namespace FungleAPI.Patches
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
             }
-            TextMeshPro lobbyWarningText = GameObject.Instantiate<TextMeshPro>(__instance.AbilityButton.buttonLabelText, __instance.transform);
+            TextMeshPro lobbyWarningText = UnityEngine.Object.Instantiate(__instance.AbilityButton.buttonLabelText, __instance.transform);
             lobbyWarningText.SetOutlineColor(Color.red);
             lobbyWarningText.transform.localScale *= 3;
             lobbyWarningText.transform.localPosition = new Vector3(0, 2, -0.1f);
             lobbyWarningText.gameObject.AddComponent<LobbyWarningText>().Text = lobbyWarningText;
+            lobbyWarningText.alignment = TextAlignmentOptions.Top;
+            lobbyWarningText.name = "LobbyWarningText";
         }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
@@ -68,7 +68,7 @@ namespace FungleAPI.Patches
             {
                 if (button.Button != null)
                 {
-                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Configuration.Buttons != null && role.CustomRole().Configuration.Buttons.Contains(button));
+                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button));
                 }
             }
         }

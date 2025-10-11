@@ -4,6 +4,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
 using Il2CppInterop.Generator.Extensions;
@@ -64,12 +65,12 @@ namespace FungleAPI.Networking.RPCs
                 }
                 else if (value.type == SyncTextType.TeamCount)
                 {
-                    name = ModdedTeam.CountText;
+                    name = FungleTranslation.CountText;
                     v = value.team.CountAndPriority.GetCount().ToString();
                 }
                 else
                 {
-                    name = ModdedTeam.PriorityText;
+                    name = FungleTranslation.PriorityText;
                     v = value.team.CountAndPriority.GetPriority().ToString();
                 }
                 Notify(value.team.TeamColor.ToTextColor() + "(" + value.team.TeamName.GetString() + ") " + name.GetString() + "</color>", v, false);
@@ -115,12 +116,12 @@ namespace FungleAPI.Networking.RPCs
                 }
                 else if (type == SyncTextType.TeamCount)
                 {
-                    name = ModdedTeam.CountText;
+                    name = FungleTranslation.CountText;
                     v = team.CountAndPriority.GetCount().ToString();
                 }
                 else
                 {
-                    name = ModdedTeam.PriorityText;
+                    name = FungleTranslation.PriorityText;
                     v = team.CountAndPriority.GetPriority().ToString();
                 }
                 Notify(team.TeamColor.ToTextColor() + "(" + team.TeamName.GetString() + ") " + name.GetString() + "</color>", v, true);

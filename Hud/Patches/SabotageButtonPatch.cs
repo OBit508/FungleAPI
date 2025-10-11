@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Hud.Patches
 {
     [HarmonyPatch(typeof(SabotageButton))]
     internal static class SabotageButtonPatch

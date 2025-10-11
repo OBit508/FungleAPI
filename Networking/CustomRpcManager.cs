@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Networking.RPCs;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -30,13 +31,6 @@ namespace FungleAPI.Networking
             }
             return null;
         }
-        internal static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
-        {
-            RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
-            AllRpc.Add(rpc);
-            plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
-            return rpc;
-        }
         internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
         public static IEnumerable<MethodBase> TargetMethods()
         {
@@ -54,7 +48,7 @@ namespace FungleAPI.Networking
                 string rpcId = messageReader.ReadString();
                 foreach (RpcHelper rpc in AllRpc)
                 {
-                    if (ModPlugin.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
+                    if (ModPluginManager.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
                     {
                         rpc.Handle(messageReader);
                     }

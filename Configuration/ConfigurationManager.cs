@@ -1,6 +1,8 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
+using FungleAPI.PluginLoading;
+using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -16,30 +18,8 @@ namespace FungleAPI.Configuration
     public static class ConfigurationManager
     {
         public static Dictionary<MethodBase, ModdedOption> Configs = new Dictionary<MethodBase, ModdedOption>();
-        internal static Dictionary<MethodBase, RoleConfig> RoleConfigs = new Dictionary<MethodBase, RoleConfig>();
         internal static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         internal static List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
-        public static List<ModdedOption> InitializeConfigs(object obj)
-        {
-            Type type = obj.GetType();
-            List<ModdedOption> configs = new List<ModdedOption>();
-            foreach (PropertyInfo property in type.GetProperties())
-            {
-                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
-                if (att != null)
-                {
-                    att.Initialize(type, property, obj);
-                    MethodInfo method = property.GetGetMethod(true);
-                    if (method != null)
-                    {
-                        Configs.Add(method, att);
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
-                    }
-                    configs.Add(att);
-                }
-            }
-            return configs;
-        }
         public static bool GetPrefix(MethodBase __originalMethod, ref float __result)
         {
             __result = float.Parse(Configs[__originalMethod].GetValue());
@@ -60,25 +40,11 @@ namespace FungleAPI.Configuration
             __result = Configs[__originalMethod].GetValue();
             return false;
         }
-        public static void PatchRoleConfig(Type type, RoleConfig config)
+        public static void InitializeRoleCountAndChances(Type roleType, ModPlugin plugin)
         {
-            PropertyInfo property = type.GetProperty("Configuration");
-            if (property != null && property.PropertyType == typeof(RoleConfig))
-            {
-                RoleConfigs.Add(property.GetGetMethod(), config);
-                FungleAPIPlugin.Harmony.Patch(property.GetGetMethod(), new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetRoleConfigPrefix", BindingFlags.Static | BindingFlags.Public)));
-            }
-        }
-        public static bool GetRoleConfigPrefix(MethodBase __originalMethod, ref RoleConfig __result)
-        {
-            __result = RoleConfigs[__originalMethod];
-            return false;
-        }
-        public static void InitializeRoleCountAndChances(RoleConfig roleConfig, Type roleType, ModPlugin plugin)
-        {
-            roleConfig.CountAndChance = new RoleCountAndChance();
-            roleConfig.CountAndChance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
-            RoleCountsAndChances.Add(roleConfig.CountAndChance);
+            RoleCountAndChance roleCountAndChance = ICustomRole.Save[roleType].CountAndChance.Value;
+            roleCountAndChance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
+            RoleCountsAndChances.Add(roleCountAndChance);
         }
         public static void InitializeTeamCountAndPriority(ModdedTeam team, ModPlugin plugin)
         {

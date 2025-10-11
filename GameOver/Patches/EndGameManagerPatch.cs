@@ -109,6 +109,7 @@ namespace FungleAPI.GameOver.Patches
                     }
                 }
             }
+            gameOver.OnSetEverythingUp(__instance);
             return false;
         }
     }

@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.GameOver;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -25,90 +26,10 @@ namespace FungleAPI.Role.Teams
 {
     public class ModdedTeam
     {
-        public static Translator count;
-        public static Translator priority;
-        public static StringNames CountText
-        {
-            get
-            {
-                if (count == null)
-                {
-                    count = new Translator("Player Count");
-                    count.AddTranslation(SupportedLangs.Latam, "Cantidad de jugadores");
-                    count.AddTranslation(SupportedLangs.Brazilian, "Quantidade de Jogadores");
-                    count.AddTranslation(SupportedLangs.Portuguese, "Quantidade de Jogadores");
-                    count.AddTranslation(SupportedLangs.Korean, "플레이어 수");
-                    count.AddTranslation(SupportedLangs.Russian, "Количество игроков");
-                    count.AddTranslation(SupportedLangs.Dutch, "Aantal spelers");
-                    count.AddTranslation(SupportedLangs.Filipino, "Bilang ng mga manlalaro");
-                    count.AddTranslation(SupportedLangs.French, "Nombre de joueurs");
-                    count.AddTranslation(SupportedLangs.German, "Spieleranzahl");
-                    count.AddTranslation(SupportedLangs.Italian, "Numero di giocatori");
-                    count.AddTranslation(SupportedLangs.Japanese, "プレイヤー数");
-                    count.AddTranslation(SupportedLangs.Spanish, "Cantidad de jugadores");
-                    count.AddTranslation(SupportedLangs.SChinese, "玩家数量");
-                    count.AddTranslation(SupportedLangs.TChinese, "玩家數量");
-                    count.AddTranslation(SupportedLangs.Irish, "Líon na n-imreoirí");
-                }
-                return count.StringName;
-            }
-        }
-        public static StringNames PriorityText
-        {
-            get
-            {
-                if (priority == null)
-                {
-                    priority = new Translator("Team Priority");
-                    priority.AddTranslation(SupportedLangs.Latam, "Prioridad del equipo");
-                    priority.AddTranslation(SupportedLangs.Brazilian, "Prioridade do Time");
-                    priority.AddTranslation(SupportedLangs.Portuguese, "Prioridade da Equipe");
-                    priority.AddTranslation(SupportedLangs.Korean, "팀 우선순위");
-                    priority.AddTranslation(SupportedLangs.Russian, "Приоритет команды");
-                    priority.AddTranslation(SupportedLangs.Dutch, "Teamprioriteit");
-                    priority.AddTranslation(SupportedLangs.Filipino, "Prayoridad ng Koponan");
-                    priority.AddTranslation(SupportedLangs.French, "Priorité de l'équipe");
-                    priority.AddTranslation(SupportedLangs.German, "Team-Priorität");
-                    priority.AddTranslation(SupportedLangs.Italian, "Priorità della squadra");
-                    priority.AddTranslation(SupportedLangs.Japanese, "チームの優先順位");
-                    priority.AddTranslation(SupportedLangs.Spanish, "Prioridad del equipo");
-                    priority.AddTranslation(SupportedLangs.SChinese, "队伍优先级");
-                    priority.AddTranslation(SupportedLangs.TChinese, "隊伍優先級");
-                    priority.AddTranslation(SupportedLangs.Irish, "Tosaíocht Foirne");
-                }
-                return priority.StringName;
-            }
-        }
+        
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
-        internal static object RegisterTeam(Type type, ModPlugin plugin)
-        {
-            ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
-            plugin.Teams.Add(team);
-            Teams.Add(team);
-            ConfigurationManager.InitializeTeamCountAndPriority(team, plugin);
-            team.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
-            team.CountData.Type = OptionTypes.Float;
-            team.CountData.Title = CountText;
-            team.CountData.Increment = 1;
-            team.CountData.ValidRange = new FloatRange(0, team.MaxCount);
-            team.CountData.FormatString = null;
-            team.CountData.ZeroIsInfinity = false;
-            team.CountData.SuffixType = NumberSuffixes.None;
-            team.CountData.OptionName = FloatOptionNames.Invalid;
-            team.PriorityData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
-            team.PriorityData.Type = OptionTypes.Float;
-            team.PriorityData.Title = PriorityText;
-            team.PriorityData.Increment = 1;
-            team.PriorityData.ValidRange = new FloatRange(0, 500);
-            team.PriorityData.FormatString = null;
-            team.PriorityData.ZeroIsInfinity = false;
-            team.PriorityData.SuffixType = NumberSuffixes.None;
-            team.PriorityData.OptionName = FloatOptionNames.Invalid;
-            plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name);
-            return team;
-        }
         public static T Instance<T>() where T : ModdedTeam
         {
             foreach (ModdedTeam team in Teams)

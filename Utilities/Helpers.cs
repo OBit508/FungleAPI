@@ -195,7 +195,7 @@ namespace FungleAPI.Utilities
                 color.a
                 );
         }
-        public static T DontDestroy<T>(this T obj) where T : Component
+        public static T DontDestroy<T>(this T obj) where T : UnityEngine.Object
         {
             obj.hideFlags |= HideFlags.HideAndDontSave;
             UnityEngine.Object.DontDestroyOnLoad(obj);

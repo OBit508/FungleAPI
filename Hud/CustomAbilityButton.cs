@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -11,7 +12,7 @@ using TMPro;
 using UnityEngine;
 using xCloud;
 using static Sentry.MeasurementUnit;
-namespace FungleAPI.Role
+namespace FungleAPI.Hud
 {
     public class CustomAbilityButton
     {
@@ -114,13 +115,13 @@ namespace FungleAPI.Role
         {
            if (Button != null)
             {
-                GameObject.Destroy(Button.gameObject);
+                UnityEngine.Object.Destroy(Button.gameObject);
                 Button = null;
             }
         }
         public virtual void Reset(bool creating = false)
         {
-            Timer = !creating ? Cooldown : (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay ? 0 : InitialCooldown);
+            Timer = !creating ? Cooldown : AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay ? 0 : InitialCooldown;
             CurrentNumUses = NumUses;
             Transformed = false;
             TransformTimer = TransformDuration;
@@ -192,21 +193,6 @@ namespace FungleAPI.Role
                 Button.usesRemainingSprite.gameObject.SetActive(false);
             }
             return Button;
-        }
-        internal static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)
-        {
-            try
-            {
-                CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
-                Buttons.Add(type, button);
-                plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
-                return button;
-            }
-            catch
-            {
-                plugin.BasePlugin.Log.LogError("Failed to register Button " + type.Name);
-                return null;
-            }
         }
     }
 }

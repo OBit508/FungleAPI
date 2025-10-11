@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.ModCompatibility;
+using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Networking.RPCs
 {
@@ -18,7 +19,7 @@ namespace FungleAPI.Networking.RPCs
         {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
             writer.StartMessage(0);
-            writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
+            writer.Write(ModPluginManager.GetModPlugin(GetType().Assembly).ModName);
             writer.Write(GetType().FullName);
             Write(writer, data);
             writer.EndMessage();
@@ -34,7 +35,7 @@ namespace FungleAPI.Networking.RPCs
         {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(NetId, byte.MaxValue, sendOption, targetClientId);
             writer.StartMessage(0);
-            writer.Write(ModPlugin.GetModPlugin(GetType().Assembly).ModName);
+            writer.Write(ModPluginManager.GetModPlugin(GetType().Assembly).ModName);
             writer.Write(GetType().FullName);
             Write(writer);
             writer.EndMessage();

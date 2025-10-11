@@ -61,7 +61,10 @@ namespace FungleAPI.GameOver.Patches
                             {
                                 independentTeams.Add(team, new ChangeableValue<int>(1));
                             }
-                            onlyCrewmates = false;
+                            if (player.Data.Role.CanKill())
+                            {
+                                onlyCrewmates = false;
+                            }
                         }
                         else if (player.Data.Role.CanKill())
                         {

@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
@@ -19,7 +20,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using xCloud;
 
-namespace FungleAPI.Freeplay.Patches
+namespace FungleAPI.Freeplay
 {
     [HarmonyPatch(typeof(TaskAdderGame))]
     internal static class TaskAdderGamePatch
@@ -57,11 +58,6 @@ namespace FungleAPI.Freeplay.Patches
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.LongTasks);
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.ShortTasks);
             __instance.Root.SubFolders = __instance.Root.SubFolders.ToSystemList().OrderBy((f) => f.FolderName).ToList().ToIl2CppList();
-            TaskFolder RoleFolder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
-            RoleFolder.gameObject.SetActive(false);
-            RoleFolder.FolderName = TranslationController.Instance.GetString(StringNames.Roles);
-            RoleFolder.SetFolderColor(TaskFolder.FolderColor.Tan);
-            __instance.Root.SubFolders.Add(RoleFolder);
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 TaskFolder folder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
@@ -78,14 +74,14 @@ namespace FungleAPI.Freeplay.Patches
                     folder2.name = "RoleFolder: ";
                     foreach (RoleBehaviour role in pair.Value)
                     {
-                        if (role.CustomRole() != null && !role.CustomRole().Configuration.HideRole || role.CustomRole() == null)
+                        if (role.CustomRole() != null && !role.CustomRole().HideRole || role.CustomRole() == null)
                         {
                             folder2.name += ((int)role.Role).ToString() + (role == pair.Value[pair.Value.Count - 1] ? "" : "|");
                         }
                     }
                     if (folder2.name == "RoleFolder: ")
                     {
-                        GameObject.Destroy(folder2.gameObject);
+                        UnityEngine.Object.Destroy(folder2.gameObject);
                     }
                     else
                     {
@@ -105,7 +101,7 @@ namespace FungleAPI.Freeplay.Patches
                         folder.SubFolders.Add(folder2);
                     }
                 }
-                RoleFolder.SubFolders.Add(folder);
+                __instance.Root.SubFolders.Add(folder);
             }
             scroller = __instance.gameObject.AddComponent<Scroller>();
             scroller.allowX = false;
@@ -118,10 +114,10 @@ namespace FungleAPI.Freeplay.Patches
             GameObject gameObject = new GameObject("Hitbox");
             gameObject.layer = 5;
             gameObject.transform.SetParent(__instance.transform, false);
-            gameObject.transform.localScale = new Vector3(7.5f, 6.5f, 1f);
-            gameObject.transform.localPosition = new Vector3(2.8f, -2.2f, 0f);
+            gameObject.transform.localScale = new Vector3(0.54f, 0.43f, 1f);
+            gameObject.transform.localPosition = new Vector3(0f, -0.25f, 0f);
             SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
-            spriteMask.sprite = ResourceHelper.EmptySprite;
+            spriteMask.sprite = FungleAssets.Empty;
             spriteMask.alphaCutoff = 0f;
             BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
             collider.size = new Vector2(1f, 1f);

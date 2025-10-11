@@ -9,39 +9,14 @@ using FungleAPI.Utilities;
 using HarmonyLib;
 using UnityEngine.UIElements;
 using FungleAPI.Translation;
+using FungleAPI.Hud;
 
 namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(ExileController))]
     internal static class ExileControllerPatch
     {
-        public static Translator remainText;
-        public static StringNames TeamsRemainText
-        {
-            get
-            {
-                if (remainText == null)
-                {
-                    remainText = new Translator("Remaining Teams: ");
-                    remainText.AddTranslation(SupportedLangs.Latam, "Equipos restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Brazilian, "Times Restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Portuguese, "Times Restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Korean, "남은 팀: ");
-                    remainText.AddTranslation(SupportedLangs.Russian, "Оставшиеся команды: ");
-                    remainText.AddTranslation(SupportedLangs.Dutch, "Resterende teams: ");
-                    remainText.AddTranslation(SupportedLangs.Filipino, "Natitirang mga koponan: ");
-                    remainText.AddTranslation(SupportedLangs.French, "Équipes restantes : ");
-                    remainText.AddTranslation(SupportedLangs.German, "Verbleibende Teams: ");
-                    remainText.AddTranslation(SupportedLangs.Italian, "Squadre rimanenti: ");
-                    remainText.AddTranslation(SupportedLangs.Japanese, "残りのチーム: ");
-                    remainText.AddTranslation(SupportedLangs.Spanish, "Equipos restantes: ");
-                    remainText.AddTranslation(SupportedLangs.SChinese, "剩余队伍: ");
-                    remainText.AddTranslation(SupportedLangs.TChinese, "剩餘隊伍: ");
-                    remainText.AddTranslation(SupportedLangs.Irish, "Foirne atá fágtha: ");
-                }
-                return remainText.StringName;
-            }
-        }
+        
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
         public static void BeginPostfix(ExileController __instance)
@@ -50,7 +25,7 @@ namespace FungleAPI.Patches
             {
                 __instance.completeString = __instance.initData.networkedPlayer.Role.CustomRole().ExileText(__instance);
             }
-            __instance.ImpostorText.text = TeamsRemainText.GetString();
+            __instance.ImpostorText.text = FungleTranslation.TeamsRemainText.GetString();
             Dictionary<ModdedTeam, ChangeableValue<int>> teams = new Dictionary<ModdedTeam, ChangeableValue<int>>();
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {

@@ -18,6 +18,7 @@ using UnityEngine;
 using FungleAPI.Translation;
 using HarmonyLib;
 using FungleAPI.Utilities.Prefabs;
+using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Configuration.Attributes
 {
@@ -43,7 +44,7 @@ namespace FungleAPI.Configuration.Attributes
         {
             if (property.PropertyType == typeof(float) || property.PropertyType == typeof(int))
             {
-                ModPlugin plugin = ModPlugin.GetModPlugin(type.Assembly);
+                ModPlugin plugin = ModPluginManager.GetModPlugin(type.Assembly);
                 float value = float.Parse(property.GetValue(obj).ToString());
                 localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName + " - Option", ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();

@@ -30,7 +30,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = __instance.CustomRole();
             if (role != null)
             {
-                if (role.Configuration.ShowTeamColor)
+                if (role.ShowTeamColor)
                 {
                     __result = role.Team.TeamColor;
                 }

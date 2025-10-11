@@ -5,6 +5,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;

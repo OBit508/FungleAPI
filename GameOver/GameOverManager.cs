@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Networking;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
@@ -25,13 +26,6 @@ namespace FungleAPI.GameOver
         {
             gameOverId++;
             return (GameOverReason)gameOverId;
-        }
-        internal static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
-        {
-            CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
-            plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
-            AllCustomGameOver.Add(gameOver);
-            return gameOver;
         }
         public static T Instance<T>() where T : CustomGameOver
         {

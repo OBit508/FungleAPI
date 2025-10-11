@@ -3,6 +3,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using Hazel;

@@ -3,6 +3,7 @@ using FungleAPI.Components;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using LibCpp2IL.Elf;
@@ -63,7 +64,7 @@ namespace FungleAPI.Role.Patches
                 __instance.TeamTitle.color = customRole.Team.TeamColor;
             }
             __instance.ImpostorText.gameObject.SetActive(true);
-            __instance.ImpostorText.text = ExileControllerPatch.TeamsRemainText.GetString();
+            __instance.ImpostorText.text = FungleTranslation.TeamsRemainText.GetString();
             Dictionary<ModdedTeam, ChangeableValue<int>> teams = new Dictionary<ModdedTeam, ChangeableValue<int>>();
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {

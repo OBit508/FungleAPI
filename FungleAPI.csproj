@@ -14,9 +14,11 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Compile Include="Attributes\IgnoreOnFungleAutoRegister.cs" />
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="Components\Credits.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
     <Compile Include="Components\PluginChanger.cs" />
     <Compile Include="Configuration\Attributes\SettingsGroup.cs" />
@@ -59,14 +61,20 @@
     <Compile Include="Configuration\Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />
     <Compile Include="Patches\ImpostorRolePatch.cs" />
-    <Compile Include="Patches\KillButtonPatch.cs" />
+    <Compile Include="Hud\Patches\KillButtonPatch.cs" />
+    <Compile Include="Patches\MainMenuManager.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Patches\ModManagerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Configuration\Patches\LobbyViewSettingsPanePatch.cs" />
+    <Compile Include="PluginLoading\FunglePlugin.cs" />
+    <Compile Include="PluginLoading\IFungleBasePlugin.cs" />
+    <Compile Include="PluginLoading\ModPluginManager.cs" />
     <Compile Include="Role\Patches\DetectiveNotesMinigamePatch.cs" />
     <Compile Include="Role\Patches\RoleManagerPatch.cs" />
+    <Compile Include="Translation\FungleTranslation.cs" />
+    <Compile Include="Utilities\Assets\FungleAssets.cs" />
     <Compile Include="Utilities\DeadBodyType.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Configuration\ConfigurationManager.cs" />
@@ -74,8 +82,7 @@
     <Compile Include="Role\ICustomRole.cs" />
     <Compile Include="Role\Patches\NameColorPatch.cs" />
     <Compile Include="Role\NeutralGhost.cs" />
-    <Compile Include="Configuration\RoleConfig.cs" />
-    <Compile Include="Patches\SabotageButtonPatch.cs" />
+    <Compile Include="Hud\Patches\SabotageButtonPatch.cs" />
     <Compile Include="Configuration\Attributes\ModdedToggleOption.cs" />
     <Compile Include="Configuration\Attributes\ModdedEnumOption.cs" />
     <Compile Include="Configuration\Attributes\ModdedNumberOption.cs" />
@@ -93,22 +100,22 @@
     <Compile Include="Components\Updater.cs" />
     <Compile Include="Patches\ExileControllerPatch.cs" />
     <Compile Include="Patches\GameManagerPatch.cs" />
-    <Compile Include="Role\CustomAbilityButton.cs" />
-    <Compile Include="Patches\HudManagerPatch.cs" />
-    <Compile Include="Patches\PlayerPatches.cs" />
+    <Compile Include="Hud\CustomAbilityButton.cs" />
+    <Compile Include="Hud\Patches\HudManagerPatch.cs" />
+    <Compile Include="Patches\PlayerControlPatch.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
     <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
     <Compile Include="Configuration\Patches\RolesSettingMenuPatch.cs" />
-    <Compile Include="Freeplay\Patches\TaskAdderGamePatch.cs" />
+    <Compile Include="Freeplay\TaskAdderGamePatch.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <Compile Include="Patches\VentPatch.cs" />
     <Compile Include="Patches\VersionShowerPatch.cs" />
     <Compile Include="Utilities\Assets\WAV.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FungleAPIPlugin.cs" />
-    <Compile Include="ModPlugin.cs" />
+    <Compile Include="PluginLoading\ModPlugin.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\Patches\IntroCutscenePatch.cs" />
     <Compile Include="Role\Teams\ModdedTeam.cs" />
@@ -122,7 +129,14 @@
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\background.png" />
+    <EmbeddedResource Include="Resources\creditsBackground.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\arrowButton2.png" />
+    <EmbeddedResource Include="Resources\arrowButton1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\pluginChangerBackground.png" />
     <EmbeddedResource Include="Resources\nextButton.png" />
   </ItemGroup>
   <ItemGroup>
