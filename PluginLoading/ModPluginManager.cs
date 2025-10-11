@@ -194,7 +194,7 @@ namespace FungleAPI.PluginLoading
             }
             if (ModCredits == null)
             {
-                ModCredits = plugin.RealName;
+                ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
             }
             plugin.ModCredits = ModCredits;
             if (loadAssets != null)

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using xCloud;
 
 namespace FungleAPI.Components
 {
@@ -42,7 +43,7 @@ namespace FungleAPI.Components
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 List<string> strings = Pages[Pages.Count - 1];
-                strings.Add("[" + plugin.RealName + " v" + plugin.ModVersion + "]");
+                strings.Add((plugin == ModPlugin.AllPlugins[0] ? "" : "\n") + plugin.ModCredits);
                 if (strings.Count >= 10)
                 {
                     Pages.Add(new List<string>());
@@ -56,6 +57,7 @@ namespace FungleAPI.Components
             Arrow.SetNewAction(new Action(delegate
             {
                 Opening = !Opening;
+                CreditsText.text = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">" + FungleTranslation.CreditsText.GetString() + "</font>";
             }));
             RightButton.SetNewAction(new Action(delegate
             {
@@ -79,15 +81,14 @@ namespace FungleAPI.Components
         }
         public void Update()
         {
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Opening ? Open : Closed, Time.deltaTime * 8);
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Opening ? Open : Closed, Time.deltaTime * 12);
         }
         public void UpdatePage()
         {
-            CreditsText.text = FungleTranslation.CreditsText.GetString();
             ModsText.text = "";
             foreach (string str in Pages[Page])
             {
-                ModsText.text += str + "\n";
+                ModsText.text += str;
             }
             PageText.text = (Page + 1).ToString() + "/" + Pages.Count.ToString();
         }

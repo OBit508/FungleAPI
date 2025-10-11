@@ -59,7 +59,6 @@ namespace FungleAPI.Utilities.Assets
             arrowButton.transform.localScale = new Vector3(-0.2f, 0.2f, 0.2f);
             arrowButton.transform.localPosition = new Vector3(-2.135f, 1.7f, -0.1f);
             TextMeshPro text = new GameObject("CreditsText").AddComponent<TextMeshPro>();
-            text.text = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">Créditos:";
             text.alignment = TextAlignmentOptions.Center;
             text.characterSpacing = 7;
             text.enableWordWrapping = false;

@@ -66,6 +66,7 @@
     <Compile Include="Patches\MeetingPatch.cs" />
     <Compile Include="Networking\RPCs\RpcSendNotification.cs" />
     <Compile Include="Patches\ModManagerPatch.cs" />
+    <Compile Include="Patches\PingTrackerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Configuration\Patches\LobbyViewSettingsPanePatch.cs" />
     <Compile Include="PluginLoading\FunglePlugin.cs" />

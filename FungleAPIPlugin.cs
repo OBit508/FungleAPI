@@ -64,33 +64,7 @@ namespace FungleAPI
                 IFungleBasePlugin fungleBasePlugin = basePlugin as IFungleBasePlugin;
                 if (fungleBasePlugin != null)
                 {
-                    ModPlugin plugin = new ModPlugin();
-                    if (Plugin != null)
-                    {
-                        ModPluginManager. Register(plugin, basePlugin);
-                        List<ModPlugin> sameNamePlugins = new List<ModPlugin>();
-                        if (fungleBasePlugin.ModName != null)
-                        {
-                            plugin.ModName = fungleBasePlugin.ModName;
-                            plugin.RealName = fungleBasePlugin.ModName;
-                        }
-                        AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
-                        {
-                            if (pl.RealName == plugin.RealName)
-                            {
-                                sameNamePlugins.Add(pl);
-                            }
-                        }));
-                        if (sameNamePlugins.Count > 0)
-                        {
-                            plugin.ModName += " (" + sameNamePlugins.Count + ")";
-                        }
-                        plugin.ModVersion = fungleBasePlugin.ModVersion;
-                        AllPlugins.Add(plugin);
-                    }
-                    loadAssets += new Action(fungleBasePlugin.LoadAssets);
-                    plugin.LocalMod = new Mod(plugin);
-                    plugin.UseShipReference = fungleBasePlugin.UseShipReference;
+                    ModPluginManager.RegisterMod(basePlugin, fungleBasePlugin.ModVersion, new Action(fungleBasePlugin.LoadAssets), fungleBasePlugin.ModName, fungleBasePlugin.ModCredits).UseShipReference = fungleBasePlugin.UseShipReference;
                     fungleBasePlugin.OnRegisterInFungleAPI();
                 }
             });
@@ -128,6 +102,7 @@ namespace FungleAPI
                     ModPluginManager.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
+                    plugin.ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
                     ModPlugin.AllPlugins.Add(plugin);
                 }
