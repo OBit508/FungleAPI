@@ -73,6 +73,7 @@ namespace FungleAPI.PluginLoading
         public string ModName;
         public string ModVersion;
         public string ModCredits;
+        public string link;
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();

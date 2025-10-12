@@ -90,14 +90,6 @@ namespace FungleAPI.Utilities.Assets
             text.transform.SetParent(credits.transform);
             text.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             text.transform.localPosition = new Vector3(0, 1.9f, 0);
-            TextMeshPro modsText = new GameObject("ModsText").AddComponent<TextMeshPro>();
-            modsText.alignment = TextAlignmentOptions.Top;
-            modsText.horizontalAlignment = HorizontalAlignmentOptions.Center;
-            modsText.text = "[FungleAPI v0.2.3]\na\na\na\na\na\na\na\na\na";
-            modsText.enableWordWrapping = false;
-            modsText.transform.SetParent(credits.transform);
-            modsText.transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
-            modsText.transform.localPosition = new Vector3(0, 1.25f, -0.1f);
             TextMeshPro pageText = new GameObject("PageText").AddComponent<TextMeshPro>();
             pageText.alignment = TextAlignmentOptions.Center;
             pageText.text = "0/10";
@@ -112,6 +104,23 @@ namespace FungleAPI.Utilities.Assets
             leftButton.transform.SetParent(credits.transform);
             leftButton.transform.localPosition = new Vector3(-1, -1.8f, -0.1f);
             leftButton.transform.localScale = new Vector3(-0.3f, 0.3f, 0.3f);
+            for (int i = 0; i < 10; i++)
+            {
+                TextMeshPro modsText = new GameObject("ModText " + i.ToString()).AddComponent<TextMeshPro>();
+                modsText.alignment = TextAlignmentOptions.Top;
+                modsText.horizontalAlignment = HorizontalAlignmentOptions.Center;
+                modsText.enableWordWrapping = false;
+                modsText.transform.SetParent(credits.transform);
+                modsText.transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
+                modsText.transform.localPosition = new Vector3(0, 1.25f - i * 0.27f, -0.1f);
+                modsText.gameObject.AddComponent<PassiveButton>().ClickSound = SelectSound;
+                BoxCollider2D collider = modsText.gameObject.AddComponent<BoxCollider2D>();
+                collider.isTrigger = true;
+                collider.size = new Vector2(50, 3);
+                ButtonRolloverHandler buttonRolloverHandler = modsText.gameObject.AddComponent<ButtonRolloverHandler>();
+                buttonRolloverHandler.TargetText = modsText;
+                buttonRolloverHandler.OutColor = Color.white;
+            }
         }
         private static void CreatePluginChanger()
         {

@@ -48,7 +48,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.2.3";
+        public const string ModV = "0.2.4";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -104,6 +104,7 @@ namespace FungleAPI
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
+                    plugin.link = "https://github.com/OBit508/FungleAPI";
                     ModPlugin.AllPlugins.Add(plugin);
                 }
                 return plugin;

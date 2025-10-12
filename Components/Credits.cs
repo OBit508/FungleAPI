@@ -22,29 +22,36 @@ namespace FungleAPI.Components
         public PassiveButton RightButton;
         public PassiveButton LeftButton;
         public TextMeshPro CreditsText;
-        public TextMeshPro ModsText;
         public TextMeshPro PageText;
         public int Page;
-        public List<List<string>> Pages;
+        public List<List<(string str, string link)>> Pages;
+        public List<TextMeshPro> Texts;
+        public List<PassiveButton> Buttons;
+        public List<ButtonRolloverHandler> Rollovers;
+        public List<BoxCollider2D> Colliders;
+        public Color linkColor = new Color32(52, 152, 235, byte.MaxValue);
         public void Awake()
         {
             transform.localPosition = Closed;
-            Pages = new List<List<string>>() { new List<string>() };
+            Pages = new List<List<(string str, string link)>>() { new List<(string str, string link)>() };
+            Texts = new List<TextMeshPro>();
+            Buttons = new List<PassiveButton>();
+            Rollovers = new List<ButtonRolloverHandler>();
+            Colliders = new List<BoxCollider2D>();
             TextMeshPro[] texts = GetComponentsInChildren<TextMeshPro>();
             PassiveButton[] buttons = GetComponentsInChildren<PassiveButton>();
             Arrow = buttons[0];
             RightButton = buttons[1];
             LeftButton = buttons[2];
             CreditsText = texts[0];
-            ModsText = texts[1];
-            PageText = texts[2];
+            PageText = texts[1];
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
-                List<string> strings = Pages[Pages.Count - 1];
-                strings.Add((plugin == ModPlugin.AllPlugins[0] ? "" : "\n") + plugin.ModCredits);
+                List<(string str, string link)> strings = Pages[Pages.Count - 1];
+                strings.Add((plugin.ModCredits, plugin.link));
                 if (strings.Count >= 10)
                 {
-                    Pages.Add(new List<string>());
+                    Pages.Add(new List<(string str, string link)>());
                 }
             }
             Arrow.SetNewAction(new Action(delegate
@@ -70,6 +77,13 @@ namespace FungleAPI.Components
                 Page--;
                 UpdatePage();
             }));
+            for (int i = 2; i < texts.Count(); i++)
+            {
+                Texts.Add(texts[i]);
+                Buttons.Add(texts[i].GetComponent<PassiveButton>());
+                Rollovers.Add(texts[i].GetComponent<ButtonRolloverHandler>());
+                Colliders.Add(texts[i].GetComponent<BoxCollider2D>());
+            }
             UpdatePage();
         }
         public void Update()
@@ -78,10 +92,27 @@ namespace FungleAPI.Components
         }
         public void UpdatePage()
         {
-            ModsText.text = "";
-            foreach (string str in Pages[Page])
+            foreach (TextMeshPro text in Texts)
             {
-                ModsText.text += str;
+                text.text = null;
+            }
+            List<(string str, string link)> currentPage = Pages[Page];
+            int count = Mathf.Min(Texts.Count, currentPage.Count);
+            for (int i = 0; i < count; i++)
+            {
+                (string str, string link) pair = currentPage[i];
+                Texts[i].text = pair.str;
+                Rollovers[i].OverColor = !string.IsNullOrEmpty(pair.link) ? linkColor : Color.white;
+                Colliders[i].size = new Vector2(Mathf.Min(2.5f * pair.str.Length, 50), 3);
+                string currentLink = pair.link;
+                Buttons[i].enabled = !string.IsNullOrEmpty(currentLink);
+                Buttons[i].SetNewAction(() =>
+                {
+                    if (!string.IsNullOrEmpty(currentLink))
+                    {
+                        Application.OpenURL(currentLink);
+                    }
+                });
             }
             PageText.text = (Page + 1).ToString() + "/" + Pages.Count.ToString();
         }
