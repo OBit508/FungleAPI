@@ -54,7 +54,7 @@ namespace FungleAPI.Configuration
         {
             int count = team.DefaultCount > (uint)int.MaxValue ? int.MaxValue : (int)team.DefaultCount;
             int priority = team.DefaultPriority > 500 ? 500 : (int)team.DefaultPriority;
-            localCount = configFile.Bind<int>(name, "Count", team.GetType() != typeof(CrewmateTeam) ? count : 1);
+            localCount = configFile.Bind<int>(name, "Count", count);
             onlineCount = localCount.Value;
             localPriority = configFile.Bind<int>(name, "Priority", team.GetType() != typeof(CrewmateTeam) ? priority : -1);
             onlinePriority = localPriority.Value;

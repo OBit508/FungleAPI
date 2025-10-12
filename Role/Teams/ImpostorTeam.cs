@@ -33,6 +33,10 @@ namespace FungleAPI.Role.Teams
             CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.ImpostorRolesHeader, 61);
             categoryHeaderRoleVariant.Title.enabled = true;
+            for (int i = 2; i < categoryHeaderRoleVariant.transform.GetChildCount(); i++)
+            {
+                categoryHeaderRoleVariant.transform.GetChild(i).gameObject.SetActive(false);
+            }
             return categoryHeaderRoleVariant;
         }
         public override RoleTypes DefaultRole => RoleTypes.Impostor;

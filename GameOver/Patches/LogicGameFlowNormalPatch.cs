@@ -172,7 +172,7 @@ namespace FungleAPI.GameOver.Patches
                 if (TutorialManager.InstanceExists)
                 {
                     GameData.Instance.RecomputeTaskCounts();
-                    if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks)
+                    if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && PlayerControl.LocalPlayer.Data.Role.TasksCountTowardProgress)
                     {
                         DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverTaskWin));
                         ShipStatus.Instance.Begin();

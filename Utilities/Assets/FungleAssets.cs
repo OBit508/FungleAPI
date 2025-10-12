@@ -22,19 +22,42 @@ namespace FungleAPI.Utilities.Assets
         public static Sprite ArrowButton1;
         public static Sprite ArrowButton2;
         public static Sprite CreditsBackground;
+        public static AudioClip HoverSound;
+        public static AudioClip SelectSound;
         public static Prefab<GameObject> PluginChangerPrefab;
         public static Prefab<GameObject> CreditsPrefab;
+        public static Prefab<GameObject> CogPrefab;
         public static void LoadAll()
         {
-            Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 200f);
+            Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 400f);
             Empty = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
             PluginChangerBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.pluginChangerBackground", 100);
             NextButton = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.nextButton", 100);
             ArrowButton1 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton1", 100);
             ArrowButton2 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton2", 100);
             CreditsBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.creditsBackground", 100);
+            HoverSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Hover", "UI_Hover");
+            SelectSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Select", "UI_Select");
             CreatePluginChanger();
             CreateCredits();
+            CreateCog();
+        }
+        private static void CreateCog()
+        {
+            CogPrefab = new Prefab<GameObject>(new GameObject("Cog"));
+            PassiveButton cog = CogPrefab.prefab.AddComponent<PassiveButton>();
+            cog.ClickSound = SelectSound;
+            BoxCollider2D boxCollider2D = cog.gameObject.AddComponent<BoxCollider2D>();
+            boxCollider2D.isTrigger = true;
+            SpriteRenderer rend = cog.gameObject.AddComponent<SpriteRenderer>();
+            rend.sprite = Cog;
+            rend.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            ButtonRolloverHandler buttonRolloverHandler = cog.gameObject.AddComponent<ButtonRolloverHandler>();
+            buttonRolloverHandler.Target = rend;
+            buttonRolloverHandler.OutColor = Color.white;
+            buttonRolloverHandler.OverColor = Color.gray;
+            cog.gameObject.layer = 5;
+            cog.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         }
         private static void CreateCredits()
         {
@@ -43,6 +66,8 @@ namespace FungleAPI.Utilities.Assets
             credits.gameObject.layer = 5;
             credits.gameObject.AddComponent<SpriteRenderer>().sprite = CreditsBackground;
             PassiveButton arrowButton = new GameObject("ArrowButton").AddComponent<PassiveButton>();
+            arrowButton.ClickSound = SelectSound;
+            arrowButton.HoverSound = HoverSound;
             BoxCollider2D boxCollider2D = arrowButton.gameObject.AddComponent<BoxCollider2D>();
             boxCollider2D.isTrigger = true;
             boxCollider2D.size = new Vector2(2, 4);
@@ -113,6 +138,8 @@ namespace FungleAPI.Utilities.Assets
         public static PassiveButton CreateNextButton(string name)
         {
             PassiveButton button = new GameObject(name).AddComponent<PassiveButton>();
+            button.ClickSound = SelectSound;
+            button.HoverSound = HoverSound;
             BoxCollider2D boxCollider2D = button.gameObject.AddComponent<BoxCollider2D>();
             boxCollider2D.isTrigger = true;
             boxCollider2D.size *= 2;

@@ -7,6 +7,7 @@ using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.IO;
+using Il2CppSystem.Resources;
 using Il2CppSystem.Runtime.Serialization;
 using Mono.Cecil;
 using Rewired.UI;
@@ -51,28 +52,52 @@ namespace FungleAPI.Utilities.Assets
         }
         public static AudioClip LoadAudio(ModPlugin plugin, string resource, string clipName, bool dontUnload = true)
         {
-            resource = resource + ".wav";
+            resource += ".wav";
             System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
-            byte[] array = new byte[stream.Length];
-            stream.Read(array, 0, array.Length);
-            WAV wav = new WAV(array);
-            AudioClip audioClip = AudioClip.Create(resource, wav.SampleCount, wav.ChannelCount, wav.Frequency, false);
-            audioClip.SetData(wav.LeftChannel, 0);
+            System.IO.BinaryReader reader = new System.IO.BinaryReader(stream);
+            reader.BaseStream.Seek(12, System.IO.SeekOrigin.Begin);
+            int channels = 0;
+            int sampleRate = 0;
+            int bitsPerSample = 0;
+            byte[] audioData = null;
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                string chunkId = Encoding.ASCII.GetString(reader.ReadBytes(4));
+                int chunkSize = reader.ReadInt32();
+
+                if (chunkId == "fmt ")
+                {
+                    reader.ReadInt16();
+                    channels = reader.ReadInt16();
+                    sampleRate = reader.ReadInt32();
+                    reader.ReadInt32();
+                    reader.ReadInt16();
+                    bitsPerSample = reader.ReadInt16();
+                }
+                else if (chunkId == "data")
+                {
+                    audioData = reader.ReadBytes(chunkSize);
+                    break;
+                }
+                else
+                {
+                    reader.BaseStream.Seek(chunkSize, System.IO.SeekOrigin.Current);
+                }
+            }
+            float[] samples = ConvertPcmToFloat(audioData, bitsPerSample);
+            AudioClip clip = AudioClip.Create(clipName, samples.Length / channels, channels, sampleRate, false);
             if (dontUnload)
             {
-                audioClip.DontUnload();
+                clip.DontUnload();
             }
-            return audioClip;
+            clip.SetData(samples, 0);
+            return clip;
         }
         public static List<Sprite> LoadSpriteSheet(ModPlugin plugin, string resource, float pixelsPerUnit, int columnsY, int columnsX, bool skipEmpty = true, bool dontUnload = true)
         {
             List<Sprite> sprites = new List<Sprite>();
             resource += ".png";
             System.IO.Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource);
-            if (stream == null)
-            {
-                return null;
-            }
             Texture2D texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
             System.IO.MemoryStream memoryStream = new System.IO.MemoryStream();
             stream.CopyTo(memoryStream);
@@ -146,6 +171,27 @@ namespace FungleAPI.Utilities.Assets
                 sprite.DontUnload();
             }
             return sprite;
+        }
+        private static float[] ConvertPcmToFloat(byte[] data, int bitsPerSample)
+        {
+            int sampleSize = bitsPerSample / 8;
+            int sampleCount = data.Length / sampleSize;
+            float[] samples = new float[sampleCount];
+
+            for (int i = 0; i < sampleCount; i++)
+            {
+                int index = i * sampleSize;
+                samples[i] = bitsPerSample switch
+                {
+                    8 => (data[index] - 128) / 128f,
+                    16 => BitConverter.ToInt16(data, index) / 32768f,
+                    24 => (((data[index + 2] << 24) | (data[index + 1] << 16) | (data[index] << 8)) >> 8) / 8388608f,
+                    32 => BitConverter.ToInt32(data, index) / 2147483648f,
+                    _ => 0
+                };
+            }
+
+            return samples;
         }
         private static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable)
         {

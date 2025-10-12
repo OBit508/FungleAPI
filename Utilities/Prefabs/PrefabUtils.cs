@@ -54,9 +54,13 @@ namespace FungleAPI.Utilities.Prefabs
                 }
             }
         } 
-        public static T Prefab<T>(int index = 0) where T : UnityEngine.Object
+        public static T Prefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object
         {
-            return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T)))[index].SafeCast<T>();
+            if (predicate == null)
+            {
+                predicate = new Predicate<T>(x => x);
+            }
+            return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T))).FirstOrDefault(x => predicate(x.SafeCast<T>())).SafeCast<T>();
         }
         public static SkeldShipStatus SkeldPrefab;
         public static MiraShipStatus MiraPrefab;

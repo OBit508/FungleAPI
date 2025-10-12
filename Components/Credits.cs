@@ -28,8 +28,6 @@ namespace FungleAPI.Components
         public List<List<string>> Pages;
         public void Awake()
         {
-            AudioClip hoverSound = EOSManager.Instance.askToMergeAccount.NotRightNowButton.GetComponent<ButtonRolloverHandler>().HoverSound;
-            AudioClip clickSound = EOSManager.Instance.askToMergeAccount.NotRightNowButton.ClickSound;
             transform.localPosition = Closed;
             Pages = new List<List<string>>() { new List<string>() };
             TextMeshPro[] texts = GetComponentsInChildren<TextMeshPro>();
@@ -48,11 +46,6 @@ namespace FungleAPI.Components
                 {
                     Pages.Add(new List<string>());
                 }
-            }
-            foreach (PassiveButton button in buttons)
-            {
-                button.HoverSound = hoverSound;
-                button.ClickSound = clickSound;
             }
             Arrow.SetNewAction(new Action(delegate
             {

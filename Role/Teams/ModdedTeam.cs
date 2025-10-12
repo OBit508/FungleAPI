@@ -75,6 +75,10 @@ namespace FungleAPI.Role.Teams
             categoryHeaderRoleVariant.Background.color = Helpers.Light(TeamColor);
             categoryHeaderRoleVariant.Title.color = Helpers.Dark(categoryHeaderRoleVariant.Background.color);
             categoryHeaderRoleVariant.Title.enabled = true;
+            for (int i = 2; i < categoryHeaderRoleVariant.transform.GetChildCount(); i++)
+            {
+                categoryHeaderRoleVariant.transform.GetChild(i).gameObject.SetActive(false);
+            }
             return categoryHeaderRoleVariant;
         }
         public virtual void Initialize()

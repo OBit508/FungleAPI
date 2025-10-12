@@ -21,15 +21,11 @@ namespace FungleAPI.Components
         public PassiveButton LeftButton;
         public void Awake()
         {
-            AudioClip hoverSound = EOSManager.Instance.askToMergeAccount.NotRightNowButton.GetComponent<ButtonRolloverHandler>().HoverSound;
-            AudioClip clickSound = EOSManager.Instance.askToMergeAccount.NotRightNowButton.ClickSound;
             Text = GetComponentInChildren<TextMeshPro>();
             RightButton = GetComponentsInChildren<PassiveButton>()[0];
             LeftButton = GetComponentsInChildren<PassiveButton>()[1];
             CurrentPlugin = FungleAPIPlugin.Plugin;
             Text.text = CurrentPlugin.ModName;
-            RightButton.ClickSound = clickSound;
-            RightButton.GetComponent<ButtonRolloverHandler>().HoverSound = hoverSound;
             RightButton.SetNewAction(new Action(delegate
             {
                 if ((CurrentIndex + 1) >= ModPlugin.AllPlugins.Count)
@@ -44,8 +40,6 @@ namespace FungleAPI.Components
                 Text.text = CurrentPlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
-            LeftButton.ClickSound = clickSound;
-            LeftButton.GetComponent<ButtonRolloverHandler>().HoverSound = hoverSound;
             LeftButton.SetNewAction(new Action(delegate
             {
                 if ((CurrentIndex - 1) <= -1)

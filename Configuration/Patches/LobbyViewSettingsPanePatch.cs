@@ -153,49 +153,54 @@ namespace FungleAPI.Configuration.Patches
             List<RoleBehaviour> list = new List<RoleBehaviour>();
             for (int i = 0; i < teams.Count; i++)
             {
-                CategoryHeaderRoleVariant categoryHeaderRoleVariant = teams.Keys.ToArray()[i].CreateCategoryHeaderRoleVariant(__instance.settingsContainer);
-                categoryHeaderRoleVariant.transform.localScale = Vector3.one;
-                categoryHeaderRoleVariant.transform.localPosition = new Vector3(0.09f, num, -2f);
-                __instance.settingsInfo.Add(categoryHeaderRoleVariant.gameObject);
-                lastItemHeight = 0.696f;
-                num -= lastItemHeight;
-                minY = Mathf.Min(minY, num);
-                foreach (RoleBehaviour roleBehaviour in teams[teams.Keys.ToArray()[i]])
+                List<RoleBehaviour> validRoles = teams[teams.Keys.ToArray()[i]];
+                validRoles.RemoveAll(r => r.CustomRole() != null && r.CustomRole().HideRole);
+                if (validRoles.Count > 0)
                 {
-                    if (roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.Crewmate && roleBehaviour.Role != RoleTypes.Impostor && (roleBehaviour.CustomRole() == null || roleBehaviour.CustomRole() != null && !roleBehaviour.CustomRole().HideRole))
+                    CategoryHeaderRoleVariant categoryHeaderRoleVariant = teams.Keys.ToArray()[i].CreateCategoryHeaderRoleVariant(__instance.settingsContainer);
+                    categoryHeaderRoleVariant.transform.localScale = Vector3.one;
+                    categoryHeaderRoleVariant.transform.localPosition = new Vector3(0.09f, num, -2f);
+                    __instance.settingsInfo.Add(categoryHeaderRoleVariant.gameObject);
+                    lastItemHeight = 0.696f;
+                    num -= lastItemHeight;
+                    minY = Mathf.Min(minY, num);
+                    foreach (RoleBehaviour roleBehaviour in validRoles)
                     {
-                        int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
-                        int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
-                        bool disabled = numPerGame == 0;
-                        ViewSettingsInfoPanelRoleVariant viewPanel = UnityEngine.Object.Instantiate(__instance.infoPanelRoleOrigin);
-                        viewPanel.transform.SetParent(__instance.settingsContainer);
-                        viewPanel.transform.localScale = Vector3.one;
-                        viewPanel.transform.localPosition = new Vector3(num2, num, -2f);
-                        if (!disabled)
+                        if (roleBehaviour.Role != RoleTypes.CrewmateGhost && roleBehaviour.Role != RoleTypes.ImpostorGhost && roleBehaviour.Role != RoleTypes.Crewmate && roleBehaviour.Role != RoleTypes.Impostor && (roleBehaviour.CustomRole() == null || roleBehaviour.CustomRole() != null && !roleBehaviour.CustomRole().HideRole))
                         {
-                            list.Add(roleBehaviour);
+                            int chancePerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetChancePerGame(roleBehaviour.Role);
+                            int numPerGame = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.GetNumPerGame(roleBehaviour.Role);
+                            bool disabled = numPerGame == 0;
+                            ViewSettingsInfoPanelRoleVariant viewPanel = UnityEngine.Object.Instantiate(__instance.infoPanelRoleOrigin);
+                            viewPanel.transform.SetParent(__instance.settingsContainer);
+                            viewPanel.transform.localScale = Vector3.one;
+                            viewPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                            if (!disabled)
+                            {
+                                list.Add(roleBehaviour);
+                            }
+                            viewPanel.SetInfo(
+                                roleBehaviour.NiceName,
+                                numPerGame,
+                                chancePerGame,
+                                61,
+                                roleBehaviour.CustomRole() == null
+                                    ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed
+                                    : roleBehaviour.CustomRole().RoleColor,
+                                roleBehaviour.RoleIconSolid,
+                                pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? i == 0 : true,
+                                disabled
+                            );
+                            if (pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
+                            {
+                                viewPanel.chanceBackground.color = Helpers.Dark(roleBehaviour.TeamColor);
+                                viewPanel.background.color = viewPanel.chanceBackground.color;
+                            }
+                            __instance.settingsInfo.Add(viewPanel.gameObject);
+                            lastItemHeight = 0.664f;
+                            num -= lastItemHeight;
+                            minY = Mathf.Min(minY, num);
                         }
-                        viewPanel.SetInfo(
-                            roleBehaviour.NiceName,
-                            numPerGame,
-                            chancePerGame,
-                            61,
-                            roleBehaviour.CustomRole() == null
-                                ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed
-                                : roleBehaviour.CustomRole().RoleColor,
-                            roleBehaviour.RoleIconSolid,
-                            pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? i == 0 : true,
-                            disabled
-                        );
-                        if (pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
-                        {
-                            viewPanel.chanceBackground.color = Helpers.Dark(roleBehaviour.TeamColor);
-                            viewPanel.background.color = viewPanel.chanceBackground.color;
-                        }
-                        __instance.settingsInfo.Add(viewPanel.gameObject);
-                        lastItemHeight = 0.664f;
-                        num -= lastItemHeight;
-                        minY = Mathf.Min(minY, num);
                     }
                 }
             }

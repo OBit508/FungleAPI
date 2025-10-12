@@ -102,9 +102,17 @@ namespace FungleAPI.Role
         public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {
         }
+        public override void SpawnTaskHeader(PlayerControl playerControl)
+        {
+        }
         public void Start()
         {
-            buttonManager = RoleManager.Instance.AllRoles.FirstOrDefault(r => r.Role == RoleTypes.CrewmateGhost).buttonManager;
+            CrewmateGhostRole crewmateGhost = RoleManager.Instance.AllRoles.FirstOrDefault(r => r.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>();
+            if (crewmateGhost != null)
+            {
+                HauntMenu = crewmateGhost.HauntMenu;
+                Ability = crewmateGhost.Ability;
+            }
         }
         public override bool DidWin(GameOverReason gameOverReason)
         {

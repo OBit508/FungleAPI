@@ -24,6 +24,28 @@ namespace FungleAPI.Role.Patches
                 targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(targetPlayer.Data.Role.Role);
             }
         }
+        [HarmonyPatch("SetRole")]
+        [HarmonyPostfix]
+        public static void SetRolePostfix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
+        {
+            RoleBehaviour role = targetPlayer.Data.Role;
+            if (role != null && role.CustomRole() != null)
+            {
+                ICustomRole customRole = role.CustomRole();
+                role.StringName = customRole.RoleName;
+                role.BlurbName = customRole.RoleBlur;
+                role.BlurbNameMed = customRole.RoleBlurMed;
+                role.BlurbNameLong = customRole.RoleBlurLong;
+                role.NameColor = customRole.RoleColor;
+                role.AffectedByLightAffectors = customRole.IsAffectedByLightOnAirship;
+                role.CanUseKillButton = customRole.UseVanillaKillButton;
+                role.CanVent = customRole.CanUseVent;
+                role.TasksCountTowardProgress = customRole.CompletedTasksCountForProgress;
+                role.RoleScreenshot = customRole.Screenshot;
+                role.RoleIconSolid = customRole.IconSolid;
+                role.RoleIconWhite = customRole.IconWhite;
+            }
+        }
         [HarmonyPatch("AssignRoleOnDeath")]
         [HarmonyPrefix]
         public static bool AssignRoleOnDeathPrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] bool specialRolesAllowed)

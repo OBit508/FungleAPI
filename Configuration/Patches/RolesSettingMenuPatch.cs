@@ -135,18 +135,23 @@ namespace FungleAPI.Configuration.Patches
             Dictionary<ModdedTeam, List<RoleBehaviour>> teams = GameSettingMenuPatch.pluginChanger.CurrentPlugin.GetTeamsAndRoles();
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in teams)
             {
-                CategoryHeaderEditRole categoryHeaderEditRole = pair.Key.CreatCategoryHeaderEditRole(menu.RoleChancesSettings.transform);
-                categoryHeaderEditRole.transform.localPosition = new Vector3(4.986f, num, -2f);
-                Headers.Add(categoryHeaderEditRole);
-                num -= 0.522f;
-                foreach (RoleBehaviour role in pair.Value)
+                List<RoleBehaviour> validRoles = pair.Value;
+                validRoles.RemoveAll(r => r.CustomRole() != null && r.CustomRole().HideRole);
+                if (validRoles.Count > 0)
                 {
-                    if (role.CustomRole() != null)
+                    CategoryHeaderEditRole categoryHeaderEditRole = pair.Key.CreatCategoryHeaderEditRole(menu.RoleChancesSettings.transform);
+                    categoryHeaderEditRole.transform.localPosition = new Vector3(4.986f, num, -2f);
+                    Headers.Add(categoryHeaderEditRole);
+                    num -= 0.522f;
+                    foreach (RoleBehaviour role in validRoles)
                     {
-                        menu.CreateQuotaOption(role.CustomRole(), ref num);
+                        if (role.CustomRole() != null)
+                        {
+                            menu.CreateQuotaOption(role.CustomRole(), ref num);
+                        }
                     }
+                    num -= 0.22f;
                 }
-                num -= 0.22f;
             }
         }
         public static void CreateQuotaOption(this RolesSettingsMenu menu, ICustomRole role, ref float yPos)
@@ -173,19 +178,16 @@ namespace FungleAPI.Configuration.Patches
             int chance = role.CountAndChance.GetChance();
             option.countText.text = count.ToString();
             option.chanceText.text = chance.ToString();
-            GameOptionButton cog = UnityEngine.Object.Instantiate(option.ChanceMinusBtn, option.transform);
-            cog.transform.GetChild(0).gameObject.SetActive(false);
-            cog.buttonSprite.sprite = FungleAssets.Cog;
-            cog.transform.localPosition = new Vector3(-1.278f, -0.3f, 0f);
-            cog.transform.localScale = new Vector3(1, 1, 1);
-            cog.SetNewAction(delegate
+            if (role.Options.Count > 0)
             {
-                ChangeTab(menu, role);
-            });
-            cog.gameObject.AddComponent<Updater>().update = new Action(delegate
-            {
-                cog.SetInteractable(role.Options.Count > 0);
-            });
+                PassiveButton cog = FungleAssets.CogPrefab.Instantiate(option.transform).GetComponent<PassiveButton>();
+                cog.transform.localPosition = new Vector3(-1.278f, -0.3f, 0f);
+                cog.ClickMask = menu.ButtonClickMask;
+                cog.SetNewAction(delegate
+                {
+                    ChangeTab(menu, role);
+                });
+            }
             option.gameObject.SetActive(true);
             menu.roleChances.Add(option);
             yPos += -0.43f;
