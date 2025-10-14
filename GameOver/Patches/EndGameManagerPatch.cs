@@ -62,14 +62,14 @@ namespace FungleAPI.GameOver.Patches
             __instance.WinText.text = gameOver.WinText;
             __instance.BackgroundBar.material.SetColor("_Color", gameOver.BackgroundColor);
             int num = Mathf.CeilToInt(7.5f);
-            List<CachedPlayerData> list = EndGameResult.CachedWinners.OrderBy(delegate (CachedPlayerData b)
+            List<CachedPlayerData> list = gameOver.Winners.OrderBy(delegate (CachedPlayerData b)
             {
                 if (!b.IsYou)
                 {
                     return 0;
                 }
                 return -1;
-            }).ToSystemList();
+            }).ToList();
             for (int i = 0; i < list.Count; i++)
             {
                 CachedPlayerData cachedPlayerData2 = list[i];

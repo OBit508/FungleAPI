@@ -45,7 +45,7 @@ namespace FungleAPI.Utilities
             List<DeadBody> bodies = new List<DeadBody>();
             foreach (DeadBody body in AllDeadBodies)
             {
-                if (body != null && !PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
+                if (body != null && body.myCollider.enabled && !PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
                 {
                     bodies.Add(body);
                 }
