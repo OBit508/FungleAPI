@@ -10,19 +10,6 @@ namespace FungleAPI.Utilities.Prefabs
 {
     public class Prefab<T> where T : UnityEngine.Object
     {
-        private static Transform __prefabs;
-        public static Transform Prefabs
-        {
-            get
-            {
-                if (__prefabs == null)
-                {
-                    __prefabs = new GameObject("Prefabs").DontDestroy().transform;
-                    __prefabs.gameObject.SetActive(false);
-                }
-                return __prefabs;
-            }
-        }
         public T prefab;
         public Prefab(T prefab)
         {
@@ -30,11 +17,11 @@ namespace FungleAPI.Utilities.Prefabs
             prefab.DontDestroy();
             if (prefab.SafeCast<Component>() != null)
             {
-                prefab.SafeCast<Component>().transform.SetParent(Prefabs);
+                prefab.SafeCast<Component>().transform.SetParent(PrefabUtils.Prefabs);
             }
             else if (prefab.SafeCast<GameObject>())
             {
-                prefab.SafeCast<GameObject>().transform.SetParent(Prefabs);
+                prefab.SafeCast<GameObject>().transform.SetParent(PrefabUtils.Prefabs);
             }
         }
         public T Instantiate()

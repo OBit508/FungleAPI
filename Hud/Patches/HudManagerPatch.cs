@@ -64,11 +64,14 @@ namespace FungleAPI.Hud.Patches
             __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
             __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            if (role.CustomRole() != null)
             {
-                if (button.Button != null)
+                foreach (CustomAbilityButton button in role.CustomRole().Buttons)
                 {
-                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button));
+                    if (button.Button != null)
+                    {
+                        button.Button.ToggleVisible(button.Active && isActive);
+                    }
                 }
             }
         }

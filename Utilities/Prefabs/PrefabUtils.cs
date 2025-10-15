@@ -13,6 +13,19 @@ namespace FungleAPI.Utilities.Prefabs
 {
     public static class PrefabUtils
     {
+        private static Transform __prefabs;
+        internal static Transform Prefabs
+        {
+            get
+            {
+                if (__prefabs == null)
+                {
+                    __prefabs = new GameObject("Prefabs").DontDestroy().transform;
+                    __prefabs.gameObject.SetActive(false);
+                }
+                return __prefabs;
+            }
+        }
         internal static void ChangePrefab(AssetReference shipRef)
         {
             switch (shipRef.Asset.name)
