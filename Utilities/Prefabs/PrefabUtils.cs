@@ -28,13 +28,25 @@ namespace FungleAPI.Utilities.Prefabs
         }
         internal static void ChangePrefab(AssetReference shipRef)
         {
-            switch (shipRef.Asset.name)
+            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<SkeldShipStatus>() != null)
             {
-                case "SkeldShip": SkeldPrefab = shipRef.Asset.SafeCast<SkeldShipStatus>(); break;
-                case "MiraShip": MiraPrefab = shipRef.Asset.SafeCast<MiraShipStatus>(); break;
-                case "PolusShip": PolusPrefab = shipRef.Asset.SafeCast<PolusShipStatus>(); break;
-                case "Airship": AirshipPrefab = shipRef.Asset.SafeCast<AirshipStatus>(); break;
-                case "FungleShip": FunglePrefab = shipRef.Asset.SafeCast<FungleShipStatus>(); break;
+                SkeldPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<SkeldShipStatus>();
+            }
+            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<MiraShipStatus>() != null)
+            {
+                MiraPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<MiraShipStatus>();
+            }
+            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<PolusShipStatus>() != null)
+            {
+                PolusPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<PolusShipStatus>();
+            }
+            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<AirshipStatus>() != null)
+            {
+                AirshipPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<AirshipStatus>();
+            }
+            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<FungleShipStatus>() != null)
+            {
+                FunglePrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<FungleShipStatus>();
             }
         }
         public static System.Collections.IEnumerator CoLoadShipPrefabs()
@@ -47,12 +59,15 @@ namespace FungleAPI.Utilities.Prefabs
                     while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged" && shipRef.AssetGUID != "AprilShip")
                     {
                         AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
-                        if (!op.IsValid())
+                        while (op.Status == AsyncOperationStatus.None)
                         {
-                            yield return new WaitForSeconds(3);
+                            yield return null;
+                        }
+                        if (op.Status == AsyncOperationStatus.Succeeded)
+                        {
+                            ChangePrefab(shipRef);
                         }
                     }
-                    ChangePrefab(shipRef);
                 }
             }
             else
