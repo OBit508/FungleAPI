@@ -19,8 +19,8 @@ namespace FungleAPI.Components
             Vector3 center = @object.Collider.bounds.center;
             Vector3 position = transform.position;
             float num = Vector2.Distance(center, position);
-            canUse = num <= UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false);
-            couldUse = (Predicate == null || Predicate != null && Predicate(PlayerControl.LocalPlayer));
+            couldUse = Predicate == null || Predicate != null && Predicate(PlayerControl.LocalPlayer);
+            canUse = num <= UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false) && couldUse;
             return num;
         }
         public override void Use()
