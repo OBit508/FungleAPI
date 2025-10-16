@@ -27,7 +27,16 @@ namespace FungleAPI.Hud.Patches
             {
                 __instance.StartCoroutine(__instance.CoShowIntro());
             }
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            IEnumerable<CustomAbilityButton> priorityToCreate = Enumerable.Empty<CustomAbilityButton>();
+            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
+            {
+                if (role.CustomRole() != null)
+                {
+                    priorityToCreate = priorityToCreate.Concat(role.CustomRole().Buttons.FindAll(b => !priorityToCreate.Contains(b)));
+                }
+            }
+            priorityToCreate = priorityToCreate.Concat(CustomAbilityButton.Buttons.Values.ToList().FindAll(b => !priorityToCreate.Contains(b)));
+            foreach (CustomAbilityButton button in priorityToCreate)
             {
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
@@ -64,14 +73,11 @@ namespace FungleAPI.Hud.Patches
             __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
             __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
-            if (role.CustomRole() != null)
+            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
-                foreach (CustomAbilityButton button in role.CustomRole().Buttons)
+                if (button.Button != null)
                 {
-                    if (button.Button != null)
-                    {
-                        button.Button.ToggleVisible(button.Active && isActive);
-                    }
+                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button));
                 }
             }
         }

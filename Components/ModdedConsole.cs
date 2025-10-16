@@ -15,17 +15,12 @@ namespace FungleAPI.Components
     {
         public override float CanUse(NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
-            bool flag = true;
-            if (pc.IsDead)
-            {
-                flag = DeadsCanUse;
-            }
             PlayerControl @object = pc.Object;
             Vector3 center = @object.Collider.bounds.center;
             Vector3 position = transform.position;
             float num = Vector2.Distance(center, position);
             canUse = num <= UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false);
-            couldUse = flag;
+            couldUse = (Predicate == null || Predicate != null && Predicate(PlayerControl.LocalPlayer));
             return num;
         }
         public override void Use()
@@ -33,12 +28,7 @@ namespace FungleAPI.Components
             SystemConsole c = HudManager.Instance.UseButton.currentTarget.SafeCast<SystemConsole>();
             if (c != null && (Vector2.Distance(PlayerControl.LocalPlayer.transform.position, transform.position) <= UsableDistance || c == this) && !PhysicsHelpers.AnythingBetween(PlayerControl.LocalPlayer.Collider, PlayerControl.LocalPlayer.Collider.bounds.center, transform.position, Constants.ShipOnlyMask, false) && !Minigame.Instance)
             {
-                bool flag = true;
-                if (PlayerControl.LocalPlayer.Data.IsDead)
-                {
-                    flag = DeadsCanUse;
-                }
-                if (flag)
+                if (Predicate == null || Predicate != null && Predicate(PlayerControl.LocalPlayer))
                 {
                     OnUse?.Invoke();
                 }
@@ -68,24 +58,7 @@ namespace FungleAPI.Components
             }
         }
         public Action OnUse;
-        public bool DeadsCanUse;
+        public Predicate<PlayerControl> Predicate;
         public Color OutlineColor;
-        public static ModdedConsole CreateConsole(float distance, bool deadsCanUse, Action onUse, Sprite sprite)
-        {
-            ModdedConsole console = new GameObject("CustomConsole").AddComponent<ModdedConsole>();
-            console.gameObject.layer = 12;
-            console.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
-            console.Image = console.gameObject.AddComponent<SpriteRenderer>();
-            console.gameObject.AddComponent<PassiveButton>().SetNewAction(console.Use);
-            console.MinigamePrefab = RoleManager.Instance.AllRoles.ToSystemList().FirstOrDefault(obj => obj.Role == AmongUs.GameOptions.RoleTypes.Scientist).SafeCast<ScientistRole>().VitalsPrefab;
-            console.Image.material = new Material(Shader.Find("Sprites/Outline"));
-            console.DeadsCanUse = deadsCanUse;
-            console.OnUse = onUse;
-            console.Image.sprite = sprite;
-            console.usableDistance = distance;
-            console.transform.localScale = Vector3.one;
-            console.transform.position = Vector3.zero;
-            return console;
-        }
     }
 }
