@@ -56,7 +56,11 @@ namespace FungleAPI.Configuration.Attributes
         public override object GetReturnedValue()
         {
             Type type = Property.PropertyType;
-            if (type == typeof(int) || type == typeof(float))
+            if (type == typeof(int))
+            {
+                return int.Parse(GetValue());
+            }
+            else if (type == typeof(float))
             {
                 return float.Parse(GetValue());
             }

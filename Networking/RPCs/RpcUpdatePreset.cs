@@ -24,7 +24,7 @@ namespace FungleAPI.Networking.RPCs
     {
         public override void Write(MessageWriter writer, PresetV1 value)
         {
-            writer.Write(File.ReadAllText(value.Path));
+            writer.Write(JsonSerializer.Serialize(value));
             HudManager.Instance.Notifier.AddSettingsChangeMessage(StringNames.ModeLabel, value.ToString(), false, RoleTypes.Crewmate);
         }
         public override void Handle(MessageReader reader)

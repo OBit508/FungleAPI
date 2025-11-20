@@ -122,7 +122,7 @@ namespace FungleAPI.Hud
         }
         public virtual void Reset(bool creating = false)
         {
-            Timer = !creating ? Cooldown : AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay ? 0 : InitialCooldown;
+            Timer = !creating ? Cooldown : TutorialManager.InstanceExists ? 0f : InitialCooldown;
             CurrentNumUses = NumUses;
             Transformed = false;
             TransformTimer = TransformDuration;

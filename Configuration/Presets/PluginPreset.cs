@@ -1,4 +1,6 @@
 ﻿using BepInEx.Configuration;
+using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.PluginLoading;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ namespace FungleAPI.Configuration.Presets
         public ConfigEntry<string> CurrentPresetVersion;
         public ModPlugin Plugin;
         public List<PresetV1> Presets = new List<PresetV1>();
+        private PresetV1 Default;
         public void Initialize()
         {
             string path = Path.Combine(ConfigurationManager.FunglePath, Plugin.RealName + " - " + Plugin.LocalMod.GUID);
@@ -48,6 +51,34 @@ namespace FungleAPI.Configuration.Presets
                 preset.Plugin = Plugin;
                 Presets.Add(preset);
             }
+        }
+        public PresetV1 GetDefault()
+        {
+            if (Default == null)
+            {
+                Default = new PresetV1();
+                Default.Plugin = Plugin;
+                Default.PresetName = "Default";
+                Plugin.Options.ForEach(new Action<ModdedOption>(delegate (ModdedOption option)
+                {
+                    Default.Configs.Add(option.FullConfigName);
+                    Default.ConfigValues.Add(option.localValue.DefaultValue.ToString());
+                }));
+                Plugin.RoleCountsAndChances.ForEach(new Action<RoleCountAndChance>(delegate (RoleCountAndChance roleCountAndChance)
+                {
+                    Default.RoleCountsAndChances.Add(roleCountAndChance.Name);
+                    Default.RoleCounts.Add((int)roleCountAndChance.localCount.DefaultValue);
+                    Default.RoleChances.Add((int)roleCountAndChance.localChance.DefaultValue);
+                }));
+                Plugin.TeamCountAndPriorities.ForEach(new Action<TeamCountAndPriority>(delegate (TeamCountAndPriority teamCountAndPriority)
+                {
+                    Default.TeamCountsAndPrioritys.Add(teamCountAndPriority.Name);
+                    Default.TeamCounts.Add((int)teamCountAndPriority.localCount.DefaultValue);
+                    Default.TeamPriorityes.Add((int)teamCountAndPriority.localPriority.DefaultValue);
+                }));
+                Default.Empty = false;
+            }
+            return Default;
         }
         public PresetV1 TryPort(string path)
         {

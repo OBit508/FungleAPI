@@ -8,6 +8,7 @@ namespace FungleAPI.Translation
 {
     public static class FungleTranslation
     {
+        private static Translator edit;
         private static Translator presetName;
         private static Translator loadPreset;
         private static Translator empty;
@@ -27,6 +28,33 @@ namespace FungleAPI.Translation
         private static Translator nonModdedText;
         private static Translator kickingText;
         private static Translator typeText;
+        public static StringNames EditText
+        {
+            get
+            {
+                if (edit == null)
+                {
+                    edit = new Translator("Edit preset");
+                    edit.AddTranslation(SupportedLangs.English, "Edit preset");
+                    edit.AddTranslation(SupportedLangs.Latam, "Editar preajuste");
+                    edit.AddTranslation(SupportedLangs.Brazilian, "Editar predefinição");
+                    edit.AddTranslation(SupportedLangs.Portuguese, "Editar predefinição");
+                    edit.AddTranslation(SupportedLangs.Korean, "프리셋 편집");
+                    edit.AddTranslation(SupportedLangs.Russian, "Редактировать пресет");
+                    edit.AddTranslation(SupportedLangs.Dutch, "Preset bewerken");
+                    edit.AddTranslation(SupportedLangs.Filipino, "I-edit ang preset");
+                    edit.AddTranslation(SupportedLangs.French, "Modifier le préréglage");
+                    edit.AddTranslation(SupportedLangs.German, "Voreinstellung bearbeiten");
+                    edit.AddTranslation(SupportedLangs.Italian, "Modifica preimpostazione");
+                    edit.AddTranslation(SupportedLangs.Japanese, "プリセットを編集");
+                    edit.AddTranslation(SupportedLangs.Spanish, "Editar preajuste");
+                    edit.AddTranslation(SupportedLangs.SChinese, "编辑预设");
+                    edit.AddTranslation(SupportedLangs.TChinese, "編輯預設");
+                    edit.AddTranslation(SupportedLangs.Irish, "Cuir réamhshocrú in eagar");
+                }
+                return edit.StringName;
+            }
+        }
         public static StringNames PresetNameText
         {
             get

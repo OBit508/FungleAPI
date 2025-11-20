@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices;
+using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Translation;
 using HarmonyLib;
@@ -10,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Globalization.CultureInfo;
 
-namespace FungleAPI.Configuration.Attributes
+namespace FungleAPI.Configuration
 {
     public class SettingsGroup
     {

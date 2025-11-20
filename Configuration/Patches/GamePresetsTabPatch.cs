@@ -9,8 +9,10 @@ using HarmonyLib;
 using Rewired.Utils.Classes.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -71,7 +73,8 @@ namespace FungleAPI.Configuration.Patches
                         menu.ConfirmPresetPopUp.gameObject.SetActive(true);
                         menu.PresetConfirmButton.SetNewAction(delegate
                         {
-                            GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected].LoadConfigs();
+                            PresetV1 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
+                            preset.LoadConfigs();
                             foreach (PassiveButton button in Buttons)
                             {
                                 button.SelectButton(false);
@@ -81,16 +84,63 @@ namespace FungleAPI.Configuration.Patches
                             menu.GameOptionsMenu.RolesMenu.RefreshChildren();
                             ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
                             menu.ConfirmPresetPopUp.Close();
+                            CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer.NetId);
                         });
                     }
                 });
+                PassiveButton edit = GameObject.Instantiate<PassiveButton>(GameSettingMenu.Instance.ControllerSelectable[0].SafeCast<PassiveButton>(), Parent);
+                edit.transform.localPosition = new Vector3(2.9f, 1.2f, -2);
+                edit.transform.localScale = new Vector3(0.7f, 0.8f, 0.8f);
+                edit.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
+                edit.buttonText.text = FungleTranslation.EditText.GetString();
+                edit.SetNewAction(delegate
+                {
+                    if (Selected > -1)
+                    {
+                        PresetV1 ps = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
+                        Utilities.Helpers.ShowEditNameScreen(FungleTranslation.PresetNameText.GetString(), ps.Empty ? "" : ps.PresetName, delegate (string text)
+                        {
+                            ps.PresetName = text;
+                            Buttons[Selected].buttonText.text = ps.PresetName;
+                            File.WriteAllText(ps.Path, JsonSerializer.Serialize(ps));
+                        });
+                    }
+                });
+                PassiveButton defaultButton = GameObject.Instantiate<PassiveButton>(menu.DefaultButtonSelected.SafeCast<PassiveButton>(), Parent);
+                defaultButton.transform.localScale = Vector3.one * 0.7f;
+                defaultButton.transform.localPosition = new Vector3(2.75f, -0.6f, 0);
+                defaultButton.activeSprites.transform.GetChild(3).gameObject.SetActive(false);
+                defaultButton.gameObject.SetActive(true);
+                defaultButton.SetNewAction(delegate
+                {
+                    menu.ConfirmPresetPopUp.gameObject.SetActive(true);
+                    menu.PresetConfirmButton.SetNewAction(delegate
+                    {
+                        PresetV1 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.GetDefault();
+                        preset.LoadConfigs();
+                        menu.GameOptionsMenu.RefreshChildren();
+                        menu.GameOptionsMenu.RolesMenu.RefreshChildren();
+                        ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
+                        menu.ConfirmPresetPopUp.Close();
+                        CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer.NetId);
+                    });
+                });
                 Collider2D collider = load.GetComponent<Collider2D>();
+                Collider2D collider2 = edit.GetComponent<Collider2D>();
                 load.gameObject.AddComponent<Updater>().update = new Action(delegate
                 {
                     collider.enabled = Selected > -1;
                     if (load.selected && !collider.enabled)
                     {
                         load.SelectButton(false);
+                    }
+                });
+                edit.gameObject.AddComponent<Updater>().update = new Action(delegate
+                {
+                    collider2.enabled = Selected > -1;
+                    if (edit.selected && !collider2.enabled)
+                    {
+                        edit.SelectButton(false);
                     }
                 });
                 if (GameSettingMenu.Instance != null)

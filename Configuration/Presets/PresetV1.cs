@@ -61,7 +61,10 @@ namespace FungleAPI.Configuration.Presets
                 TeamPriorityes.Add(teamCountAndPriority.localPriority.Value);
             }));
             Empty = false;
-            File.WriteAllText(Path, JsonSerializer.Serialize(this));
+            if (this != Plugin.PluginPreset.GetDefault())
+            {
+                File.WriteAllText(Path, JsonSerializer.Serialize(this));
+            }
         }
         public void LoadConfigs()
         {
@@ -104,7 +107,10 @@ namespace FungleAPI.Configuration.Presets
             TeamCounts.Clear();
             TeamPriorityes.Clear();
             Empty = true;
-            File.WriteAllText(Path, JsonSerializer.Serialize(this));
+            if (this != Plugin.PluginPreset.GetDefault())
+            {
+                File.WriteAllText(Path, JsonSerializer.Serialize(this));
+            }
         }
         public override string ToString()
         {

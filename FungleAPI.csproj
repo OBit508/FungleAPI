@@ -28,7 +28,7 @@
     <Compile Include="Components\Credits.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
     <Compile Include="Components\PluginChanger.cs" />
-    <Compile Include="Configuration\Attributes\SettingsGroup.cs" />
+    <Compile Include="Configuration\SettingsGroup.cs" />
     <Compile Include="Configuration\ModSettings.cs" />
     <Compile Include="Configuration\Helpers\RoleCountAndChance.cs" />
     <Compile Include="Configuration\Helpers\TeamCountAndPriority.cs" />

@@ -21,6 +21,7 @@ namespace FungleAPI.Configuration.Patches
     {
         public static ModPlugin LastPlugin;
         public static bool LastCheck;
+        public static bool Update;
         [HarmonyPatch("RefreshChildren")]
         [HarmonyPrefix]
         public static bool RefreshChildrenPrefix(GameOptionsMenu __instance)
@@ -29,6 +30,7 @@ namespace FungleAPI.Configuration.Patches
             {
                 return true;
             }
+            Update = true;
             __instance.Initialize();
             return false;
         }
@@ -61,7 +63,7 @@ namespace FungleAPI.Configuration.Patches
                         }
                         __instance.InitializeControllerNavigation();
                     }
-                    else if (LastPlugin != GameSettingMenuPatch.pluginChanger.CurrentPlugin || LastCheck != GameSettingMenuPatch.TeamConfigTab)
+                    else if (LastPlugin != GameSettingMenuPatch.pluginChanger.CurrentPlugin || LastCheck != GameSettingMenuPatch.TeamConfigTab || Update)
                     {
                         foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
                         {
@@ -79,6 +81,7 @@ namespace FungleAPI.Configuration.Patches
                         Set(__instance);
                         LastPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
                         LastCheck = GameSettingMenuPatch.TeamConfigTab;
+                        Update = false;
                     }
                     __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin && !GameSettingMenuPatch.TeamConfigTab);
                 }
