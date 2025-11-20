@@ -1,6 +1,6 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Utilities;

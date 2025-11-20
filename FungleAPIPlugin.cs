@@ -22,6 +22,7 @@ using FungleAPI.Utilities.Assets;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Il2CppSystem.Text;
 using InnerNet;
@@ -48,7 +49,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.2.4";
+        public const string ModV = "0.2.5";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -64,7 +65,7 @@ namespace FungleAPI
                 IFungleBasePlugin fungleBasePlugin = basePlugin as IFungleBasePlugin;
                 if (fungleBasePlugin != null)
                 {
-                    ModPluginManager.RegisterMod(basePlugin, fungleBasePlugin.ModVersion, new Action(fungleBasePlugin.LoadAssets), fungleBasePlugin.ModName, fungleBasePlugin.ModCredits).UseShipReference = fungleBasePlugin.UseShipReference;
+                    ModPluginManager.RegisterMod(basePlugin, fungleBasePlugin.ModVersion, new Action(fungleBasePlugin.LoadAssets), fungleBasePlugin.ModName, fungleBasePlugin.ModCredits);
                     fungleBasePlugin.OnRegisterInFungleAPI();
                 }
             });
@@ -104,6 +105,12 @@ namespace FungleAPI
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
+                    plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = Instance.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
+                    if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
+                    {
+                        plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
+                    }
+                    plugin.PluginPreset.Initialize();
                     plugin.link = "https://github.com/OBit508/FungleAPI";
                     ModPlugin.AllPlugins.Add(plugin);
                 }

@@ -2,6 +2,7 @@
 using Epic.OnlineServices;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
@@ -26,9 +27,9 @@ namespace FungleAPI.Networking.RPCs
 
         public override void Write(MessageWriter writer, (SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team) value)
         {
-            ModdedOption[] options = ConfigurationManager.Configs.Values.ToArray();
-            writer.Write(options.Count());
-            for (int i = 0; i < options.Count(); i++)
+            List<ModdedOption> options = ConfigurationManager.Options;
+            writer.Write(options.Count);
+            for (int i = 0; i < options.Count; i++)
             {
                 writer.WriteConfig(options[i]);
                 writer.Write(options[i].GetValue());

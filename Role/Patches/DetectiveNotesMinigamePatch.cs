@@ -14,33 +14,6 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(DetectiveNotesMinigame))]
     internal static class DetectiveNotesMinigamePatch
     {
-        public static Translator typeText;
-        public static StringNames TypeHereText
-        {
-            get
-            {
-                if (typeText == null)
-                {
-                    typeText = new Translator("Type here who was the killer");
-                    typeText.AddTranslation(SupportedLangs.Latam, "Escribe aquí quién fue el asesino");
-                    typeText.AddTranslation(SupportedLangs.Brazilian, "Digite aqui quem foi o assassino");
-                    typeText.AddTranslation(SupportedLangs.Portuguese, "Digite aqui quem foi o assassino");
-                    typeText.AddTranslation(SupportedLangs.Korean, "여기에 살인자가 누구였는지 입력하세요");
-                    typeText.AddTranslation(SupportedLangs.Russian, "Введите здесь, кто был убийцей");
-                    typeText.AddTranslation(SupportedLangs.Dutch, "Typ hier wie de moordenaar was");
-                    typeText.AddTranslation(SupportedLangs.Filipino, "I-type dito kung sino ang pumatay");
-                    typeText.AddTranslation(SupportedLangs.French, "Tapez ici qui était le meurtrier");
-                    typeText.AddTranslation(SupportedLangs.German, "Geben Sie hier ein, wer der Mörder war");
-                    typeText.AddTranslation(SupportedLangs.Italian, "Digita qui chi è stato l'assassino");
-                    typeText.AddTranslation(SupportedLangs.Japanese, "ここに誰が殺人者だったか入力してください");
-                    typeText.AddTranslation(SupportedLangs.Spanish, "Escribe aquí quién fue el asesino");
-                    typeText.AddTranslation(SupportedLangs.SChinese, "在此输入谁是凶手");
-                    typeText.AddTranslation(SupportedLangs.TChinese, "在此輸入誰是兇手");
-                    typeText.AddTranslation(SupportedLangs.Irish, "Clóscríobh anseo cé a bhí ina mharaitheoir");
-                }
-                return typeText.StringName;
-            }
-        }
         public static string text;
         public static bool typing;
         public static TouchScreenKeyboard keyboard;
@@ -51,7 +24,7 @@ namespace FungleAPI.Role.Patches
         {
             keyboard = null;
             typing = false;
-            text = "<size=2.25>" + TypeHereText.GetString() + "</size>";
+            text = "<size=2.25>" + FungleTranslation.TypeHereText.GetString() + "</size>";
             Pencil = __instance.ControllerSelectable[2].GetComponent<SpriteRenderer>();
             __instance.ControllerSelectable[2].SafeCast<PassiveButton>().SetNewAction(new Action(delegate
             {
@@ -75,7 +48,7 @@ namespace FungleAPI.Role.Patches
             }
             if (ControllerManager.Instance.CurrentUiState.MenuName == __instance.MainOverlay)
             {
-                Player player = ReInput.players.GetPlayer(0);
+                Rewired.Player player = ReInput.players.GetPlayer(0);
                 bool flag = false;
                 int num = __instance.currentPageIndex;
                 if (player.GetButtonDown(35))

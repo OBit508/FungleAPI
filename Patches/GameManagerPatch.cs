@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.GameOver;
+using Il2CppSystem.Net.NetworkInformation;
 
 namespace FungleAPI.Patches
 {
@@ -34,6 +35,13 @@ namespace FungleAPI.Patches
         public static bool RpcEndGamePrefix(GameManager __instance, [HarmonyArgument(0)] GameOverReason endReason)
         {
             __instance.RpcEndGame(endReason.GetGameOver());
+            return false;
+        }
+        [HarmonyPatch("GetDeadBody")]
+        [HarmonyPrefix]
+        public static bool GetDeadBodyPrefix(GameManager __instance, [HarmonyArgument(0)] RoleBehaviour impostorRole, ref DeadBody __result)
+        {
+            __result = __instance.deadBodyPrefab[impostorRole.Role == RoleTypes.Viper || impostorRole.CustomRole() != null && impostorRole.CustomRole().CreatedDeadBodyOnKill == DeadBodyType.Viper ? 1 : 0];
             return false;
         }
     }

@@ -29,23 +29,14 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void AwakePostfix(AmongUsClient __instance)
         {
-            bool flag = false;
+            foreach (ModdedTeam team in ModdedTeam.Teams)
+            {
+                team.Initialize(ModPluginManager.GetModPlugin(team.GetType().Assembly));
+            }
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
                 plugin.Settings.Initialize();
-                
-                if (plugin.UseShipReference)
-                {
-                    flag = true;
-                }
-            }
-            foreach (ModdedTeam team in ModdedTeam.Teams)
-            {
-                team.Initialize();
-            }
-            if (flag)
-            {
-                __instance.StartCoroutine(Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs().WrapToIl2Cpp());
+                plugin.Options.AddRange(plugin.Settings.Options);
             }
         }
         [HarmonyPatch("CreatePlayer")]

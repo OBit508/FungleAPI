@@ -24,6 +24,7 @@ namespace FungleAPI.Hud
             return button.SimpleCast<T>();
         }
         public AbilityButton Button;
+        public virtual bool IndependentButton => false;
         public virtual bool Active => true;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
@@ -49,7 +50,7 @@ namespace FungleAPI.Hud
         public void SetCooldown(float cooldown)
         {
             Timer = cooldown;
-            Button.SetCoolDown(Timer, cooldown);
+            Button.SetCoolDown(Timer, Cooldown);
         }
         public void SetNumUses(int numUses)
         {
@@ -59,7 +60,7 @@ namespace FungleAPI.Hud
         public void SetTransformDuration(float newDuration)
         {
             TransformTimer = newDuration;
-            Button.SetCoolDown(Timer, newDuration);
+            Button.SetCoolDown(Timer, TransformDuration);
         }
         public virtual void MeetingStart(MeetingHud meetingHud)
         {

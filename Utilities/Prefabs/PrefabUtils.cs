@@ -28,28 +28,41 @@ namespace FungleAPI.Utilities.Prefabs
         }
         internal static void ChangePrefab(AssetReference shipRef)
         {
-            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<SkeldShipStatus>() != null)
+            ShipStatus ship = shipRef.Asset.SafeCast<GameObject>().GetComponent<ShipStatus>();
+            if (ship.SafeCast<SkeldShipStatus>() != null)
             {
-                SkeldPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<SkeldShipStatus>();
+                SkeldPrefab = ship.SafeCast<SkeldShipStatus>();
+                FungleAPIPlugin.Instance.Log.LogInfo("Loaded SkeldPrefab");
             }
-            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<MiraShipStatus>() != null)
+            if (ship.SafeCast<MiraShipStatus>() != null)
             {
-                MiraPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<MiraShipStatus>();
+                MiraPrefab = ship.SafeCast<MiraShipStatus>();
+                FungleAPIPlugin.Instance.Log.LogInfo("Loaded MiraPrefab");
             }
-            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<PolusShipStatus>() != null)
+            if (ship.SafeCast<PolusShipStatus>() != null)
             {
-                PolusPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<PolusShipStatus>();
+                PolusPrefab = ship.SafeCast<PolusShipStatus>();
+                FungleAPIPlugin.Instance.Log.LogInfo("Loaded PolusPrefab");
             }
-            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<AirshipStatus>() != null)
+            if (ship.SafeCast<AirshipStatus>() != null)
             {
-                AirshipPrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<AirshipStatus>();
+                AirshipPrefab = ship.SafeCast<AirshipStatus>();
+                FungleAPIPlugin.Instance.Log.LogInfo("Loaded AirshipPrefab");
             }
-            if (shipRef.Asset.SafeCast<GameObject>().GetComponent<FungleShipStatus>() != null)
+            if (ship.SafeCast<FungleShipStatus>() != null)
             {
-                FunglePrefab = shipRef.Asset.SafeCast<GameObject>().GetComponent<FungleShipStatus>();
+                FunglePrefab = ship.SafeCast<FungleShipStatus>();
+                FungleAPIPlugin.Instance.Log.LogInfo("Loaded FunglePrefab");
             }
+            ship.AllStepWatchers = Enumerable.ToArray<IStepWatcher>(Enumerable.OrderByDescending<IStepWatcher, int>(ship.GetComponentsInChildren<IStepWatcher>(), (IStepWatcher s) => s.Priority));
+            ship.AllRooms = ship.GetComponentsInChildren<PlainShipRoom>().ToArray();
+            ship.FastRooms = Enumerable.ToDictionary<PlainShipRoom, SystemTypes>(Enumerable.Where<PlainShipRoom>(ship.AllRooms, (PlainShipRoom p) => p.RoomId > SystemTypes.Hallway), (PlainShipRoom d) => d.RoomId).ToIl2CppDictionary();
+            ship.AllCameras = ship.GetComponentsInChildren<SurvCamera>().ToArray();
+            ship.AllConsoles = ship.GetComponentsInChildren<Console>().ToArray();
+            ship.AllVents = ship.GetComponentsInChildren<Vent>().ToArray();
+            ship.Ladders = ship.GetComponentsInChildren<Ladder>().ToArray();
         }
-        public static System.Collections.IEnumerator CoLoadShipPrefabs()
+        internal static System.Collections.IEnumerator CoLoadShipPrefabs()
         {
             if (LevelImpostorUtils.GetLevelImpostor() == null)
             {

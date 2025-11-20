@@ -177,7 +177,6 @@ namespace FungleAPI.Utilities.Assets
             int sampleSize = bitsPerSample / 8;
             int sampleCount = data.Length / sampleSize;
             float[] samples = new float[sampleCount];
-
             for (int i = 0; i < sampleCount; i++)
             {
                 int index = i * sampleSize;
@@ -196,10 +195,10 @@ namespace FungleAPI.Utilities.Assets
         private static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable)
         {
             if (iCall_LoadImage == null)
+            {
                 iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
-
-            var il2cppArray = (Il2CppStructArray<byte>)data;
-
+            }
+            Il2CppStructArray<byte> il2cppArray = (Il2CppStructArray<byte>)data;
             return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
         }
         internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);

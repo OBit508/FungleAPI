@@ -17,37 +17,33 @@ namespace FungleAPI.Utilities
     {
         public static bool Exists<T>(this List<T> list, Predicate<T> match)
         {
-            return list.Exists(ToIl2Cpp(match));
+            return list.Exists(ToIl2CppPredicate(match));
         }
         public static T Find<T>(this List<T> list, Predicate<T> match)
         {
-            return list.Find(ToIl2Cpp(match));
-        }
-        public static List<T> FindAll<T>(this List<T> list, Predicate<T> match)
-        {
-            return list.FindAll(match);
+            return list.Find(ToIl2CppPredicate(match));
         }
         public static int FindIndex<T>(this List<T> list, Predicate<T> match)
         {
-            return list.FindIndex(ToIl2Cpp(match));
+            return list.FindIndex(ToIl2CppPredicate(match));
         }
         public static int FindIndex<T>(this List<T> list, int startIndex, int count, Predicate<T> match)
         {
-            return list.FindIndex(startIndex, count, ToIl2Cpp(match));
+            return list.FindIndex(startIndex, count, ToIl2CppPredicate(match));
         }
         public static void RemoveAll<T>(this List<T> list, Predicate<T> match)
         {
-            list.RemoveAll(ToIl2Cpp(match));
+            list.RemoveAll(ToIl2CppPredicate(match));
         }
         public static bool TrueForAll<T>(this List<T> list, Predicate<T> match)
         {
-            return list.TrueForAll(ToIl2Cpp(match));
+            return list.TrueForAll(ToIl2CppPredicate(match));
         }
-        public static Il2CppStructArray<T> ToArray<T>(this List<T> list) where T : unmanaged
+        public static Il2CppStructArray<T> ToIl2CppStructArray<T>(this List<T> list) where T : unmanaged
         {
             return (T[])list.ToArray();
         }
-        public static Il2CppSystem.Predicate<T> ToIl2Cpp<T>(Predicate<T> predicate)
+        public static Il2CppSystem.Predicate<T> ToIl2CppPredicate<T>(this Predicate<T> predicate)
         {
             if (predicate == null)
             {
@@ -55,7 +51,7 @@ namespace FungleAPI.Utilities
             }
             return DelegateSupport.ConvertDelegate<Il2CppSystem.Predicate<T>>(predicate);
         }
-        public static Predicate<T> ToSystem<T>(Il2CppSystem.Predicate<T> predicate)
+        public static Predicate<T> ToSystemPredicate<T>(this Il2CppSystem.Predicate<T> predicate)
         {
             if (predicate == null)
             {
@@ -71,6 +67,33 @@ namespace FungleAPI.Utilities
                 values.Add(item);
             }
             return values;
+        }
+        public static System.Collections.Generic.List<T> ToSystemList<T>(this List<T> list)
+        {
+            System.Collections.Generic.List<T> values = new System.Collections.Generic.List<T>();
+            foreach (T item in list)
+            {
+                values.Add(item);
+            }
+            return values;
+        }
+        public static System.Collections.Generic.Dictionary<TKey, TValue> ToSystemDictionary<TKey, TValue>(this Dictionary<TKey, TValue> dictionary)
+        {
+            System.Collections.Generic.Dictionary<TKey, TValue> dic = new System.Collections.Generic.Dictionary<TKey, TValue>();
+            foreach (KeyValuePair<TKey, TValue> pair in dictionary)
+            {
+                dic.Add(pair.key, pair.value);
+            }
+            return dic;
+        }
+        public static Dictionary<TKey, TValue> ToIl2CppDictionary<TKey, TValue>(this System.Collections.Generic.Dictionary<TKey, TValue> dictionary)
+        {
+            Dictionary<TKey, TValue> dic = new Dictionary<TKey, TValue>();
+            foreach (System.Collections.Generic.KeyValuePair<TKey, TValue> pair in dictionary)
+            {
+                dic.Add(pair.Key, pair.Value);
+            }
+            return dic;
         }
         public static T FirstOrDefault<T>(this List<T> enumerable, Predicate<T> match)
         {
@@ -115,15 +138,6 @@ namespace FungleAPI.Utilities
         public static List<TSource> OrderBy<TSource, TKey>(this List<TSource> source, Func<TSource, TKey> keySelector)
         {
             return source.ToArray().OrderBy(keySelector).ToList().ToIl2CppList();
-        }
-        public static System.Collections.Generic.List<T> ToSystemList<T>(this List<T> list)
-        {
-            System.Collections.Generic.List<T> values = new System.Collections.Generic.List<T>();
-            foreach (T item in list)
-            {
-                values.Add(item);
-            }
-            return values;
         }
     }
 }

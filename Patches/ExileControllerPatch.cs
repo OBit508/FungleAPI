@@ -16,7 +16,6 @@ namespace FungleAPI.Patches
     [HarmonyPatch(typeof(ExileController))]
     internal static class ExileControllerPatch
     {
-        
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
         public static void BeginPostfix(ExileController __instance)

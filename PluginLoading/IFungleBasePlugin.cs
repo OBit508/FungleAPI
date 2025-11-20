@@ -13,7 +13,6 @@ namespace FungleAPI.PluginLoading
         string ModName { get; }
         string ModVersion { get; }
         string ModCredits => null;
-        bool UseShipReference => false;
         void LoadAssets()
         {
         }

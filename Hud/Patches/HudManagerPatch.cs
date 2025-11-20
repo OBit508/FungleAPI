@@ -14,10 +14,12 @@ namespace FungleAPI.Hud.Patches
     [HarmonyPatch(typeof(HudManager))]
     internal static class HudManagerPatch
     {
+        public static float timer;
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
-        public static void OnStart(HudManager __instance)
+        public static void StartPostfix(HudManager __instance)
         {
+            timer = 0;
             if (ShipStatus.Instance != null)
             {
                 MapBehaviour.Instance = UnityEngine.Object.Instantiate(ShipStatus.Instance.MapPrefab, __instance.transform);
@@ -50,9 +52,49 @@ namespace FungleAPI.Hud.Patches
             lobbyWarningText.name = "LobbyWarningText";
         }
         [HarmonyPatch("Update")]
-        [HarmonyPrefix]
-        public static void OnUpdate(HudManager __instance)
+        [HarmonyPostfix]
+        public static void UpdatePostfix(HudManager __instance)
         {
+            if (HudHelper.UpdateFlag != HudUpdateFlag.Never && HudHelper.UpdateFlag != HudUpdateFlag.OnSetHudActive)
+            {
+                PlayerControl localPlayer = PlayerControl.LocalPlayer;
+                if (localPlayer != null)
+                {
+                    RoleBehaviour role = localPlayer.Data.Role;
+                    if (role != null)
+                    {
+                        if (HudHelper.UpdateFlag == HudUpdateFlag.Delay || HudHelper.UpdateFlag == HudUpdateFlag.DelayAndOnSetHudActive)
+                        {
+                            timer += Time.deltaTime;
+                            if (timer >= HudHelper.UpdateDelay)
+                            {
+                                __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
+                                __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
+                                foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+                                {
+                                    if (button.Button != null)
+                                    {
+                                        button.Button.ToggleVisible(button.Active && HudHelper.Active && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                                    }
+                                }
+                                timer = 0;
+                            }
+                        }
+                        else if (HudHelper.UpdateFlag == HudUpdateFlag.Always)
+                        {
+                            __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
+                            __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
+                            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+                            {
+                                if (button.Button != null)
+                                {
+                                    button.Button.ToggleVisible(button.Active && HudHelper.Active && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
                 if (button.Button != null && button.Button.isActiveAndEnabled)
@@ -70,14 +112,18 @@ namespace FungleAPI.Hud.Patches
         })]
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
-            __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
-            __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
-            __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            HudHelper.Active = isActive;
+            if (HudHelper.UpdateFlag == HudUpdateFlag.OnSetHudActive || HudHelper.UpdateFlag == HudUpdateFlag.DelayAndOnSetHudActive)
             {
-                if (button.Button != null)
+                __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
+                __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
+                __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
+                foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
                 {
-                    button.Button.ToggleVisible(button.Active && isActive && role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button));
+                    if (button.Button != null)
+                    {
+                        button.Button.ToggleVisible(button.Active && isActive && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                    }
                 }
             }
         }

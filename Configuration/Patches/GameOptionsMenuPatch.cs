@@ -21,56 +21,71 @@ namespace FungleAPI.Configuration.Patches
     {
         public static ModPlugin LastPlugin;
         public static bool LastCheck;
+        [HarmonyPatch("RefreshChildren")]
+        [HarmonyPrefix]
+        public static bool RefreshChildrenPrefix(GameOptionsMenu __instance)
+        {
+            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin)
+            {
+                return true;
+            }
+            __instance.Initialize();
+            return false;
+        }
         [HarmonyPatch("Initialize")]
         [HarmonyPrefix]
         public static bool InitializePrefix(GameOptionsMenu __instance)
         {
-            try
+            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.HideNSeek && GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.SeekFools)
             {
-                if (__instance.gameObject.active && __instance.Children == null || __instance.Children.Count == 0)
+                try
                 {
-                    __instance.MapPicker.Initialize(20);
-                    BaseGameSetting mapNameSetting = GameManager.Instance.GameSettingsList.MapNameSetting;
-                    __instance.MapPicker.SetUpFromData(mapNameSetting, 20);
-                    __instance.Children = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
-                    __instance.Children.Add(__instance.MapPicker);
-                    Set(__instance);
-                    LastPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
-                    LastCheck = GameSettingMenuPatch.TeamConfigTab;
-                    __instance.cachedData = GameOptionsManager.Instance.CurrentGameOptions;
-                    for (int i = 0; i < __instance.Children.Count; i++)
+                    if (__instance.gameObject.active && __instance.Children == null || __instance.Children.Count == 0)
                     {
-                        OptionBehaviour optionBehaviour = __instance.Children[i];
-                        if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
+                        __instance.MapPicker.Initialize(20);
+                        BaseGameSetting mapNameSetting = GameManager.Instance.GameSettingsList.MapNameSetting;
+                        __instance.MapPicker.SetUpFromData(mapNameSetting, 20);
+                        __instance.Children = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
+                        __instance.Children.Add(__instance.MapPicker);
+                        Set(__instance);
+                        LastPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
+                        LastCheck = GameSettingMenuPatch.TeamConfigTab;
+                        __instance.cachedData = GameOptionsManager.Instance.CurrentGameOptions;
+                        for (int i = 0; i < __instance.Children.Count; i++)
                         {
-                            optionBehaviour.SetAsPlayer();
+                            OptionBehaviour optionBehaviour = __instance.Children[i];
+                            if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
+                            {
+                                optionBehaviour.SetAsPlayer();
+                            }
                         }
+                        __instance.InitializeControllerNavigation();
                     }
-                    __instance.InitializeControllerNavigation();
-                }
-                else if (LastPlugin != GameSettingMenuPatch.pluginChanger.CurrentPlugin || LastCheck != GameSettingMenuPatch.TeamConfigTab)
-                {
-                    foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
+                    else if (LastPlugin != GameSettingMenuPatch.pluginChanger.CurrentPlugin || LastCheck != GameSettingMenuPatch.TeamConfigTab)
                     {
-                        UnityEngine.Object.Destroy(categoryHeaderMasked.gameObject);
-                    }
-                    foreach (OptionBehaviour op in __instance.Children)
-                    {
-                        if (op != __instance.MapPicker)
+                        foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
                         {
-                            UnityEngine.Object.Destroy(op.gameObject);
+                            UnityEngine.Object.Destroy(categoryHeaderMasked.gameObject);
                         }
+                        foreach (OptionBehaviour op in __instance.Children)
+                        {
+                            if (op != __instance.MapPicker)
+                            {
+                                UnityEngine.Object.Destroy(op.gameObject);
+                            }
+                        }
+                        __instance.Children.Clear();
+                        __instance.Children.Add(__instance.MapPicker);
+                        Set(__instance);
+                        LastPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
+                        LastCheck = GameSettingMenuPatch.TeamConfigTab;
                     }
-                    __instance.Children.Clear();
-                    __instance.Children.Add(__instance.MapPicker);
-                    Set(__instance);
-                    LastPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
-                    LastCheck = GameSettingMenuPatch.TeamConfigTab;
+                    __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin && !GameSettingMenuPatch.TeamConfigTab);
                 }
-                __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin && !GameSettingMenuPatch.TeamConfigTab);
+                catch { }
+                return false;
             }
-            catch { }
-            return false;
+            return true;
         }
         public static void Set(GameOptionsMenu menu)
         {

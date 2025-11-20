@@ -4,6 +4,7 @@ using Epic.OnlineServices;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -51,6 +52,10 @@ namespace FungleAPI.Role
         {
             return RolesToRegister[typeof(T)];
         }
+        public static RoleTypes GetType(Type type)
+        {
+            return RolesToRegister[type];
+        }
         public static ICustomRole CustomRole(this RoleBehaviour role)
         {
             return role as ICustomRole;
@@ -76,7 +81,7 @@ namespace FungleAPI.Role
             (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance, ChangeableValue<List<CustomAbilityButton>> Buttons) pair = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            InitializeRoleOptions(role);
+            InitializeRoleOptions(role, plugin);
             ConfigurationManager.InitializeRoleCountAndChances(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
@@ -102,7 +107,7 @@ namespace FungleAPI.Role
             }
             return role;
         }
-        internal static void InitializeRoleOptions(RoleBehaviour obj)
+        internal static void InitializeRoleOptions(RoleBehaviour obj, ModPlugin plugin)
         {
             Type type = obj.GetType();
             foreach (PropertyInfo property in type.GetProperties())
@@ -110,12 +115,14 @@ namespace FungleAPI.Role
                 ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
                 if (att != null)
                 {
-                    att.Initialize(type, property, obj);
+                    att.Initialize(property);
                     MethodInfo method = property.GetGetMethod(true);
                     if (method != null)
                     {
-                        ConfigurationManager.Configs.Add(method, att);
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
+                        ConfigurationManager.Options.Add(att);
+                        plugin.Options.Add(att);
+                        HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
+                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
                     }
                     if (obj.CustomRole() != null)
                     {

@@ -26,24 +26,39 @@ namespace FungleAPI.Configuration.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedToggleOption : ModdedOption
     {
-        public ModdedToggleOption(string configName, string groupId)
-            : base(configName, groupId) 
+        public ModdedToggleOption(string configName)
+            : base(configName) 
         {
             Data = ScriptableObject.CreateInstance<CheckboxGameSetting>().DontUnload();
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
             checkboxGameSetting.Title = ConfigName.StringName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
         }
-        public override void Initialize(Type type, PropertyInfo property, object obj)
+        public override void Initialize(PropertyInfo property)
         {
+            base.Initialize(property);
             if (property.PropertyType == typeof(bool))
             {
-                ModPlugin plugin = ModPluginManager.GetModPlugin(type.Assembly);
-                bool value = (bool)property.GetValue(obj);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName, ConfigName.Default, value.ToString());
+                ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
+                bool value = (bool)property.GetValue(null);
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + property.DeclaringType.FullName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
-                FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
+                FullConfigName = plugin.ModName + property.DeclaringType.FullName + property.Name + value.GetType().FullName;
             }
+        }
+        public override object GetReturnedValue()
+        {
+            Type type = Property.PropertyType;
+            bool value = bool.Parse(GetValue());
+            if (type == typeof(bool))
+            {
+                return value;
+            }
+            else if (type == typeof(int) || type == typeof(float))
+            {
+                return value ? 1 : 0;
+            }
+            return GetValue();
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {

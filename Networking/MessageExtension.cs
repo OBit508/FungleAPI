@@ -19,6 +19,7 @@ using AmongUs.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Role.Teams;
 using FungleAPI.PluginLoading;
+using FungleAPI.Configuration.Helpers;
 
 namespace FungleAPI.Networking
 {
@@ -81,7 +82,7 @@ namespace FungleAPI.Networking
         }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
         {
-            bool flag = FungleAPIPlugin.Plugin.Roles.Contains(role);
+            bool flag = role.CustomRole() == null;
             Writer.Write(flag);
             if (flag)
             {
@@ -126,7 +127,7 @@ namespace FungleAPI.Networking
         public static ModdedOption ReadConfig(this MessageReader Reader)
         {
             string fullConfigName = Reader.ReadString();
-            foreach (ModdedOption config in ConfigurationManager.Configs.Values)
+            foreach (ModdedOption config in ConfigurationManager.Options)
             {
                 if (config.FullConfigName == fullConfigName)
                 {

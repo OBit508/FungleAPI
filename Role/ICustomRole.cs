@@ -7,10 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.Configuration;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Hud;
+using FungleAPI.Configuration.Helpers;
 
 namespace FungleAPI.Role
 {

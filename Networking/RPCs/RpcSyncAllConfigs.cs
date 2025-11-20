@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -27,11 +28,11 @@ namespace FungleAPI.Networking.RPCs
             {
                 writer.WriteMod(plugin.LocalMod);
             }
-            writer.Write(ConfigurationManager.Configs.Count);
-            for (int i = 0; i < ConfigurationManager.Configs.Count; i++)
+            writer.Write(ConfigurationManager.Options.Count);
+            for (int i = 0; i < ConfigurationManager.Options.Count; i++)
             {
-                writer.WriteConfig(ConfigurationManager.Configs.Values.ToArray()[i]);
-                writer.Write(ConfigurationManager.Configs.Values.ToArray()[i].GetValue());
+                writer.WriteConfig(ConfigurationManager.Options.ToArray()[i]);
+                writer.Write(ConfigurationManager.Options.ToArray()[i].GetValue());
             }
             writer.Write(ConfigurationManager.RoleCountsAndChances.Count);
             for (int i = 0; i < ConfigurationManager.RoleCountsAndChances.Count; i++)

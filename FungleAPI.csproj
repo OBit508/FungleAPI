@@ -14,17 +14,24 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
-    <Compile Include="Attributes\IgnoreOnFungleAutoRegister.cs" />
+    <Compile Include="Attributes\FungleIgnore.cs" />
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="Configuration\Helpers\HarmonyHelper.cs" />
+    <Compile Include="Configuration\Presets\PluginPreset.cs" />
+    <Compile Include="Configuration\Presets\PresetV1.cs" />
+    <Compile Include="Configuration\Patches\GamePresetsTabPatch.cs" />
+    <Compile Include="Networking\RPCs\RpcUpdatePreset.cs" />
+    <Compile Include="Patches\NameTextBehaviourPatch.cs" />
+    <Compile Include="Utilities\ControllerHelper.cs" />
     <Compile Include="Components\Credits.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
     <Compile Include="Components\PluginChanger.cs" />
     <Compile Include="Configuration\Attributes\SettingsGroup.cs" />
     <Compile Include="Configuration\ModSettings.cs" />
-    <Compile Include="Configuration\RoleCountAndChance.cs" />
-    <Compile Include="Configuration\TeamCountAndPriority.cs" />
+    <Compile Include="Configuration\Helpers\RoleCountAndChance.cs" />
+    <Compile Include="Configuration\Helpers\TeamCountAndPriority.cs" />
     <Compile Include="Freeplay\ModFolderConfig.cs" />
     <Compile Include="GameOver\CustomGameOver.cs" />
     <Compile Include="GameOver\Ends\CrewmateDisconnect.cs" />
@@ -38,7 +45,8 @@
     <Compile Include="GameOver\Ends\ImpostorsBySabotage.cs" />
     <Compile Include="GameOver\Ends\ImpostorsByVote.cs" />
     <Compile Include="GameOver\Ends\NeutralGameOver.cs" />
-    <Compile Include="GameOver\Patches\LogicGameFlowNormalPatch.cs" />
+    <Compile Include="Hud\HudHelper.cs" />
+    <Compile Include="Hud\HudUpdateFlag.cs" />
     <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
     <Compile Include="ModCompatibility\MCIUtils.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
@@ -56,7 +64,7 @@
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
     <Compile Include="Networking\RPCs\SyncTextType.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
-    <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
+    <Compile Include="GameOver\EndGameManagerPatch.cs" />
     <Compile Include="Configuration\Patches\GameOptionsMenuPatch.cs" />
     <Compile Include="Configuration\Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />
@@ -69,6 +77,7 @@
     <Compile Include="Patches\PingTrackerPatch.cs" />
     <Compile Include="Patches\ShipStatusPatch.cs" />
     <Compile Include="Configuration\Patches\LobbyViewSettingsPanePatch.cs" />
+    <Compile Include="Player\PlayerUtils.cs" />
     <Compile Include="PluginLoading\FunglePlugin.cs" />
     <Compile Include="PluginLoading\IFungleBasePlugin.cs" />
     <Compile Include="PluginLoading\ModPluginManager.cs" />
@@ -103,7 +112,7 @@
     <Compile Include="Patches\GameManagerPatch.cs" />
     <Compile Include="Hud\CustomAbilityButton.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
-    <Compile Include="Patches\PlayerControlPatch.cs" />
+    <Compile Include="Player\PlayerControlPatch.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
@@ -127,6 +136,16 @@
     <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\xMark.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\inactive.png" />
+    <EmbeddedResource Include="Resources\highlight.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\UI_Hover.wav" />

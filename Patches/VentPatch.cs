@@ -93,15 +93,30 @@ namespace FungleAPI.Patches
             }
             return false;
         }
+        [HarmonyPatch("EnterVent")]
+        [HarmonyPostfix]
+        public static void EnterVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
+        {
+            List<PlayerControl> players = VentHelper.ShipVents[__instance].Players;
+            if (!players.Contains(pc))
+            {
+                players.Add(pc);
+            }
+        }
+        [HarmonyPatch("ExitVent")]
+        [HarmonyPostfix]
+        public static void ExitVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
+        {
+            List<PlayerControl> players = VentHelper.ShipVents[__instance].Players;
+            if (players.Contains(pc))
+            {
+                players.Remove(pc);
+            }
+        }
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         public static void StartPostfix(Vent __instance)
         {
-            if (Helpers.VentPrefab == null)
-            {
-                Helpers.VentPrefab = GameObject.Instantiate<Vent>(__instance);
-                Helpers.VentPrefab.gameObject.SetActive(false);
-            }
             foreach (Il2CppSystem.Type type in AllVentComponents)
             {
                 if (__instance.gameObject.GetComponent(type) == null)

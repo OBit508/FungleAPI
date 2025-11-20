@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.GameOver;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -26,7 +27,6 @@ namespace FungleAPI.Role.Teams
 {
     public class ModdedTeam
     {
-        
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
@@ -81,7 +81,7 @@ namespace FungleAPI.Role.Teams
             }
             return categoryHeaderRoleVariant;
         }
-        public virtual void Initialize()
+        public virtual void Initialize(ModPlugin plugin)
         {
             if (!initialized)
             {
@@ -92,12 +92,14 @@ namespace FungleAPI.Role.Teams
                     ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
                     if (att != null)
                     {
-                        att.Initialize(type, property, this);
+                        att.Initialize(property);
                         MethodInfo method = property.GetGetMethod(true);
                         if (method != null)
                         {
-                            ConfigurationManager.Configs.Add(method, att);
-                            FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(ConfigurationManager).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(MethodBase), property.PropertyType.MakeByRefType() }, null)));
+                            ConfigurationManager.Options.Add(att);
+                            plugin.Options.Add(att);
+                            HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
+                            FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
                         }
                         ExtraConfigs.Add(att);
                     }

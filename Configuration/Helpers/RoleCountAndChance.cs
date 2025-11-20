@@ -5,15 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Helpers
 {
     public class RoleCountAndChance
     {
         public string Name;
-        private ConfigEntry<int> localChance;
-        private int onlineChance;
-        private ConfigEntry<int> localCount;
-        private int onlineCount;
+        internal ConfigEntry<int> localChance;
+        internal int onlineChance;
+        internal ConfigEntry<int> localCount;
+        internal int onlineCount;
+        internal Type roleType;
         public int GetCount()
         {
             if (AmongUsClient.Instance.AmHost)
@@ -48,11 +49,12 @@ namespace FungleAPI.Configuration
             }
             onlineChance = chance;
         }
-        public void Initialize(ConfigFile configFile, string name)
+        public void Initialize(ConfigFile configFile, string name, Type type)
         {
-            localCount = configFile.Bind<int>(name, "Count", 0);
+            roleType = type;
+            localCount = configFile.Bind(name, "Count", 0);
             onlineCount = localCount.Value;
-            localChance = configFile.Bind<int>(name, "Chance", 0);
+            localChance = configFile.Bind(name, "Chance", 0);
             onlineChance = localChance.Value;
             Name = name;
         }

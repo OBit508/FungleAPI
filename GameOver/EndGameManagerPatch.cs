@@ -1,5 +1,4 @@
 ﻿using AmongUs.Data;
-using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using FungleAPI.Utilities.Sound;
 using HarmonyLib;
@@ -12,9 +11,8 @@ using UnityEngine;
 using FungleAPI.Utilities;
 using UnityEngine.Audio;
 using FungleAPI.Role.Teams;
-using FungleAPI.GameOver;
 
-namespace FungleAPI.GameOver.Patches
+namespace FungleAPI.GameOver
 {
     [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
     internal static class EndGameManagerPatch
@@ -102,7 +100,7 @@ namespace FungleAPI.GameOver.Patches
                     poolablePlayer.SetName(cachedPlayerData2.PlayerName, vector.Inv(), gameOver.NameColor, -15f);
                     Vector3 vector2 = new Vector3(0f, -1.31f, -0.5f);
                     poolablePlayer.SetNamePosition(vector2);
-                    if (AprilFoolsMode.ShouldHorseAround() && GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek)
+                    if (AprilFoolsMode.ShouldHorseAround() && GameOptionsManager.Instance.CurrentGameOptions.GameMode == AmongUs.GameOptions.GameModes.HideNSeek)
                     {
                         poolablePlayer.SetBodyType(PlayerBodyTypes.Normal);
                         poolablePlayer.SetFlipX(false);

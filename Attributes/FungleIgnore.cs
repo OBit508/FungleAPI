@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public class IgnoreOnFungleAutoRegister : Attribute
+    public class FungleIgnore : Attribute
     {
     }
 }

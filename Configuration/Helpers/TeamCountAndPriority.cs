@@ -6,16 +6,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Configuration
+namespace FungleAPI.Configuration.Helpers
 {
     public class TeamCountAndPriority
     {
         public ModdedTeam Team;
         public string Name;
-        private ConfigEntry<int> localPriority;
-        private int onlinePriority;
-        private ConfigEntry<int> localCount;
-        private int onlineCount;
+        internal ConfigEntry<int> localPriority;
+        internal int onlinePriority;
+        internal ConfigEntry<int> localCount;
+        internal int onlineCount;
         public int GetCount()
         {
             if (AmongUsClient.Instance.AmHost)
@@ -52,11 +52,11 @@ namespace FungleAPI.Configuration
         }
         public void Initialize(ConfigFile configFile, ModdedTeam team, string name)
         {
-            int count = team.DefaultCount > (uint)int.MaxValue ? int.MaxValue : (int)team.DefaultCount;
+            int count = team.DefaultCount > int.MaxValue ? int.MaxValue : (int)team.DefaultCount;
             int priority = team.DefaultPriority > 500 ? 500 : (int)team.DefaultPriority;
-            localCount = configFile.Bind<int>(name, "Count", count);
+            localCount = configFile.Bind(name, "Count", count);
             onlineCount = localCount.Value;
-            localPriority = configFile.Bind<int>(name, "Priority", team.GetType() != typeof(CrewmateTeam) ? priority : -1);
+            localPriority = configFile.Bind(name, "Priority", team.GetType() != typeof(CrewmateTeam) ? priority : -1);
             onlinePriority = localPriority.Value;
             Name = name;
             Team = team;

@@ -4,12 +4,15 @@ using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Role;
+using FungleAPI.Translation;
+using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,6 +21,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -25,9 +29,10 @@ namespace FungleAPI.Utilities
 {
     public static class Helpers
     {
+        internal static GenericPopup Popup;
+        internal static EditName Screen;
         internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
-        public static Vent VentPrefab;
         public static List<DeadBody> AllDeadBodies
         {
             get
@@ -35,6 +40,54 @@ namespace FungleAPI.Utilities
                 allDeadBodies.RemoveAll(body => body == null || body.IsDestroyedOrNull());
                 return allDeadBodies;
             }
+        }
+        public static void ShowPopup(string text)
+        {
+            if (Popup == null)
+            {
+                Popup = GameObject.Instantiate<GenericPopup>(DestroyableSingleton<DiscordManager>.Instance.discordPopup, Camera.main.transform);
+                Popup.transform.localPosition = new Vector3(0, 0, -500);
+                SpriteRenderer background = Popup.transform.Find("Background").GetComponent<SpriteRenderer>();
+                Vector2 size = background.size;
+                size.x *= 2.5f;
+                background.size = size;
+                Popup.TextAreaTMP.fontSizeMin = 2f;
+            }
+            Popup.Show(text);
+        }
+        public static void ShowEditNameScreen(string tittleText, string defaultText, Action<string> OnSubmit = null, Action<string> OnBack = null)
+        {
+            if (Screen == null)
+            {
+                Screen = GameObject.Instantiate<EditName>(AccountManager.Instance.accountTab.editNameScreen, Camera.main.transform);
+                Screen.transform.localPosition = new Vector3(0, 0, -500);
+                Screen.gameObject.layer = 5;
+                foreach (Transform tr in Screen.GetComponentsInChildren<Transform>())
+                {
+                    tr.gameObject.layer = 5;
+                }
+                Screen.nameText.name = "ModdedEditNameTab";
+                Screen.nameText.nameSource.characterLimit = 30;
+                Screen.transform.GetChild(0).GetComponent<BoxCollider2D>().isTrigger = true;
+                Screen.transform.GetChild(3).gameObject.SetActive(false);
+                Screen.transform.GetChild(7).gameObject.SetActive(false);
+            }
+            TextMeshPro tittle = Screen.transform.GetChild(2).GetComponent<TextMeshPro>();
+            tittle.text = tittleText;
+            tittle.GetComponent<TextTranslatorTMP>().enabled = false;
+            Screen.transform.GetChild(6).GetComponent<PassiveButton>().SetNewAction(delegate
+            {
+                Screen.Close();
+                OnSubmit?.Invoke(Screen.nameText.nameSource.text);
+            });
+            Screen.BackButton.SafeCast<PassiveButton>().SetNewAction(delegate
+            {
+                Screen.Close();
+                OnBack?.Invoke(Screen.nameText.nameSource.text);
+            });
+            Screen.nameText.nameSource.SetText(defaultText);
+            Screen.gameObject.SetActive(true);
+            Screen.StartCoroutine(Screen.Show());
         }
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
@@ -193,7 +246,7 @@ namespace FungleAPI.Utilities
             }
             return -1;
         }
-        public static Color Dark(Color color, float num = 0.5f)
+        public static Color Dark(this Color color, float num = 0.5f)
         {
             num = Mathf.Clamp01(num);
             return new Color(
@@ -203,7 +256,7 @@ namespace FungleAPI.Utilities
                 color.a
             );
         }
-        public static Color Light(Color color, float num = 0.5f)
+        public static Color Light(this Color color, float num = 0.5f)
         {
             return new Color(
                 Mathf.Clamp01(color.r * num),
@@ -226,9 +279,9 @@ namespace FungleAPI.Utilities
             }
             return obj.Cast<T>();
         }
-        public static Vent CreateVent(Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
+        public static Vent CreateVent(VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
-            Vent vent = GameObject.Instantiate<Vent>(VentPrefab, ShipStatus.Instance.transform);
+            Vent vent = GameObject.Instantiate<Vent>(type == VentType.Skeld ? PrefabUtils.SkeldPrefab.AllVents[0] : type == VentType.Polus ? PrefabUtils.PolusPrefab.AllVents[0] : PrefabUtils.FunglePrefab.AllVents[0], ShipStatus.Instance.transform);
             vent.gameObject.SetActive(true);
             vent.Id = ShipStatus.Instance.AllVents.Count;
             ShipStatus.Instance.AllVents = ShipStatus.Instance.AllVents.Concat(new Vent[] { vent }).ToArray();
@@ -285,6 +338,12 @@ namespace FungleAPI.Utilities
                     return null;
                 }
             }
+        }
+        public enum VentType 
+        {
+            Skeld,
+            Polus,
+            Fungle
         }
     }
 }

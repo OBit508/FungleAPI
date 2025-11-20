@@ -1,4 +1,7 @@
-﻿using FungleAPI.Translation;
+﻿using Epic.OnlineServices;
+using FungleAPI.Configuration.Helpers;
+using FungleAPI.Translation;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +12,30 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Configuration.Attributes
 {
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-    public class SettingsGroup : Attribute
+    public class SettingsGroup
     {
-        public SettingsGroup(string name)
-        {
-            groupName = new Translator(name);
-        }
-        public Translator groupName;
-        public string Id;
         public List<ModdedOption> Options = new List<ModdedOption>();
         public StringNames GroupName => groupName.StringName;
-        public void Initialize(PropertyInfo property, object obj)
+        public virtual void Initialize()
         {
-            if (property.PropertyType == typeof(string))
+            Type type = GetType();
+            foreach (PropertyInfo property in type.GetProperties())
             {
-                Id = (string)property.GetValue(obj);
+                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
+                if (att != null)
+                {
+                    att.Initialize(property);
+                    MethodInfo method = property.GetGetMethod(true);
+                    if (method != null)
+                    {
+                        HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
+                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
+                    }
+                    Options.Add(att);
+                }
             }
+            groupName = new Translator(type.Name);
         }
+        private Translator groupName;
     }
 }

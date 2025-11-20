@@ -1,7 +1,8 @@
 ﻿using BepInEx.Configuration;
 using Epic.OnlineServices.RTC;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Translation;
-using FungleAPI.Utilities;
+using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Mono.Cecil;
 using System;
@@ -21,14 +22,13 @@ namespace FungleAPI.Configuration.Attributes
     {
         public BaseGameSetting Data;
         public Translator ConfigName;
+        public PropertyInfo Property;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
-        internal string GroupId;
-        protected ModdedOption(string configName, string groupId)
+        protected ModdedOption(string configName)
         {
             ConfigName = new Translator(configName);
-            GroupId = groupId;
         }
         public string GetValue()
         {
@@ -94,8 +94,13 @@ namespace FungleAPI.Configuration.Attributes
         {
             return null;
         }
-        public virtual void Initialize(Type type, PropertyInfo property, object obj)
+        public virtual void Initialize(PropertyInfo property)
         {
+            Property = property;
+        }
+        public virtual object GetReturnedValue()
+        {
+            return null;
         }
     }
 }

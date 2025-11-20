@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.ProBuilder;
 using UnityEngine.UI;
 using xCloud;
 
@@ -22,11 +23,17 @@ namespace FungleAPI.Utilities.Assets
         public static Sprite ArrowButton1;
         public static Sprite ArrowButton2;
         public static Sprite CreditsBackground;
+        public static Sprite Highlight;
+        public static Sprite Folder;
+        public static Sprite Inactive;
+        public static Sprite XMark;
         public static AudioClip HoverSound;
         public static AudioClip SelectSound;
         public static Prefab<GameObject> PluginChangerPrefab;
         public static Prefab<GameObject> CreditsPrefab;
         public static Prefab<GameObject> CogPrefab;
+        public static Prefab<GameObject> DestroyButtonPrefab;
+        public static Prefab<GameObject> SaveButtonPrefab;
         public static void LoadAll()
         {
             Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 400f);
@@ -36,11 +43,82 @@ namespace FungleAPI.Utilities.Assets
             ArrowButton1 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton1", 100);
             ArrowButton2 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton2", 100);
             CreditsBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.creditsBackground", 100);
+            Highlight = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.highlight", 100);
+            Folder = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.folder", 100);
+            Inactive = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.inactive", 100);
+            XMark = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.xMark", 100);
             HoverSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Hover", "UI_Hover");
             SelectSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Select", "UI_Select");
             CreatePluginChanger();
             CreateCredits();
             CreateCog();
+            CreateDestroyButton();
+            CreateFolderButton();
+        }
+        private static void CreateDestroyButton()
+        {
+            DestroyButtonPrefab = new Prefab<GameObject>(new GameObject("DestroyButton"));
+            PassiveButton button = DestroyButtonPrefab.prefab.AddComponent<PassiveButton>();
+            button.ClickSound = SelectSound;
+            button.HoverSound = HoverSound;
+            BoxCollider2D boxCollider2D = button.gameObject.AddComponent<BoxCollider2D>();
+            boxCollider2D.isTrigger = true;
+            SpriteRenderer highlight = new GameObject("Highlight").AddComponent<SpriteRenderer>();
+            highlight.transform.SetParent(button.transform);
+            highlight.sprite = Highlight;
+            highlight.transform.localPosition = Vector3.zero;
+            highlight.gameObject.layer = 5;
+            SpriteRenderer inactive = new GameObject("Inactive").AddComponent<SpriteRenderer>();
+            inactive.transform.SetParent(button.transform);
+            inactive.sprite = Inactive;
+            inactive.transform.localPosition = Vector3.zero;
+            inactive.gameObject.layer = 5;
+            button.activeSprites = highlight.gameObject;
+            button.inactiveSprites = inactive.gameObject;
+            SpriteRenderer icon = new GameObject("Icon").AddComponent<SpriteRenderer>();
+            icon.transform.SetParent(button.transform);
+            icon.transform.localPosition = Vector3.zero;
+            icon.sprite = XMark;
+            icon.color = Color.gray;
+            icon.gameObject.layer = 5;
+            ButtonRolloverHandler buttonRolloverHandler = button.gameObject.AddComponent<ButtonRolloverHandler>();
+            buttonRolloverHandler.Target = icon;
+            buttonRolloverHandler.Target.color = Color.gray;
+            buttonRolloverHandler.OutColor = Color.gray;
+            buttonRolloverHandler.OverColor = Color.white;
+            button.gameObject.layer = 5;
+        }
+        private static void CreateFolderButton()
+        {
+            SaveButtonPrefab = new Prefab<GameObject>(new GameObject("SaveButton"));
+            PassiveButton button = SaveButtonPrefab.prefab.AddComponent<PassiveButton>();
+            button.ClickSound = SelectSound;
+            button.HoverSound = HoverSound;
+            BoxCollider2D boxCollider2D = button.gameObject.AddComponent<BoxCollider2D>();
+            boxCollider2D.isTrigger = true;
+            SpriteRenderer highlight = new GameObject("Highlight").AddComponent<SpriteRenderer>();
+            highlight.transform.SetParent(button.transform);
+            highlight.sprite = Highlight;
+            highlight.transform.localPosition = Vector3.zero;
+            highlight.gameObject.layer = 5;
+            SpriteRenderer inactive = new GameObject("Inactive").AddComponent<SpriteRenderer>();
+            inactive.transform.SetParent(button.transform);
+            inactive.sprite = Inactive;
+            inactive.transform.localPosition = Vector3.zero;
+            inactive.gameObject.layer = 5;
+            button.activeSprites = highlight.gameObject;
+            button.inactiveSprites = inactive.gameObject;
+            SpriteRenderer icon = new GameObject("Icon").AddComponent<SpriteRenderer>();
+            icon.transform.SetParent(button.transform);
+            icon.transform.localPosition = Vector3.zero;
+            icon.sprite = Folder;
+            icon.color = Color.gray;
+            icon.gameObject.layer = 5;
+            ButtonRolloverHandler buttonRolloverHandler = button.gameObject.AddComponent<ButtonRolloverHandler>();
+            buttonRolloverHandler.Target = icon;
+            buttonRolloverHandler.OutColor = Color.gray;
+            buttonRolloverHandler.OverColor = Color.white;
+            button.gameObject.layer = 5;
         }
         private static void CreateCog()
         {

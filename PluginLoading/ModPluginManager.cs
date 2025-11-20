@@ -4,12 +4,14 @@ using FungleAPI.Attributes;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
+using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
@@ -41,7 +43,7 @@ namespace FungleAPI.PluginLoading
             {
                 try
                 {
-                    if (type.GetCustomAttribute<IgnoreOnFungleAutoRegister>() == null)
+                    if (type.GetCustomAttribute<FungleIgnore>() == null)
                     {
                         if (type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
                         {
@@ -202,6 +204,12 @@ namespace FungleAPI.PluginLoading
                 FungleAPIPlugin.loadAssets += loadAssets;
             }
             plugin.LocalMod = new Mod(plugin);
+            plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = basePlugin.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
+            if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
+            {
+                plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
+            }
+            plugin.PluginPreset.Initialize();
             return plugin;
         }
         public static ModPlugin GetByNameAndGUID(string modName, string modVersion)

@@ -15,7 +15,7 @@ namespace FungleAPI.Components
     [Attributes.RegisterTypeInIl2Cpp]
     public class Credits : MonoBehaviour
     {
-        public Vector3 Closed =  new Vector3(5.55f, 0, 0);
+        public Vector3 Closed = new Vector3(5.55f, 0, 0);
         public Vector3 Open = new Vector3(1.5f, 0, 0);
         public bool Opening;
         public PassiveButton Arrow;
@@ -29,6 +29,7 @@ namespace FungleAPI.Components
         public List<PassiveButton> Buttons;
         public List<ButtonRolloverHandler> Rollovers;
         public List<BoxCollider2D> Colliders;
+        public RectTransform Rect;
         public Color linkColor = new Color32(52, 152, 235, byte.MaxValue);
         public void Awake()
         {
@@ -88,7 +89,14 @@ namespace FungleAPI.Components
         }
         public void Update()
         {
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Opening ? Open : Closed, Time.deltaTime * 12);
+            if (Rect == null)
+                Rect = gameObject.AddComponent<RectTransform>();
+
+            Rect.anchoredPosition = Vector2.MoveTowards(
+                Rect.anchoredPosition,
+                Opening ? Open : Closed,
+                Time.deltaTime * 12
+            );
         }
         public void UpdatePage()
         {

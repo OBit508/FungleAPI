@@ -26,8 +26,8 @@ namespace FungleAPI.Configuration.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedNumberOption : ModdedOption
     {
-        public ModdedNumberOption(string configName, string groupId, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
-            : base(configName, groupId)
+        public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
+            : base(configName)
         {
             Data = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
@@ -40,17 +40,27 @@ namespace FungleAPI.Configuration.Attributes
             floatGameSetting.SuffixType = suffixType;
             floatGameSetting.OptionName = FloatOptionNames.Invalid;
         }
-        public override void Initialize(Type type, PropertyInfo property, object obj)
+        public override void Initialize(PropertyInfo property)
         {
+            base.Initialize(property);
             if (property.PropertyType == typeof(float) || property.PropertyType == typeof(int))
             {
-                ModPlugin plugin = ModPluginManager.GetModPlugin(type.Assembly);
-                float value = float.Parse(property.GetValue(obj).ToString());
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + type.FullName + " - Option", ConfigName.Default, value.ToString());
+                ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
+                float value = float.Parse(property.GetValue(null).ToString());
+                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + property.DeclaringType.FullName + " - Option", ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
-                FullConfigName = plugin.ModName + type.FullName + property.Name + value.GetType().FullName;
+                FullConfigName = plugin.ModName + property.DeclaringType.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);
             }
+        }
+        public override object GetReturnedValue()
+        {
+            Type type = Property.PropertyType;
+            if (type == typeof(int) || type == typeof(float))
+            {
+                return float.Parse(GetValue());
+            }
+            return GetValue();
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {

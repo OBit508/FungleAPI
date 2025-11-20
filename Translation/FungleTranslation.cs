@@ -8,6 +8,9 @@ namespace FungleAPI.Translation
 {
     public static class FungleTranslation
     {
+        private static Translator presetName;
+        private static Translator loadPreset;
+        private static Translator empty;
         private static Translator count;
         private static Translator priority;
         private static Translator credits;
@@ -23,6 +26,86 @@ namespace FungleAPI.Translation
         private static Translator teamConfigDesc;
         private static Translator nonModdedText;
         private static Translator kickingText;
+        private static Translator typeText;
+        public static StringNames PresetNameText
+        {
+            get
+            {
+                if (presetName == null)
+                {
+                    presetName = new Translator("What will be the name of your preset?");
+                    presetName.AddTranslation(SupportedLangs.Latam, "¿Cuál será el nombre de tu preajuste?");
+                    presetName.AddTranslation(SupportedLangs.Brazilian, "Qual será o nome da sua predefinição?");
+                    presetName.AddTranslation(SupportedLangs.Portuguese, "Qual será o nome da sua predefinição?");
+                    presetName.AddTranslation(SupportedLangs.Korean, "프리셋의 이름은 무엇으로 하시겠습니까?");
+                    presetName.AddTranslation(SupportedLangs.Russian, "Какое имя будет у вашего пресета?");
+                    presetName.AddTranslation(SupportedLangs.Dutch, "Wat wordt de naam van je preset?");
+                    presetName.AddTranslation(SupportedLangs.Filipino, "Ano ang magiging pangalan ng iyong preset?");
+                    presetName.AddTranslation(SupportedLangs.French, "Quel sera le nom de votre préréglage ?");
+                    presetName.AddTranslation(SupportedLangs.German, "Wie soll dein Preset heißen?");
+                    presetName.AddTranslation(SupportedLangs.Italian, "Quale sarà il nome del tuo preset?");
+                    presetName.AddTranslation(SupportedLangs.Japanese, "プリセットの名前は何にしますか？");
+                    presetName.AddTranslation(SupportedLangs.Spanish, "¿Cuál será el nombre de tu preajuste?");
+                    presetName.AddTranslation(SupportedLangs.SChinese, "您的预设名称是什么？");
+                    presetName.AddTranslation(SupportedLangs.TChinese, "您的預設名稱是什麼？");
+                    presetName.AddTranslation(SupportedLangs.Irish, "Cad a bheidh mar ainm ar do réamhshocrú?");
+                }
+                return presetName.StringName;
+            }
+        }
+        public static StringNames LoadPresetText
+        {
+            get
+            {
+                if (loadPreset == null)
+                {
+                    loadPreset = new Translator("Load preset");
+                    loadPreset.AddTranslation(SupportedLangs.English, "Load preset");
+                    loadPreset.AddTranslation(SupportedLangs.Latam, "Cargar preajuste");
+                    loadPreset.AddTranslation(SupportedLangs.Brazilian, "Carregar predefinição");
+                    loadPreset.AddTranslation(SupportedLangs.Portuguese, "Carregar predefinição");
+                    loadPreset.AddTranslation(SupportedLangs.Korean, "프리셋 불러오기");
+                    loadPreset.AddTranslation(SupportedLangs.Russian, "Загрузить пресет");
+                    loadPreset.AddTranslation(SupportedLangs.Dutch, "Preset laden");
+                    loadPreset.AddTranslation(SupportedLangs.Filipino, "I-load ang preset");
+                    loadPreset.AddTranslation(SupportedLangs.French, "Charger le préréglage");
+                    loadPreset.AddTranslation(SupportedLangs.German, "Voreinstellung laden");
+                    loadPreset.AddTranslation(SupportedLangs.Italian, "Carica preimpostazione");
+                    loadPreset.AddTranslation(SupportedLangs.Japanese, "プリセットを読み込む");
+                    loadPreset.AddTranslation(SupportedLangs.Spanish, "Cargar preajuste");
+                    loadPreset.AddTranslation(SupportedLangs.SChinese, "加载预设");
+                    loadPreset.AddTranslation(SupportedLangs.TChinese, "載入預設");
+                    loadPreset.AddTranslation(SupportedLangs.Irish, "Luchtaigh réamhshocrú");
+                }
+                return loadPreset.StringName;
+            }
+        }
+        public static StringNames EmptyText
+        {
+            get
+            {
+                if (empty == null)
+                {
+                    empty = new Translator("Empty");
+                    empty.AddTranslation(SupportedLangs.Latam, "Vacío");
+                    empty.AddTranslation(SupportedLangs.Brazilian, "Vazio");
+                    empty.AddTranslation(SupportedLangs.Portuguese, "Vazio");
+                    empty.AddTranslation(SupportedLangs.Korean, "비어 있음");
+                    empty.AddTranslation(SupportedLangs.Russian, "Пусто");
+                    empty.AddTranslation(SupportedLangs.Dutch, "Leeg");
+                    empty.AddTranslation(SupportedLangs.Filipino, "Walang laman");
+                    empty.AddTranslation(SupportedLangs.French, "Vide");
+                    empty.AddTranslation(SupportedLangs.German, "Leer");
+                    empty.AddTranslation(SupportedLangs.Italian, "Vuoto");
+                    empty.AddTranslation(SupportedLangs.Japanese, "空");
+                    empty.AddTranslation(SupportedLangs.Spanish, "Vacío");
+                    empty.AddTranslation(SupportedLangs.SChinese, "空");
+                    empty.AddTranslation(SupportedLangs.TChinese, "空的");
+                    empty.AddTranslation(SupportedLangs.Irish, "Folamh");
+                }
+                return empty.StringName;
+            }
+        }
         public static StringNames CreditsText
         {
             get
@@ -411,6 +494,32 @@ namespace FungleAPI.Translation
 
                 }
                 return kickingText.StringName;
+            }
+        }
+        public static StringNames TypeHereText
+        {
+            get
+            {
+                if (typeText == null)
+                {
+                    typeText = new Translator("Type here who was the killer");
+                    typeText.AddTranslation(SupportedLangs.Latam, "Escribe aquí quién fue el asesino");
+                    typeText.AddTranslation(SupportedLangs.Brazilian, "Digite aqui quem foi o assassino");
+                    typeText.AddTranslation(SupportedLangs.Portuguese, "Digite aqui quem foi o assassino");
+                    typeText.AddTranslation(SupportedLangs.Korean, "여기에 살인자가 누구였는지 입력하세요");
+                    typeText.AddTranslation(SupportedLangs.Russian, "Введите здесь, кто был убийцей");
+                    typeText.AddTranslation(SupportedLangs.Dutch, "Typ hier wie de moordenaar was");
+                    typeText.AddTranslation(SupportedLangs.Filipino, "I-type dito kung sino ang pumatay");
+                    typeText.AddTranslation(SupportedLangs.French, "Tapez ici qui était le meurtrier");
+                    typeText.AddTranslation(SupportedLangs.German, "Geben Sie hier ein, wer der Mörder war");
+                    typeText.AddTranslation(SupportedLangs.Italian, "Digita qui chi è stato l'assassino");
+                    typeText.AddTranslation(SupportedLangs.Japanese, "ここに誰が殺人者だったか入力してください");
+                    typeText.AddTranslation(SupportedLangs.Spanish, "Escribe aquí quién fue el asesino");
+                    typeText.AddTranslation(SupportedLangs.SChinese, "在此输入谁是凶手");
+                    typeText.AddTranslation(SupportedLangs.TChinese, "在此輸入誰是兇手");
+                    typeText.AddTranslation(SupportedLangs.Irish, "Clóscríobh anseo cé a bhí ina mharaitheoir");
+                }
+                return typeText.StringName;
             }
         }
     }
