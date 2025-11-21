@@ -20,8 +20,6 @@ namespace FungleAPI.Utilities.Assets
         public static Sprite Empty;
         public static Sprite NextButton;
         public static Sprite PluginChangerBackground;
-        public static Sprite ArrowButton1;
-        public static Sprite ArrowButton2;
         public static Sprite CreditsBackground;
         public static Sprite Highlight;
         public static Sprite Folder;
@@ -30,7 +28,7 @@ namespace FungleAPI.Utilities.Assets
         public static AudioClip HoverSound;
         public static AudioClip SelectSound;
         public static Prefab<GameObject> PluginChangerPrefab;
-        public static Prefab<GameObject> CreditsPrefab;
+        public static Prefab<GameObject> ModsPagePrefab;
         public static Prefab<GameObject> CogPrefab;
         public static Prefab<GameObject> DestroyButtonPrefab;
         public static Prefab<GameObject> SaveButtonPrefab;
@@ -40,8 +38,6 @@ namespace FungleAPI.Utilities.Assets
             Empty = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
             PluginChangerBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.pluginChangerBackground", 100);
             NextButton = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.nextButton", 100);
-            ArrowButton1 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton1", 100);
-            ArrowButton2 = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.arrowButton2", 100);
             CreditsBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.creditsBackground", 100);
             Highlight = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.highlight", 100);
             Folder = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.folder", 100);
@@ -50,7 +46,7 @@ namespace FungleAPI.Utilities.Assets
             HoverSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Hover", "UI_Hover");
             SelectSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Select", "UI_Select");
             CreatePluginChanger();
-            CreateCredits();
+            CreateModsPage();
             CreateCog();
             CreateDestroyButton();
             CreateFolderButton();
@@ -137,49 +133,31 @@ namespace FungleAPI.Utilities.Assets
             cog.gameObject.layer = 5;
             cog.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         }
-        private static void CreateCredits()
+        private static void CreateModsPage()
         {
-            CreditsPrefab = new Prefab<GameObject>(new GameObject("Credits"));
-            Credits credits = CreditsPrefab.prefab.AddComponent<Credits>();
-            credits.gameObject.layer = 5;
-            credits.gameObject.AddComponent<SpriteRenderer>().sprite = CreditsBackground;
-            PassiveButton arrowButton = new GameObject("ArrowButton").AddComponent<PassiveButton>();
-            arrowButton.ClickSound = SelectSound;
-            arrowButton.HoverSound = HoverSound;
-            BoxCollider2D boxCollider2D = arrowButton.gameObject.AddComponent<BoxCollider2D>();
-            boxCollider2D.isTrigger = true;
-            boxCollider2D.size = new Vector2(2, 4);
-            SpriteRenderer arrow1 = new GameObject("Arrow1").AddComponent<SpriteRenderer>();
-            arrow1.sprite = ArrowButton1;
-            arrow1.transform.SetParent(arrowButton.transform);
-            SpriteRenderer arrow2 = new GameObject("Arrow2").AddComponent<SpriteRenderer>();
-            arrow2.sprite = ArrowButton2;
-            arrow2.transform.SetParent(arrowButton.transform);
-            arrowButton.activeSprites = arrow2.gameObject;
-            arrowButton.inactiveSprites = arrow1.gameObject;
-            arrowButton.gameObject.layer = 5;
-            arrowButton.transform.SetParent(credits.transform);
-            arrowButton.transform.localScale = new Vector3(-0.2f, 0.2f, 0.2f);
-            arrowButton.transform.localPosition = new Vector3(-2.135f, 1.7f, -0.1f);
-            TextMeshPro text = new GameObject("CreditsText").AddComponent<TextMeshPro>();
+            ModsPagePrefab = new Prefab<GameObject>(new GameObject("ModsPage"));
+            ModsPage page = ModsPagePrefab.prefab.AddComponent<ModsPage>();
+            page.gameObject.layer = 5;
+            page.gameObject.AddComponent<SpriteRenderer>().sprite = CreditsBackground;
+            TextMeshPro text = new GameObject("ModsText").AddComponent<TextMeshPro>();
             text.alignment = TextAlignmentOptions.Center;
             text.characterSpacing = 7;
             text.enableWordWrapping = false;
-            text.transform.SetParent(credits.transform);
+            text.transform.SetParent(page.transform);
             text.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             text.transform.localPosition = new Vector3(0, 1.9f, 0);
             TextMeshPro pageText = new GameObject("PageText").AddComponent<TextMeshPro>();
             pageText.alignment = TextAlignmentOptions.Center;
             pageText.text = "0/10";
-            pageText.transform.SetParent(credits.transform);
+            pageText.transform.SetParent(page.transform);
             pageText.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             pageText.transform.localPosition = new Vector3(0, -1.8f, -0.1f);
             PassiveButton rightButton = CreateNextButton("RightButton");
-            rightButton.transform.SetParent(credits.transform);
+            rightButton.transform.SetParent(page.transform);
             rightButton.transform.localPosition = new Vector3(1, -1.8f, -0.1f);
             rightButton.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             PassiveButton leftButton = CreateNextButton("LeftButton");
-            leftButton.transform.SetParent(credits.transform);
+            leftButton.transform.SetParent(page.transform);
             leftButton.transform.localPosition = new Vector3(-1, -1.8f, -0.1f);
             leftButton.transform.localScale = new Vector3(-0.3f, 0.3f, 0.3f);
             for (int i = 0; i < 10; i++)
@@ -188,16 +166,9 @@ namespace FungleAPI.Utilities.Assets
                 modsText.alignment = TextAlignmentOptions.Top;
                 modsText.horizontalAlignment = HorizontalAlignmentOptions.Center;
                 modsText.enableWordWrapping = false;
-                modsText.transform.SetParent(credits.transform);
+                modsText.transform.SetParent(page.transform);
                 modsText.transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
                 modsText.transform.localPosition = new Vector3(0, 1.25f - i * 0.27f, -0.1f);
-                modsText.gameObject.AddComponent<PassiveButton>().ClickSound = SelectSound;
-                BoxCollider2D collider = modsText.gameObject.AddComponent<BoxCollider2D>();
-                collider.isTrigger = true;
-                collider.size = new Vector2(50, 3);
-                ButtonRolloverHandler buttonRolloverHandler = modsText.gameObject.AddComponent<ButtonRolloverHandler>();
-                buttonRolloverHandler.TargetText = modsText;
-                buttonRolloverHandler.OutColor = Color.white;
             }
         }
         private static void CreatePluginChanger()

@@ -25,7 +25,7 @@
     <Compile Include="Networking\RPCs\RpcUpdatePreset.cs" />
     <Compile Include="Patches\NameTextBehaviourPatch.cs" />
     <Compile Include="Utilities\ControllerHelper.cs" />
-    <Compile Include="Components\Credits.cs" />
+    <Compile Include="Components\ModsPage.cs" />
     <Compile Include="Components\LobbyWarningText.cs" />
     <Compile Include="Components\PluginChanger.cs" />
     <Compile Include="Configuration\SettingsGroup.cs" />

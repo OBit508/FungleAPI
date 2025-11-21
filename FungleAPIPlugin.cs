@@ -111,7 +111,6 @@ namespace FungleAPI
                         plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
                     }
                     plugin.PluginPreset.Initialize();
-                    plugin.link = "https://github.com/OBit508/FungleAPI";
                     ModPlugin.AllPlugins.Add(plugin);
                 }
                 return plugin;

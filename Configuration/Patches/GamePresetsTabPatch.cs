@@ -34,6 +34,7 @@ namespace FungleAPI.Configuration.Patches
             }
             if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin)
             {
+                menu.SetSelectedText();
                 menu.PresetDescriptionText.gameObject.SetActive(true);
                 menu.DefaultButtonSelected.gameObject.SetActive(true);
                 menu.SecondPresetButton.gameObject.SetActive(true);

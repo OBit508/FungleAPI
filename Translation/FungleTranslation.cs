@@ -14,7 +14,6 @@ namespace FungleAPI.Translation
         private static Translator empty;
         private static Translator count;
         private static Translator priority;
-        private static Translator credits;
         private static Translator impostors;
         private static Translator neutral;
         private static Translator neutrals;
@@ -132,32 +131,6 @@ namespace FungleAPI.Translation
                     empty.AddTranslation(SupportedLangs.Irish, "Folamh");
                 }
                 return empty.StringName;
-            }
-        }
-        public static StringNames CreditsText
-        {
-            get
-            {
-                if (credits == null)
-                {
-                    credits = new Translator("Credits:");
-                    credits.AddTranslation(SupportedLangs.Latam, "Créditos:");
-                    credits.AddTranslation(SupportedLangs.Brazilian, "Créditos:");
-                    credits.AddTranslation(SupportedLangs.Portuguese, "Créditos:");
-                    credits.AddTranslation(SupportedLangs.Korean, "크레딧:");
-                    credits.AddTranslation(SupportedLangs.Russian, "Авторы:");
-                    credits.AddTranslation(SupportedLangs.Dutch, "Credits:");
-                    credits.AddTranslation(SupportedLangs.Filipino, "Mga Kredito:");
-                    credits.AddTranslation(SupportedLangs.French, "Crédits :");
-                    credits.AddTranslation(SupportedLangs.German, "Credits:");
-                    credits.AddTranslation(SupportedLangs.Italian, "Crediti:");
-                    credits.AddTranslation(SupportedLangs.Japanese, "クレジット：");
-                    credits.AddTranslation(SupportedLangs.Spanish, "Créditos:");
-                    credits.AddTranslation(SupportedLangs.SChinese, "制作人员：");
-                    credits.AddTranslation(SupportedLangs.TChinese, "製作人員：");
-                    credits.AddTranslation(SupportedLangs.Irish, "Creidiúintí:");
-                }
-                return credits.StringName;
             }
         }
         public static StringNames CountText

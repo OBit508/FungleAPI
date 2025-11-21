@@ -1,6 +1,8 @@
 ﻿using AmongUs.Data;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Components;
+using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using System;
@@ -8,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 namespace FungleAPI.Patches
@@ -29,7 +32,21 @@ namespace FungleAPI.Patches
                 __instance.screenMask.enabled = false;
             });
             __instance.announcementPopUp.SetMainMenuManager(__instance);
-            FungleAssets.CreditsPrefab.Instantiate(__instance.transform.GetChild(5).GetChild(1).GetChild(3));
+            Transform parent = __instance.transform.GetChild(5).GetChild(1).GetChild(3);
+            ModsPage page = FungleAssets.ModsPagePrefab.Instantiate(parent).GetComponent<ModsPage>();
+            PassiveButton button = GameObject.Instantiate<PassiveButton>(__instance.creditsButton, parent);
+            button.transform.localScale = Vector3.one * 1.1f;
+            button.SetNewAction(delegate
+            {
+                page.Opening = !page.Opening;
+            });
+            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.2f, 0.89f);
+            button.GetComponent<AspectPosition>().Update();
+            TextMeshPro text = button.transform.GetChild(2).GetChild(0).GetComponent<TextMeshPro>();
+            text.GetComponent<TextTranslatorTMP>().enabled = false;
+            text.text = "Mods";
+            page.Closed = button.transform.localPosition;
+            page.transform.localScale = Vector3.zero;
             return false;
         }
         public static System.Collections.IEnumerator RunStartUp(MainMenuManager mainMenuManager)
@@ -81,7 +98,11 @@ namespace FungleAPI.Patches
                     break;
             }
             AmongUsClient.Instance.MenuTarget = AmongUsClient.MainMenuTarget.None;
-            yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs();
+            if (!ShipsLoaded)
+            {
+                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs();
+                ShipsLoaded = true;
+            }
             mainMenuManager.finishStartup = true;
             if (DestroyableSingleton<DisconnectPopup>.Instance.gameObject.activeSelf)
             {
@@ -90,5 +111,6 @@ namespace FungleAPI.Patches
             yield return null;
             yield break;
         }
+        public static bool ShipsLoaded;
     }
 }
