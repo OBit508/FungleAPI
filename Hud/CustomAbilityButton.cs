@@ -1,4 +1,5 @@
-﻿using FungleAPI.Patches;
+﻿using FungleAPI.Attributes;
+using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
@@ -14,6 +15,7 @@ using xCloud;
 using static Sentry.MeasurementUnit;
 namespace FungleAPI.Hud
 {
+    [FungleIgnore]
     public class CustomAbilityButton
     {
         internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
@@ -24,8 +26,7 @@ namespace FungleAPI.Hud
             return button.SimpleCast<T>();
         }
         public AbilityButton Button;
-        public virtual bool IndependentButton => false;
-        public virtual bool Active => true;
+        public virtual bool Active => false;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
         public virtual float Cooldown { get; }

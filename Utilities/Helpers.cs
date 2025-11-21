@@ -89,10 +89,7 @@ namespace FungleAPI.Utilities
             Screen.gameObject.SetActive(true);
             Screen.StartCoroutine(Screen.Show());
         }
-        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
-        {
-            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
-        }
+        
         public static ModdedConsole CreateConsole(float distance, Predicate<PlayerControl> predicate, Action onUse, Sprite sprite)
         {
             ModdedConsole console = new GameObject("CustomConsole").AddComponent<ModdedConsole>();
@@ -110,18 +107,6 @@ namespace FungleAPI.Utilities
             console.transform.position = Vector3.zero;
             return console;
         }
-        public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
-        {
-            List<DeadBody> bodies = new List<DeadBody>();
-            foreach (DeadBody body in AllDeadBodies)
-            {
-                if (body != null && body.myCollider.enabled && !PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
-                {
-                    bodies.Add(body);
-                }
-            }
-            return bodies;
-        }
         public static DeadBody CreateCustomBody(PlayerControl from, DeadBodyType deadBodyType)
         {
             DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[deadBodyType == DeadBodyType.Normal ? 0 : 1]);
@@ -137,21 +122,6 @@ namespace FungleAPI.Utilities
             body.transform.position = vector;
             body.enabled = true;
             return body;
-        }
-        public static DeadBody GetClosestDeadBody(this PlayerControl target, float distance, bool includeReporteds = false)
-        {
-            DeadBody closest = null;
-            float dis = distance;
-            foreach (DeadBody body in GetClosestsDeadBodies(target, distance, includeReporteds))
-            {
-                float d = Vector2.Distance(target.GetTruePosition(), body.TruePosition);
-                if (dis > d)
-                {
-                    dis = d;
-                    closest = body;
-                }
-            }
-            return closest;
         }
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
         {
@@ -185,39 +155,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
-        public static DeadBody GetBody(this PlayerControl player)
-        {
-            return GetBodyById(player.PlayerId);
-        }
         public static string GetString(this StringNames s)
         {
             return TranslationController.Instance.GetString(s);
-        }
-        public static PlayerVoteArea GetVoteArea(this PlayerControl player)
-        {
-            if (MeetingHud.Instance)
-            {
-                foreach (PlayerVoteArea playerVoteArea in MeetingHud.Instance.playerStates)
-                {
-                    if (playerVoteArea.TargetPlayerId == player.PlayerId)
-                    {
-                        return playerVoteArea;
-                    }
-                }
-            }
-            return null;
-        }
-        public static List<ChatBubble> GetChatBubble(this PlayerControl player)
-        {
-            List<ChatBubble> list = new List<ChatBubble>();
-            foreach (ChatBubble chatBubble in HudManager.Instance.Chat.chatBubblePool.activeChildren)
-            {
-                if (chatBubble.playerInfo.Object.PlayerId == player.PlayerId)
-                {
-                    list.Add(chatBubble);
-                }
-            }
-            return list;
         }
         public static void SetNewAction(this PassiveButton button, Action action)
         {

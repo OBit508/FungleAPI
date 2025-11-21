@@ -16,6 +16,12 @@
   <ItemGroup>
     <Compile Include="Attributes\FungleIgnore.cs" />
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
+    <Compile Include="Base\Buttons\RoleButton.cs" />
+    <Compile Include="Base\Buttons\RoleTargetButton.cs" />
+    <Compile Include="Base\Buttons\TargetButton.cs" />
+    <Compile Include="Base\Roles\CrewmateBase.cs" />
+    <Compile Include="Base\Roles\ImpostorBase.cs" />
+    <Compile Include="Base\Roles\NeutralBase.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\Preloader\Core\Patching\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Configuration\Helpers\HarmonyHelper.cs" />
@@ -153,10 +159,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\creditsBackground.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\arrowButton2.png" />
-    <EmbeddedResource Include="Resources\arrowButton1.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\pluginChangerBackground.png" />

@@ -68,6 +68,11 @@ namespace FungleAPI.Patches
             {
                 DestroyableSingleton<StoreMenu>.Instance.Initialize();
             }
+            if (!ShipsLoaded)
+            {
+                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs();
+                ShipsLoaded = true;
+            }
             while (!DestroyableSingleton<EOSManager>.Instance.HasFinishedLoginFlow() || DestroyableSingleton<AccountManager>.Instance.signInScreen.IsOpen())
             {
                 yield return new WaitForSeconds(0.3f);
@@ -98,11 +103,6 @@ namespace FungleAPI.Patches
                     break;
             }
             AmongUsClient.Instance.MenuTarget = AmongUsClient.MainMenuTarget.None;
-            if (!ShipsLoaded)
-            {
-                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs();
-                ShipsLoaded = true;
-            }
             mainMenuManager.finishStartup = true;
             if (DestroyableSingleton<DisconnectPopup>.Instance.gameObject.activeSelf)
             {

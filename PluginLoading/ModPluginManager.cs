@@ -53,11 +53,11 @@ namespace FungleAPI.PluginLoading
                         {
                             plugin.Settings = (ModSettings)Activator.CreateInstance(type);
                         }
-                        else if (typeof(ModFolderConfig).IsAssignableFrom(type) && type != typeof(ModFolderConfig))
+                        else if (typeof(ModFolderConfig).IsAssignableFrom(type))
                         {
                             plugin.FolderConfig = (ModFolderConfig)Activator.CreateInstance(type);
                         }
-                        else if (typeof(CustomAbilityButton).IsAssignableFrom(type) && type != typeof(CustomAbilityButton))
+                        else if (typeof(CustomAbilityButton).IsAssignableFrom(type))
                         {
                             RegisterButton(type, plugin);
                         }
@@ -65,29 +65,29 @@ namespace FungleAPI.PluginLoading
                         {
                             RegisterRole(type, plugin);
                         }
-                        else if (typeof(CustomGameOver).IsAssignableFrom(type) && type != typeof(CustomGameOver))
+                        else if (typeof(CustomGameOver).IsAssignableFrom(type))
                         {
                             RegisterGameOver(type, plugin);
                         }
-                        else if (typeof(ModdedTeam).IsAssignableFrom(type) && type != typeof(ModdedTeam))
+                        else if (typeof(ModdedTeam).IsAssignableFrom(type))
                         {
                             RegisterTeam(type, plugin);
                         }
-                        else if (typeof(RpcHelper).IsAssignableFrom(type) && type != typeof(RpcHelper) && type != typeof(CustomRpc<>))
+                        else if (typeof(RpcHelper).IsAssignableFrom(type))
                         {
                             RegisterRpc(type, plugin);
                         }
-                        else if (typeof(PlayerComponent).IsAssignableFrom(type) && type != typeof(PlayerComponent))
+                        else if (typeof(PlayerComponent).IsAssignableFrom(type))
                         {
                             ClassInjector.RegisterTypeInIl2Cpp(type);
                             PlayerControlPatch.AllPlayerComponents.Add(Il2CppType.From(type));
                         }
-                        else if (typeof(DeadBodyComponent).IsAssignableFrom(type) && type != typeof(DeadBodyComponent))
+                        else if (typeof(DeadBodyComponent).IsAssignableFrom(type))
                         {
                             ClassInjector.RegisterTypeInIl2Cpp(type);
                             DeadBodyHelper.AllBodyComponents.Add(Il2CppType.From(type));
                         }
-                        else if (typeof(VentComponent).IsAssignableFrom(type) && type != typeof(VentComponent))
+                        else if (typeof(VentComponent).IsAssignableFrom(type))
                         {
                             ClassInjector.RegisterTypeInIl2Cpp(type);
                             VentPatch.AllVentComponents.Add(Il2CppType.From(type));
@@ -147,7 +147,7 @@ namespace FungleAPI.PluginLoading
             RoleTypes role = (RoleTypes)CustomRoleManager.id;
             CustomRoleManager.RolesToRegister.Add(type, role);
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, (new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance()), new ChangeableValue<List<CustomAbilityButton>>(new List<CustomAbilityButton>())));
+            ICustomRole.Save.Add(type, (new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
             return role;
         }
         public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)

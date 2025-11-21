@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices;
+using FungleAPI.Attributes;
 using FungleAPI.Configuration.Attributes;
 using HarmonyLib;
 using System;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Configuration
 {
+    [FungleIgnore]
     public class ModSettings
     {
         public List<ModdedOption> Options = new List<ModdedOption>();

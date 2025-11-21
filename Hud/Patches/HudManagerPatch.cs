@@ -29,16 +29,7 @@ namespace FungleAPI.Hud.Patches
             {
                 __instance.StartCoroutine(__instance.CoShowIntro());
             }
-            IEnumerable<CustomAbilityButton> priorityToCreate = Enumerable.Empty<CustomAbilityButton>();
-            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
-            {
-                if (role.CustomRole() != null)
-                {
-                    priorityToCreate = priorityToCreate.Concat(role.CustomRole().Buttons.FindAll(b => !priorityToCreate.Contains(b)));
-                }
-            }
-            priorityToCreate = priorityToCreate.Concat(CustomAbilityButton.Buttons.Values.ToList().FindAll(b => !priorityToCreate.Contains(b)));
-            foreach (CustomAbilityButton button in priorityToCreate)
+            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
@@ -68,13 +59,14 @@ namespace FungleAPI.Hud.Patches
                             timer += Time.deltaTime;
                             if (timer >= HudHelper.UpdateDelay)
                             {
+                                __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && HudHelper.Active);
                                 __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
                                 __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
                                 foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
                                 {
                                     if (button.Button != null)
                                     {
-                                        button.Button.ToggleVisible(button.Active && HudHelper.Active && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                                        button.Button.ToggleVisible(button.Active && HudHelper.Active);
                                     }
                                 }
                                 timer = 0;
@@ -82,13 +74,14 @@ namespace FungleAPI.Hud.Patches
                         }
                         else if (HudHelper.UpdateFlag == HudUpdateFlag.Always)
                         {
+                            __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && HudHelper.Active);
                             __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
                             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
                             foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
                             {
                                 if (button.Button != null)
                                 {
-                                    button.Button.ToggleVisible(button.Active && HudHelper.Active && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                                    button.Button.ToggleVisible(button.Active && HudHelper.Active);
                                 }
                             }
                         }
@@ -122,7 +115,7 @@ namespace FungleAPI.Hud.Patches
                 {
                     if (button.Button != null)
                     {
-                        button.Button.ToggleVisible(button.Active && isActive && (button.IndependentButton || role.CustomRole() != null && role.CustomRole().Buttons != null && role.CustomRole().Buttons.Contains(button)));
+                        button.Button.ToggleVisible(button.Active && isActive);
                     }
                 }
             }

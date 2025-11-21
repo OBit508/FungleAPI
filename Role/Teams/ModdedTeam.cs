@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
+using FungleAPI.Attributes;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
@@ -25,6 +26,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruc
 
 namespace FungleAPI.Role.Teams
 {
+    [FungleIgnore]
     public class ModdedTeam
     {
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();

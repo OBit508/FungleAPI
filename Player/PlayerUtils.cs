@@ -3,6 +3,8 @@ using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using System;
@@ -17,6 +19,67 @@ namespace FungleAPI.Player
     public static class PlayerUtils
     {
         internal static Dictionary<PlayerControl, List<PlayerComponent>> Components = new Dictionary<PlayerControl, List<PlayerComponent>>();
+        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
+        }
+        public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
+        {
+            List<DeadBody> bodies = new List<DeadBody>();
+            foreach (DeadBody body in Helpers.AllDeadBodies)
+            {
+                if (body != null && body.myCollider.enabled && !PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
+                {
+                    bodies.Add(body);
+                }
+            }
+            return bodies;
+        }
+        public static DeadBody GetClosestDeadBody(this PlayerControl target, float distance, bool includeReporteds = false)
+        {
+            DeadBody closest = null;
+            float dis = distance;
+            foreach (DeadBody body in GetClosestsDeadBodies(target, distance, includeReporteds))
+            {
+                float d = Vector2.Distance(target.GetTruePosition(), body.TruePosition);
+                if (dis > d)
+                {
+                    dis = d;
+                    closest = body;
+                }
+            }
+            return closest;
+        }
+        public static DeadBody GetBody(this PlayerControl player)
+        {
+            return Helpers.GetBodyById(player.PlayerId);
+        }
+        public static PlayerVoteArea GetVoteArea(this PlayerControl player)
+        {
+            if (MeetingHud.Instance)
+            {
+                foreach (PlayerVoteArea playerVoteArea in MeetingHud.Instance.playerStates)
+                {
+                    if (playerVoteArea.TargetPlayerId == player.PlayerId)
+                    {
+                        return playerVoteArea;
+                    }
+                }
+            }
+            return null;
+        }
+        public static List<ChatBubble> GetChatBubble(this PlayerControl player)
+        {
+            List<ChatBubble> list = new List<ChatBubble>();
+            foreach (ChatBubble chatBubble in HudManager.Instance.Chat.chatBubblePool.activeChildren)
+            {
+                if (chatBubble.playerInfo.Object.PlayerId == player.PlayerId)
+                {
+                    list.Add(chatBubble);
+                }
+            }
+            return list;
+        }
         public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
         {
             foreach (PlayerControl p in Components.Keys)

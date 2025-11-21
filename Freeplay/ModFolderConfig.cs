@@ -1,4 +1,5 @@
-﻿using FungleAPI.Configuration;
+﻿using FungleAPI.Attributes;
+using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -12,6 +13,7 @@ using UnityEngine;
 
 namespace FungleAPI.Freeplay
 {
+    [FungleIgnore]
     public class ModFolderConfig
     {
         public bool initialized;

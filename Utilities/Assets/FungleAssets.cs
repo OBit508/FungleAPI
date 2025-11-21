@@ -73,7 +73,7 @@ namespace FungleAPI.Utilities.Assets
             button.inactiveSprites = inactive.gameObject;
             SpriteRenderer icon = new GameObject("Icon").AddComponent<SpriteRenderer>();
             icon.transform.SetParent(button.transform);
-            icon.transform.localPosition = Vector3.zero;
+            icon.transform.localPosition = new Vector3(0, 0, -0.1f);
             icon.sprite = XMark;
             icon.color = Color.gray;
             icon.gameObject.layer = 5;
@@ -106,7 +106,7 @@ namespace FungleAPI.Utilities.Assets
             button.inactiveSprites = inactive.gameObject;
             SpriteRenderer icon = new GameObject("Icon").AddComponent<SpriteRenderer>();
             icon.transform.SetParent(button.transform);
-            icon.transform.localPosition = Vector3.zero;
+            icon.transform.localPosition = new Vector3(0, 0, -0.1f);
             icon.sprite = Folder;
             icon.color = Color.gray;
             icon.gameObject.layer = 5;

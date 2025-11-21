@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using FungleAPI.Attributes;
+using Hazel;
 using InnerNet;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver
 {
+    [FungleIgnore]
     public class CustomGameOver
     {
         public static CustomGameOver CachedGameOver;

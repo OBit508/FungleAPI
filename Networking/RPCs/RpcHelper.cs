@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using FungleAPI.Attributes;
+using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.RPCs
 {
+    [FungleIgnore]
     public class RpcHelper
     {
         public virtual void Handle(MessageReader reader)

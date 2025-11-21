@@ -1,6 +1,9 @@
 ﻿
-using FungleAPI.Patches;
+using FungleAPI.Attributes;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
+using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using Hazel;
 using InnerNet;
 using System;
@@ -8,11 +11,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.ModCompatibility;
-using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Networking.RPCs
 {
+    [FungleIgnore]
     public class CustomRpc<DataT> : RpcHelper
     {
         public void Send(DataT data, uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
@@ -29,6 +31,7 @@ namespace FungleAPI.Networking.RPCs
         {
         }
     }
+    [FungleIgnore]
     public class CustomRpc : RpcHelper
     {
         public void Send(uint NetId, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
