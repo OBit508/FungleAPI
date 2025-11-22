@@ -28,6 +28,7 @@
     <Compile Include="Configuration\Presets\PluginPreset.cs" />
     <Compile Include="Configuration\Presets\PresetV1.cs" />
     <Compile Include="Configuration\Patches\GamePresetsTabPatch.cs" />
+    <Compile Include="GameOver\LogicGameFlowNormalPatch.cs" />
     <Compile Include="Networking\RPCs\RpcUpdatePreset.cs" />
     <Compile Include="Patches\NameTextBehaviourPatch.cs" />
     <Compile Include="Utilities\ControllerHelper.cs" />
