@@ -47,6 +47,28 @@ namespace FungleAPI.Role.Patches
                 role.RoleIconWhite = customRole.IconWhite;
             }
         }
+        [HarmonyPrefix]
+        [HarmonyPatch("AssignRoleOnDeath")]
+        public static bool AssignRoleOnDeath(RoleManager __instance, [HarmonyArgument(0)] PlayerControl plr)
+        {
+            if (!plr || !plr.Data.IsDead)
+            {
+                return false;
+            }
+            ICustomRole role = plr.Data.Role.CustomRole();
+            if (role == null)
+            {
+                return true;
+            }
+            if (role.AvaibleGhostRoles == null || role.AvaibleGhostRoles.Count <= 0)
+            {
+                plr.RpcSetRole(role.GhostRole);
+                return false;
+            }
+            plr.RpcSetRole(role.AvaibleGhostRoles[new System.Random().Next(0, role.AvaibleGhostRoles.Count - 1)], false);
+            return false;
+        }
+
         [HarmonyPatch("SelectRoles")]
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)

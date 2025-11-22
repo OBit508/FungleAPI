@@ -16,6 +16,7 @@ using FungleAPI.Role;
 using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Rewired.Utils.Classes.Data;
@@ -39,7 +40,25 @@ namespace FungleAPI.PluginLoading
             plugin.ModName = plugin.ModAssembly.GetName().Name;
             plugin.RealName = plugin.ModName;
             plugin.BasePlugin = basePlugin;
+            List<Type> types = new List<Type>();
+            HashSet<Type> visited = new HashSet<Type>();
+            void AddTypes(Type type)
+            {
+                if (!visited.Add(type))
+                {
+                    return;
+                }
+                types.Add(type);
+                foreach (Type t in type.GetNestedTypes(AccessTools.all))
+                {
+                    AddTypes(t);
+                }
+            }
             foreach (Type type in plugin.ModAssembly.GetTypes())
+            {
+                AddTypes(type);
+            }
+            foreach (Type type in types)
             {
                 try
                 {

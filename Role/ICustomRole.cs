@@ -36,6 +36,7 @@ namespace FungleAPI.Role
         bool CompletedTasksCountForProgress => Team == ModdedTeam.Crewmates;
         bool IsGhostRole => false;
         RoleTypes GhostRole => Team == ModdedTeam.Crewmates ? RoleTypes.CrewmateGhost : (Team == ModdedTeam.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost.Role);
+        List<RoleTypes> AvaibleGhostRoles => null;
         bool ShowTeamColor => false;
         Sprite Screenshot => null;
         bool HideRole => false;
