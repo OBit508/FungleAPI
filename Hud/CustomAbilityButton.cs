@@ -26,6 +26,7 @@ namespace FungleAPI.Hud
             return button.SimpleCast<T>();
         }
         public AbilityButton Button;
+        public virtual ButtonLocation Location => ButtonLocation.BottomRight;
         public virtual bool Active => false;
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
@@ -135,7 +136,7 @@ namespace FungleAPI.Hud
                 Destroy();
             }
             Reset(true);
-            Button = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton, HudManager.Instance.AbilityButton.transform.parent);
+            Button = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
             Button.name = GetType().Name;
             PassiveButton component = Button.GetComponent<PassiveButton>();
             Button.graphic.sprite = ButtonSprite;
