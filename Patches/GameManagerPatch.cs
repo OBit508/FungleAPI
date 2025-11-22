@@ -37,12 +37,5 @@ namespace FungleAPI.Patches
             __instance.RpcEndGame(endReason.GetGameOver());
             return false;
         }
-        [HarmonyPatch("GetDeadBody")]
-        [HarmonyPrefix]
-        public static bool GetDeadBodyPrefix(GameManager __instance, [HarmonyArgument(0)] RoleBehaviour impostorRole, ref DeadBody __result)
-        {
-            __result = __instance.deadBodyPrefab[impostorRole.Role == RoleTypes.Viper || impostorRole.CustomRole() != null && impostorRole.CustomRole().CreatedDeadBodyOnKill == DeadBodyType.Viper ? 1 : 0];
-            return false;
-        }
     }
 }

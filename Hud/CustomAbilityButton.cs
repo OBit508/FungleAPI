@@ -31,7 +31,7 @@ namespace FungleAPI.Hud
         public virtual bool CanClick { get; }
         public virtual bool CanUse { get; }
         public virtual float Cooldown { get; }
-        public virtual float InitialCooldown { get; }
+        public virtual float InitialCooldown => Cooldown / 2;
         public float Timer;
         public virtual bool HaveUses { get; }
         public virtual int NumUses { get; }
