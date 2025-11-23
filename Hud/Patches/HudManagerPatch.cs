@@ -95,8 +95,8 @@ namespace FungleAPI.Hud.Patches
                     }
                 }
                 Vector3 pos = HudHelper.BottomLeft.localPosition;
-                pos.x = __instance.joystick.SafeCast<VirtualJoystick>().transform.localPosition.x + 1.425f;
-                HudHelper.BottomLeft.position = pos;
+                pos.x = monoBehaviour.transform.localPosition.x + 1.5f;
+                HudHelper.BottomLeft.localPosition = pos;
             }
             __instance.SetJoystickSize(DataManager.Settings.Input.TouchJoystickSize);
         }
