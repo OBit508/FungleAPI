@@ -1,5 +1,8 @@
-﻿using FungleAPI.Components;
+﻿using AmongUs.Data;
+using AmongUs.GameOptions;
+using FungleAPI.Components;
 using FungleAPI.Role;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -55,6 +58,47 @@ namespace FungleAPI.Hud.Patches
             lobbyWarningText.gameObject.AddComponent<LobbyWarningText>().Text = lobbyWarningText;
             lobbyWarningText.alignment = TextAlignmentOptions.Top;
             lobbyWarningText.name = "LobbyWarningText";
+        }
+        [HarmonyPatch("SetTouchType")]
+        [HarmonyPrefix]
+        public static void SetTouchTypePrefix(HudManager __instance, [HarmonyArgument(0)] ControlTypes type)
+        {
+            if (__instance.joystick != null)
+            {
+                GameObject.Destroy(__instance.joystick.SafeCast<MonoBehaviour>().gameObject);
+                __instance.joystick = null;
+            }
+            if (__instance.joystickR != null)
+            {
+                GameObject.Destroy(__instance.joystickR.gameObject);
+                __instance.joystickR = null;
+            }
+            MonoBehaviour monoBehaviour = GameObject.Instantiate<MonoBehaviour>(__instance.Joysticks[(int)type]);
+            if (monoBehaviour != null)
+            {
+                monoBehaviour.transform.SetParent(__instance.transform, false);
+                __instance.joystick = monoBehaviour.GetComponent<IVirtualJoystick>();
+            }
+            bool flag;
+            GameOptionsManager.Instance.CurrentGameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag);
+            if (type == ControlTypes.VirtualJoystick)
+            {
+                if (flag)
+                {
+                    MonoBehaviour monoBehaviour2 = GameObject.Instantiate<MonoBehaviour>(__instance.RightVJoystick);
+                    if (monoBehaviour2 != null)
+                    {
+                        monoBehaviour2.transform.SetParent(__instance.transform, false);
+                        __instance.joystickR = monoBehaviour2.GetComponent<VirtualJoystick>();
+                        __instance.joystickR.ToggleVisuals(LobbyBehaviour.Instance == null);
+                        Logger.GlobalInstance.Info(string.Format("[{0}] Initializing Right Joystick for Flashlight. [Use Flashlight: {1}] [Lobby: {2}]", "HudManager", flag, LobbyBehaviour.Instance != null), null);
+                    }
+                }
+                Vector3 pos = HudHelper.BottomLeft.localPosition;
+                pos.x = __instance.joystick.SafeCast<VirtualJoystick>().transform.localPosition.x + 1.425f;
+                HudHelper.BottomLeft.position = pos;
+            }
+            __instance.SetJoystickSize(DataManager.Settings.Input.TouchJoystickSize);
         }
         [HarmonyPatch("Update")]
         [HarmonyPostfix]

@@ -89,7 +89,6 @@ namespace FungleAPI.Utilities
             Screen.gameObject.SetActive(true);
             Screen.StartCoroutine(Screen.Show());
         }
-        
         public static ModdedConsole CreateConsole(float distance, Predicate<PlayerControl> predicate, Action onUse, Sprite sprite)
         {
             ModdedConsole console = new GameObject("CustomConsole").AddComponent<ModdedConsole>();

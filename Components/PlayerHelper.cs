@@ -1,4 +1,5 @@
-﻿using FungleAPI.Utilities.Assets;
+﻿using FungleAPI.Player;
+using FungleAPI.Utilities.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
