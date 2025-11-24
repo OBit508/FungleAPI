@@ -38,12 +38,10 @@ namespace FungleAPI.Player
         public static void StartPostfix(PlayerControl __instance)
         {
             __instance.StartCoroutine(TrySendMods(__instance).WrapToIl2Cpp());
-            PlayerUtils.Components.Add(__instance, new List<PlayerComponent>());
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 PlayerComponent comp = __instance.gameObject.AddComponent(type).SafeCast<PlayerComponent>();
                 comp.player = __instance;
-                PlayerUtils.Components[__instance].Add(comp);
             }
         }
         [HarmonyPrefix]

@@ -18,7 +18,6 @@ namespace FungleAPI.Player
 {
     public static class PlayerUtils
     {
-        internal static Dictionary<PlayerControl, List<PlayerComponent>> Components = new Dictionary<PlayerControl, List<PlayerComponent>>();
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer.NetId);
@@ -80,24 +79,17 @@ namespace FungleAPI.Player
             }
             return list;
         }
-        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
-        {
-            foreach (PlayerControl p in Components.Keys)
-            {
-                if (p == null)
-                {
-                    Components.Remove(p);
-                }
-            }
-            return Components[player].FirstOrDefault(c => c.GetType() == typeof(T)).SafeCast<T>();
-        }
         public static Vent GetCurrentVent(this PlayerControl player)
         {
-            if (player.AmOwner)
+            try
             {
-                return Vent.currentVent;
+                if (player.AmOwner)
+                {
+                    return Vent.currentVent;
+                }
+                return ShipStatus.Instance.AllVents.FirstOrDefault(v => v.TryGetHelper().Players.Contains(player));
             }
-            return VentHelper.ShipVents.Values.FirstOrDefault(v => v.Players.Contains(player)).vent;
+            catch { return null; }
         }
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {
