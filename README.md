@@ -5,3 +5,4 @@ Reactor: https://github.com/NuclearPowered/Reactor
 
 
 Example mod: https://github.com/OBit508/FungleAPI-Example
+Guide: https://github.com/OBit508/FungleAPI-Guide/blob/main/GUIDE
