@@ -12,6 +12,8 @@ using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
+using FungleAPI.Cosmetics;
+using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Event;
 using FungleAPI.Event.Types;
 using FungleAPI.Freeplay;
@@ -121,6 +123,10 @@ namespace FungleAPI.PluginLoading
                         {
                             RegisterEvent(type, plugin);
                         }
+                        else if (typeof(ModCosmetics).IsAssignableFrom(type))
+                        {
+                            plugin.Cosmetics = RegisterCosmetics(type, plugin);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -129,6 +135,13 @@ namespace FungleAPI.PluginLoading
                 }
             }
             EventManager.RegisterEvents(plugin);
+        }
+        public static ModCosmetics RegisterCosmetics(Type type, ModPlugin plugin)
+        {
+            ModCosmetics cosmetics = (ModCosmetics)Activator.CreateInstance(type);
+            CosmeticManager.Add(cosmetics);
+            plugin.BasePlugin.Log.LogInfo("Registered Cosmetics " + type.Name);
+            return cosmetics;
         }
         public static void RegisterEvent(Type type, ModPlugin plugin)
         {

@@ -1,4 +1,7 @@
-﻿using FungleAPI.Translation;
+﻿using FungleAPI.Components;
+using FungleAPI.Cosmetics;
+using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Rewired;
@@ -9,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role.Patches
+namespace FungleAPI.Patches
 {
     [HarmonyPatch(typeof(DetectiveNotesMinigame))]
     internal static class DetectiveNotesMinigamePatch
@@ -18,6 +21,28 @@ namespace FungleAPI.Role.Patches
         public static bool typing;
         public static TouchScreenKeyboard keyboard;
         public static SpriteRenderer Pencil;
+        public static Dictionary<Color, (SpecialColor, Material)> SpecialColors = new Dictionary<Color, (SpecialColor, Material)>();
+        public static SpecialColorBehaviour Behaviour;
+        [HarmonyPatch("CreateBodyMaterials")]
+        [HarmonyPrefix]
+        public static bool CreateBodyMaterialsPrefix(DetectiveNotesMinigame __instance)
+        {
+            SpecialColors.Clear();
+            Color32[] playerColors = Palette.PlayerColors;
+            for (int i = 0; i < playerColors.Length; i++)
+            {
+                Color color = playerColors[i];
+                Material material = new Material(__instance.bodyMaterial.material);
+                PlayerMaterial.SetColors(color, material);
+                PlayerMaterial.SetMaskLayer(material, 20);
+                __instance.bodyColorMaterials.Add(color, material);
+                if (CosmeticManager.IsSpecialColor(i, out SpecialColor specialColor))
+                {
+                    SpecialColors.Add(color, (specialColor, material));
+                }
+            }
+            return false;
+        }
         [HarmonyPatch("Begin")]
         [HarmonyPostfix]
         public static void BeginPostfix(DetectiveNotesMinigame __instance)
@@ -115,10 +140,21 @@ namespace FungleAPI.Role.Patches
         }
         [HarmonyPatch("SetUpCurrentPage")]
         [HarmonyPostfix]
-        public static void SetPagePostfix()
+        public static void SetPagePostfix(DetectiveNotesMinigame __instance)
         {
+            if (Behaviour == null)
+            {
+                Behaviour = __instance.gameObject.AddComponent<SpecialColorBehaviour>();
+            }
             keyboard = null;
             typing = false;
+            Behaviour.Mat = null;
+            Behaviour.Color = null;
+            if (SpecialColors.TryGetValue(__instance.associatedDetective.notesPageInfos[__instance.currentPageIndex].victimPlayer.Color, out (SpecialColor, Material) value))
+            {
+                Behaviour.Mat = value.Item2;
+                Behaviour.Color = value.Item1;
+            }
         }
     }
 }

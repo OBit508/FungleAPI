@@ -10,6 +10,7 @@ using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Patches;
+using FungleAPI.Cosmetics;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;
@@ -72,6 +73,7 @@ namespace FungleAPI
             {
                 if (!loaddedAssets)
                 {
+                    CosmeticManager.SetPaletta();
                     loadAssets();
                     loaddedAssets = true;
                     MCIActive = MCIUtils.GetMCI() != null;

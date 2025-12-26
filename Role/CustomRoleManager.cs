@@ -18,11 +18,21 @@ namespace FungleAPI.Role
 {
     public static class CustomRoleManager
     {
-        public static MiraRoleTabConfig CurrentRoleTabConfig;
-        public static KillButtonConfig CurrentKillConfig;
-        public static VentButtonConfig CurrentVentConfig;
-        public static ReportButtonConfig CurrentReportConfig;
-        public static SabotageButtonConfig CurrentSabotageConfig;
+        internal static MiraRoleTabConfig Default = new MiraRoleTabConfig();
+        internal static MiraRoleTabConfig Custom;
+        public static MiraRoleTabConfig CurrentRoleTabConfig => Custom == null ? Default : Custom;
+        internal static KillButtonConfig Default1 = new KillButtonConfig();
+        internal static KillButtonConfig Custom1;
+        public static KillButtonConfig CurrentKillConfig => Custom1 == null ? Default1 : Custom1;
+        internal static VentButtonConfig Default2 = new VentButtonConfig();
+        internal static VentButtonConfig Custom2;
+        public static VentButtonConfig CurrentVentConfig => Custom2 == null ? Default2 : Custom2;
+        internal static ReportButtonConfig Default3 = new ReportButtonConfig();
+        internal static ReportButtonConfig Custom3;
+        public static ReportButtonConfig CurrentReportConfig => Custom3 == null ? Default3 : Custom3;
+        internal static SabotageButtonConfig Default4 = new SabotageButtonConfig();
+        internal static SabotageButtonConfig Custom4;
+        public static SabotageButtonConfig CurrentSabotageConfig => Custom4 == null ? Default4 : Custom4;
         public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
@@ -91,43 +101,24 @@ namespace FungleAPI.Role
                 role.RoleIconWhite = customRole.IconWhite;
                 if (amOwner)
                 {
-                    CurrentRoleTabConfig = customRole.RoleTabConfig;
-                    CurrentKillConfig = customRole.CreateKillConfig();
-                    CurrentVentConfig = customRole.CreateVentConfig();
-                    CurrentReportConfig = customRole.CreateReportConfig();
-                    CurrentSabotageConfig = customRole.CreateSabotageConfig();
+                    Custom = customRole.RoleTabConfig;
+                    Custom1 = customRole.CreateKillConfig();
+                    Custom2 = customRole.CreateVentConfig();
+                    Custom3 = customRole.CreateReportConfig();
+                    Custom4 = customRole.CreateSabotageConfig();
                 }
             }
             else if (amOwner)
             {
-                CurrentRoleTabConfig = null;
-                CurrentKillConfig = null;
-                CurrentVentConfig = null;
-                CurrentReportConfig = null;
-                CurrentSabotageConfig = null;
+                Custom = null;
+                Custom1 = null;
+                Custom2 = null;
+                Custom3 = null;
+                Custom4 = null;
             }
             if (amOwner)
             {
-                if (CurrentRoleTabConfig == null)
-                {
-                    CurrentRoleTabConfig = new MiraRoleTabConfig() { __text = role.NiceName, TabNameColor = role.TeamColor };
-                }
-                if (CurrentKillConfig == null)
-                {
-                    CurrentKillConfig = new KillButtonConfig();
-                }
-                if (CurrentVentConfig == null)
-                {
-                    CurrentVentConfig = new VentButtonConfig();
-                }
-                if (CurrentReportConfig == null)
-                {
-                    CurrentReportConfig = new ReportButtonConfig();
-                }
-                if (CurrentSabotageConfig == null)
-                {
-                    CurrentSabotageConfig = new SabotageButtonConfig();
-                }
+                Default = new MiraRoleTabConfig() { __text = role.NiceName, TabNameColor = role.TeamColor };
             }
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)

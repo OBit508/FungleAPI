@@ -15,6 +15,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Configuration.Presets;
+using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;
@@ -86,6 +87,7 @@ namespace FungleAPI.PluginLoading
         public List<ModdedOption> Options = new List<ModdedOption>();
         public List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         public List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
+        public ModCosmetics Cosmetics = new ModCosmetics();
         public ModSettings Settings = new ModSettings();
         public ModFolderConfig FolderConfig = new ModFolderConfig();
         public Mod LocalMod;
