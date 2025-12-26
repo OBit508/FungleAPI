@@ -2,7 +2,7 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;

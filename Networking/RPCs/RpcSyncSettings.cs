@@ -1,10 +1,11 @@
 ﻿using AmongUs.GameOptions;
 using Epic.OnlineServices;
+using FungleAPI.Base.Rpc;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
@@ -18,7 +19,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncSettings : CustomRpc<(SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team)>
+    public class RpcSyncSettings : AdvancedRpc<(SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team)>
     {
         public static void Notify(string text1, string text2, bool playSound)
         {

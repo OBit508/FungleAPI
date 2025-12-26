@@ -15,33 +15,14 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool DoClickPrefix()
         {
-            if (PlayerControl.LocalPlayer.Data.Role.CanSabotage() && !PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
-            {
-                HudManager.Instance.ToggleMapVisible(new MapOptions
-                {
-                    Mode = MapOptions.Modes.Sabotage
-                });
-            }
+            CustomRoleManager.CurrentSabotageConfig.DoClick?.Invoke();
             return false;
         }
         [HarmonyPrefix]
         [HarmonyPatch("Refresh")]
         public static bool RefreshPrefix(SabotageButton __instance)
         {
-            PlayerControl player = PlayerControl.LocalPlayer;
-            if (GameManager.Instance == null || player == null)
-            {
-                __instance.ToggleVisible(false);
-                __instance.SetDisabled();
-                return false;
-            }
-            if (player.inVent || !GameManager.Instance.SabotagesEnabled() || player.petting)
-            {
-                __instance.ToggleVisible(player.Data.Role.CanSabotage() && GameManager.Instance.SabotagesEnabled());
-                __instance.SetDisabled();
-                return false;
-            }
-            __instance.SetEnabled();
+            CustomRoleManager.CurrentSabotageConfig.Refresh?.Invoke();
             return false;
         }
     }

@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.Patches;
-using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
@@ -13,6 +12,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Configuration;
 using FungleAPI.Hud;
+using FungleAPI.Base.Roles;
+using FungleAPI.Teams;
 
 namespace FungleAPI.Role
 {

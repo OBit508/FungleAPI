@@ -6,7 +6,6 @@ using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.GameOver;
 using FungleAPI.PluginLoading;
-using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
@@ -24,7 +23,7 @@ using UnityEngine.UIElements;
 using static Il2CppSystem.Globalization.CultureInfo;
 using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruction;
 
-namespace FungleAPI.Role.Teams
+namespace FungleAPI.Teams
 {
     [FungleIgnore]
     public class ModdedTeam
@@ -57,25 +56,25 @@ namespace FungleAPI.Role.Teams
         public virtual bool AssignOnlyEnabledRoles => true;
         public virtual CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
-            CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
+            CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
             categoryHeaderEditRole.SetHeader(StringNames.None, 20);
-            categoryHeaderEditRole.Background.color = Helpers.Light(TeamColor, 0.7f);
+            categoryHeaderEditRole.Background.color = TeamColor.Light(0.7f);
             categoryHeaderEditRole.countLabel.color = TeamColor;
             categoryHeaderEditRole.chanceLabel.color = TeamColor;
-            categoryHeaderEditRole.blankLabel.color = Helpers.Dark(TeamColor, 0.7f);
+            categoryHeaderEditRole.blankLabel.color = TeamColor.Dark(0.7f);
             categoryHeaderEditRole.Title.text = PluralName.GetString();
-            categoryHeaderEditRole.Title.color = Helpers.Light(TeamColor, 0.9f);
+            categoryHeaderEditRole.Title.color = TeamColor.Light(0.9f);
             categoryHeaderEditRole.Title.enabled = true;
             return categoryHeaderEditRole;
         }
         public virtual CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
         {
-            CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
+            CategoryHeaderRoleVariant categoryHeaderRoleVariant = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
             string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
             categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + TeamName.GetString();
-            categoryHeaderRoleVariant.Background.color = Helpers.Light(TeamColor);
-            categoryHeaderRoleVariant.Title.color = Helpers.Dark(categoryHeaderRoleVariant.Background.color);
+            categoryHeaderRoleVariant.Background.color = TeamColor.Light();
+            categoryHeaderRoleVariant.Title.color = categoryHeaderRoleVariant.Background.color.Dark();
             categoryHeaderRoleVariant.Title.enabled = true;
             for (int i = 2; i < categoryHeaderRoleVariant.transform.GetChildCount(); i++)
             {

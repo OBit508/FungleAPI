@@ -1,20 +1,18 @@
-﻿using Hazel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.Base.Rpc;
+using Hazel;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcRequestForAmModded : CustomRpc
+    public class RpcRequestForAmModded : SimpleRpc
     {
-        public override void Handle(MessageReader reader)
+        public override void Handle(MessageReader messageReader)
         {
-            if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.Data != null)
-            {
-                CustomRpcManager.Instance<RpcAmModded>().Send(PlayerControl.LocalPlayer, PlayerControl.LocalPlayer.NetId, SendOption.Reliable, AmongUsClient.Instance.HostId);
-            }
+            CustomRpcManager.Instance<RpcAmModded>().Send(PlayerControl.LocalPlayer);
         }
     }
 }

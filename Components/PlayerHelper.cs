@@ -12,5 +12,7 @@ namespace FungleAPI.Components
     public class PlayerHelper : PlayerComponent
     {
         public RoleBehaviour OldRole = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Crewmate);
+        internal Vent __CurrentVent;
+        public Vent CurrentVent => player.AmOwner ? Vent.currentVent : __CurrentVent;
     }
 }

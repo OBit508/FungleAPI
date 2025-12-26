@@ -1,18 +1,8 @@
 ﻿using FungleAPI.Attributes;
-using FungleAPI.Patches;
-using FungleAPI.PluginLoading;
-using FungleAPI.Role.Teams;
 using FungleAPI.Utilities;
-using HarmonyLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using xCloud;
-using static Sentry.MeasurementUnit;
 namespace FungleAPI.Hud
 {
     [FungleIgnore]

@@ -1,10 +1,12 @@
-﻿using FungleAPI.ModCompatibility;
+﻿using AsmResolver.PE.DotNet.StrongName;
+using FungleAPI.ModCompatibility;
 using Il2CppInterop.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -31,6 +33,11 @@ namespace FungleAPI.Utilities.Prefabs
             ShipStatus ship = shipRef.Asset.SafeCast<GameObject>().GetComponent<ShipStatus>();
             if (ship.SafeCast<SkeldShipStatus>() != null)
             {
+                if (ship.name == "AprilShip")
+                {
+                    AprilShipPrefab = ship.SafeCast<SkeldShipStatus>();
+                    FungleAPIPlugin.Instance.Log.LogInfo("Loaded AprilShipPrefab");
+                }
                 SkeldPrefab = ship.SafeCast<SkeldShipStatus>();
                 FungleAPIPlugin.Instance.Log.LogInfo("Loaded SkeldPrefab");
             }
@@ -62,18 +69,42 @@ namespace FungleAPI.Utilities.Prefabs
             ship.AllVents = ship.GetComponentsInChildren<Vent>().ToArray();
             ship.Ladders = ship.GetComponentsInChildren<Ladder>().ToArray();
         }
-        internal static System.Collections.IEnumerator CoLoadShipPrefabs()
+        internal static System.Collections.IEnumerator CoLoadShipPrefabs(TextMeshPro textMeshPro, string baseText)
         {
+            int dots = 0;
+            float dotTimer = 0f;
+            void UpdateLoadingText()
+            {
+                dots = (dots % 3) + 1;
+                textMeshPro.text = baseText + new string('.', dots) + "</font>";
+            }
             if (LevelImpostorUtils.GetLevelImpostor() == null)
             {
                 for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
                 {
                     AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
-                    while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged" && shipRef.AssetGUID != "AprilShip")
+                    while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged")
                     {
-                        AsyncOperationHandle op = shipRef.LoadAssetAsync<GameObject>();
-                        while (op.Status == AsyncOperationStatus.None)
+                        dotTimer += Time.deltaTime;
+                        if (dotTimer >= 0.35f)
                         {
+                            dotTimer = 0f;
+                            UpdateLoadingText();
+                        }
+                        AsyncOperationHandle<GameObject> op = shipRef.LoadAssetAsync<GameObject>();
+                        if (!op.IsValid())
+                        {
+                            yield return null;
+                            continue;
+                        }
+                        while (!op.IsDone)
+                        {
+                            dotTimer += Time.deltaTime;
+                            if (dotTimer >= 0.35f)
+                            {
+                                dotTimer = 0f;
+                                UpdateLoadingText();
+                            }
                             yield return null;
                         }
                         if (op.Status == AsyncOperationStatus.Succeeded)
@@ -85,16 +116,22 @@ namespace FungleAPI.Utilities.Prefabs
             }
             else
             {
-                while (!SkeldPrefab && !MiraPrefab && !PolusPrefab & !AirshipPrefab && !FunglePrefab)
+                while (!SkeldPrefab && !MiraPrefab && !PolusPrefab && !AirshipPrefab && !FunglePrefab)
                 {
+                    dotTimer += Time.deltaTime;
+                    if (dotTimer >= 0.35f)
+                    {
+                        dotTimer = 0f;
+                        UpdateLoadingText();
+                    }
                     foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
                     {
                         ChangePrefab(shipRef);
                     }
-                    yield return new WaitForSeconds(1);
+                    yield return null;
                 }
             }
-        } 
+        }
         public static T Prefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object
         {
             if (predicate == null)
@@ -106,6 +143,7 @@ namespace FungleAPI.Utilities.Prefabs
         public static SkeldShipStatus SkeldPrefab;
         public static MiraShipStatus MiraPrefab;
         public static PolusShipStatus PolusPrefab;
+        public static SkeldShipStatus AprilShipPrefab;
         public static AirshipStatus AirshipPrefab;
         public static FungleShipStatus FunglePrefab;
     }

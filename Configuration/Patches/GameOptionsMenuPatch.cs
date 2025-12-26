@@ -4,7 +4,7 @@ using FungleAPI.Configuration.Attributes;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -195,7 +195,7 @@ namespace FungleAPI.Configuration.Patches
                     op.SetClickMask(menu.ButtonClickMask);
                     op.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.Option, option, null, null), PlayerControl.LocalPlayer.NetId);
+                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.Option, option, null, null), PlayerControl.LocalPlayer);
                     });
                     menu.Children.Add(op);
                     num -= 0.45f;
@@ -222,7 +222,7 @@ namespace FungleAPI.Configuration.Patches
                     count.SetClickMask(menu.ButtonClickMask);
                     count.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamCount, null, null, team), PlayerControl.LocalPlayer.NetId);
+                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamCount, null, null, team), PlayerControl.LocalPlayer);
                     });
                     menu.Children.Add(count);
                     num -= 0.45f;
@@ -232,7 +232,7 @@ namespace FungleAPI.Configuration.Patches
                     priority.SetClickMask(menu.ButtonClickMask);
                     priority.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamPriority, null, null, team), PlayerControl.LocalPlayer.NetId);
+                        CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamPriority, null, null, team), PlayerControl.LocalPlayer);
                     });
                     menu.Children.Add(priority);
                     num -= 0.45f;
@@ -244,7 +244,7 @@ namespace FungleAPI.Configuration.Patches
                         op.SetClickMask(menu.ButtonClickMask);
                         op.OnValueChanged += new Action<OptionBehaviour>(delegate
                         {
-                            CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamOption, option, null, team), PlayerControl.LocalPlayer.NetId);
+                            CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.TeamOption, option, null, team), PlayerControl.LocalPlayer);
                         });
                         menu.Children.Add(op);
                         num -= 0.45f;

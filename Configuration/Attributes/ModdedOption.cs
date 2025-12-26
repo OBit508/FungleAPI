@@ -1,19 +1,9 @@
 ﻿using BepInEx.Configuration;
-using Epic.OnlineServices.RTC;
-using FungleAPI.Configuration.Helpers;
 using FungleAPI.Translation;
-using HarmonyLib;
-using Il2CppInterop.Runtime;
-using Mono.Cecil;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Configuration.Attributes
 {

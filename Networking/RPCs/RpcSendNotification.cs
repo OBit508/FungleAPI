@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using FungleAPI.Base.Rpc;
+using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPro
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSendNotification : CustomRpc<(string text, bool playSound, bool handlePlaySound)>
+    public class RpcSendNotification : AdvancedRpc<(string text, bool playSound, bool handlePlaySound)>
     {
         public override void Handle(MessageReader reader)
         {

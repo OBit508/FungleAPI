@@ -1,16 +1,12 @@
 ﻿using AmongUs.GameOptions;
-using BepInEx.Configuration;
-using FungleAPI.Role.Teams;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Utilities;
 using FungleAPI.Configuration.Attributes;
-using FungleAPI.Hud;
 using FungleAPI.Configuration.Helpers;
+using FungleAPI.Teams;
 
 namespace FungleAPI.Role
 {
@@ -29,6 +25,12 @@ namespace FungleAPI.Role
             string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return exileController.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + exileController.initData.networkedPlayer.Role.NiceName;
         }
+        SabotageButtonConfig CreateSabotageConfig() => null;
+        ReportButtonConfig CreateReportConfig() => null;
+        VentButtonConfig CreateVentConfig() => null;
+        KillButtonConfig CreateKillConfig() => null;
+        MiraRoleTabConfig RoleTabConfig => new MiraRoleTabConfig(this);
+        RoleHintType HintType => RoleHintType.TaskHint;
         bool CanUseVent => Team == ModdedTeam.Impostors;
         bool IsAffectedByLightOnAirship => Team == ModdedTeam.Impostors;
         bool UseVanillaKillButton => Team == ModdedTeam.Impostors;

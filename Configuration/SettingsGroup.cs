@@ -1,7 +1,7 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

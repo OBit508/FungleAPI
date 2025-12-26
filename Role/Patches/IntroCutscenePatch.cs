@@ -1,8 +1,10 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Components;
+using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.Patches;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -22,6 +24,18 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(IntroCutscene))]
     internal static class IntroCutscenePatch
     {
+        [HarmonyPostfix]
+        [HarmonyPatch("CoBegin")]
+        public static void CoBeginnPatch(IntroCutscene __instance)
+        {
+            EventManager.CallEvent(new OnIntroBegin() { Intro = __instance });
+        }
+        [HarmonyPostfix]
+        [HarmonyPatch("OnDestroy")]
+        public static void OnDestroyPatch(IntroCutscene __instance)
+        {
+            EventManager.CallEvent(new OnIntroEnd() { Intro = __instance });
+        }
         [HarmonyPatch("BeginCrewmate")]
         [HarmonyPrefix]
         public static bool BeginCrewmatePatch(IntroCutscene __instance)

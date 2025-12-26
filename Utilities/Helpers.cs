@@ -268,14 +268,13 @@ namespace FungleAPI.Utilities
             }
             catch
             {
-                try
+                VentHelper ventHelper = target.GetComponent<VentHelper>();
+                if (ventHelper == null)
                 {
-                    return target.GetComponent<VentHelper>();
+                    VentPatch.DoStart(target);
+                    ventHelper = target.GetComponent<VentHelper>();
                 }
-                catch
-                {
-                    return null;
-                }
+                return ventHelper;
             }
         }
         public enum VentType 

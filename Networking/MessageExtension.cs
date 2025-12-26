@@ -1,25 +1,26 @@
-﻿using FungleAPI.Components;
-using Hazel;
-using Il2CppInterop.Generator.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AmongUs.GameOptions;
+using FungleAPI.Base.Rpc;
+using FungleAPI.Components;
+using FungleAPI.Configuration;
+using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Helpers;
+using FungleAPI.GameOver;
+using FungleAPI.PluginLoading;
+using FungleAPI.Role;
+using FungleAPI.Teams;
+using FungleAPI.Utilities;
+using Hazel;
+using Il2CppInterop.Generator.Extensions;
+using Il2CppInterop.Runtime;
+using Il2CppSystem.Runtime.Serialization;
 using Unity.Services.Analytics.Internal;
 using UnityEngine;
-using FungleAPI.Utilities;
-using FungleAPI.Configuration;
-using FungleAPI.Role;
-using FungleAPI.Configuration.Attributes;
-using Il2CppSystem.Runtime.Serialization;
-using Il2CppInterop.Runtime;
-using AmongUs.GameOptions;
-using FungleAPI.GameOver;
-using FungleAPI.Role.Teams;
-using FungleAPI.PluginLoading;
-using FungleAPI.Configuration.Helpers;
 
 namespace FungleAPI.Networking
 {
@@ -77,23 +78,13 @@ namespace FungleAPI.Networking
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
         {
             Type type = customGameOver.GetType();
-            Writer.Write(ModPluginManager.GetModPlugin(type.Assembly).ModName);
             Writer.Write(type.FullName);
+            Writer.WritePlugin(ModPluginManager.GetModPlugin(type.Assembly));
         }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
         {
-            bool flag = role.CustomRole() == null;
-            Writer.Write(flag);
-            if (flag)
-            {
-                Writer.Write((int)role.Role);
-            }
-            else
-            {
-                Type type = role.GetType();
-                Writer.Write(ModPluginManager.GetModPlugin(type.Assembly).ModName);
-                Writer.Write(type.FullName);
-            }
+            Writer.Write(role.GetType().FullName);
+            Writer.WritePlugin(role.GetRolePlugin());
         }
         public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
         {
@@ -102,6 +93,15 @@ namespace FungleAPI.Networking
         public static void WriteTeam(this MessageWriter Writer, ModdedTeam team)
         {
             WriteCountAndPriority(Writer, team.CountAndPriority);
+        }
+        public static void WriteRPC(this MessageWriter Writer, RpcHelper rpcHelper)
+        {
+            Writer.Write(rpcHelper.RpcType.FullName);
+            Writer.WritePlugin(rpcHelper.Plugin);
+        }
+        public static void WritePlugin(this MessageWriter Writer, ModPlugin plugin)
+        {
+            Writer.WriteMod(plugin.LocalMod);
         }
         public static Vector2 ReadVector2(this MessageReader Reader)
         {
@@ -172,20 +172,13 @@ namespace FungleAPI.Networking
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {
-            string modName = Reader.ReadString();
             string fullName = Reader.ReadString();
-            return GameOverManager.AllCustomGameOver.FirstOrDefault(g => ModPluginManager.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+            return Reader.ReadPlugin().GameOvers.FirstOrDefault(g => g.GetType().FullName == fullName);
         }
         public static RoleBehaviour ReadRole(this MessageReader Reader)
         {
-            bool flag = Reader.ReadBoolean();
-            if (flag)
-            {
-                return RoleManager.Instance.GetRole((RoleTypes)Reader.ReadInt32());
-            }
-            string modName = Reader.ReadString();
-            string fullName = Reader.ReadString();
-            return RoleManager.Instance.AllRoles.FirstOrDefault(g => ModPluginManager.GetModPlugin(g.GetType().Assembly).ModName == modName && g.GetType().FullName == fullName);
+            string roleType = Reader.ReadString();
+            return Reader.ReadPlugin().Roles.FirstOrDefault(r => r.GetType().FullName == roleType);
         }
         public static TeamCountAndPriority ReadCountAndPriority(this MessageReader Reader)
         {
@@ -195,6 +188,15 @@ namespace FungleAPI.Networking
         public static ModdedTeam ReadTeam(this MessageReader Reader)
         {
             return ReadCountAndPriority(Reader).Team;
+        }
+        public static RpcHelper ReadRPC(this MessageReader Reader)
+        {
+            string rpcType = Reader.ReadString();
+            return Reader.ReadPlugin().RPCs.FirstOrDefault(r => r.RpcType.FullName == rpcType);
+        }
+        public static ModPlugin ReadPlugin(this MessageReader Reader)
+        {
+            return Reader.ReadMod().Plugin;
         }
     }
 }

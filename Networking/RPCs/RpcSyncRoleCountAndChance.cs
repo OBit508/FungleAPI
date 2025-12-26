@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Base.Rpc;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Networking;
@@ -14,7 +15,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncRoleCountAndChance : CustomRpc<RoleBehaviour>
+    public class RpcSyncRoleCountAndChance : AdvancedRpc<RoleBehaviour>
     {
         public override void Handle(MessageReader reader)
         {

@@ -1,37 +1,28 @@
 ﻿using AmongUs.GameOptions;
-using BepInEx.Core.Logging.Interpolation;
-using Epic.OnlineServices;
-using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
-using FungleAPI.Hud;
-using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
-using Hazel;
-using Il2CppInterop.Generator.Extensions;
 using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.Injection;
-using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using xCloud;
-using static Il2CppSystem.Reflection.RuntimePropertyInfo;
-using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Role
 {
     public static class CustomRoleManager
     {
+        public static MiraRoleTabConfig CurrentRoleTabConfig;
+        public static KillButtonConfig CurrentKillConfig;
+        public static VentButtonConfig CurrentVentConfig;
+        public static ReportButtonConfig CurrentReportConfig;
+        public static SabotageButtonConfig CurrentSabotageConfig;
         public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
@@ -75,6 +66,69 @@ namespace FungleAPI.Role
                 }
             }
             return count;
+        }
+        public static void UpdateRole(RoleBehaviour role)
+        {
+            if (role == null)
+            {
+                return;
+            }
+            bool amOwner = role.Player.AmOwner;
+            ICustomRole customRole = role.CustomRole();
+            if (customRole != null)
+            {
+                role.StringName = customRole.RoleName;
+                role.BlurbName = customRole.RoleBlur;
+                role.BlurbNameMed = customRole.RoleBlurMed;
+                role.BlurbNameLong = customRole.RoleBlurLong;
+                role.NameColor = customRole.RoleColor;
+                role.AffectedByLightAffectors = customRole.IsAffectedByLightOnAirship;
+                role.CanUseKillButton = customRole.UseVanillaKillButton;
+                role.CanVent = customRole.CanUseVent;
+                role.TasksCountTowardProgress = customRole.CompletedTasksCountForProgress;
+                role.RoleScreenshot = customRole.Screenshot;
+                role.RoleIconSolid = customRole.IconSolid;
+                role.RoleIconWhite = customRole.IconWhite;
+                if (amOwner)
+                {
+                    CurrentRoleTabConfig = customRole.RoleTabConfig;
+                    CurrentKillConfig = customRole.CreateKillConfig();
+                    CurrentVentConfig = customRole.CreateVentConfig();
+                    CurrentReportConfig = customRole.CreateReportConfig();
+                    CurrentSabotageConfig = customRole.CreateSabotageConfig();
+                }
+            }
+            else if (amOwner)
+            {
+                CurrentRoleTabConfig = null;
+                CurrentKillConfig = null;
+                CurrentVentConfig = null;
+                CurrentReportConfig = null;
+                CurrentSabotageConfig = null;
+            }
+            if (amOwner)
+            {
+                if (CurrentRoleTabConfig == null)
+                {
+                    CurrentRoleTabConfig = new MiraRoleTabConfig() { __text = role.NiceName, TabNameColor = role.TeamColor };
+                }
+                if (CurrentKillConfig == null)
+                {
+                    CurrentKillConfig = new KillButtonConfig();
+                }
+                if (CurrentVentConfig == null)
+                {
+                    CurrentVentConfig = new VentButtonConfig();
+                }
+                if (CurrentReportConfig == null)
+                {
+                    CurrentReportConfig = new ReportButtonConfig();
+                }
+                if (CurrentSabotageConfig == null)
+                {
+                    CurrentSabotageConfig = new SabotageButtonConfig();
+                }
+            }
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
@@ -131,6 +185,15 @@ namespace FungleAPI.Role
                 }
             }
         }
+        public static void CreateForRole(Il2CppSystem.Text.StringBuilder sb, RoleBehaviour role, Color? color = null)
+        {
+            if (color == null)
+            {
+                color = role.TeamColor;
+            }
+            sb.AppendLine(color.Value.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + role.NiceName + "</b>.</color>");
+            sb.AppendLine("<size=70%>" + role.BlurbLong);
+        }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {
             Assembly assembly = role.GetType().Assembly;
@@ -142,6 +205,14 @@ namespace FungleAPI.Role
                 }
             }
             return FungleAPIPlugin.Plugin;
+        }
+        public static RoleHintType GetHintType(this RoleBehaviour role)
+        {
+            if (role.CustomRole() != null)
+            {
+                return role.CustomRole().HintType;
+            }
+            return RoleHintType.TaskHint;
         }
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {

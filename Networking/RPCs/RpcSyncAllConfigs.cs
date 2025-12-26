@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Base.Rpc;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
@@ -19,7 +20,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcSyncAllConfigs : CustomRpc
+    public class RpcSyncAllConfigs : SimpleRpc
     {
         public override void Write(MessageWriter writer)
         {

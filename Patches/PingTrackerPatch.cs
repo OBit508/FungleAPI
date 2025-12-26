@@ -20,9 +20,10 @@ namespace FungleAPI.Patches
                 modsText = "";
                 foreach (ModPlugin plugin in ModPlugin.AllPlugins)
                 {
-                    modsText += (plugin == ModPlugin.AllPlugins[0] ? "" : ",") + plugin.ModCredits;
+                    modsText += (plugin == ModPlugin.AllPlugins[0] ? "" : ", ") + plugin.ModCredits;
                 }
             }
+            __instance.text.enableWordWrapping = false;
             __instance.text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
             __instance.text.text += "\n<size=2>" + modsText + "</size>";
         }

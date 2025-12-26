@@ -1,28 +1,12 @@
-﻿using BepInEx.Configuration;
-using Epic.OnlineServices;
-using Epic.OnlineServices.RTC;
-using FungleAPI.Components;
-using FungleAPI.Networking;
-using FungleAPI.Patches;
-using FungleAPI.PluginLoading;
-using FungleAPI.Role;
+﻿using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppSystem.Web;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
-using static Rewired.UI.ControlMapper.ControlMapper;
-using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
 namespace FungleAPI.Configuration.Attributes
 {

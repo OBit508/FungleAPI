@@ -4,7 +4,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;
@@ -74,7 +74,7 @@ namespace FungleAPI.Freeplay
                     folder2.name = "RoleFolder: ";
                     foreach (RoleBehaviour role in pair.Value)
                     {
-                        if (role.CustomRole() != null && !role.CustomRole().HideRole || role.CustomRole() == null)
+                        if (role.CustomRole() != null && !role.CustomRole().HideInFreeplayComputer || role.CustomRole() == null)
                         {
                             folder2.name += ((int)role.Role).ToString() + (role == pair.Value[pair.Value.Count - 1] ? "" : "|");
                         }
@@ -216,7 +216,7 @@ namespace FungleAPI.Freeplay
                     for (int m = 0; m < roles.Count(); m++)
                     {
                         RoleTypes roleBehaviour = (RoleTypes)int.Parse(roles[m]);
-                        if (roleBehaviour != RoleTypes.ImpostorGhost && roleBehaviour != RoleTypes.CrewmateGhost && roleBehaviour != CustomRoleManager.NeutralGhost.Role)
+                        if (roleBehaviour != RoleTypes.ImpostorGhost && roleBehaviour != RoleTypes.CrewmateGhost)
                         {
                             TaskAddButton taskAddButton2 = UnityEngine.Object.Instantiate(__instance.RoleButton);
                             taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;

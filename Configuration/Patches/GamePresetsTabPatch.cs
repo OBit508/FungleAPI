@@ -85,7 +85,7 @@ namespace FungleAPI.Configuration.Patches
                             menu.GameOptionsMenu.RolesMenu.RefreshChildren();
                             ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
                             menu.ConfirmPresetPopUp.Close();
-                            CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer.NetId);
+                            CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer);
                         });
                     }
                 });
@@ -110,7 +110,8 @@ namespace FungleAPI.Configuration.Patches
                 PassiveButton defaultButton = GameObject.Instantiate<PassiveButton>(menu.DefaultButtonSelected.SafeCast<PassiveButton>(), Parent);
                 defaultButton.transform.localScale = Vector3.one * 0.7f;
                 defaultButton.transform.localPosition = new Vector3(2.75f, -0.6f, 0);
-                defaultButton.activeSprites.transform.GetChild(3).gameObject.SetActive(false);
+                GameObject.Destroy(defaultButton.activeSprites.transform.GetChild(3).gameObject);
+                GameObject.Destroy(defaultButton.transform.GetChild(4).gameObject);
                 defaultButton.gameObject.SetActive(true);
                 defaultButton.SetNewAction(delegate
                 {
@@ -123,7 +124,7 @@ namespace FungleAPI.Configuration.Patches
                         menu.GameOptionsMenu.RolesMenu.RefreshChildren();
                         ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
                         menu.ConfirmPresetPopUp.Close();
-                        CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer.NetId);
+                        CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer);
                     });
                 });
                 Collider2D collider = load.GetComponent<Collider2D>();

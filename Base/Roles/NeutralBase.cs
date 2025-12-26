@@ -5,11 +5,7 @@ using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace FungleAPI.Base.Roles
@@ -65,15 +61,13 @@ namespace FungleAPI.Base.Roles
             Console console = usable.SafeCast<Console>();
             return console == null || DoTasks;
         }
-        public virtual Il2CppSystem.Collections.Generic.List<PlayerControl> GetValidTargets()
+        public override bool IsValidTarget(NetworkedPlayerInfo target)
         {
-            List<PlayerControl> targets = GetTempPlayerList().ToSystemList();
-            targets.RemoveAll(t => t.Data.Role.GetTeam() == this.GetTeam() && !this.GetTeam().FriendlyFire);
-            return targets.ToIl2CppList();
+            return !(target == null) && !target.Disconnected && !target.IsDead && target.PlayerId != this.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible;
         }
         public override PlayerControl FindClosestTarget()
         {
-            Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = GetPlayersInAbilityRangeSorted(GetValidTargets());
+            Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = GetPlayersInAbilityRangeSorted(GetTempPlayerList());
             if (playersInAbilityRangeSorted.Count <= 0)
             {
                 return null;
@@ -87,6 +81,15 @@ namespace FungleAPI.Base.Roles
         public override DeadBody FindClosestBody()
         {
             return Player.GetClosestDeadBody(GetAbilityDistance());
+        }
+        public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
+        {
+            if (this.GetHintType() == RoleHintType.MiraAPI_RoleTab)
+            {
+                CustomRoleManager.CreateForRole(taskStringBuilder, this);
+                return;
+            }
+            base.AppendTaskHint(taskStringBuilder);
         }
     }
 }

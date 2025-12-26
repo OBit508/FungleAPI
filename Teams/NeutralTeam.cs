@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Role.Teams
+namespace FungleAPI.Teams
 {
     public class NeutralTeam : ModdedTeam
     {

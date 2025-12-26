@@ -5,7 +5,6 @@ using Epic.OnlineServices;
 using FungleAPI.Utilities.Assets;
 using FungleAPI.Components;
 using FungleAPI.Networking.RPCs;
-using FungleAPI.Role.Teams;
 using FungleAPI.Role;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
@@ -24,6 +23,7 @@ using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPro
 using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.PluginLoading;
+using FungleAPI.Teams;
 
 namespace FungleAPI.Configuration.Patches
 {
@@ -165,7 +165,7 @@ namespace FungleAPI.Configuration.Patches
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {
-                    CustomRpcManager.Instance<RpcSyncRoleCountAndChance>().Send(role as RoleBehaviour, PlayerControl.LocalPlayer.NetId);
+                    CustomRpcManager.Instance<RpcSyncRoleCountAndChance>().Send(role as RoleBehaviour, PlayerControl.LocalPlayer);
                 }
             });
             option.roleMaxCount = role.MaxRoleCount;
@@ -223,7 +223,7 @@ namespace FungleAPI.Configuration.Patches
                 op.SetClickMask(menu.ButtonClickMask);
                 op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
-                    CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.RoleOption, config, role as RoleBehaviour, null), PlayerControl.LocalPlayer.NetId);
+                    CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.RoleOption, config, role as RoleBehaviour, null), PlayerControl.LocalPlayer);
                 });
                 op.transform.localPosition = new Vector3(2.17f, num, -2f);
                 menu.advancedSettingChildren.Add(op);

@@ -1,4 +1,5 @@
-﻿using FungleAPI.Role;
+﻿using FungleAPI.Components;
+using FungleAPI.Role;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -9,33 +10,35 @@ using UnityEngine;
 
 namespace FungleAPI.Hud.Patches
 {
-    [HarmonyPatch(typeof(KillButton), "SetTarget")]
+    [HarmonyPatch(typeof(KillButton))]
     internal static class KillButtonPatch
     {
-        public static bool Prefix(KillButton __instance, PlayerControl target)
+        [HarmonyPatch("SetTarget")]
+        [HarmonyPrefix]
+        public static bool SetTargetPrefix(KillButton __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            if (!PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data == null || !PlayerControl.LocalPlayer.Data.Role)
-            {
-                return false;
-            }
-            ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
-            if (customRole == null)
-            {
-                return true;
-            }
-            if (__instance.currentTarget && __instance.currentTarget != target)
-            {
-                __instance.currentTarget.cosmetics.SetOutline(false, new Il2CppSystem.Nullable<Color>(Color.clear));
-            }
-            __instance.currentTarget = target;
-            if (__instance.currentTarget)
-            {
-                __instance.currentTarget.cosmetics.SetOutline(true, new Il2CppSystem.Nullable<Color>(customRole.OutlineColor));
-                __instance.SetEnabled();
-                return false;
-            }
-            __instance.SetDisabled();
+            CustomRoleManager.CurrentKillConfig.SetTarget?.Invoke(target);
             return false;
+        }
+        [HarmonyPatch("CheckClick")]
+        [HarmonyPrefix]
+        public static bool CheckClickPrefix(KillButton __instance, [HarmonyArgument(0)] PlayerControl target)
+        {
+            CustomRoleManager.CurrentKillConfig.CheckClick?.Invoke(target);
+            return false;
+        }
+        [HarmonyPatch("DoClick")]
+        [HarmonyPrefix]
+        public static bool DoClickPrefix(KillButton __instance)
+        {
+            CustomRoleManager.CurrentKillConfig.DoClick?.Invoke();
+            return false;
+        }
+        [HarmonyPatch("ResetKillButton")]
+        [HarmonyPostfix]
+        public static void ResetKillButtonPostfix(KillButton __instance)
+        {
+
         }
     }
 }

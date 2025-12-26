@@ -3,10 +3,12 @@ using AsmResolver.PE.DotNet.ReadyToRun;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Epic.OnlineServices.Presence;
 using FungleAPI.Components;
+using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Role.Patches;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;
@@ -38,18 +40,69 @@ namespace FungleAPI.Player
         public static void StartPostfix(PlayerControl __instance)
         {
             __instance.StartCoroutine(TrySendMods(__instance).WrapToIl2Cpp());
-            foreach (Il2CppSystem.Type type in AllPlayerComponents)
+            if (__instance.GetComponent<PlayerHelper>() == null)
             {
-                PlayerComponent comp = __instance.gameObject.AddComponent(type).SafeCast<PlayerComponent>();
-                comp.player = __instance;
+                DoStart(__instance);
             }
         }
+        [HarmonyPatch("SetKillTimer")]
         [HarmonyPrefix]
-        [HarmonyPatch("RpcMurderPlayer")]
-        public static bool PlayerControlMurderPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
+        public static bool SetKillTimerPrefix(PlayerControl __instance, [HarmonyArgument(0)] float time)
         {
-            __instance.RpcCustomMurderPlayer(target, MurderResultFlags.Succeeded);
+            if (__instance.Data.Role.CanUseKillButton)
+            {
+                float @float = CustomRoleManager.CurrentKillConfig.Cooldown();
+                if (@float <= 0f)
+                {
+                    return false;
+                }
+                __instance.killTimer = Mathf.Clamp(time, 0f, @float);
+                DestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(__instance.killTimer, @float);
+            }
             return false;
+        }
+        [HarmonyPatch("RpcMurderPlayer")]
+        [HarmonyPrefix]
+        public static bool RpcMurderPlayerPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
+        {
+            __instance.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError));
+            return false;
+        }
+        [HarmonyPatch("MurderPlayer")]
+        [HarmonyPrefix]
+        public static bool MurderPlayerPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] MurderResultFlags resultFlags)
+        {
+            __instance.CustomMurderPlayer(target, resultFlags, true, true, true, true, true);
+            return false;
+        }
+        [HarmonyPatch("CompleteTask")]
+        [HarmonyPostfix]
+        public static void CompleteTaskPostfix(PlayerControl __instance, uint idx)
+        {
+            PlayerTask task = __instance.myTasks.ToArray().First(t => t.Id == idx);
+            if (task != null)
+            {
+                EventManager.CallEvent(new OnCompleteTask() { Player = __instance, Task = task });
+            }
+        }
+        [HarmonyPatch("Die")]
+        [HarmonyPostfix]
+        public static void DiePostfix(PlayerControl __instance, DeathReason reason)
+        {
+            EventManager.CallEvent(new OnPlayerDie() { Player = __instance, Reason = reason });
+        }
+        [HarmonyPatch("ReportDeadBody")]
+        [HarmonyPostfix]
+        public static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+        {
+            EventManager.CallEvent(new OnReportBody() { Reporter = __instance, Target = target, Body = target != null ? Helpers.GetBodyById(target.PlayerId) : null });
+        }
+        public static void DoStart(PlayerControl player)
+        {
+            foreach (Il2CppSystem.Type type in AllPlayerComponents)
+            {
+                player.gameObject.AddComponent(type).SafeCast<PlayerComponent>().player = player;
+            }
         }
         public static System.Collections.IEnumerator TrySendMods(PlayerControl player)
         {
@@ -59,7 +112,7 @@ namespace FungleAPI.Player
             }
             if (!player.isDummy && !player.notRealPlayer && player.AmOwner)
             {
-                CustomRpcManager.Instance<RpcAmModded>().Send(player, player.NetId);
+                CustomRpcManager.Instance<RpcAmModded>().Send(player);
             }
         }
     }

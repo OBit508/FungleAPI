@@ -2,6 +2,8 @@
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.PluginLoading;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
 using HarmonyLib;
@@ -54,6 +56,31 @@ namespace FungleAPI.Patches
             mainMenuManager.finishStartup = false;
             Logger.GlobalInstance.Info("MainMenuManager.RunStartUp beginning", null);
             Constants.SetMainThread();
+            AccountManager.Instance.waitingText.gameObject.SetActive(true);
+            AccountManager.Instance.waitingText.transform.position = new Vector3(0, 0, -25);
+            TextMeshPro textMeshPro = new GameObject("MainScreen Load Text").AddComponent<TextMeshPro>();
+            textMeshPro.gameObject.layer = 5;
+            textMeshPro.alignment = TextAlignmentOptions.Center;
+            textMeshPro.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            textMeshPro.enableWordWrapping = false;
+            textMeshPro.fontSize = 4;
+            textMeshPro.characterSpacing = 4;
+            textMeshPro.transform.position = new Vector3(0, 0, -500);
+            if (!ShipsLoaded)
+            {
+                string baseText = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">" + FungleTranslation.LoadingPrefabsText.GetString();
+                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs(textMeshPro, baseText);
+                ShipsLoaded = true;
+            }
+            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            {
+                IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
+                if (fungleBasePlugin != null)
+                {
+                    yield return fungleBasePlugin.CoLoadOnMainScreen(textMeshPro);
+                }
+            }
+            GameObject.Destroy(textMeshPro.gameObject);
             DestroyableSingleton<EOSManager>.Instance.FinishedAssets = true;
             GameObject.Instantiate<HatManager>(mainMenuManager.HatManagerRef).Initialize();
             mainMenuManager.cosmicubeManager = GameObject.Instantiate<CosmicubeManager>(mainMenuManager.CosmicubeManagerRef);
@@ -67,11 +94,6 @@ namespace FungleAPI.Patches
             if (!DestroyableSingleton<StoreMenu>.InstanceExists || !DestroyableSingleton<StoreMenu>.Instance.Initialized)
             {
                 DestroyableSingleton<StoreMenu>.Instance.Initialize();
-            }
-            if (!ShipsLoaded)
-            {
-                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs();
-                ShipsLoaded = true;
             }
             while (!DestroyableSingleton<EOSManager>.Instance.HasFinishedLoginFlow() || DestroyableSingleton<AccountManager>.Instance.signInScreen.IsOpen())
             {

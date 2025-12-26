@@ -1,7 +1,9 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
+using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.GameOver;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using InnerNet;
@@ -20,9 +22,23 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static void SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
         {
-            if (targetPlayer.Data.Role != null)
+            RoleBehaviour role = targetPlayer.Data.Role;
+            if (role != null)
             {
-                targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(targetPlayer.Data.Role.Role);
+                targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(role.Role);
+                if (role.CanUseKillButton)
+                {
+                    CustomRoleManager.CurrentKillConfig?.ResetButton?.Invoke();
+                }
+                if (role.CanSabotage())
+                {
+                    CustomRoleManager.CurrentSabotageConfig?.ResetButton?.Invoke();
+                }
+                if (role.CanVent)
+                {
+                    CustomRoleManager.CurrentVentConfig?.ResetButton?.Invoke();
+                }
+                CustomRoleManager.CurrentReportConfig?.ResetButton?.Invoke();
             }
         }
         [HarmonyPatch("SetRole")]
@@ -30,22 +46,24 @@ namespace FungleAPI.Role.Patches
         public static void SetRolePostfix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
         {
             RoleBehaviour role = targetPlayer.Data.Role;
-            if (role != null && role.CustomRole() != null)
+            if (role != null)
             {
-                ICustomRole customRole = role.CustomRole();
-                role.StringName = customRole.RoleName;
-                role.BlurbName = customRole.RoleBlur;
-                role.BlurbNameMed = customRole.RoleBlurMed;
-                role.BlurbNameLong = customRole.RoleBlurLong;
-                role.NameColor = customRole.RoleColor;
-                role.AffectedByLightAffectors = customRole.IsAffectedByLightOnAirship;
-                role.CanUseKillButton = customRole.UseVanillaKillButton;
-                role.CanVent = customRole.CanUseVent;
-                role.TasksCountTowardProgress = customRole.CompletedTasksCountForProgress;
-                role.RoleScreenshot = customRole.Screenshot;
-                role.RoleIconSolid = customRole.IconSolid;
-                role.RoleIconWhite = customRole.IconWhite;
+                CustomRoleManager.UpdateRole(role);
+                if (role.CanUseKillButton)
+                {
+                    CustomRoleManager.CurrentKillConfig.InitializeButton?.Invoke();
+                }
+                if (role.CanSabotage())
+                {
+                    CustomRoleManager.CurrentSabotageConfig.InitializeButton?.Invoke();
+                }
+                if (role.CanVent)
+                {
+                    CustomRoleManager.CurrentVentConfig.InitializeButton?.Invoke();
+                }
+                CustomRoleManager.CurrentReportConfig.InitializeButton?.Invoke();
             }
+            EventManager.CallEvent(new OnSetRole() { Player = targetPlayer, Role = role });
         }
         [HarmonyPrefix]
         [HarmonyPatch("AssignRoleOnDeath")]

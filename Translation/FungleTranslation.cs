@@ -27,6 +27,61 @@ namespace FungleAPI.Translation
         private static Translator nonModdedText;
         private static Translator kickingText;
         private static Translator typeText;
+        private static Translator yourRoleIs;
+        private static Translator loadingPregabs;
+        public static StringNames LoadingPrefabsText
+        {
+            get
+            {
+                if (loadingPregabs == null)
+                {
+                    loadingPregabs = new Translator("Loading Prefabs");
+                    loadingPregabs.AddTranslation(SupportedLangs.Latam, "Cargando prefabs");
+                    loadingPregabs.AddTranslation(SupportedLangs.Brazilian, "Carregando Predefinições");
+                    loadingPregabs.AddTranslation(SupportedLangs.Portuguese, "Carregando Predefinições");
+                    loadingPregabs.AddTranslation(SupportedLangs.Korean, "프리팹 불러오는 중");
+                    loadingPregabs.AddTranslation(SupportedLangs.Russian, "Загрузка префабов");
+                    loadingPregabs.AddTranslation(SupportedLangs.Dutch, "Prefabs laden");
+                    loadingPregabs.AddTranslation(SupportedLangs.Filipino, "Naglo-load ng prefabs");
+                    loadingPregabs.AddTranslation(SupportedLangs.French, "Chargement des prefabs");
+                    loadingPregabs.AddTranslation(SupportedLangs.German, "Prefabs werden geladen");
+                    loadingPregabs.AddTranslation(SupportedLangs.Italian, "Caricamento dei prefab");
+                    loadingPregabs.AddTranslation(SupportedLangs.Japanese, "プレハブを読み込み中");
+                    loadingPregabs.AddTranslation(SupportedLangs.Spanish, "Cargando prefabs");
+                    loadingPregabs.AddTranslation(SupportedLangs.SChinese, "正在加载预制体");
+                    loadingPregabs.AddTranslation(SupportedLangs.TChinese, "正在載入預製物");
+                    loadingPregabs.AddTranslation(SupportedLangs.Irish, "Ag luchtú prefabs");
+
+                }
+                return loadingPregabs.StringName;
+            }
+        }
+        public static StringNames YourRoleIsText
+        {
+            get
+            {
+                if (yourRoleIs == null)
+                {
+                    yourRoleIs = new Translator("Your role is ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Latam, "Tu rol es ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Brazilian, "Sua função é ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Portuguese, "Sua função é ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Korean, "당신의 역할은 ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Russian, "Ваша роль — ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Dutch, "Jouw rol is ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Filipino, "Ang iyong papel ay ");
+                    yourRoleIs.AddTranslation(SupportedLangs.French, "Votre rôle est ");
+                    yourRoleIs.AddTranslation(SupportedLangs.German, "Deine Rolle ist ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Italian, "Il tuo ruolo è ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Japanese, "あなたの役割は ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Spanish, "Tu rol es ");
+                    yourRoleIs.AddTranslation(SupportedLangs.SChinese, "你的身份是 ");
+                    yourRoleIs.AddTranslation(SupportedLangs.TChinese, "你的身份是 ");
+                    yourRoleIs.AddTranslation(SupportedLangs.Irish, "Is é do ról ");
+                }
+                return yourRoleIs.StringName;
+            }
+        }
         public static StringNames EditText
         {
             get

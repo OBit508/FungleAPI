@@ -11,7 +11,7 @@ namespace FungleAPI.Hud
     {
         public static Transform BottomLeft;
         public static Transform BottomRight;
-        internal static HudUpdateFlag UpdateFlag = HudUpdateFlag.Always;
+        internal static HudUpdateFlag UpdateFlag = HudUpdateFlag.OnSetHudActive;
         internal static float UpdateDelay;
         internal static bool Active;
         public static void SetUpdateFlag(HudUpdateFlag flag, float delay = 0)

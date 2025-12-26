@@ -6,7 +6,6 @@ using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
 using HarmonyLib;
 using Hazel;
 using Il2CppSystem.Text;
@@ -24,8 +23,8 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(RoleBehaviour))]
     internal static class RoleBehaviourPatch
     {
-        [HarmonyPrefix]
         [HarmonyPatch("TeamColor", MethodType.Getter)]
+        [HarmonyPrefix]
         public static bool TeamColorPrefix(RoleBehaviour __instance, ref Color __result)
         { 
             ICustomRole role = __instance.CustomRole();
@@ -42,6 +41,21 @@ namespace FungleAPI.Role.Patches
                 return false;
             }
             __result = __instance.GetTeam().TeamColor;
+            return false;
+        }
+        [HarmonyPatch("Initialize")]
+        [HarmonyPrefix]
+        public static bool InitializePrefix(RoleBehaviour __instance, [HarmonyArgument(0)] PlayerControl player)
+        {
+            __instance.Player = player;
+            if (!player.AmOwner)
+            {
+                return false;
+            }
+            DestroyableSingleton<HudManager>.Instance.SetHudActive(player, __instance, true);
+            PlayerNameColor.SetForRoleDirectly(player, __instance);
+            __instance.InitializeAbilityButton();
+            __instance.InitializeSecondaryAbilityButton();
             return false;
         }
     }

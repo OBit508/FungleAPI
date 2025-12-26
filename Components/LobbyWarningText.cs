@@ -45,7 +45,7 @@ namespace FungleAPI.Components
                 }
                 else if (client.Value.Item2.Value <= 0 && AmongUsClient.Instance.AmHost)
                 {
-                    CustomRpcManager.Instance<RpcRequestForAmModded>().Send(PlayerControl.LocalPlayer.NetId, Hazel.SendOption.Reliable, client.Key.Id);
+                    CustomRpcManager.Instance<RpcRequestForAmModded>().Send(PlayerControl.LocalPlayer, Hazel.SendOption.Reliable, client.Key.Id);
                     client.Value.Item2.Value = 1.5f;
                 }
             }

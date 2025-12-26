@@ -1,31 +1,33 @@
-﻿using AmongUs.GameOptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
+using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
+using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.Player;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Rewired.Utils.Classes.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
 using static FungleAPI.PluginLoading.ModPlugin;
@@ -40,7 +42,6 @@ namespace FungleAPI.PluginLoading
             plugin.ModName = plugin.ModAssembly.GetName().Name;
             plugin.RealName = plugin.ModName;
             plugin.BasePlugin = basePlugin;
-            List<Type> types = new List<Type>();
             HashSet<Type> visited = new HashSet<Type>();
             void AddTypes(Type type)
             {
@@ -48,7 +49,7 @@ namespace FungleAPI.PluginLoading
                 {
                     return;
                 }
-                types.Add(type);
+                plugin.AllTypes.Add(type);
                 foreach (Type t in type.GetNestedTypes(AccessTools.all))
                 {
                     AddTypes(t);
@@ -58,7 +59,7 @@ namespace FungleAPI.PluginLoading
             {
                 AddTypes(type);
             }
-            foreach (Type type in types)
+            foreach (Type type in plugin.AllTypes)
             {
                 try
                 {
@@ -111,6 +112,15 @@ namespace FungleAPI.PluginLoading
                             ClassInjector.RegisterTypeInIl2Cpp(type);
                             VentPatch.AllVentComponents.Add(Il2CppType.From(type));
                         }
+                        else if (typeof(VentComponent).IsAssignableFrom(type))
+                        {
+                            ClassInjector.RegisterTypeInIl2Cpp(type);
+                            VentPatch.AllVentComponents.Add(Il2CppType.From(type));
+                        }
+                        else if (typeof(FungleEvent).IsAssignableFrom(type))
+                        {
+                            RegisterEvent(type, plugin);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -118,10 +128,18 @@ namespace FungleAPI.PluginLoading
                     basePlugin.Log.LogError(ex);
                 }
             }
+            EventManager.RegisterEvents(plugin);
+        }
+        public static void RegisterEvent(Type type, ModPlugin plugin)
+        {
+            EventManager.EventTypes.Add(type);
+            plugin.BasePlugin.Log.LogInfo("Registered Event " + type.Name);
         }
         public static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
+            rpc.RpcType = type;
+            rpc.Plugin = plugin;
             CustomRpcManager.AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
@@ -156,6 +174,7 @@ namespace FungleAPI.PluginLoading
         public static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
         {
             CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
+            plugin.GameOvers.Add(gameOver);
             plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             GameOverManager.AllCustomGameOver.Add(gameOver);
             return gameOver;

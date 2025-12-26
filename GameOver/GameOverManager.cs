@@ -3,7 +3,7 @@ using FungleAPI.GameOver.Ends;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;

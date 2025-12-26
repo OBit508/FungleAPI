@@ -3,7 +3,7 @@ using FungleAPI.Components;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;

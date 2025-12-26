@@ -1,5 +1,5 @@
 ﻿using BepInEx.Configuration;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using System;
 using System.Collections.Generic;
 using System.Linq;

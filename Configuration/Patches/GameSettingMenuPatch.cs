@@ -23,6 +23,7 @@ namespace FungleAPI.Configuration.Patches
         [HarmonyPostfix]
         public static void StartPostfix(GameSettingMenu __instance)
         {
+            RolesSettingMenuPatch.chanceTabPlugin = null;
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.HideNSeek && GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.SeekFools)
             {
                 TeamConfigTab = false;
@@ -33,6 +34,10 @@ namespace FungleAPI.Configuration.Patches
                     RolesSettingMenuPatch.chanceTabPlugin = null;
                     __instance.GameSettingsTab.Initialize();
                     GamePresetsTabPatch.Update(__instance.PresetsTab);
+                    if (RolesSettingMenuPatch.chanceTabPlugin != null)
+                    {
+                        RolesSettingMenuPatch.UpdatePrefix(__instance.RoleSettingsTab);
+                    }
                 });
                 __instance.transform.GetChild(2).gameObject.SetActive(false);
                 __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0, 0.3f, -1);

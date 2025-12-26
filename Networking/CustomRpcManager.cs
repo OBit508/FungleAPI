@@ -1,17 +1,18 @@
-﻿using FungleAPI.Networking.RPCs;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using FungleAPI.Base.Rpc;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Networking
@@ -31,6 +32,12 @@ namespace FungleAPI.Networking
             }
             return null;
         }
+        public static void SendRpc(InnerNetObject innerNetObject, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        {
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, byte.MaxValue, sendOption, targetClientId);
+            write(writer);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
         internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
         public static IEnumerable<MethodBase> TargetMethods()
         {
@@ -39,20 +46,12 @@ namespace FungleAPI.Networking
                    where m != null
                    select m;
         }
-        public static bool Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+        public static bool Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
         {
             if (callId == byte.MaxValue)
             {
-                MessageReader messageReader = reader.ReadMessage();
-                string rpcModName = messageReader.ReadString();
-                string rpcId = messageReader.ReadString();
-                foreach (RpcHelper rpc in AllRpc)
-                {
-                    if (ModPluginManager.GetModPlugin(rpc.GetType().Assembly).ModName == rpcModName && rpcId == rpc.GetType().FullName)
-                    {
-                        rpc.Handle(messageReader);
-                    }
-                }
+                RpcHelper rpc = messageReader.ReadRPC();
+                rpc.__handle(__instance, messageReader);
                 return false;
             }
             return true;

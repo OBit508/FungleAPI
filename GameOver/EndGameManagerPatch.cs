@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Utilities;
 using UnityEngine.Audio;
-using FungleAPI.Role.Teams;
 
 namespace FungleAPI.GameOver
 {

@@ -15,7 +15,6 @@ using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
@@ -49,7 +48,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "com.rafael.fungleapi";
-        public const string ModV = "0.2.5";
+        public const string ModV = "0.2.6";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
 		public override void Load()
@@ -87,6 +86,7 @@ namespace FungleAPI
                     rolesRegistered = true;
                 }
             }));
+            Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");
             SetErrorMessages();
         }
         internal static bool MCIActive;

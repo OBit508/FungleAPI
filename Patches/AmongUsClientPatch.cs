@@ -7,7 +7,7 @@ using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Teams;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -50,7 +50,7 @@ namespace FungleAPI.Patches
             LobbyWarningText.nonModdedPlayers.Add(clientData, (new ChangeableValue<float>(5), new ChangeableValue<float>(1.5f)));
             __instance.StartCoroutine(SafeSend(new Action(delegate
             {
-                CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer.NetId, SendOption.Reliable, clientData.Id);
+                CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
             })));
         }
         public static System.Collections.IEnumerator SafeSend(Action ac)

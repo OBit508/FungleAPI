@@ -19,10 +19,11 @@ using static Rewired.Demos.CustomPlatform.MyPlatformControllerExtension;
 using static UnityEngine.GraphicsBuffer;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Player;
+using FungleAPI.Base.Rpc;
 
 namespace FungleAPI.Networking.RPCs
 {
-    public class RpcCustomMurder : CustomRpc<(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)>
+    public class RpcCustomMurder : AdvancedRpc<(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)>
     {
         public override void Write(MessageWriter writer, (PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound) value)
         {
