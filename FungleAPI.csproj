@@ -28,7 +28,6 @@
     <Compile Include="Base\Rpc\SimpleRpc.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
-    <Compile Include="Cosmetics\AnimatedColors\AnimatedColorsUtils.cs" />
     <Compile Include="Cosmetics\AnimatedColors\FireColor.cs" />
     <Compile Include="Cosmetics\AnimatedColors\GalaxyColor.cs" />
     <Compile Include="Cosmetics\AnimatedColors\HSBColor.cs" />
@@ -40,7 +39,7 @@
     <Compile Include="Cosmetics\Helpers\SpecialColor.cs" />
     <Compile Include="Cosmetics\AnimatedColors\RainbowColor.cs" />
     <Compile Include="Cosmetics\Patches\PlayerTabPatch.cs" />
-    <Compile Include="Cosmetics\VanillaColors.cs" />
+    <Compile Include="Cosmetics\VanillaCosmetics.cs" />
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\EventRegister.cs" />
     <Compile Include="Event\Types\FungleEvent.cs" />
@@ -67,6 +66,7 @@
     <Compile Include="Role\ReportButtonConfig.cs" />
     <Compile Include="Role\SabotageButtonConfig.cs" />
     <Compile Include="Role\VentButtonConfig.cs" />
+    <Compile Include="Utilities\Assets\LateAsset.cs" />
     <Compile Include="Utilities\HarmonyHelper.cs" />
     <Compile Include="Configuration\Presets\PluginPreset.cs" />
     <Compile Include="Configuration\Presets\PresetV1.cs" />

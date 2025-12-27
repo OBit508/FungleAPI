@@ -11,6 +11,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Patches;
 using FungleAPI.Cosmetics;
+using FungleAPI.Cosmetics.Patches;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;

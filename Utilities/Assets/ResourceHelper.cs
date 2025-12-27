@@ -34,7 +34,7 @@ namespace FungleAPI.Utilities.Assets
         {
             return new System.IO.StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)).ReadToEnd();
         }
-        public static T LoadAsset<T>(AssetBundle bundle, string name, bool dontUnload = true) where T : UnityEngine.Object
+        public static T LoadAsset<T>(this AssetBundle bundle, string name, bool dontUnload = true) where T : UnityEngine.Object
         {
             T asset = bundle.LoadAsset(name, Il2CppType.Of<T>()).SafeCast<T>();
             if (dontUnload)

@@ -7,6 +7,7 @@ using AmongUs.Data;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using UnityEngine;
 
@@ -15,62 +16,41 @@ namespace FungleAPI.Cosmetics.Patches
     [HarmonyPatch(typeof(PlayerTab))]
     internal static class PlayerTabPatch
     {
+        public static BoxCollider2D Collider;
         [HarmonyPatch("OnEnable")]
-        [HarmonyPrefix]
-        public static bool OnEnablePrefix(PlayerTab __instance)
+        [HarmonyPostfix]
+        public static void OnEnablePostfix(PlayerTab __instance)
         {
-            __instance.PlayerPreview.gameObject.SetActive(true);
-            if (__instance.HasLocalPlayer())
+            if (__instance.scroller == null)
             {
-                __instance.PlayerPreview.UpdateFromLocalPlayer(PlayerMaterial.MaskType.None);
-            }
-            else
-            {
-                __instance.PlayerPreview.UpdateFromDataManager(PlayerMaterial.MaskType.None);
-            }
-            float num = (float)Palette.PlayerColors.Length / 4f;
-            for (int i = 0; i < Palette.PlayerColors.Length; i++)
-            {
-                float x = __instance.XRange.Lerp((float)(i % 4) / 3f);
-                float y = __instance.YStart - (float)(i / 4) * __instance.YOffset;
-                ColorChip colorChip = UnityEngine.Object.Instantiate<ColorChip>(__instance.ColorTabPrefab);
-                colorChip.transform.SetParent(__instance.ColorTabArea);
-                colorChip.transform.localPosition = new Vector3(x, y, -1f);
-                int j = i;
-                if (ActiveInputManager.currentControlType == ActiveInputManager.InputType.Keyboard)
+                Scroller newScroller = GameObject.Instantiate<Scroller>(PlayerCustomizationMenu.Instance.Tabs[1].Tab.scroller, __instance.transform, true);
+                newScroller.Inner.transform.DestroyChildren();
+                GameObject gameObject = new GameObject();
+                gameObject.layer = 5;
+                gameObject.name = "SpriteMask";
+                gameObject.transform.SetParent(__instance.transform);
+                gameObject.transform.localPosition = new Vector3(0f, 0f, 0f);
+                gameObject.transform.localScale = new Vector3(500f, 4.76f);
+                gameObject.AddComponent<SpriteMask>().sprite = FungleAssets.Empty;
+                Collider = gameObject.AddComponent<BoxCollider2D>();
+                Collider.size = new Vector2(1f, 0.75f);
+                Collider.enabled = true;
+                __instance.scroller = newScroller;
+                for (int i = 0; i < __instance.ColorChips.Count; i++)
                 {
-                    colorChip.Button.OnMouseOver.AddListener(new Action(delegate
+                    ColorChip colorChip = __instance.ColorChips[i];
+                    colorChip.transform.SetParent(__instance.scroller.Inner);
+                    colorChip.Button.ClickMask = Collider;
+                    colorChip.Inner.FrontLayer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                    if (CosmeticManager.IsSpecialColor(i, out SpecialColor color))
                     {
-                        __instance.SelectColor(j);
-                    }));
-                    colorChip.Button.OnMouseOut.AddListener(new Action(delegate
-                    {
-                        __instance.SelectColor(__instance.GetDisplayColor());
-                    }));
-                    colorChip.Button.SetNewAction(delegate
-                    {
-                        __instance.ClickEquip();
-                    });
+                        SpecialColorChip specialColorChip = colorChip.gameObject.GetOrAddComponent<SpecialColorChip>();
+                        specialColorChip.Color = color;
+                        specialColorChip.Chip = colorChip;
+                    }
                 }
-                else
-                {
-                    colorChip.Button.SetNewAction(delegate
-                    {
-                        __instance.SelectColor(j);
-                    });
-                }
-                colorChip.Inner.SpriteColor = Palette.PlayerColors[i];
-                if (CosmeticManager.IsSpecialColor(i, out SpecialColor specialColor))
-                {
-                    SpecialColorChip specialColorChip = colorChip.gameObject.GetOrAddComponent<SpecialColorChip>();
-                    specialColorChip.Chip = colorChip;
-                    specialColorChip.Color = specialColor;
-                }
-                colorChip.Tag = j;
-                __instance.ColorChips.Add(colorChip);
+                __instance.SetScrollerBounds();
             }
-            __instance.currentColor = (int)DataManager.Player.Customization.Color;
-            return false;
         }
     }
 }

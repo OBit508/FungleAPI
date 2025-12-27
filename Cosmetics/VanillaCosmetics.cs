@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 using FungleAPI.Cosmetics.AnimatedColors;
 using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Translation;
+using FungleAPI.Utilities.Assets;
 using UnityEngine;
 
 namespace FungleAPI.Cosmetics
 {
-    public class VanillaColors : ModCosmetics
+    public class VanillaCosmetics : ModCosmetics
     {
         private List<CustomColor> __colors;
         public override List<CustomColor> Colors

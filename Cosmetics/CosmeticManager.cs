@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Cosmetics.Helpers;
+using Innersloth.Assets;
 using UnityEngine;
 
 namespace FungleAPI.Cosmetics
 {
     public static class CosmeticManager
     {
-        internal static float hue = UnityEngine.Random.value;
         internal const float r = 0.618033988749895f;
+        internal static float hue = UnityEngine.Random.value;
         public static List<CustomColor> AllColors = new List<CustomColor>();
         public static List<CustomColor> SpecialColors = new List<CustomColor>();
         public static bool IsSpecialColor(int colorId, out SpecialColor specialColor)
@@ -21,8 +22,11 @@ namespace FungleAPI.Cosmetics
         }
         public static void Add(ModCosmetics modCosmetics)
         {
-            AllColors = AllColors.Concat(modCosmetics.Colors).ToList();
-            SpecialColors = SpecialColors.Concat(modCosmetics.Colors.FindAll(c => c is SpecialColor)).ToList();
+            if (modCosmetics.Colors != null && modCosmetics.Colors.Count > 0)
+            {
+                AllColors = AllColors.Concat(modCosmetics.Colors).ToList();
+                SpecialColors = SpecialColors.Concat(modCosmetics.Colors.FindAll(c => c is SpecialColor)).ToList();
+            }
         }
         public static Color GetBaseColor(int colorId)
         {
@@ -31,9 +35,8 @@ namespace FungleAPI.Cosmetics
             {
                 return specialColor.BaseColor;
             }
-            return color.Color;
+            return color == null ? Color.black : color.Color;
         }
-
         public static Color GetValidProxyColor()
         {
             hue = (hue + r) % 1f;
