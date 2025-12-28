@@ -188,6 +188,7 @@
     <Compile Include="Role\RoleHintType.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
+    <Compile Include="Utilities\StateMachineWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\folder.png" />

@@ -1,4 +1,13 @@
-﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using BepInEx.Core.Logging.Interpolation;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
@@ -13,14 +22,6 @@ using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
 using Steamworks;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -285,6 +286,49 @@ namespace FungleAPI.Utilities
                 }
                 return ventHelper;
             }
+        }
+        [Comment("MiraAPI method")]
+        public static MethodBase GetStateMachineMoveNext<T>(string methodName)
+        {
+            string typeName = typeof(T).FullName;
+            Type showRoleStateMachine = typeof(T).GetNestedTypes().FirstOrDefault((Type x) => x.Name.Contains(methodName));
+            bool flag;
+            if (showRoleStateMachine == null)
+            {
+                BepInExErrorLogInterpolatedStringHandler bepInExErrorLogInterpolatedStringHandler = new BepInExErrorLogInterpolatedStringHandler(34, 2, out flag);
+                if (flag)
+                {
+                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral("Failed to find ");
+                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
+                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral(" state machine for ");
+                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(typeName);
+                }
+                FungleAPIPlugin.Instance.Log.LogError(bepInExErrorLogInterpolatedStringHandler);
+                return null;
+            }
+            MethodInfo moveNext = AccessTools.Method(showRoleStateMachine, "MoveNext", null, null);
+            if (moveNext == null)
+            {
+                BepInExErrorLogInterpolatedStringHandler bepInExErrorLogInterpolatedStringHandler = new BepInExErrorLogInterpolatedStringHandler(36, 2, out flag);
+                if (flag)
+                {
+                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral("Failed to find MoveNext method for ");
+                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(typeName);
+                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral(".");
+                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
+                }
+                FungleAPIPlugin.Instance.Log.LogError(bepInExErrorLogInterpolatedStringHandler);
+                return null;
+            }
+            BepInExInfoLogInterpolatedStringHandler bepInExInfoLogInterpolatedStringHandler = new BepInExInfoLogInterpolatedStringHandler(15, 1, out flag);
+            if (flag)
+            {
+                bepInExInfoLogInterpolatedStringHandler.AppendLiteral("Found ");
+                bepInExInfoLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
+                bepInExInfoLogInterpolatedStringHandler.AppendLiteral(".MoveNext");
+            }
+            FungleAPIPlugin.Instance.Log.LogInfo(bepInExInfoLogInterpolatedStringHandler);
+            return moveNext;
         }
         public enum VentType 
         {

@@ -36,21 +36,21 @@ namespace FungleAPI.Cosmetics.Patches
                 Collider.size = new Vector2(1f, 0.75f);
                 Collider.enabled = true;
                 __instance.scroller = newScroller;
-                for (int i = 0; i < __instance.ColorChips.Count; i++)
-                {
-                    ColorChip colorChip = __instance.ColorChips[i];
-                    colorChip.transform.SetParent(__instance.scroller.Inner);
-                    colorChip.Button.ClickMask = Collider;
-                    colorChip.Inner.FrontLayer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-                    if (CosmeticManager.IsSpecialColor(i, out SpecialColor color))
-                    {
-                        SpecialColorChip specialColorChip = colorChip.gameObject.GetOrAddComponent<SpecialColorChip>();
-                        specialColorChip.Color = color;
-                        specialColorChip.Chip = colorChip;
-                    }
-                }
-                __instance.SetScrollerBounds();
             }
+            for (int i = 0; i < __instance.ColorChips.Count; i++)
+            {
+                ColorChip colorChip = __instance.ColorChips[i];
+                colorChip.transform.SetParent(__instance.scroller.Inner);
+                colorChip.Button.ClickMask = Collider;
+                colorChip.Inner.FrontLayer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                if (CosmeticManager.IsSpecialColor(i, out SpecialColor color))
+                {
+                    SpecialColorChip specialColorChip = colorChip.gameObject.GetOrAddComponent<SpecialColorChip>();
+                    specialColorChip.Color = color;
+                    specialColorChip.Chip = colorChip;
+                }
+            }
+            __instance.SetScrollerBounds();
         }
     }
 }
