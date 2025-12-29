@@ -95,6 +95,7 @@ namespace FungleAPI.PluginLoading
         {
             public Mod(ModPlugin plugin)
             {
+                Plugin = plugin;
                 Version = plugin.ModVersion;
                 Name = plugin.ModName;
                 RealName = plugin.RealName;
@@ -106,13 +107,6 @@ namespace FungleAPI.PluginLoading
                         GUID = p.GUID;
                     }
                 }
-            }
-            public Mod(string version, string name, string realName, string guid)
-            {
-                Version = version;
-                Name = name;
-                RealName = realName;
-                GUID = guid;
             }
             public override int GetHashCode()
             {

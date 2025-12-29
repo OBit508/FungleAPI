@@ -330,6 +330,24 @@ namespace FungleAPI.Utilities
             FungleAPIPlugin.Instance.Log.LogInfo(bepInExInfoLogInterpolatedStringHandler);
             return moveNext;
         }
+        public static bool IsCurrentServerOfficial()
+        {
+            try
+            {
+                IRegionInfo currentRegion = DestroyableSingleton<ServerManager>.Instance.CurrentRegion;
+                StaticHttpRegionInfo regionInfo = (currentRegion != null) ? currentRegion.TryCast<StaticHttpRegionInfo>() : null;
+                if (regionInfo != null && regionInfo.PingServer.EndsWith("among.us", StringComparison.Ordinal))
+                {
+                    return regionInfo.Servers.All((ServerInfo serverInfo) => serverInfo.Ip.EndsWith("among.us", StringComparison.Ordinal));
+                }
+                return false;
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
         public enum VentType 
         {
             Skeld,

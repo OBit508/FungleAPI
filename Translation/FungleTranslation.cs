@@ -25,10 +25,65 @@ namespace FungleAPI.Translation
         private static Translator teamConfigButton;
         private static Translator teamConfigDesc;
         private static Translator nonModdedText;
-        private static Translator kickingText;
         private static Translator typeText;
         private static Translator yourRoleIs;
         private static Translator loadingPregabs;
+        private static Translator publicRooms;
+        private static Translator forcedDisconnection;
+        public static StringNames ForcedDisconnectionText 
+        {
+            get
+            {
+                if (forcedDisconnection == null)
+                {
+                    forcedDisconnection = new Translator(" was forced to disconnect for not having FungleAPI installed.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Latam, " fue forzado a desconectarse por no tener FungleAPI instalada.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Brazilian, " foi forçado a se desconectar por não ter a FungleAPI instalada.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Portuguese, " foi forçado a se desconectar por não ter a FungleAPI instalada.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Korean, " FungleAPI가 설치되어 있지 않아 강제로 연결이 끊어졌습니다.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Russian, " был принудительно отключён из-за отсутствия установленной FungleAPI.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Dutch, " werd gedwongen te verbreken omdat FungleAPI niet is geïnstalleerd.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Filipino, " ay pinilit na ma-disconnect dahil walang naka-install na FungleAPI.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.French, " a été forcé de se déconnecter car FungleAPI n’est pas installée.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.German, " wurde zwangsweise getrennt, da FungleAPI nicht installiert ist.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Italian, " è stato forzato a disconnettersi perché FungleAPI non è installata.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Japanese, " FungleAPIがインストールされていないため、強制的に切断されました。");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Spanish, " fue forzado a desconectarse por no tener FungleAPI instalada.");
+                    forcedDisconnection.AddTranslation(SupportedLangs.SChinese, " 由于未安装 FungleAPI，被强制断开连接。");
+                    forcedDisconnection.AddTranslation(SupportedLangs.TChinese, " 由於未安裝 FungleAPI，被強制中斷連線。");
+                    forcedDisconnection.AddTranslation(SupportedLangs.Irish, " cuireadh iallach air dícheangal toisc nach bhfuil FungleAPI suiteáilte.");
+
+                }
+                return forcedDisconnection.StringName;
+            }
+        }
+        public static StringNames ChangeToPublicText
+        {
+            get
+            {
+                if (publicRooms == null)
+                {
+                    publicRooms = new Translator("Public rooms are disabled for security reasons.");
+                    publicRooms.AddTranslation(SupportedLangs.Latam, "Las salas públicas están deshabilitadas por razones de seguridad.");
+                    publicRooms.AddTranslation(SupportedLangs.Brazilian, "Salas públicas estão desativadas por segurança.");
+                    publicRooms.AddTranslation(SupportedLangs.Portuguese, "Salas públicas estão desativadas por segurança.");
+                    publicRooms.AddTranslation(SupportedLangs.Korean, "보안상의 이유로 공개 방이 비활성화되었습니다.");
+                    publicRooms.AddTranslation(SupportedLangs.Russian, "Публичные комнаты отключены по соображениям безопасности.");
+                    publicRooms.AddTranslation(SupportedLangs.Dutch, "Openbare kamers zijn om veiligheidsredenen uitgeschakeld.");
+                    publicRooms.AddTranslation(SupportedLangs.Filipino, "Ang mga pampublikong silid ay hindi pinagana para sa seguridad.");
+                    publicRooms.AddTranslation(SupportedLangs.French, "Les salons publics sont désactivés pour des raisons de sécurité.");
+                    publicRooms.AddTranslation(SupportedLangs.German, "Öffentliche Räume sind aus Sicherheitsgründen deaktiviert.");
+                    publicRooms.AddTranslation(SupportedLangs.Italian, "Le stanze pubbliche sono disabilitate per motivi di sicurezza.");
+                    publicRooms.AddTranslation(SupportedLangs.Japanese, "セキュリティ上の理由により公開ルームは無効化されています。");
+                    publicRooms.AddTranslation(SupportedLangs.Spanish, "Las salas públicas están deshabilitadas por razones de seguridad.");
+                    publicRooms.AddTranslation(SupportedLangs.SChinese, "出于安全原因，公共房间已被禁用。");
+                    publicRooms.AddTranslation(SupportedLangs.TChinese, "基於安全原因，公共房間已被停用。");
+                    publicRooms.AddTranslation(SupportedLangs.Irish, "Tá seomraí poiblí díchumasaithe ar chúiseanna slándála.");
+
+                }
+                return publicRooms.StringName;
+            }
+        }
         public static StringNames LoadingPrefabsText
         {
             get
@@ -524,32 +579,6 @@ namespace FungleAPI.Translation
                     nonModdedText.AddTranslation(SupportedLangs.Irish, "Cliaint gan mods:");
                 }
                 return nonModdedText.StringName;
-            }
-        }
-        public static StringNames KickingText
-        {
-            get
-            {
-                if (kickingText == null)
-                {
-                    kickingText = new Translator("Kicking in:");
-                    kickingText.AddTranslation(SupportedLangs.Brazilian, "Expulsando em:");
-                    kickingText.AddTranslation(SupportedLangs.Portuguese, "Expulsando em:");
-                    kickingText.AddTranslation(SupportedLangs.Korean, "추방까지:");
-                    kickingText.AddTranslation(SupportedLangs.Russian, "Исключение через:");
-                    kickingText.AddTranslation(SupportedLangs.Dutch, "Uitzetten over:");
-                    kickingText.AddTranslation(SupportedLangs.Filipino, "Pagtatanggal sa loob ng:");
-                    kickingText.AddTranslation(SupportedLangs.French, "Expulsion dans :");
-                    kickingText.AddTranslation(SupportedLangs.German, "Rauswurf in:");
-                    kickingText.AddTranslation(SupportedLangs.Italian, "Espulsione tra:");
-                    kickingText.AddTranslation(SupportedLangs.Japanese, "追放まで:");
-                    kickingText.AddTranslation(SupportedLangs.Spanish, "Expulsando en:");
-                    kickingText.AddTranslation(SupportedLangs.SChinese, "踢出倒计时:");
-                    kickingText.AddTranslation(SupportedLangs.TChinese, "踢出倒數:");
-                    kickingText.AddTranslation(SupportedLangs.Irish, "Ag ciceáil i:");
-
-                }
-                return kickingText.StringName;
             }
         }
         public static StringNames TypeHereText

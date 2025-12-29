@@ -1,4 +1,9 @@
-﻿using AmongUs.GameOptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using AmongUs.GameOptions;
 using AsmResolver.PE.DotNet.ReadyToRun;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Epic.OnlineServices.Presence;
@@ -7,6 +12,8 @@ using FungleAPI.Event;
 using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Patches;
 using FungleAPI.Utilities;
@@ -20,11 +27,6 @@ using Il2CppSystem.Net;
 using InnerNet;
 using Rewired;
 using Rewired.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using xCloud;
 using static UnityEngine.GraphicsBuffer;
@@ -39,7 +41,6 @@ namespace FungleAPI.Player
         [HarmonyPostfix]
         public static void StartPostfix(PlayerControl __instance)
         {
-            __instance.StartCoroutine(TrySendMods(__instance).WrapToIl2Cpp());
             if (__instance.GetComponent<PlayerHelper>() == null)
             {
                 DoStart(__instance);
@@ -102,17 +103,6 @@ namespace FungleAPI.Player
             foreach (Il2CppSystem.Type type in AllPlayerComponents)
             {
                 player.gameObject.AddComponent(type).SafeCast<PlayerComponent>().player = player;
-            }
-        }
-        public static System.Collections.IEnumerator TrySendMods(PlayerControl player)
-        {
-            while (player.Data == null && player.Data.ClientId == -1)
-            {
-                yield return null;
-            }
-            if (!player.isDummy && !player.notRealPlayer && player.AmOwner)
-            {
-                CustomRpcManager.Instance<RpcAmModded>().Send(player);
             }
         }
     }

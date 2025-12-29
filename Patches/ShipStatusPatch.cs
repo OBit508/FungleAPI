@@ -17,7 +17,14 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void AwakePostfix()
         {
-            VentHelper.ShipVents.Clear();
+            Vent[] vents = VentHelper.ShipVents.Keys.ToArray();
+            for (int i = 0; i < vents.Count(); i++)
+            {
+                if (vents[i] == null)
+                {
+                    VentHelper.ShipVents.Remove(vents[i]);
+                }
+            }
         }
         [HarmonyPatch("CloseDoorsOfType")]
         [HarmonyPostfix]

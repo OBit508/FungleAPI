@@ -71,8 +71,6 @@ namespace FungleAPI.Networking
         public static void WriteMod(this MessageWriter Writer, ModPlugin.Mod mod)
         {
             Writer.Write(mod.Version);
-            Writer.Write(mod.Name);
-            Writer.Write(mod.RealName);
             Writer.Write(mod.GUID);
         }
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
@@ -163,12 +161,15 @@ namespace FungleAPI.Networking
         public static ModPlugin.Mod ReadMod(this MessageReader Reader)
         {
             string Version = Reader.ReadString();
-            string Name = Reader.ReadString();
-            string RealName = Reader.ReadString();
             string GUID = Reader.ReadString();
-            ModPlugin.Mod mod = new ModPlugin.Mod(Version, Name, RealName, GUID);
-            mod.Plugin = ModPlugin.AllPlugins.FirstOrDefault(pl => pl.LocalMod.Equals(mod));
-            return mod;
+            return ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == GUID && m.LocalMod.Version == Version).LocalMod;
+        }
+        public static ModPlugin.Mod ReadMod(this MessageReader Reader, out string GUID)
+        {
+            string Version = Reader.ReadString();
+            string txt = Reader.ReadString();
+            GUID = txt;
+            return ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == txt && m.LocalMod.Version == Version).LocalMod;
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {

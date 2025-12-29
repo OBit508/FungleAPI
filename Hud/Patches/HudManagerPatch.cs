@@ -53,13 +53,6 @@ namespace FungleAPI.Hud.Patches
             gridArrange.Start();
             gridArrange.ArrangeChilds();
             aspectPosition.AdjustPosition();
-            TextMeshPro lobbyWarningText = UnityEngine.Object.Instantiate(__instance.AbilityButton.buttonLabelText, __instance.transform);
-            lobbyWarningText.SetOutlineColor(Color.red);
-            lobbyWarningText.transform.localScale *= 3;
-            lobbyWarningText.transform.localPosition = new Vector3(0, 2, -0.1f);
-            lobbyWarningText.gameObject.AddComponent<LobbyWarningText>().Text = lobbyWarningText;
-            lobbyWarningText.alignment = TextAlignmentOptions.Top;
-            lobbyWarningText.name = "LobbyWarningText";
             __instance.ImpostorVentButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.ImpostorVentButton.transform);
             __instance.ImpostorVentButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
             __instance.SabotageButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.SabotageButton.transform);

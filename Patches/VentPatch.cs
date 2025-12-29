@@ -110,7 +110,7 @@ namespace FungleAPI.Patches
         public static void EnterVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
         {
             pc.GetComponent<PlayerHelper>().__CurrentVent = __instance;
-            List<PlayerControl> players = VentHelper.ShipVents[__instance].Players;
+            List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (!players.Contains(pc))
             {
                 players.Add(pc);
@@ -122,7 +122,7 @@ namespace FungleAPI.Patches
         public static void ExitVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
         {
             pc.GetComponent<PlayerHelper>().__CurrentVent = null;
-            List<PlayerControl> players = VentHelper.ShipVents[__instance].Players;
+            List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (players.Contains(pc))
             {
                 players.Remove(pc);

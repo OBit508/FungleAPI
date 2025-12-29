@@ -153,6 +153,7 @@ namespace FungleAPI.PluginLoading
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
             rpc.RpcType = type;
             rpc.Plugin = plugin;
+            plugin.RPCs.Add(rpc);
             CustomRpcManager.AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;

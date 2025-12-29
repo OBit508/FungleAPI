@@ -47,7 +47,6 @@ namespace FungleAPI.Patches
             {
                 return;
             }
-            LobbyWarningText.nonModdedPlayers.Add(clientData, (new ChangeableValue<float>(5), new ChangeableValue<float>(1.5f)));
             __instance.StartCoroutine(SafeSend(new Action(delegate
             {
                 CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
@@ -61,9 +60,5 @@ namespace FungleAPI.Patches
             }
             ac();
         }
-        public static DisconnectReasons FailedToSyncOptionsError = (DisconnectReasons)(-100);
-        public static DisconnectReasons MissingMods = (DisconnectReasons)(-101);
-        public static DisconnectReasons MissingModsOnHost = (DisconnectReasons)(-102);
-        public static DisconnectReasons NotTheSameMods = (DisconnectReasons)(-103);
     }
 }

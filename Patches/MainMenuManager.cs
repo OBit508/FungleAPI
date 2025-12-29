@@ -22,6 +22,21 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(MainMenuManager __instance)
         {
+            __instance.findGameButton.GetComponent<PassiveButton>().SetNewAction(delegate
+            {
+                Helpers.ShowPopup(FungleTranslation.ChangeToPublicText.GetString());
+            });
+            foreach (SpriteRenderer spriteRenderer in __instance.findGameButton.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                Color color = spriteRenderer.color;
+                color.a = 0.5f;
+                spriteRenderer.color = color;
+            }
+            SpriteRenderer background = GameObject.Instantiate<SpriteRenderer>(__instance.findGameButton.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(1).GetComponent<SpriteRenderer>(), __instance.findGameButton.transform.GetChild(1).GetChild(0));
+            background.color = Color.black;
+            Vector3 pos = __instance.findGameButton.transform.GetChild(1).GetChild(0).GetChild(0).GetChild(1).transform.position;
+            pos.z += 0.1f;
+            background.transform.position = pos;
             ChatLanguageSet.Instance.Load();
             __instance.StartCoroutine(RunStartUp(__instance).WrapToIl2Cpp());
             QualitySettings.vSyncCount = (DataManager.Settings.Video.VSync ? 1 : 0);

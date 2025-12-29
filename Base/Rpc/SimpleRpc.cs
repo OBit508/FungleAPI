@@ -13,7 +13,9 @@ namespace FungleAPI.Base.Rpc
             CustomRpcManager.SendRpc(innerNetObject, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
+                writer.StartMessage(0);
                 Write(innerNetObject, writer);
+                writer.EndMessage();
             }, sendOption, targetClientId);
         }
         public virtual void Write(MessageWriter messageWriter)
@@ -32,7 +34,9 @@ namespace FungleAPI.Base.Rpc
             CustomRpcManager.SendRpc(innerNetObject, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
+                writer.StartMessage(0);
                 Write(innerNetObject, writer);
+                writer.EndMessage();
             }, sendOption, targetClientId);
         }
         public virtual void Write(MessageWriter messageWriter)

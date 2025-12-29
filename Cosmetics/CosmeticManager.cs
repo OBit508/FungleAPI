@@ -30,7 +30,7 @@ namespace FungleAPI.Cosmetics
         }
         public static Color GetBaseColor(int colorId)
         {
-            CustomColor color = SpecialColors.FirstOrDefault(c => c.ColorId == colorId);
+            CustomColor color = AllColors.FirstOrDefault(c => c.ColorId == colorId);
             if (color is SpecialColor specialColor)
             {
                 return specialColor.BaseColor;

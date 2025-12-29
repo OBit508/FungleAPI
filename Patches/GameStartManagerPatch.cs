@@ -1,49 +1,37 @@
-﻿using FungleAPI.Components;
-using HarmonyLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.Components;
+using FungleAPI.Translation;
+using FungleAPI.Utilities;
+using HarmonyLib;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace FungleAPI.Patches
 {
-    [HarmonyPatch(typeof(GameStartManager), "Update")]
+    [HarmonyPatch(typeof(GameStartManager))]
     internal static class GameStartManagerPatch
     {
-        public static bool UsingCustomText;
-        public static void Postfix(GameStartManager __instance)
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        public static void StartPostfix(GameStartManager __instance)
         {
-            if (LobbyWarningText.nonModdedPlayers.Count > 0)
+            if (AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
             {
-                __instance.StartButton.ChangeButtonText("The game cannot start because certain players do not have the FungleAPI installed.");
-                ActionMapGlyphDisplay startButtonGlyph = __instance.StartButtonGlyph;
-                if (startButtonGlyph != null)
-                {
-                    startButtonGlyph.SetColor(Palette.DisabledClear);
-                }
-                __instance.StartButton.SetButtonEnableState(false);
-                UsingCustomText = true;
+                return;
             }
-            else if (UsingCustomText)
+            __instance.HostPublicButton.enabled = false;
+            __instance.HostPrivateButton.transform.FindChild("Inactive").GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
+            __instance.HostPrivateButton.SetNewAction(delegate
             {
-                if (__instance.LastPlayerCount >= __instance.MinPlayers)
-                {
-                    __instance.StartButton.ChangeButtonText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.StartLabel));
-                    __instance.GameStartTextClient.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.WaitingForHost);
-                }
-                else
-                {
-                    __instance.StartButton.ChangeButtonText(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.WaitingForPlayers));
-                    __instance.GameStartTextClient.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.WaitingForPlayers);
-                }
-                ActionMapGlyphDisplay startButtonGlyph = __instance.StartButtonGlyph;
-                if (startButtonGlyph != null)
-                {
-                    startButtonGlyph.SetColor(__instance.LastPlayerCount >= __instance.MinPlayers ? Palette.EnabledColor : Palette.DisabledClear);
-                }
-                __instance.StartButton.SetButtonEnableState(__instance.LastPlayerCount >= __instance.MinPlayers);
-                UsingCustomText = false;
+                Helpers.ShowPopup(FungleTranslation.ChangeToPublicText.GetString());
+            });
+            if (AmongUsClient.Instance.AmHost && AmongUsClient.Instance.IsGamePublic)
+            {
+                AmongUsClient.Instance.ChangeGamePublic(false);
             }
         }
     }

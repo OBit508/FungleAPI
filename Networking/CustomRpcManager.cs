@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Base.Rpc;
 using FungleAPI.PluginLoading;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -21,6 +22,28 @@ namespace FungleAPI.Networking
     public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
+        internal static bool SafeModEnabled;
+        public static bool ModdedProtocolActive 
+        { 
+            get
+            {
+                if (ModdedProtocol == ModdedProtocolUsage.Never || UseSafeMode && SafeModEnabled || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+                {
+                    return false;
+                }
+                if (ModdedProtocol != ModdedProtocolUsage.Always)
+                {
+                    bool isOfficial = Helpers.IsCurrentServerOfficial();
+                    if ((isOfficial && ModdedProtocol != ModdedProtocolUsage.OnVanillaServers) || (!isOfficial && ModdedProtocol != ModdedProtocolUsage.OnModdedServers))
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            } 
+        }
+        public static ModdedProtocolUsage ModdedProtocol = ModdedProtocolUsage.Never;
+        public static bool UseSafeMode = true;
         public static T Instance<T>() where T : RpcHelper
         {
             foreach (RpcHelper rpc in AllRpc)
@@ -34,7 +57,7 @@ namespace FungleAPI.Networking
         }
         public static void SendRpc(InnerNetObject innerNetObject, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, byte.MaxValue, sendOption, targetClientId);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, 240, sendOption, targetClientId);
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
@@ -48,13 +71,49 @@ namespace FungleAPI.Networking
         }
         public static bool Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
         {
-            if (callId == byte.MaxValue)
+            if (callId == 240)
             {
                 RpcHelper rpc = messageReader.ReadRPC();
-                rpc.__handle(__instance, messageReader);
+                rpc.__handle(__instance, messageReader.ReadMessage());
                 return false;
             }
             return true;
+        }
+        public enum ModdedProtocolUsage
+        {
+            Always,
+            OnVanillaServers,
+            OnModdedServers,
+            Never
+        }
+        [HarmonyPatch(typeof(Constants))]
+        internal static class ConstantsPatch
+        {
+            [HarmonyPatch("GetBroadcastVersion")]
+            [HarmonyPostfix]
+            public static void GetBroadcastVersionPostfix(ref int __result)
+            {
+                if (!ModdedProtocolActive)
+                {
+                    return;
+                }
+                if (__result % 50 < 25)
+                {
+                    __result += 25;
+                }
+            }
+
+            [HarmonyPatch("IsVersionModded")]
+            [HarmonyPrefix]
+            public static bool IsVersionModdedPrefix(ref bool __result)
+            {
+                if (!ModdedProtocolActive)
+                {
+                    return true;
+                }
+                __result = true;
+                return false;
+            }
         }
     }
 }
