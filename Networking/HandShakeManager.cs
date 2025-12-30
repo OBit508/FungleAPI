@@ -22,7 +22,6 @@ namespace FungleAPI.Networking
 {
     internal static class HandShakeManager
     {
-        public static Dictionary<DisconnectReasons, Translator> ErrorMessages = new Dictionary<DisconnectReasons, Translator>();
         public static DisconnectReasons MissingMods = (DisconnectReasons)230;
         public static DisconnectReasons MissingModsOnHost = (DisconnectReasons)231;
         public static DisconnectReasons NotSameMods = (DisconnectReasons)232;
@@ -62,7 +61,7 @@ namespace FungleAPI.Networking
                 {
                     if (!mods.Any(m => m.Equals(plugin.LocalMod)))
                     {
-                        missingMods.Add(plugin.LocalMod.GUID);
+                        missingMods.Add(plugin.LocalMod.Name);
                     }
                 }
                 if (amongUsClient.AmHost)
@@ -91,6 +90,10 @@ namespace FungleAPI.Networking
                     amongUsClient.KickPlayer(clientId, FailedToVerifyMods);
                 }
             }
+        }
+        public static void KickPlayer(int clientId, DisconnectReasons disconnectReason, string extraText = "", string extraText2 = "")
+        {
+            AmongUsClient.Instance.KickPlayer(clientId, disconnectReason, extraText, extraText2);
         }
         public static void KickPlayer(this InnerNetClient innerNetClient, int clientId, DisconnectReasons disconnectReason, string extraText = "", string extraText2 = "")
         {

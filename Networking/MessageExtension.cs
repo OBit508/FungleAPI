@@ -164,12 +164,13 @@ namespace FungleAPI.Networking
             string GUID = Reader.ReadString();
             return ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == GUID && m.LocalMod.Version == Version).LocalMod;
         }
-        public static ModPlugin.Mod ReadMod(this MessageReader Reader, out string GUID)
+        public static ModPlugin.Mod ReadMod(this MessageReader Reader, out string Name)
         {
             string Version = Reader.ReadString();
-            string txt = Reader.ReadString();
-            GUID = txt;
-            return ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == txt && m.LocalMod.Version == Version).LocalMod;
+            string guid = Reader.ReadString();
+            ModPlugin.Mod mod = ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == guid && m.LocalMod.Version == Version).LocalMod;
+            Name = mod == null ? "" : mod.Name;
+            return mod;
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {

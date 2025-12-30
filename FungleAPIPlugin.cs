@@ -52,7 +52,7 @@ namespace FungleAPI
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
 	public class FungleAPIPlugin : BasePlugin
 	{
-        public const string ModId = "com.rafael.fungleapi";
+        public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.6";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
@@ -228,12 +228,12 @@ namespace FungleAPI
             errorMessage6.AddTranslation(SupportedLangs.SChinese, "尝试同步设置时发生错误。");
             errorMessage6.AddTranslation(SupportedLangs.TChinese, "嘗試同步設定時發生錯誤。");
             errorMessage6.AddTranslation(SupportedLangs.Irish, "Tharla earráid agus iarracht á déanamh na socruithe a shioncronú.");
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.MissingModsOnHost, errorMessage);
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.MissingMods, errorMessage2);
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.NotSameMods, errorMessage3);
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.HostIsNotModded, errorMessage4);
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.FailedToVerifyMods, errorMessage5);
-            HandShakeManager.ErrorMessages.Add(HandShakeManager.FailedToSyncOptions, errorMessage6);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.MissingModsOnHost, errorMessage.StringName);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.MissingMods, errorMessage2.StringName);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.NotSameMods, errorMessage3.StringName);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.HostIsNotModded, errorMessage4.StringName);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToVerifyMods, errorMessage5.StringName);
+            DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToSyncOptions, errorMessage6.StringName);
         }
     }
 }

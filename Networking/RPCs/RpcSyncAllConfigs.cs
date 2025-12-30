@@ -73,7 +73,7 @@ namespace FungleAPI.Networking.RPCs
             }
             catch 
             {
-                AmongUsClient.Instance.HandleDisconnect(DisconnectReasons.Custom, HandShakeManager.ErrorMessages[HandShakeManager.FailedToSyncOptions].GetString());
+                AmongUsClient.Instance.HandleDisconnect(HandShakeManager.FailedToSyncOptions);
             }
         }
     }

@@ -24,7 +24,7 @@ namespace FungleAPI.Networking.Patches
                     HandShakeManager.ReadModsAndCheck(reader, __instance._ownerId_5__2);
                     return;
                 }
-                AmongUsClient.Instance.HandleDisconnect(DisconnectReasons.Custom, HandShakeManager.ErrorMessages[HandShakeManager.HostIsNotModded].GetString());
+                AmongUsClient.Instance.HandleDisconnect(HandShakeManager.HostIsNotModded);
             }
         }
     }

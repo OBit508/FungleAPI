@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AmongUs.Data;
 using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
@@ -54,16 +55,17 @@ namespace FungleAPI.Networking.Patches
                 DisconnectReasons reason = (DisconnectReasons)reader.ReadByte();
                 string extraText = reader.ReadString();
                 string extraText2 = reader.ReadString();
-                string text = HandShakeManager.ErrorMessages[reason].GetString();
+                string text = DisconnectPopup.ErrorMessages[reason].GetString();
                 if (!string.IsNullOrEmpty(extraText2) && !string.IsNullOrEmpty(extraText))
                 {
                     text = text.Replace("0", extraText) + extraText2;
                 }
                 else if (!string.IsNullOrEmpty(extraText))
                 {
-                    text += extraText2;
+                    text += extraText;
                 }
-                innerNetClient.EnqueueDisconnect(DisconnectReasons.Custom, text);
+                innerNetClient.HandleDisconnect(DisconnectReasons.Custom, text);
+                innerNetClient.LastCustomDisconnect = text;
                 __result = false;
                 return false;
             }
