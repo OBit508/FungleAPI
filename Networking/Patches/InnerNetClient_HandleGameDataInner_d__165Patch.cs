@@ -64,8 +64,11 @@ namespace FungleAPI.Networking.Patches
                 {
                     text += extraText;
                 }
-                innerNetClient.HandleDisconnect(DisconnectReasons.Custom, text);
-                innerNetClient.LastCustomDisconnect = text;
+                innerNetClient.Dispatcher.Add(new Action(delegate
+                {
+                    innerNetClient.HandleDisconnect(DisconnectReasons.Custom, text);
+                    innerNetClient.LastCustomDisconnect = text;
+                }));
                 __result = false;
                 return false;
             }
