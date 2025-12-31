@@ -67,7 +67,6 @@
     <Compile Include="Networking\Patches\InnerNetClient_HandleGameDataInner_d__165Patch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />
-    <Compile Include="Role\MiraRoleTabConfig.cs" />
     <Compile Include="Role\ReportButtonConfig.cs" />
     <Compile Include="Role\SabotageButtonConfig.cs" />
     <Compile Include="Role\VentButtonConfig.cs" />

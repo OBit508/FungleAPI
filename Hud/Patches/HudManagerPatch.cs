@@ -216,24 +216,6 @@ namespace FungleAPI.Hud.Patches
                             }
                         }
                     }
-                    if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started && !ShipStatus.Instance)
-                    {
-                        return false;
-                    }
-                    RoleHintType type = role.GetHintType();
-                    if (type == RoleHintType.MiraAPI_RoleTab)
-                    {
-                        if (RoleTab == null)
-                        {
-                            RoleTab = CreateRoleTab(role);
-                        }
-                        UpdateRoleTab(role);
-                        return false;
-                    }
-                    else if (RoleTab != null)
-                    {
-                        GameObject.Destroy(RoleTab.gameObject);
-                    }
                 }
             }
             return false;
@@ -261,36 +243,6 @@ namespace FungleAPI.Hud.Patches
                     }
                 }
             }
-        }
-        public static TaskPanelBehaviour CreateRoleTab(RoleBehaviour role)
-        {
-            TaskPanelBehaviour ogPanel = DestroyableSingleton<HudManager>.Instance.TaskStuff.transform.FindChild("TaskPanel").gameObject.GetComponent<TaskPanelBehaviour>();
-            GameObject gameObject = GameObject.Instantiate<GameObject>(ogPanel.gameObject, ogPanel.transform.parent);
-            gameObject.name = "RolePanel";
-            TaskPanelBehaviour component = gameObject.GetComponent<TaskPanelBehaviour>();
-            component.open = false;
-            GameObject.Destroy(component.tab.gameObject.GetComponentInChildren<TextTranslatorTMP>());
-            component.transform.localPosition = ogPanel.transform.localPosition - new Vector3(0f, 1f, 0f);
-            return component;
-        }
-        public static void UpdateRoleTab(RoleBehaviour role)
-        {
-            TextMeshPro tabText = RoleTab.tab.gameObject.GetComponentInChildren<TextMeshPro>();
-            TaskPanelBehaviour ogPanel = DestroyableSingleton<HudManager>.Instance.TaskStuff.transform.FindChild("TaskPanel").gameObject.GetComponent<TaskPanelBehaviour>();
-            if (tabText.text != CustomRoleManager.CurrentRoleTabConfig.TabNameText)
-            {
-                tabText.text = CustomRoleManager.CurrentRoleTabConfig.TabNameText;
-            }
-            if (tabText.color != CustomRoleManager.CurrentRoleTabConfig.TabNameColor)
-            {
-                tabText.color = CustomRoleManager.CurrentRoleTabConfig.TabNameColor;
-            }
-            float y = ogPanel.taskText.textBounds.size.y + 1f;
-            RoleTab.closedPosition = new Vector3(ogPanel.closedPosition.x, ogPanel.open ? (y + 0.2f) : 2f, ogPanel.closedPosition.z);
-            RoleTab.openPosition = new Vector3(ogPanel.openPosition.x, ogPanel.open ? y : 2f, ogPanel.openPosition.z);
-            Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
-            role.AppendTaskHint(stringBuilder);
-            RoleTab.SetTaskText(stringBuilder.ToString());
         }
     }
 }

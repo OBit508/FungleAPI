@@ -18,9 +18,6 @@ namespace FungleAPI.Role
 {
     public static class CustomRoleManager
     {
-        internal static MiraRoleTabConfig Default = new MiraRoleTabConfig();
-        internal static MiraRoleTabConfig Custom;
-        public static MiraRoleTabConfig CurrentRoleTabConfig => Custom == null ? Default : Custom;
         internal static KillButtonConfig Default1 = new KillButtonConfig();
         internal static KillButtonConfig Custom1;
         public static KillButtonConfig CurrentKillConfig => Custom1 == null ? Default1 : Custom1;
@@ -115,10 +112,6 @@ namespace FungleAPI.Role
                 Custom2 = null;
                 Custom3 = null;
                 Custom4 = null;
-            }
-            if (amOwner)
-            {
-                Default = new MiraRoleTabConfig() { __text = role.NiceName, TabNameColor = role.TeamColor };
             }
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
