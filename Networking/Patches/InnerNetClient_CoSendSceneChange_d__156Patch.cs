@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FungleAPI.ModCompatibility;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
@@ -27,6 +28,7 @@ namespace FungleAPI.Networking.Patches
                     writer.WritePacked(innerNetClient.ClientId);
                     writer.Write(__instance.sceneName);
                     HandShakeManager.SendMods(writer);
+                    ReactorSupport.SendHandShakeMessage(writer);
                     writer.EndMessage();
                     writer.EndMessage();
                     innerNetClient.SendOrDisconnect(writer);

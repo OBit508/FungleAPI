@@ -71,65 +71,69 @@ namespace FungleAPI.Utilities.Prefabs
         }
         internal static System.Collections.IEnumerator CoLoadShipPrefabs(TextMeshPro textMeshPro, string baseText)
         {
-            int dots = 0;
-            float dotTimer = 0f;
-            void UpdateLoadingText()
+            if (LevelImpostorSupport.LevelImpostorAssembly == null)
             {
-                dots = (dots % 3) + 1;
-                textMeshPro.text = baseText + new string('.', dots) + "</font>";
-            }
-            if (LevelImpostorUtils.GetLevelImpostor() == null)
-            {
-                for (int i = 0; i < AmongUsClient.Instance.ShipPrefabs.Count; i++)
+                ChangeableValue<bool> done = new ChangeableValue<bool>(false);
+                System.Collections.IEnumerator WaitFor()
                 {
-                    AssetReference shipRef = AmongUsClient.Instance.ShipPrefabs[i];
-                    while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged")
+                    foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
                     {
-                        dotTimer += Time.deltaTime;
-                        if (dotTimer >= 0.35f)
+                        while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged")
                         {
-                            dotTimer = 0f;
-                            UpdateLoadingText();
-                        }
-                        AsyncOperationHandle<GameObject> op = shipRef.LoadAssetAsync<GameObject>();
-                        if (!op.IsValid())
-                        {
-                            yield return null;
-                            continue;
-                        }
-                        while (!op.IsDone)
-                        {
-                            dotTimer += Time.deltaTime;
-                            if (dotTimer >= 0.35f)
+                            AsyncOperationHandle<GameObject> op = shipRef.LoadAssetAsync<GameObject>();
+                            if (!op.IsValid())
                             {
-                                dotTimer = 0f;
-                                UpdateLoadingText();
+                                yield return null;
+                                continue;
                             }
-                            yield return null;
-                        }
-                        if (op.Status == AsyncOperationStatus.Succeeded)
-                        {
-                            ChangePrefab(shipRef);
+                            while (!op.IsDone)
+                            {
+                                yield return null;
+                            }
+                            if (op.Status == AsyncOperationStatus.Succeeded)
+                            {
+                                ChangePrefab(shipRef);
+                            }
                         }
                     }
+                    done.Value = true;
                 }
+                Helpers.StartCoroutine(WaitFor());
+                yield return CoAnimateDots(textMeshPro, baseText, done);
             }
             else
             {
-                while (!SkeldPrefab && !MiraPrefab && !PolusPrefab && !AirshipPrefab && !FunglePrefab)
+                ChangeableValue<bool> done = new ChangeableValue<bool>(false);
+                System.Collections.IEnumerator WaitFor()
                 {
-                    dotTimer += Time.deltaTime;
-                    if (dotTimer >= 0.35f)
-                    {
-                        dotTimer = 0f;
-                        UpdateLoadingText();
-                    }
-                    foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+                    yield return LevelImpostorSupport.CoUnsafeWaitForMapLoading();
+                    done.Value = true;
+                }
+                Helpers.StartCoroutine(WaitFor());
+                yield return CoAnimateDots(textMeshPro, baseText, done);
+                foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+                {
+                    if (shipRef.Asset != null)
                     {
                         ChangePrefab(shipRef);
                     }
-                    yield return null;
                 }
+            }
+        }
+        internal static System.Collections.IEnumerator CoAnimateDots(TextMeshPro textMeshPro, string baseText, ChangeableValue<bool> func)
+        {
+            int dots = 0;
+            float timer = 0f;
+            while (!func.Value)
+            {
+                timer += Time.deltaTime;
+                if (timer >= 0.35f)
+                {
+                    timer = 0f;
+                    dots = (dots % 3) + 1;
+                    textMeshPro.text = baseText + new string('.', dots) + "</font>";
+                }
+                yield return null;
             }
         }
         public static T Prefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object

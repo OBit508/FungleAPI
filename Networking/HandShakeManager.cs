@@ -7,6 +7,7 @@ using AmongUs.Data;
 using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
@@ -33,12 +34,15 @@ namespace FungleAPI.Networking
             messageWriter.Write(ModPlugin.AllPlugins.Count);
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
-                messageWriter.WriteMod(plugin.LocalMod);
+                messageWriter.Write(plugin.LocalMod.Version);
+                messageWriter.Write(plugin.LocalMod.GUID);
+                messageWriter.Write(plugin.LocalMod.Name);
             }
         }
-        public static void ReadModsAndCheck(MessageReader messageReader, int clientId)
+        public static bool ReadModsAndCheck(MessageReader messageReader, int clientId)
         {
             AmongUsClient amongUsClient = AmongUsClient.Instance;
+            bool amHost = amongUsClient.AmHost;
             try
             {
                 List<string> extraMods = new List<string>();
@@ -47,48 +51,93 @@ namespace FungleAPI.Networking
                 int modCount = messageReader.ReadInt32();
                 for (int i = 0; i < modCount; i++)
                 {
-                    ModPlugin.Mod mod = messageReader.ReadMod(out string str);
+                    string version = messageReader.ReadString();
+                    string guid = messageReader.ReadString();
+                    string name = messageReader.ReadString();
+                    ModPlugin modPlugin = ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == guid && m.LocalMod.Version == version);
+                    ModPlugin.Mod mod = modPlugin == null ? null : modPlugin.LocalMod;
                     if (mod == null)
                     {
-                        extraMods.Add(str);
+                        extraMods.Add(name + " (" + version + ")");
                     }
                     else
                     {
                         mods.Add(mod);
                     }
                 }
-                foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+                if (modCount < ModPlugin.AllPlugins.Count)
                 {
-                    if (!mods.Any(m => m.Equals(plugin.LocalMod)))
+                    foreach (ModPlugin plugin in ModPlugin.AllPlugins)
                     {
-                        missingMods.Add(plugin.LocalMod.Name);
-                    }
-                }
-                if (amongUsClient.AmHost)
-                {
-                    if (missingMods.Count > 0 && extraMods.Count > 0)
-                    {
-                        amongUsClient.KickPlayer(clientId, NotSameMods, string.Join(", ", missingMods) + ".", string.Join(", ", extraMods) + ".");
-                    }
-                    else
-                    {
-                        if (missingMods.Count > 0)
+                        if (!mods.Contains(plugin.LocalMod))
                         {
-                            amongUsClient.KickPlayer(clientId, MissingMods, string.Join(", ", missingMods) + ".");
-                        }
-                        if (extraMods.Count > 0)
-                        {
-                            amongUsClient.KickPlayer(clientId, MissingModsOnHost, string.Join(", ", extraMods) + ".");
+                            missingMods.Add(plugin.LocalMod.Name + " (" + plugin.LocalMod.Version + ")");
                         }
                     }
                 }
+                DisconnectReasons disconnectReason = DisconnectReasons.Unknown;
+                string extraText = "";
+                string extraText2 = "";
+                bool disconnect = false;
+                if (missingMods.Count > 0 && extraMods.Count > 0)
+                {
+                    disconnectReason = NotSameMods;
+                    extraText = string.Join(", ", missingMods) + ".";
+                    extraText2 = string.Join(", ", extraMods) + ".";
+                    disconnect = true;
+                }
+                else
+                {
+                    if (missingMods.Count > 0)
+                    {
+                        disconnectReason = amHost ? MissingMods : MissingModsOnHost;
+                        extraText = string.Join(", ", missingMods) + ".";
+                        disconnect = true;
+                    }
+                    if (extraMods.Count > 0)
+                    {
+                        disconnectReason = amHost ? MissingModsOnHost : MissingMods;
+                        extraText = string.Join(", ", extraMods) + ".";
+                        disconnect = true;
+                    }
+                }
+                if (amHost)
+                {
+                    if (disconnect)
+                    {
+                        KickPlayer(clientId, disconnectReason, extraText, extraText2);
+                        FungleAPIPlugin.Instance.Log.LogError("Removed client " + clientId);
+                    }
+                    if (clientId != amongUsClient.HostId)
+                    {
+                        CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
+                    }
+                }
+                else if (disconnect)
+                {
+                    string text = DisconnectPopup.ErrorMessages[disconnectReason].GetString();
+                    if (!string.IsNullOrEmpty(extraText2) && !string.IsNullOrEmpty(extraText))
+                    {
+                        text = text.Replace("0", extraText) + extraText2;
+                    }
+                    else if (!string.IsNullOrEmpty(extraText))
+                    {
+                        text += extraText;
+                    }
+                    FungleAPIPlugin.Instance.Log.LogError("Local client disconnected");
+                    amongUsClient.HandleDisconnect(DisconnectReasons.Custom, text);
+                    amongUsClient.LastCustomDisconnect = text;
+                }
+                return disconnect;
             }
-            catch
+            catch (Exception ex)
             {
+                FungleAPIPlugin.Instance.Log.LogError("Failed to verify mods from " + clientId.ToString() + " error: " + ex.Message);
                 if (amongUsClient.AmHost)
                 {
                     amongUsClient.KickPlayer(clientId, FailedToVerifyMods);
                 }
+                return true;
             }
         }
         public static void KickPlayer(int clientId, DisconnectReasons disconnectReason, string extraText = "", string extraText2 = "")

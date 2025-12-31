@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AmongUs.Data;
 using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -23,6 +24,12 @@ namespace FungleAPI.Networking.Patches
             InnerNetClient innerNetClient = __instance.__4__this;
             MessageReader reader = __instance.reader;
             if (__instance.__1__state != 0) return true;
+            if (reader.Tag == byte.MaxValue)
+            {
+                ReactorSupport.ReadSetKickReasonMessage(reader);
+                __result = false;
+                return false;
+            }
             if (reader.Tag == 6)
             {
                 int clientId = reader.ReadPackedInt32();
@@ -32,7 +39,10 @@ namespace FungleAPI.Networking.Patches
                 {
                     if (reader.BytesRemaining >= 0)
                     {
-                        HandShakeManager.ReadModsAndCheck(reader, clientId);
+                        if (!HandShakeManager.ReadModsAndCheck(reader, clientId))
+                        {
+                            ReactorSupport.ReadHandShakeMessage(reader, clientData);
+                        }
                     }
                     else if (innerNetClient.AmHost)
                     {

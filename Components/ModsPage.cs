@@ -16,7 +16,7 @@ namespace FungleAPI.Components
     public class ModsPage : MonoBehaviour
     {
         public Vector3 Closed;
-        public Vector3 Open = new Vector3(-2.5f, -0.2f, 0);
+        public Vector3 Open = new Vector3(-0.1f, -0.3f, 0);
         public bool Opening;
         public PassiveButton Arrow;
         public PassiveButton RightButton;
@@ -26,6 +26,7 @@ namespace FungleAPI.Components
         public List<List<string>> Pages;
         public TextMeshPro[] Texts;
         public Color linkColor = new Color32(52, 152, 235, byte.MaxValue);
+        public float p;
         public void Awake()
         {
             transform.localPosition = Closed;
@@ -67,16 +68,9 @@ namespace FungleAPI.Components
         }
         public void Update()
         {
-            Vector3 pos = Opening ? Open : Closed;
-            Vector3 scale = Opening ? Vector3.one * 0.9f : Vector3.zero;
-            if (transform.localPosition != pos)
-            {
-                transform.localPosition = Vector3.MoveTowards(transform.localPosition, pos, Time.deltaTime * 12);
-            }
-            if (transform.localScale != scale)
-            {
-                transform.localScale = Vector3.MoveTowards(transform.localScale, scale, Time.deltaTime * 7);
-            }
+            p = Mathf.MoveTowards(p, Opening ? 1f : 0f, Time.deltaTime * 5f);
+            transform.localPosition = Vector3.Lerp(Closed, Open, p);
+            transform.localScale = Vector3.one * Mathf.Lerp(0f, 0.9f, p);
         }
         public void UpdatePage()
         {

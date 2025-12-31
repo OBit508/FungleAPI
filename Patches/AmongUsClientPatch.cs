@@ -39,26 +39,5 @@ namespace FungleAPI.Patches
                 plugin.Options.AddRange(plugin.Settings.Options);
             }
         }
-        [HarmonyPatch("CreatePlayer")]
-        [HarmonyPostfix]
-        public static void CreatePlayerPostfix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData clientData)
-        {
-            if (clientData.Id == __instance.HostId || !__instance.AmHost)
-            {
-                return;
-            }
-            __instance.StartCoroutine(SafeSend(new Action(delegate
-            {
-                CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
-            })));
-        }
-        public static System.Collections.IEnumerator SafeSend(Action ac)
-        {
-            while (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null || PlayerControl.LocalPlayer.Data.ClientId == -1 || AmongUsClient.Instance.ClientId == -1)
-            {
-                yield return null;
-            }
-            ac();
-        }
     }
 }

@@ -56,6 +56,7 @@ namespace FungleAPI
         public const string ModV = "0.2.6";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
+        internal static FungleHelper Helper;
 		public override void Load()
 		{
             Instance = this;
@@ -77,10 +78,11 @@ namespace FungleAPI
             {
                 if (!loaddedAssets)
                 {
+                    ReactorSupport.Initialize();
+                    LevelImpostorSupport.Initialize();
                     CosmeticManager.SetPaletta();
                     loadAssets();
                     loaddedAssets = true;
-                    MCIActive = MCIUtils.GetMCI() != null;
                     Type type = typeof(Constants);
                     HarmonyLib.Patches patches = Harmony.GetPatchInfo(type.GetMethod("GetBroadcastVersion"));
                     HarmonyLib.Patches patches2 = Harmony.GetPatchInfo(type.GetMethod("IsVersionModded"));
@@ -101,8 +103,8 @@ namespace FungleAPI
             }));
             Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");
             SetErrorMessages();
+            Helper = AddComponent<FungleHelper>();
         }
-        internal static bool MCIActive;
         private static bool rolesRegistered;
         internal static bool loaddedAssets;
         internal static ModPlugin plugin;
@@ -234,6 +236,17 @@ namespace FungleAPI
             DisconnectPopup.ErrorMessages.Add(HandShakeManager.HostIsNotModded, errorMessage4.StringName);
             DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToVerifyMods, errorMessage5.StringName);
             DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToSyncOptions, errorMessage6.StringName);
+        }
+        internal class FungleHelper : MonoBehaviour
+        {
+            public IEnumerator Play(IEnumerator enumerator)
+            {
+                try
+                {
+                    yield return enumerator;
+                }
+                finally { }
+            }
         }
     }
 }

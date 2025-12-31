@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Base.Rpc;
+using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -27,6 +28,10 @@ namespace FungleAPI.Networking
         { 
             get
             {
+                if (ReactorSupport.DisableServerAuthority)
+                {
+                    return true;
+                }
                 if (ModdedProtocol == ModdedProtocolUsage.Never || UseSafeMode && SafeModEnabled || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
                 {
                     return false;

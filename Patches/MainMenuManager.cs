@@ -57,7 +57,7 @@ namespace FungleAPI.Patches
             {
                 page.Opening = !page.Opening;
             });
-            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.2f, 0.89f);
+            button.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.2f, 0.12f);
             button.GetComponent<AspectPosition>().Update();
             TextMeshPro text = button.transform.GetChild(2).GetChild(0).GetComponent<TextMeshPro>();
             text.GetComponent<TextTranslatorTMP>().enabled = false;

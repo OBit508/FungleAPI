@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Core.Logging.Interpolation;
+using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Networking;
@@ -347,7 +348,10 @@ namespace FungleAPI.Utilities
                 return true;
             }
         }
-
+        public static void StartCoroutine(System.Collections.IEnumerator enumerator)
+        {
+            FungleAPIPlugin.Helper.StartCoroutine(FungleAPIPlugin.Helper.Play(enumerator).WrapToIl2Cpp());
+        }
         public enum VentType 
         {
             Skeld,

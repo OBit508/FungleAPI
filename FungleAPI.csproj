@@ -60,6 +60,7 @@
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
+    <Compile Include="ModCompatibility\ReactorSupport.cs" />
     <Compile Include="Networking\HandShakeManager.cs" />
     <Compile Include="Networking\Patches\InnerNetClient_CoHandleSpawn_d__166Patch.cs" />
     <Compile Include="Networking\Patches\InnerNetClient_CoSendSceneChange_d__156Patch.cs" />
@@ -103,8 +104,7 @@
     <Compile Include="GameOver\Ends\NeutralGameOver.cs" />
     <Compile Include="Hud\HudHelper.cs" />
     <Compile Include="Hud\HudUpdateFlag.cs" />
-    <Compile Include="ModCompatibility\LevelImpostorUtils.cs" />
-    <Compile Include="ModCompatibility\MCIUtils.cs" />
+    <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
     <Compile Include="Components\ModdedConsole.cs" />

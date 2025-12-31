@@ -8,10 +8,10 @@ namespace FungleAPI.Translation
         {
             Default = defaultText;
             StringName = (StringNames)validId;
-            validId--;
+            validId++;
             All.Add(this);
         }
-        internal static int validId = -99999;
+        internal static int validId = int.MinValue;
         internal static List<Translator> All = new List<Translator>();
         internal string Default;
         public StringNames StringName;
