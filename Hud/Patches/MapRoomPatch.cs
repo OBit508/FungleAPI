@@ -17,7 +17,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageDoors")]
@@ -26,7 +26,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseDoors)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(true);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(true);
             }
         }
         [HarmonyPatch("SabotageHeli")]
@@ -35,7 +35,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageLights")]
@@ -44,7 +44,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageMushroomMixup")]
@@ -53,7 +53,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageOxygen")]
@@ -62,7 +62,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageReactor")]
@@ -71,7 +71,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
         [HarmonyPatch("SabotageSeismic")]
@@ -80,7 +80,7 @@ namespace FungleAPI.Hud.Patches
         {
             if (__instance.Parent.CanUseSabotage)
             {
-                CustomRoleManager.CurrentSabotageConfig.ResetTimer?.Invoke(false);
+                RoleConfigManager.SabotageConfig.ResetTimer?.Invoke(false);
             }
         }
     }

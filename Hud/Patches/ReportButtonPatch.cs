@@ -15,14 +15,14 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool SetActivePrefix(ReportButton __instance, [HarmonyArgument(0)] bool isActive)
         {
-            CustomRoleManager.CurrentReportConfig.SetActive?.Invoke(isActive);
+            RoleConfigManager.ReportConfig.SetActive?.Invoke(isActive);
             return false;
         }
         [HarmonyPatch("DoClick")]
         [HarmonyPrefix]
         public static bool DoClickPrefix(ReportButton __instance)
         {
-            CustomRoleManager.CurrentReportConfig.DoClick?.Invoke();
+            RoleConfigManager.ReportConfig.DoClick?.Invoke();
             return false;
         }
     }

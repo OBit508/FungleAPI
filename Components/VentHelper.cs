@@ -22,6 +22,10 @@ namespace FungleAPI.Components
         public List<PlayerControl> Players = new List<PlayerControl>();
         public void Start()
         {
+            foreach (ButtonBehavior buttonBehavior in vent.Buttons)
+            {
+                GameObject.Destroy(buttonBehavior.gameObject);
+            }
             List<ButtonBehavior> buttons = new List<ButtonBehavior>();
             List<GameObject> cleaningIndicators = new List<GameObject>();
             foreach (Vent vent in Vents)

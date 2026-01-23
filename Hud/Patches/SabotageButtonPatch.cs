@@ -15,14 +15,14 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool DoClickPrefix()
         {
-            CustomRoleManager.CurrentSabotageConfig.DoClick?.Invoke();
+            RoleConfigManager.SabotageConfig.DoClick?.Invoke();
             return false;
         }
         [HarmonyPrefix]
         [HarmonyPatch("Refresh")]
         public static bool RefreshPrefix(SabotageButton __instance)
         {
-            CustomRoleManager.CurrentSabotageConfig.Refresh?.Invoke();
+            RoleConfigManager.SabotageConfig.Refresh?.Invoke();
             return false;
         }
     }

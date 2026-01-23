@@ -17,21 +17,21 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool SetTargetPrefix(KillButton __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            CustomRoleManager.CurrentKillConfig.SetTarget?.Invoke(target);
+            RoleConfigManager.KillConfig.SetTarget?.Invoke(target);
             return false;
         }
         [HarmonyPatch("CheckClick")]
         [HarmonyPrefix]
         public static bool CheckClickPrefix(KillButton __instance, [HarmonyArgument(0)] PlayerControl target)
         {
-            CustomRoleManager.CurrentKillConfig.CheckClick?.Invoke(target);
+            RoleConfigManager.KillConfig.CheckClick?.Invoke(target);
             return false;
         }
         [HarmonyPatch("DoClick")]
         [HarmonyPrefix]
         public static bool DoClickPrefix(KillButton __instance)
         {
-            CustomRoleManager.CurrentKillConfig.DoClick?.Invoke();
+            RoleConfigManager.KillConfig.DoClick?.Invoke();
             return false;
         }
         [HarmonyPatch("ResetKillButton")]

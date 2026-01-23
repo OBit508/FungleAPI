@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
+using FungleAPI.Base.Roles;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Configuration;

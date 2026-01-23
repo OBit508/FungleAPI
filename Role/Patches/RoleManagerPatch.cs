@@ -28,17 +28,17 @@ namespace FungleAPI.Role.Patches
                 targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(role.Role);
                 if (role.CanUseKillButton)
                 {
-                    CustomRoleManager.CurrentKillConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.KillConfig?.ResetButton?.Invoke();
                 }
                 if (role.CanSabotage())
                 {
-                    CustomRoleManager.CurrentSabotageConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.SabotageConfig?.ResetButton?.Invoke();
                 }
                 if (role.CanVent)
                 {
-                    CustomRoleManager.CurrentVentConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.VentConfig?.ResetButton?.Invoke();
                 }
-                CustomRoleManager.CurrentReportConfig?.ResetButton?.Invoke();
+                RoleConfigManager.ReportConfig?.ResetButton?.Invoke();
             }
         }
         [HarmonyPatch("SetRole")]
@@ -51,17 +51,17 @@ namespace FungleAPI.Role.Patches
                 CustomRoleManager.UpdateRole(role);
                 if (role.CanUseKillButton)
                 {
-                    CustomRoleManager.CurrentKillConfig.InitializeButton?.Invoke();
+                    RoleConfigManager.KillConfig.InitializeButton?.Invoke();
                 }
                 if (role.CanSabotage())
                 {
-                    CustomRoleManager.CurrentSabotageConfig.InitializeButton?.Invoke();
+                    RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
                 }
                 if (role.CanVent)
                 {
-                    CustomRoleManager.CurrentVentConfig.InitializeButton?.Invoke();
+                    RoleConfigManager.VentConfig.InitializeButton?.Invoke();
                 }
-                CustomRoleManager.CurrentReportConfig.InitializeButton?.Invoke();
+                RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
             }
             EventManager.CallEvent(new OnSetRole() { Player = targetPlayer, Role = role });
         }

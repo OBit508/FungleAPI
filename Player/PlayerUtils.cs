@@ -122,7 +122,7 @@ namespace FungleAPI.Player
                     target.ShowFailedMurder();
                     if (resetKillTimer)
                     {
-                        killer.SetKillTimer(CustomRoleManager.CurrentKillConfig.Cooldown() / 2f);
+                        killer.SetKillTimer(RoleConfigManager.KillConfig.Cooldown() / 2f);
                     }
                 }
                 else
@@ -155,7 +155,7 @@ namespace FungleAPI.Player
                     }
                     if (resetKillTimer)
                     {
-                        killer.SetKillTimer(CustomRoleManager.CurrentKillConfig.Cooldown());
+                        killer.SetKillTimer(RoleConfigManager.KillConfig.Cooldown());
                     }
                 }
                 DestroyableSingleton<UnityTelemetry>.Instance.WriteMurder();

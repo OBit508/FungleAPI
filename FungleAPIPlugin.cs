@@ -53,7 +53,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.6";
+        public const string ModV = "0.2.7";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;

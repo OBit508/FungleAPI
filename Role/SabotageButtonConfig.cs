@@ -5,6 +5,7 @@ namespace FungleAPI.Role
 {
     public class SabotageButtonConfig
     {
+        public static SabotageButtonConfig Default { get; } = new SabotageButtonConfig();
         public static Sprite DefaultSprite;
         public SabotageButtonConfig()
         {

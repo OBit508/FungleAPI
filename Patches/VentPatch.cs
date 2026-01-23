@@ -28,7 +28,7 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static bool SetOutlinePrefix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
         {
-            if (!CustomRoleManager.CurrentVentConfig.ShowOutline())
+            if (!RoleConfigManager.VentConfig.ShowOutline())
             {
                 if (!on && !mainTarget)
                 {

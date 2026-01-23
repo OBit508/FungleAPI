@@ -5,6 +5,7 @@ namespace FungleAPI.Role
 {
     public class KillButtonConfig
     {
+        public static KillButtonConfig Default { get; } = new KillButtonConfig();
         public KillButtonConfig()
         {
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove;

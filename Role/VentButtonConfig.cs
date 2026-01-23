@@ -5,6 +5,7 @@ namespace FungleAPI.Role
 {
     public class VentButtonConfig
     {
+        public static VentButtonConfig Default { get; } = new VentButtonConfig();
         public static Sprite DefaultSprite;
         public VentButtonConfig()
         {

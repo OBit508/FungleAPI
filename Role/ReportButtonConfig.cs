@@ -5,6 +5,7 @@ namespace FungleAPI.Role
 {
     public class ReportButtonConfig
     {
+        public static ReportButtonConfig Default { get; } = new ReportButtonConfig();
         public static Sprite DefaultSprite;
         public ReportButtonConfig()
         {

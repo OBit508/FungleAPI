@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Base.Roles;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
@@ -18,18 +19,6 @@ namespace FungleAPI.Role
 {
     public static class CustomRoleManager
     {
-        internal static KillButtonConfig Default1 = new KillButtonConfig();
-        internal static KillButtonConfig Custom1;
-        public static KillButtonConfig CurrentKillConfig => Custom1 == null ? Default1 : Custom1;
-        internal static VentButtonConfig Default2 = new VentButtonConfig();
-        internal static VentButtonConfig Custom2;
-        public static VentButtonConfig CurrentVentConfig => Custom2 == null ? Default2 : Custom2;
-        internal static ReportButtonConfig Default3 = new ReportButtonConfig();
-        internal static ReportButtonConfig Custom3;
-        public static ReportButtonConfig CurrentReportConfig => Custom3 == null ? Default3 : Custom3;
-        internal static SabotageButtonConfig Default4 = new SabotageButtonConfig();
-        internal static SabotageButtonConfig Custom4;
-        public static SabotageButtonConfig CurrentSabotageConfig => Custom4 == null ? Default4 : Custom4;
         public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
@@ -80,7 +69,6 @@ namespace FungleAPI.Role
             {
                 return;
             }
-            bool amOwner = role.Player.AmOwner;
             ICustomRole customRole = role.CustomRole();
             if (customRole != null)
             {
@@ -96,23 +84,8 @@ namespace FungleAPI.Role
                 role.RoleScreenshot = customRole.Screenshot;
                 role.RoleIconSolid = customRole.IconSolid;
                 role.RoleIconWhite = customRole.IconWhite;
-                if (amOwner)
-                {
-                    Custom = customRole.RoleTabConfig;
-                    Custom1 = customRole.CreateKillConfig();
-                    Custom2 = customRole.CreateVentConfig();
-                    Custom3 = customRole.CreateReportConfig();
-                    Custom4 = customRole.CreateSabotageConfig();
-                }
             }
-            else if (amOwner)
-            {
-                Custom = null;
-                Custom1 = null;
-                Custom2 = null;
-                Custom3 = null;
-                Custom4 = null;
-            }
+            RoleConfigManager.UpdateByRole(role);
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
@@ -237,6 +210,16 @@ namespace FungleAPI.Role
                 return roleBehaviour.CustomRole().CanUseVent;
             }
             return roleBehaviour.CanVent;
+        }
+        public static void AppendHint(RoleBehaviour roleBehaviour, Il2CppSystem.Text.StringBuilder stringBuilder)
+        {
+            RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();
+            if (roleBaseHelper != null)
+            {
+                roleBaseHelper.AppendHint(stringBuilder);
+                return;
+            }
+            roleBehaviour.AppendTaskHint(stringBuilder);
         }
     }
 }

@@ -5,13 +5,16 @@ using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
+using HarmonyLib;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 namespace FungleAPI.Base.Roles
 {
     [FungleIgnore]
-    public class NeutralBase : RoleBehaviour
+    public class NeutralBase : RoleBaseHelper
     {
         public virtual bool DoTasks => false;
         public override bool IsDead => false;
@@ -54,42 +57,16 @@ namespace FungleAPI.Base.Roles
         }
         public override bool CanUse(IUsable usable)
         {
-            if (!GameManager.Instance.LogicUsables.CanUse(usable, this.Player))
+            if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
             {
                 return false;
             }
             Console console = usable.SafeCast<Console>();
             return console == null || DoTasks;
         }
-        public override bool IsValidTarget(NetworkedPlayerInfo target)
-        {
-            return !(target == null) && !target.Disconnected && !target.IsDead && target.PlayerId != this.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible;
-        }
-        public override PlayerControl FindClosestTarget()
-        {
-            Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = GetPlayersInAbilityRangeSorted(GetTempPlayerList());
-            if (playersInAbilityRangeSorted.Count <= 0)
-            {
-                return null;
-            }
-            return playersInAbilityRangeSorted[0];
-        }
         public override bool DidWin(GameOverReason gameOverReason)
         {
             return GameOverManager.Instance<NeutralGameOver>().Reason == gameOverReason;
-        }
-        public override DeadBody FindClosestBody()
-        {
-            return Player.GetClosestDeadBody(GetAbilityDistance());
-        }
-        public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
-        {
-            if (this.GetHintType() == RoleHintType.MiraAPI_RoleTab)
-            {
-                CustomRoleManager.CreateForRole(taskStringBuilder, this);
-                return;
-            }
-            base.AppendTaskHint(taskStringBuilder);
         }
     }
 }

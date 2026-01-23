@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Types;
+using FungleAPI.Role;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,13 @@ namespace FungleAPI.Patches
         public static void UpdateSystemPostfix([HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] byte amount)
         {
             EventManager.CallEvent(new OnUpdateSystem() { Amount = amount, Player = player, SystemType = systemType });
+        }
+        [HarmonyPatch("CalculateLightRadius")]
+        [HarmonyPrefix]
+        public static bool CalculateLightRadiusPrefix([HarmonyArgument(0)] NetworkedPlayerInfo player, ref float __result)
+        {
+            __result = RoleConfigManager.LightConfig.CalculateLightRadius(player, false);
+            return false;
         }
     }
 }

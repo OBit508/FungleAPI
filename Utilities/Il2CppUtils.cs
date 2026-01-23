@@ -86,6 +86,17 @@ namespace FungleAPI.Utilities
             }
             return dic;
         }
+        public static Il2CppSystem.Comparison<T> ToIl2CppComparison<T>(this Comparison<T> comparison)
+        {
+            return DelegateSupport.ConvertDelegate<Il2CppSystem.Comparison<T>>(comparison);
+        }
+        public static Comparison<T> ToSystemComparison<T>(this Il2CppSystem.Comparison<T> il2cppComparison)
+        {
+            return (a, b) =>
+            {
+                return il2cppComparison.Invoke(a, b);
+            };
+        }
         public static Dictionary<TKey, TValue> ToIl2CppDictionary<TKey, TValue>(this System.Collections.Generic.Dictionary<TKey, TValue> dictionary)
         {
             Dictionary<TKey, TValue> dic = new Dictionary<TKey, TValue>();

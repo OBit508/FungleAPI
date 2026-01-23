@@ -15,14 +15,14 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool SetTargetPrefix(VentButton __instance, [HarmonyArgument(0)] Vent target)
         {
-            CustomRoleManager.CurrentVentConfig.SetTarget?.Invoke(target);
+            RoleConfigManager.VentConfig.SetTarget?.Invoke(target);
             return false;
         }
         [HarmonyPatch("DoClick")]
         [HarmonyPrefix]
         public static bool DoClickPrefix(VentButton __instance)
         {
-            CustomRoleManager.CurrentVentConfig.DoClick?.Invoke();
+            RoleConfigManager.VentConfig.DoClick?.Invoke();
             return false;
         }
     }

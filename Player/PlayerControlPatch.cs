@@ -52,7 +52,7 @@ namespace FungleAPI.Player
         {
             if (__instance.Data.Role.CanUseKillButton)
             {
-                float @float = CustomRoleManager.CurrentKillConfig.Cooldown();
+                float @float = RoleConfigManager.KillConfig.Cooldown();
                 if (@float <= 0f)
                 {
                     return false;
@@ -97,6 +97,20 @@ namespace FungleAPI.Player
         public static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
         {
             EventManager.CallEvent(new OnReportBody() { Reporter = __instance, Target = target, Body = target != null ? Helpers.GetBodyById(target.PlayerId) : null });
+        }
+        [HarmonyPatch("AdjustLighting")]
+        [HarmonyPrefix]
+        public static bool AdjustLightingPrefix(PlayerControl __instance)
+        {
+            RoleConfigManager.LightConfig?.AdjustLighting(__instance);
+            return false;
+        }
+        [HarmonyPatch("IsFlashlightEnabled")]
+        [HarmonyPrefix]
+        public static bool IsFlashlightEnabledPrefix(PlayerControl __instance, ref bool __result)
+        {
+            __result = RoleConfigManager.LightConfig.IsFlashlightEnabled(__instance);
+            return false;
         }
         public static void DoStart(PlayerControl player)
         {

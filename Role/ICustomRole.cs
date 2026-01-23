@@ -29,7 +29,8 @@ namespace FungleAPI.Role
         ReportButtonConfig CreateReportConfig() => null;
         VentButtonConfig CreateVentConfig() => null;
         KillButtonConfig CreateKillConfig() => null;
-        MiraRoleTabConfig RoleTabConfig => new MiraRoleTabConfig(this);
+        LightSourceConfig CreateLightConfig() => null;
+        MiraRoleTabConfig CreateRoleTabConfig() => null;
         RoleHintType HintType => RoleHintType.TaskHint;
         bool CanUseVent => Team == ModdedTeam.Impostors;
         bool IsAffectedByLightOnAirship => Team == ModdedTeam.Impostors;
