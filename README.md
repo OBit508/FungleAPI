@@ -6,3 +6,6 @@ Reactor: https://github.com/NuclearPowered/Reactor
 
 Example mod: https://github.com/OBit508/FungleAPI-Example
 Guide: https://github.com/OBit508/FungleAPI-Guide/blob/main/GUIDE
+
+
+This mod is not affiliated with or endorsed by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
