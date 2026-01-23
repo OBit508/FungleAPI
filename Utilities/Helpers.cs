@@ -223,11 +223,18 @@ namespace FungleAPI.Utilities
         }
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
-            if (obj == null || obj.TryCast<T>() == null)
+            try
+            {
+                if (obj == null || obj.TryCast<T>() == null)
+                {
+                    return null;
+                }
+                return obj.Cast<T>();
+            }
+            catch
             {
                 return null;
             }
-            return obj.Cast<T>();
         }
         public static Vent CreateVent(VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {

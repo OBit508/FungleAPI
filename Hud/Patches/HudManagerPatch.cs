@@ -249,7 +249,7 @@ namespace FungleAPI.Hud.Patches
             HudHelper.Active = isActive;
             if (HudHelper.UpdateFlag == HudUpdateFlag.OnSetHudActive || HudHelper.UpdateFlag == HudUpdateFlag.DelayAndOnSetHudActive)
             {
-                __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && isActive);
+                __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != RoleTypes.Engineer && isActive);
                 __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
                 __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
                 foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)

@@ -7,11 +7,13 @@ using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using InnerNet;
+using MonoMod.Cil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FungleAPI.Role.Patches
 {
@@ -20,7 +22,7 @@ namespace FungleAPI.Role.Patches
     {
         [HarmonyPatch("SetRole")]
         [HarmonyPrefix]
-        public static void SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
+        public static bool SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
         {
             RoleBehaviour role = targetPlayer.Data.Role;
             if (role != null)
@@ -40,30 +42,55 @@ namespace FungleAPI.Role.Patches
                 }
                 RoleConfigManager.ReportConfig?.ResetButton?.Invoke();
             }
-        }
-        [HarmonyPatch("SetRole")]
-        [HarmonyPostfix]
-        public static void SetRolePostfix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer)
-        {
-            RoleBehaviour role = targetPlayer.Data.Role;
-            if (role != null)
+            if (!targetPlayer)
             {
-                CustomRoleManager.UpdateRole(role);
-                if (role.CanUseKillButton)
-                {
-                    RoleConfigManager.KillConfig.InitializeButton?.Invoke();
-                }
-                if (role.CanSabotage())
-                {
-                    RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
-                }
-                if (role.CanVent)
-                {
-                    RoleConfigManager.VentConfig.InitializeButton?.Invoke();
-                }
-                RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
+                return false;
             }
+            NetworkedPlayerInfo data = targetPlayer.Data;
+            if (data == null)
+            {
+                Debug.LogError("It shouldn't be possible, but " + targetPlayer.name + " still doesn't have PlayerData during role selection.");
+                return false;
+            }
+            if (data.Role)
+            {
+                data.Role.Deinitialize(targetPlayer);
+                GameObject.Destroy(data.Role.gameObject);
+            }
+            RoleBehaviour roleBehaviour = GameObject.Instantiate<RoleBehaviour>(__instance.AllRoles.FirstOrDefault(r => r.Role == roleType), data.gameObject.transform);
+            targetPlayer.Data.Role = roleBehaviour;
+            targetPlayer.Data.RoleType = roleType;
+            roleBehaviour.Initialize(targetPlayer);
+            if (roleType != RoleTypes.ImpostorGhost && roleType != RoleTypes.CrewmateGhost)
+            {
+                targetPlayer.Data.RoleWhenAlive = new Il2CppSystem.Nullable<RoleTypes>(roleType);
+            }
+            roleBehaviour.AdjustTasks(targetPlayer);
+            if (roleBehaviour.IsDead && !targetPlayer.Data.IsDead)
+            {
+                targetPlayer.Die(DeathReason.Kill, false);
+                return false;
+            }
+            if (!roleBehaviour.IsDead && targetPlayer.Data.IsDead)
+            {
+                targetPlayer.Revive();
+            }
+            CustomRoleManager.UpdateRole(roleBehaviour);
+            if (roleBehaviour.CanUseKillButton)
+            {
+                RoleConfigManager.KillConfig.InitializeButton?.Invoke();
+            }
+            if (roleBehaviour.CanSabotage())
+            {
+                RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
+            }
+            if (roleBehaviour.CanVent)
+            {
+                RoleConfigManager.VentConfig.InitializeButton?.Invoke();
+            }
+            RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
             EventManager.CallEvent(new OnSetRole() { Player = targetPlayer, Role = role });
+            return false;
         }
         [HarmonyPrefix]
         [HarmonyPatch("AssignRoleOnDeath")]

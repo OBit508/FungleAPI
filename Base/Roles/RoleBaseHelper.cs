@@ -12,6 +12,7 @@ using UnityEngine;
 namespace FungleAPI.Base.Roles
 {
     [FungleIgnore]
+    [RegisterTypeInIl2Cpp]
     public class RoleBaseHelper : RoleBehaviour
     {
         public virtual bool ValidTarget(NetworkedPlayerInfo target)
