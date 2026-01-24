@@ -1,4 +1,4 @@
-This is an AmongUs API inspired by MiraAPI and Reactor, aiming to be an easier for beginner modders.
+This is an AmongUs API based on MiraAPI and Reactor, aiming to be an easier for beginner modders.
 (If you want something with more freedom, I recommend using the MiraAPI)
 MiraAPI: https://github.com/All-Of-Us-Mods/MiraAPI
 Reactor: https://github.com/NuclearPowered/Reactor
@@ -6,3 +6,6 @@ Reactor: https://github.com/NuclearPowered/Reactor
 
 Example mod: https://github.com/OBit508/FungleAPI-Example
 Guide: https://github.com/OBit508/FungleAPI-Guide/blob/main/GUIDE
+
+
+This mod is not affiliated with or endorsed by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
