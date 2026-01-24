@@ -18,8 +18,9 @@ namespace FungleAPI.Hud
         public AbilityButton Button;
         public virtual ButtonLocation Location => ButtonLocation.BottomRight;
         public virtual bool Active => false;
-        public virtual bool CanClick { get; }
-        public virtual bool CanUse { get; }
+        public virtual bool CanUse => true;
+        public virtual bool CanClick => CanUse;
+        public virtual bool CanCooldown => true;
         public virtual float Cooldown { get; }
         public virtual float InitialCooldown => Cooldown / 2;
         public float Timer;
@@ -70,7 +71,6 @@ namespace FungleAPI.Hud
             {
                 flag = CurrentNumUses > 0;
             }
-
             if (flag && CanUse && !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null)
             {
                 color = Palette.EnabledColor;
@@ -85,7 +85,7 @@ namespace FungleAPI.Hud
             Button.buttonLabelText.color = color;
             if (!Transformed)
             {
-                if (!MeetingHud.Instance && !ExileController.Instance && Timer > 0f)
+                if (!MeetingHud.Instance && !ExileController.Instance && Timer > 0f && CanCooldown)
                 {
                     Timer -= Time.deltaTime;
                     Button.SetCoolDown(Timer, Cooldown);
@@ -119,7 +119,7 @@ namespace FungleAPI.Hud
             Transformed = false;
             TransformTimer = TransformDuration;
         }
-        public AbilityButton CreateButton()
+        public virtual AbilityButton CreateButton()
         {
             if (Button != null)
             {
