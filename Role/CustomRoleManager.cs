@@ -85,7 +85,10 @@ namespace FungleAPI.Role
                 role.RoleIconSolid = customRole.IconSolid;
                 role.RoleIconWhite = customRole.IconWhite;
             }
-            RoleConfigManager.UpdateByRole(role);
+            if (role.Player != null && role.Player.AmOwner)
+            {
+                RoleConfigManager.UpdateByRole(role);
+            }
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
