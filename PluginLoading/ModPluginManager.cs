@@ -189,6 +189,8 @@ namespace FungleAPI.PluginLoading
         public static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
         {
             CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
+            gameOver.GameOverType = type;
+            gameOver.Plugin = plugin;
             plugin.GameOvers.Add(gameOver);
             plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             GameOverManager.AllCustomGameOver.Add(gameOver);
@@ -200,7 +202,7 @@ namespace FungleAPI.PluginLoading
             RoleTypes role = (RoleTypes)CustomRoleManager.id;
             CustomRoleManager.RolesToRegister.Add(type, role);
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, (new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
+            ICustomRole.Save.Add(type, (new ChangeableValue<ModPlugin>(plugin), new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
             return role;
         }
         public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)

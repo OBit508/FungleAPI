@@ -93,6 +93,7 @@ namespace FungleAPI.PluginLoading
         public Mod LocalMod;
         public class Mod
         {
+            public static List<Mod> AllMods = new List<Mod>();
             public Mod(ModPlugin plugin)
             {
                 Plugin = plugin;
@@ -107,18 +108,11 @@ namespace FungleAPI.PluginLoading
                         GUID = p.GUID;
                     }
                 }
-            }
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(GUID, Name);
-            }
-            public override bool Equals(object obj)
-            {
-                if (obj is Mod mod)
+                if (GUID == null || GUID.Length <= 0)
                 {
-                    return mod.Version == Version && mod.Name == Name && mod.RealName == RealName;
+                    GUID = plugin.RealName + "." + plugin.ModName + "." + plugin.ModVersion;
                 }
-                return false;
+                AllMods.Add(this);
             }
             public string Version;
             public string Name;

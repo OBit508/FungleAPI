@@ -11,7 +11,7 @@ using UnityEngine;
 using FungleAPI.Utilities;
 using UnityEngine.Audio;
 
-namespace FungleAPI.GameOver
+namespace FungleAPI.GameOver.Patches
 {
     [HarmonyPatch(typeof(EndGameManager), "SetEverythingUp")]
     internal static class EndGameManagerPatch

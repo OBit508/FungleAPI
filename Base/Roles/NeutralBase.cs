@@ -66,7 +66,11 @@ namespace FungleAPI.Base.Roles
         }
         public override bool DidWin(GameOverReason gameOverReason)
         {
-            return GameOverManager.Instance<NeutralGameOver>().Reason == gameOverReason;
+            if (!Player.Data.IsDead && this.CanKill())
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

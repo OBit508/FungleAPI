@@ -53,7 +53,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.7";
+        public const string ModV = "0.2.8";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
@@ -74,13 +74,16 @@ namespace FungleAPI
                     fungleBasePlugin.OnRegisterInFungleAPI();
                 }
             });
+            IL2CPPChainloader.Instance.Finished += new Action(delegate
+            {
+                ReactorSupport.Initialize();
+                LevelImpostorSupport.Initialize();
+                CosmeticManager.SetPaletta();
+            });
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
             {
                 if (!loaddedAssets)
                 {
-                    ReactorSupport.Initialize();
-                    LevelImpostorSupport.Initialize();
-                    CosmeticManager.SetPaletta();
                     loadAssets();
                     loaddedAssets = true;
                     Type type = typeof(Constants);

@@ -70,14 +70,11 @@ namespace FungleAPI.Networking
         }
         public static void WriteMod(this MessageWriter Writer, ModPlugin.Mod mod)
         {
-            Writer.Write(mod.Version);
             Writer.Write(mod.GUID);
         }
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
         {
-            Type type = customGameOver.GetType();
-            Writer.Write(type.FullName);
-            Writer.WritePlugin(ModPluginManager.GetModPlugin(type.Assembly));
+            Writer.Write((int)customGameOver.Reason);
         }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
         {
@@ -160,14 +157,12 @@ namespace FungleAPI.Networking
         }
         public static ModPlugin.Mod ReadMod(this MessageReader Reader)
         {
-            string Version = Reader.ReadString();
             string GUID = Reader.ReadString();
-            return ModPlugin.AllPlugins.FirstOrDefault(m => m.LocalMod.GUID == GUID && m.LocalMod.Version == Version).LocalMod;
+            return ModPlugin.Mod.AllMods.FirstOrDefault(m => m.GUID == GUID);
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {
-            string fullName = Reader.ReadString();
-            return Reader.ReadPlugin().GameOvers.FirstOrDefault(g => g.GetType().FullName == fullName);
+            return GameOverManager.GetGameOver((GameOverReason)Reader.ReadInt32());
         }
         public static RoleBehaviour ReadRole(this MessageReader Reader)
         {

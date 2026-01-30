@@ -69,7 +69,9 @@
     <Compile Include="Networking\Patches\InnerNetClient_HandleGameDataInner_d__165Patch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
+    <Compile Include="Networking\RPCs\RpcEndGame.cs" />
     <Compile Include="Patches\AirshipStatusPatch.cs" />
+    <Compile Include="Patches\PlayerBanDataPatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />
     <Compile Include="Role\LightSourceConfig.cs" />
     <Compile Include="Role\MiraRoleTabConfig.cs" />
@@ -83,7 +85,7 @@
     <Compile Include="Configuration\Presets\PluginPreset.cs" />
     <Compile Include="Configuration\Presets\PresetV1.cs" />
     <Compile Include="Configuration\Patches\GamePresetsTabPatch.cs" />
-    <Compile Include="GameOver\LogicGameFlowNormalPatch.cs" />
+    <Compile Include="GameOver\Patches\LogicGameFlowNormalPatch.cs" />
     <Compile Include="Hud\ButtonLocation.cs" />
     <Compile Include="Hud\Patches\TaskPanelPatch.cs" />
     <Compile Include="Networking\RPCs\RpcUpdatePreset.cs" />
@@ -101,7 +103,6 @@
     <Compile Include="GameOver\Ends\CrewmateDisconnect.cs" />
     <Compile Include="GameOver\Ends\CrewmatesByTask.cs" />
     <Compile Include="GameOver\Ends\CrewmatesByVote.cs" />
-    <Compile Include="GameOver\Ends\SpecificGameOver.cs" />
     <Compile Include="GameOver\Ends\HideAndSeek_CrewmatesByTimer.cs" />
     <Compile Include="GameOver\Ends\HideAndSeek_ImpostorsByKills.cs" />
     <Compile Include="GameOver\Ends\ImpostorDisconnect.cs" />
@@ -125,7 +126,7 @@
     <Compile Include="Networking\RPCs\RpcSyncSettings.cs" />
     <Compile Include="Networking\RPCs\SyncTextType.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
-    <Compile Include="GameOver\EndGameManagerPatch.cs" />
+    <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
     <Compile Include="Configuration\Patches\GameOptionsMenuPatch.cs" />
     <Compile Include="Configuration\Patches\GameSettingMenuPatch.cs" />
     <Compile Include="Patches\GameStartManagerPatch.cs" />

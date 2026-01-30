@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.GameOver
+namespace FungleAPI.GameOver.Patches
 {
     [HarmonyPatch(typeof(LogicGameFlowNormal), "CheckEndCriteria")]
     internal static class LogicGameFlowNormalPatch
@@ -127,20 +127,13 @@ namespace FungleAPI.GameOver
                     else if (neutralKillerCount.Count == 1 && crewmateCount <= 1)
                     {
                         NetworkedPlayerInfo data = neutralKillerCount[0].Data;
-                        string winText = "Victory of the " + data.Role.NiceName;
-                        if (data.Role.CustomRole() != null)
+                        ICustomRole customRole = data.Role.CustomRole();
+                        if (customRole != null && customRole.NeutralGameOver != null)
                         {
-                            winText = data.Role.CustomRole().NeutralWinText;
+                            gameManager.RpcEndGame(customRole.NeutralGameOver);
+                            return;
                         }
-                        if (TutorialManager.InstanceExists)
-                        {
-                            DestroyableSingleton<HudManager>.Instance.ShowPopUp(winText);
-                            gameManager.ReviveEveryoneFreeplay();
-                        }
-                        else
-                        {
-                            gameManager.RpcEndGame(new List<NetworkedPlayerInfo>() { data }, winText, data.Role.NameColor, data.Role.NameColor);
-                        }
+                        gameManager.RpcEndGame(customRole.NeutralGameOver);
                     }
                 }
                 else if (independentTeams.Count == 1)
@@ -178,7 +171,7 @@ namespace FungleAPI.GameOver
                         }
                         else
                         {
-                            gameManager.RpcEndGame(pair.Key);
+                            gameManager.RpcEndGame(pair.Key.DefaultGameOver);
                         }
                     }
                 }

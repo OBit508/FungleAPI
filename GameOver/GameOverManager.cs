@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -42,39 +43,12 @@ namespace FungleAPI.GameOver
         public static void RpcEndGame(this GameManager gameManager, CustomGameOver gameOver)
         {
             gameManager.ShouldCheckForGameEnd = false;
-            gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.GetType().FullName), null);
+            gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
             AmongUsClient amongUsClient = AmongUsClient.Instance;
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);
             gameOver.Serialize(messageWriter);
-            messageWriter.Write(false);
             amongUsClient.FinishEndGame(messageWriter);
-        }
-        public static void RpcEndGame(this GameManager gameManager, ModdedTeam team)
-        {
-            if (team.DefaultGameOver != null)
-            {
-                RpcEndGame(gameManager, team.DefaultGameOver);
-                return;
-            }
-            List<NetworkedPlayerInfo> winners = new List<NetworkedPlayerInfo>();
-            foreach (NetworkedPlayerInfo networkedPlayerInfo in GameData.Instance.AllPlayers)
-            {
-                if (networkedPlayerInfo.Role != null && networkedPlayerInfo.Role.GetTeam() == team)
-                {
-                    winners.Add(networkedPlayerInfo);
-                }
-            }
-            RpcEndGame(gameManager, winners, team.VictoryText, team.TeamColor, team.TeamColor);
-        }
-        public static void RpcEndGame(this GameManager gameManager, List<NetworkedPlayerInfo> winners, string winText, Color backgroundColor, Color nameColor)
-        {
-            SpecificGameOver end = Instance<SpecificGameOver>();
-            end.winners = winners;
-            end.winText = winText;
-            end.backgroundColor = backgroundColor;
-            end.nameColor = nameColor;
-            RpcEndGame(gameManager, end);
         }
         [HarmonyPatch("Create")]
         [HarmonyPrefix]
@@ -82,38 +56,39 @@ namespace FungleAPI.GameOver
         {
             CustomGameOver.CachedGameOver = reader.ReadGameOver();
             CustomGameOver.CachedGameOver.Deserialize(reader);
-            reader.ReadBoolean();
+            CustomGameOver.CachedGameOver.SetData();
+            bool showAd = reader.ReadBoolean();
             if (reader.Position < reader.Length)
             {
                 MessageReader messageReader = reader.ReadMessage();
                 if (messageReader.Tag == 1)
                 {
+                    uint oldXpAmount = (uint)messageReader.ReadInt32();
+                    uint grantedXp = (uint)messageReader.ReadInt32();
                     uint num = (uint)messageReader.ReadInt32();
-                    uint num2 = (uint)messageReader.ReadInt32();
-                    uint num3 = (uint)messageReader.ReadInt32();
                     messageReader.ReadInt32();
-                    uint num4 = (uint)messageReader.ReadInt32();
-                    uint num5 = (uint)messageReader.ReadInt32();
-                    uint num6 = (uint)messageReader.ReadInt32();
+                    uint oldLevel = (uint)messageReader.ReadInt32();
+                    uint newLevel = (uint)messageReader.ReadInt32();
+                    uint maxLevel = (uint)messageReader.ReadInt32();
                     string text = messageReader.ReadString();
                     messageReader.ReadInt32();
-                    uint num7 = (uint)messageReader.ReadInt32();
+                    uint grantedPodsWithMultiplierApplied = (uint)messageReader.ReadInt32();
                     messageReader.ReadInt32();
-                    uint num8 = (uint)messageReader.ReadInt32();
-                    bool flag2 = messageReader.ReadBoolean();
-                    float num9 = 1f;
-                    float num10 = 1f;
-                    uint num11 = num3;
-                    if (flag2)
+                    uint grantedPodsWithMultiplierApplied2 = (uint)messageReader.ReadInt32();
+                    bool flag = messageReader.ReadBoolean();
+                    float multiplier = 1f;
+                    float multiplier2 = 1f;
+                    uint xpRequiredToLevelUpNextLevel = num;
+                    if (flag)
                     {
-                        num9 = messageReader.ReadSingle();
-                        num10 = messageReader.ReadSingle();
-                        num11 = (uint)messageReader.ReadInt32();
+                        multiplier = messageReader.ReadSingle();
+                        multiplier2 = messageReader.ReadSingle();
+                        xpRequiredToLevelUpNextLevel = (uint)messageReader.ReadInt32();
                     }
-                    ProgressionManager.XpGrantResult xpGrantResult = new ProgressionManager.XpGrantResult(num2, num, num3, num11, flag2, num4, num5, num6);
-                    ProgressionManager.CurrencyGrantResult currencyGrantResult = new ProgressionManager.CurrencyGrantResult(text, (uint)DestroyableSingleton<InventoryManager>.Instance.GetPodCount(text), num7, num9);
-                    ProgressionManager.CurrencyGrantResult currencyGrantResult2 = new ProgressionManager.CurrencyGrantResult(Constants.Beans, (uint)DestroyableSingleton<InventoryManager>.Instance.UnusedBeans, num8, num10);
-                    __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, false, xpGrantResult, currencyGrantResult, currencyGrantResult2);
+                    ProgressionManager.XpGrantResult xpGrantResult = new ProgressionManager.XpGrantResult(grantedXp, oldXpAmount, num, xpRequiredToLevelUpNextLevel, flag, oldLevel, newLevel, maxLevel);
+                    ProgressionManager.CurrencyGrantResult podsGrantResult = new ProgressionManager.CurrencyGrantResult(text, (uint)DestroyableSingleton<InventoryManager>.Instance.GetPodCount(text), grantedPodsWithMultiplierApplied, multiplier);
+                    ProgressionManager.CurrencyGrantResult beansGrantResult = new ProgressionManager.CurrencyGrantResult(Constants.Beans, (uint)DestroyableSingleton<InventoryManager>.Instance.UnusedBeans, grantedPodsWithMultiplierApplied2, multiplier2);
+                    __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, showAd, xpGrantResult, podsGrantResult, beansGrantResult);
                     return false;
                 }
             }

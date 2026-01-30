@@ -7,6 +7,9 @@ using FungleAPI.Utilities;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Teams;
+using FungleAPI.PluginLoading;
+using FungleAPI.GameOver;
+using FungleAPI.GameOver.Ends;
 
 namespace FungleAPI.Role
 {
@@ -18,6 +21,7 @@ namespace FungleAPI.Role
         StringNames RoleBlurMed { get; }
         StringNames RoleBlurLong { get; }
         Color RoleColor { get; }
+        ModPlugin Plugin { get { return Save[GetType()].Plugin.Value; } }
         List<ModdedOption> Options { get { return Save[GetType()].Options.Value; } }
         RoleCountAndChance CountAndChance { get { return Save[GetType()].CountAndChance.Value; } }
         string ExileText(ExileController exileController)
@@ -52,6 +56,7 @@ namespace FungleAPI.Role
         public RoleTypes Role => CustomRoleManager.RolesToRegister[GetType()];
         bool CanKill => UseVanillaKillButton;
         public Color OutlineColor => RoleColor;
-        internal static Dictionary<Type, (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
+        public CustomGameOver NeutralGameOver => GameOverManager.Instance<NeutralGameOver>();
+        internal static Dictionary<Type, (ChangeableValue<ModPlugin> Plugin, ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
     }
 }
