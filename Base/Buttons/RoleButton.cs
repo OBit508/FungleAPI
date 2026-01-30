@@ -4,7 +4,7 @@ using FungleAPI.Hud;
 namespace FungleAPI.Base.Buttons
 {
     [FungleIgnore]
-    public class RoleButton<T> : CustomAbilityButton where T : RoleBehaviour
+    public abstract class RoleButton<T> : CustomAbilityButton where T : RoleBehaviour
     {
         public PlayerControl Player => PlayerControl.LocalPlayer;
         public RoleBehaviour Role => Player != null && Player.Data != null ? Player.Data.Role : null;

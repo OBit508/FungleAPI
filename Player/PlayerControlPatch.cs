@@ -37,6 +37,7 @@ namespace FungleAPI.Player
     internal static class PlayerControlPatch
     {
         internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
+        internal static Dictionary<uint, int> CachedColors = new Dictionary<uint, int>();
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
         public static void StartPostfix(PlayerControl __instance)
@@ -68,6 +69,12 @@ namespace FungleAPI.Player
         {
             __instance.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError));
             return false;
+        }
+        [HarmonyPatch("ClientInitialize")]
+        [HarmonyPostfix]
+        public static void ClientInitializePostfix(PlayerControl __instance)
+        {
+            __instance.StartCoroutine(ClientInitialize(__instance).WrapToIl2Cpp());
         }
         [HarmonyPatch("MurderPlayer")]
         [HarmonyPrefix]
@@ -111,6 +118,22 @@ namespace FungleAPI.Player
         {
             __result = RoleConfigManager.LightConfig.IsFlashlightEnabled(__instance);
             return false;
+        }
+        public static System.Collections.IEnumerator ClientInitialize(PlayerControl playerControl)
+        {
+            while (!(GameData.Instance != null && playerControl.Data != null && !playerControl.Data.IsIncomplete))
+            {
+                yield return null;
+            }
+            if (CachedColors.TryGetValue(playerControl.Data.NetId, out int color))
+            {
+                if (playerControl.Data.DefaultOutfit.ColorId == 255)
+                {
+                    playerControl.SetColor(color);
+                    FungleAPIPlugin.Instance.Log.LogWarning("Fixed color for player " + playerControl.Data.PlayerName + " original color: " + color);
+                }
+                CachedColors.Remove(playerControl.Data.NetId);
+            }
         }
         public static void DoStart(PlayerControl player)
         {

@@ -55,7 +55,7 @@ namespace FungleAPI.Patches
         {
             foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
             {
-                button.Reset();
+                button.Reset(CustomAbilityButton.ResetType.EndMeeting);
             }
         }
     }

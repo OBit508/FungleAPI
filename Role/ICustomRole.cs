@@ -21,7 +21,6 @@ namespace FungleAPI.Role
         StringNames RoleBlurMed { get; }
         StringNames RoleBlurLong { get; }
         Color RoleColor { get; }
-        ModPlugin Plugin { get { return Save[GetType()].Plugin.Value; } }
         List<ModdedOption> Options { get { return Save[GetType()].Options.Value; } }
         RoleCountAndChance CountAndChance { get { return Save[GetType()].CountAndChance.Value; } }
         string ExileText(ExileController exileController)
@@ -57,6 +56,6 @@ namespace FungleAPI.Role
         bool CanKill => UseVanillaKillButton;
         public Color OutlineColor => RoleColor;
         public CustomGameOver NeutralGameOver => GameOverManager.Instance<NeutralGameOver>();
-        internal static Dictionary<Type, (ChangeableValue<ModPlugin> Plugin, ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
+        internal static Dictionary<Type, (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
     }
 }

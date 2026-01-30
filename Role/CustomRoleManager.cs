@@ -22,7 +22,6 @@ namespace FungleAPI.Role
         public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
         public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
-        internal static int id = Enum.GetNames<RoleTypes>().Length + 20;
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
         public static T Instance<T>() where T : RoleBehaviour
         {
@@ -92,7 +91,7 @@ namespace FungleAPI.Role
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
-            (ChangeableValue<ModPlugin>Plugin, ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance) pair = ICustomRole.Save[type];
+            (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance) pair = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
             InitializeRoleOptions(role, plugin);
@@ -159,7 +158,7 @@ namespace FungleAPI.Role
             ICustomRole customRole = role.CustomRole();
             if (customRole != null)
             {
-                return customRole.Plugin;
+                return ModPluginManager.GetModPlugin(role.GetType().Assembly);
             }
             return FungleAPIPlugin.Plugin;
         }

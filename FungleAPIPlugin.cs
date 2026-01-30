@@ -53,7 +53,7 @@ namespace FungleAPI
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.8";
+        public const string ModV = "0.2.7";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
@@ -76,6 +76,15 @@ namespace FungleAPI
             });
             IL2CPPChainloader.Instance.Finished += new Action(delegate
             {
+                List<ModPlugin> ordered = AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
+                ordered.Remove(Plugin);
+                AllPlugins.Clear();
+                AllPlugins.Add(Plugin);
+                AllPlugins.AddRange(ordered);
+                foreach (ModPlugin modPlugin in AllPlugins)
+                {
+                    ModPluginManager.RegisterTypes(modPlugin);
+                }
                 ReactorSupport.Initialize();
                 LevelImpostorSupport.Initialize();
                 CosmeticManager.SetPaletta();

@@ -14,8 +14,7 @@ namespace FungleAPI.Base.Rpc
     [FungleIgnore]
     public class RpcHelper
     {
-        public Type RpcType;
-        public ModPlugin Plugin;
+        public int RpcId;
         public virtual void __handle(InnerNetObject innerNetObject, MessageReader messageReader)
         {
         }

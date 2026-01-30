@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
 using FungleAPI.Base.Roles;
@@ -31,8 +25,15 @@ using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using Rewired.Utils.Classes.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
+using xCloud;
 using static FungleAPI.PluginLoading.ModPlugin;
 
 namespace FungleAPI.PluginLoading
@@ -62,6 +63,10 @@ namespace FungleAPI.PluginLoading
             {
                 AddTypes(type);
             }
+            EventManager.RegisterEvents(plugin);
+        }
+        public static void RegisterTypes(ModPlugin plugin)
+        {
             foreach (Type type in plugin.AllTypes)
             {
                 try
@@ -132,10 +137,9 @@ namespace FungleAPI.PluginLoading
                 }
                 catch (Exception ex)
                 {
-                    basePlugin.Log.LogError(ex);
+                    plugin.BasePlugin.Log.LogError(ex);
                 }
             }
-            EventManager.RegisterEvents(plugin);
         }
         public static ModCosmetics RegisterCosmetics(Type type, ModPlugin plugin)
         {
@@ -151,17 +155,18 @@ namespace FungleAPI.PluginLoading
         }
         public static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {
+            LastRpcId++;
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
-            rpc.RpcType = type;
-            rpc.Plugin = plugin;
-            plugin.RPCs.Add(rpc);
+            rpc.RpcId = LastRpcId;
             CustomRpcManager.AllRpc.Add(rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
             return rpc;
         }
         public static object RegisterTeam(Type type, ModPlugin plugin)
         {
+            LastTeamId++;
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
+            team.TeamId = LastTeamId;
             plugin.Teams.Add(team);
             ModdedTeam.Teams.Add(team);
             ConfigurationManager.InitializeTeamCountAndPriority(team, plugin);
@@ -188,9 +193,9 @@ namespace FungleAPI.PluginLoading
         }
         public static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
         {
+            LastGameOverId++;
             CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
-            gameOver.GameOverType = type;
-            gameOver.Plugin = plugin;
+            gameOver.GameOverId = LastGameOverId;
             plugin.GameOvers.Add(gameOver);
             plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             GameOverManager.AllCustomGameOver.Add(gameOver);
@@ -198,11 +203,11 @@ namespace FungleAPI.PluginLoading
         }
         public static RoleTypes RegisterRole(Type type, ModPlugin plugin)
         {
-            CustomRoleManager.id++;
-            RoleTypes role = (RoleTypes)CustomRoleManager.id;
+            LastRoleId++;
+            RoleTypes role = (RoleTypes)LastRoleId;
             CustomRoleManager.RolesToRegister.Add(type, role);
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, (new ChangeableValue<ModPlugin>(plugin), new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
+            ICustomRole.Save.Add(type, (new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
             return role;
         }
         public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)
@@ -228,7 +233,7 @@ namespace FungleAPI.PluginLoading
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
             {
-                ModPluginManager.Register(plugin, basePlugin);
+                Register(plugin, basePlugin);
                 List<ModPlugin> sameNamePlugins = new List<ModPlugin>();
                 if (ModName != null)
                 {
@@ -271,5 +276,9 @@ namespace FungleAPI.PluginLoading
         {
             return AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
         }
+        internal static int LastRpcId = int.MinValue;
+        internal static int LastGameOverId = int.MinValue;
+        internal static int LastTeamId = int.MinValue;
+        internal static int LastRoleId = 30;
     }
 }

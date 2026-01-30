@@ -21,6 +21,7 @@ namespace FungleAPI.GameOver
     [HarmonyPatch(typeof(EndGameResult))]
     public static class GameOverManager
     {
+        public static bool AllowNonHostGameOverRequest = true;
         public static List<CustomGameOver> AllCustomGameOver = new List<CustomGameOver>();
         internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
         public static GameOverReason GetValidGameOver()
@@ -36,15 +37,24 @@ namespace FungleAPI.GameOver
         {
             return AllCustomGameOver.FirstOrDefault(g => g.Reason == gameOverReason);
         }
+        public static CustomGameOver GetGameOverById(int Id)
+        {
+            return AllCustomGameOver.FirstOrDefault(g => g.GameOverId == Id);
+        }
         public static void RpcEndGame<T>(this GameManager gameManager) where T : CustomGameOver
         {
             RpcEndGame(gameManager, Instance<T>());
         }
         public static void RpcEndGame(this GameManager gameManager, CustomGameOver gameOver)
         {
+            AmongUsClient amongUsClient = AmongUsClient.Instance;
+            if (!amongUsClient.AmHost && AllowNonHostGameOverRequest)
+            {
+                Rpc<RpcRequestForEndGame>.Instance.Send(gameOver, PlayerControl.LocalPlayer, SendOption.Reliable, amongUsClient.HostId);
+                return;
+            }
             gameManager.ShouldCheckForGameEnd = false;
             gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
-            AmongUsClient amongUsClient = AmongUsClient.Instance;
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);
             gameOver.Serialize(messageWriter);

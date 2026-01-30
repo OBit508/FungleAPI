@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -22,6 +23,7 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(MainMenuManager __instance)
         {
+            PlayerControlPatch.CachedColors.Clear();
             __instance.findGameButton.GetComponent<PassiveButton>().SetNewAction(delegate
             {
                 Helpers.ShowPopup(FungleTranslation.ChangeToPublicText.GetString());

@@ -70,6 +70,7 @@
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
     <Compile Include="Networking\RPCs\RpcEndGame.cs" />
+    <Compile Include="Networking\RPCs\RpcRequestForEndGame.cs" />
     <Compile Include="Patches\AirshipStatusPatch.cs" />
     <Compile Include="Patches\PlayerBanDataPatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />

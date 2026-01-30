@@ -74,12 +74,11 @@ namespace FungleAPI.Networking
         }
         public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
         {
-            Writer.Write((int)customGameOver.Reason);
+            Writer.Write(customGameOver.GameOverId);
         }
         public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
         {
-            Writer.Write(role.GetType().FullName);
-            Writer.WritePlugin(role.GetRolePlugin());
+            Writer.Write((int)role.Role);
         }
         public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
         {
@@ -87,12 +86,11 @@ namespace FungleAPI.Networking
         }
         public static void WriteTeam(this MessageWriter Writer, ModdedTeam team)
         {
-            WriteCountAndPriority(Writer, team.CountAndPriority);
+            Writer.Write(team.TeamId);
         }
         public static void WriteRPC(this MessageWriter Writer, RpcHelper rpcHelper)
         {
-            Writer.Write(rpcHelper.RpcType.FullName);
-            Writer.WritePlugin(rpcHelper.Plugin);
+            Writer.Write(rpcHelper.RpcId);
         }
         public static void WritePlugin(this MessageWriter Writer, ModPlugin plugin)
         {
@@ -162,12 +160,11 @@ namespace FungleAPI.Networking
         }
         public static CustomGameOver ReadGameOver(this MessageReader Reader)
         {
-            return GameOverManager.GetGameOver((GameOverReason)Reader.ReadInt32());
+            return GameOverManager.GetGameOverById(Reader.ReadInt32());
         }
         public static RoleBehaviour ReadRole(this MessageReader Reader)
         {
-            string roleType = Reader.ReadString();
-            return Reader.ReadPlugin().Roles.FirstOrDefault(r => r.GetType().FullName == roleType);
+            return RoleManager.Instance.GetRole((RoleTypes)Reader.ReadInt32());
         }
         public static TeamCountAndPriority ReadCountAndPriority(this MessageReader Reader)
         {
@@ -176,12 +173,13 @@ namespace FungleAPI.Networking
         }
         public static ModdedTeam ReadTeam(this MessageReader Reader)
         {
-            return ReadCountAndPriority(Reader).Team;
+            int id = Reader.ReadInt32();
+            return ModdedTeam.Teams.FirstOrDefault(t => t.TeamId == id);
         }
         public static RpcHelper ReadRPC(this MessageReader Reader)
         {
-            string rpcType = Reader.ReadString();
-            return Reader.ReadPlugin().RPCs.FirstOrDefault(r => r.RpcType.FullName == rpcType);
+            int id = Reader.ReadInt32();
+            return CustomRpcManager.AllRpc.FirstOrDefault(r => r.RpcId == id);
         }
         public static ModPlugin ReadPlugin(this MessageReader Reader)
         {

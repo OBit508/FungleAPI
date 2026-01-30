@@ -6,7 +6,7 @@ using UnityEngine;
 namespace FungleAPI.Hud
 {
     [FungleIgnore]
-    public class CustomAbilityButton
+    public abstract class CustomAbilityButton
     {
         internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
         public static T Instance<T>() where T : CustomAbilityButton
@@ -15,177 +15,167 @@ namespace FungleAPI.Hud
             Buttons.TryGetValue(typeof(T), out button);
             return button.SimpleCast<T>();
         }
-        public AbilityButton Button;
+        public abstract string OverrideText { get; }
+        public abstract Color32 TextOutlineColor { get; }
+        public abstract Sprite ButtonSprite { get; }
+        public abstract float Cooldown { get; }
+        public virtual float InitialCooldown => Cooldown / 2f;
         public virtual ButtonLocation Location => ButtonLocation.BottomRight;
-        public virtual bool Active => false;
-        public virtual bool CanUse => true;
-        public virtual bool CanClick => CanUse;
+        public virtual int MaxUses { get; }
+        public virtual bool Active { get; }
         public virtual bool CanCooldown => true;
-        public virtual float Cooldown { get; }
-        public virtual float InitialCooldown => Cooldown / 2;
-        public float Timer;
-        public virtual bool HaveUses { get; }
-        public virtual int NumUses { get; }
-        public int CurrentNumUses;
+        public virtual bool LimitedUses => MaxUses > 0;
         public virtual bool TransformButton { get; }
-        public virtual float TransformDuration { get; }
-        public float TransformTimer;
-        public bool Transformed;
-        public virtual void Destransform() 
+        public virtual float TransformDuration => 0f;
+        public virtual bool CanDetransform => true;
+        public AbilityButton Button { get; protected set; }
+        public float Timer { get; protected set; }
+        public float TransformTimer { get; protected set; }
+        public int UsesLeft { get; protected set; }
+        public bool Transformed { get; protected set; }
+        public abstract void OnClick();
+        public virtual void CreateButton()
         {
-            Transformed = false;
-            TransformTimer = TransformDuration;
-        }
-        public virtual void Click() { }
-        public virtual string OverrideText { get { return "Ability Button"; } }
-        public virtual Sprite ButtonSprite { get; }
-        public virtual Color32 TextOutlineColor { get { return Color.white; } }
-        public void SetCooldown(float cooldown)
-        {
-            Timer = cooldown;
-            Button.SetCoolDown(Timer, Cooldown);
-        }
-        public void SetNumUses(int numUses)
-        {
-            CurrentNumUses = numUses;
-            Button.SetUsesRemaining(numUses);
-        }
-        public void SetTransformDuration(float newDuration)
-        {
-            TransformTimer = newDuration;
-            Button.SetCoolDown(Timer, TransformDuration);
-        }
-        public virtual void MeetingStart(MeetingHud meetingHud)
-        {
-            if (Transformed)
+            if (Button)
             {
-                Destransform();
+                return;
             }
-        }
-        public virtual void Update()
-        {
-            Color color = Palette.DisabledClear;
-            int num = 1;
-            bool flag = true;
-            if (HaveUses)
-            {
-                flag = CurrentNumUses > 0;
-            }
-            if (flag && CanUse && !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null)
-            {
-                color = Palette.EnabledColor;
-                num = 0;
-            }
-            Button.graphic.color = color;
-            Button.graphic.material.SetFloat("_Desat", num);
-            Button.usesRemainingSprite.color = color;
-            Button.usesRemainingSprite.material.SetFloat("_Desat", num);
-            Button.usesRemainingText.color = color;
-            Button.usesRemainingText.material.SetFloat("_Desat", num);
-            Button.buttonLabelText.color = color;
-            if (!Transformed)
-            {
-                if (!MeetingHud.Instance && !ExileController.Instance && Timer > 0f && CanCooldown)
-                {
-                    Timer -= Time.deltaTime;
-                    Button.SetCoolDown(Timer, Cooldown);
-                }
-            }
-            else if (!MeetingHud.Instance && !ExileController.Instance && TransformTimer > 0f)
-            {
-                TransformTimer -= Time.deltaTime;
-                Button.SetFillUp(TransformTimer, TransformDuration);
-                if (TransformTimer <= 0f)
-                {
-                    TransformTimer = TransformDuration;
-                    Transformed = false;
-                    Destransform();
-                }
-            }
-        }
-        public virtual void Start() { }
-        public virtual void Destroy()
-        {
-           if (Button != null)
-            {
-                UnityEngine.Object.Destroy(Button.gameObject);
-                Button = null;
-            }
-        }
-        public virtual void Reset(bool creating = false)
-        {
-            Timer = !creating ? Cooldown : TutorialManager.InstanceExists ? 0f : InitialCooldown;
-            CurrentNumUses = NumUses;
-            Transformed = false;
-            TransformTimer = TransformDuration;
-        }
-        public virtual AbilityButton CreateButton()
-        {
-            if (Button != null)
-            {
-                Destroy();
-            }
-            Reset(true);
-            Button = UnityEngine.Object.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
-            Button.name = GetType().Name;
-            PassiveButton component = Button.GetComponent<PassiveButton>();
+            Reset(ResetType.Create);
+            Button = GameObject.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
+            Button.name = OverrideText;
             Button.graphic.sprite = ButtonSprite;
-            Button.graphic.color = new Color(1f, 1f, 1f, 1f);
-            Button.gameObject.SetActive(true);
             Button.OverrideText(OverrideText);
             Button.buttonLabelText.SetOutlineColor(TextOutlineColor);
-            Button.GetComponent<PassiveButton>().SetNewAction(delegate
+            if (LimitedUses)
             {
-                if (CanClick && CanUse)
-                {
-                    bool flag = true;
-                    bool flag2 = true;
-                    if (TransformButton)
-                    {
-                        flag = !Transformed;
-                    }
-
-                    if (HaveUses)
-                    {
-                        flag2 = CurrentNumUses > 0;
-                    }
-
-                    if (flag && flag2 && Timer <= 0f)
-                    {
-                        Timer = Cooldown;
-                        if (HaveUses)
-                        {
-                            CurrentNumUses--;
-                            if (Button != null)
-                            {
-                                Button.SetUsesRemaining(CurrentNumUses);
-                            }
-                        }
-                        Click();
-                        if (TransformButton)
-                        {
-                            Transformed = true;
-                        }
-                    }
-
-                    if (!flag)
-                    {
-                        Transformed = false;
-                        TransformTimer = TransformDuration;
-                        Destransform();
-                    }
-                }
-            });
-            Button.SetCoolDown(Timer, Cooldown);
-            if (HaveUses)
-            {
-                Button.SetUsesRemaining(NumUses);
+                Button.SetUsesRemaining(MaxUses);
             }
             else
             {
                 Button.usesRemainingSprite.gameObject.SetActive(false);
             }
-            return Button;
+            Button.GetComponent<PassiveButton>().SetNewAction(ClickHandler);
+        }
+        public virtual bool CanUse()
+        {
+            return !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null && (Transformed && CanDetransform || !Transformed);
+        }
+        public virtual void MeetingStart(MeetingHud meetingHud) 
+        {
+            if (Transformed)
+            {
+                EndTransform();
+            }
+        }
+        public virtual void Enable() { }
+        public virtual void Reset(ResetType resetType)
+        {
+            Timer = resetType == ResetType.Create ? InitialCooldown : Cooldown;
+            UsesLeft = resetType != ResetType.EndMeeting ? MaxUses : UsesLeft;
+            Transformed = false;
+            TransformTimer = TransformDuration;
+        }
+        public virtual bool CanClick()
+        {
+            return CanUse() && (Timer <= 0f) && (!LimitedUses || UsesLeft > 0);
+        }
+        public virtual void SetCooldown(float cooldown) 
+        {
+            Timer = cooldown; 
+            Button.SetCoolDown(Timer, Cooldown); 
+        }
+        public virtual void SetNumUses(int numUses) 
+        { 
+            UsesLeft = numUses; 
+            Button.SetUsesRemaining(numUses); 
+        }
+        public virtual void SetTransformDuration(float newDuration) 
+        {
+            TransformTimer = newDuration;
+            Button.SetFillUp(Timer, TransformDuration); 
+        }
+        public virtual void ClickHandler()
+        {
+            if (!CanClick())
+            {
+                return;
+            }
+            if (TransformButton && Transformed && CanDetransform)
+            {
+                EndTransform();
+                return;
+            }
+            if (LimitedUses)
+            {
+                UsesLeft--;
+                Button?.SetUsesRemaining(UsesLeft);
+            }
+            OnClick();
+            if (TransformButton)
+            {
+                Transformed = true;
+                TransformTimer = TransformDuration;
+            }
+            Timer = Cooldown;
+        }
+        public virtual void Update()
+        {
+            UpdateTimer();
+            UpdateUI();
+        }
+        protected virtual void UpdateTimer()
+        {
+            if (MeetingHud.Instance || ExileController.Instance)
+            {
+                return;
+            }
+            if (TransformButton && Transformed)
+            {
+                TransformTimer -= Time.deltaTime;
+                Button.SetFillUp(TransformTimer, TransformDuration);
+                if (TransformTimer <= 0f)
+                {
+                    EndTransform();
+                }
+            }
+            else if (CanCooldown && Timer > 0)
+            {
+                Timer -= Time.deltaTime;
+                if (Timer < 0)
+                {
+                    Timer = 0;
+                }
+                Button.SetCoolDown(Timer, Cooldown);
+            }
+        }
+        protected virtual void UpdateUI()
+        {
+            bool enabled = CanUse() && (!LimitedUses || UsesLeft > 0);
+            Color color = enabled ? Palette.EnabledColor : Palette.DisabledClear;
+            int desat = enabled ? 0 : 1;
+            Button.graphic.color = color;
+            Button.graphic.material.SetFloat("_Desat", desat);
+            Button.buttonLabelText.color = color;
+        }
+        public virtual void EndTransform()
+        {
+            Transformed = false;
+            TransformTimer = TransformDuration;
+        }
+        public virtual void Destroy()
+        {
+            if (!Button)
+            {
+                return;
+            }
+            GameObject.Destroy(Button.gameObject);
+            Button = null;
+        }
+        public enum ResetType
+        {
+            EndMeeting,
+            Default,
+            Create
         }
     }
 }

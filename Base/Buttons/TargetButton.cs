@@ -5,11 +5,10 @@ using Rewired.Utils;
 namespace FungleAPI.Base.Buttons
 {
     [FungleIgnore]
-    public class TargetButton<T> : CustomAbilityButton where T : UnityEngine.Object
+    public abstract class TargetButton<T> : CustomAbilityButton where T : UnityEngine.Object
     {
         public T Target;
-        public override bool CanUse => Target != null;
-        public override bool CanClick => CanUse;
+        public override bool CanUse() => base.CanUse() && Target != null;
         public virtual void SetOutline(T target, bool active)
         {
         }

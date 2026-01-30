@@ -157,6 +157,7 @@ namespace FungleAPI.Teams
         public FloatGameSetting PriorityData;
         public List<ModdedOption> ExtraConfigs;
         public bool initialized;
+        public int TeamId;
         public static List<ModdedTeam> Teams = new List<ModdedTeam>();
     }
 }
