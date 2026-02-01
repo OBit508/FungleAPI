@@ -26,7 +26,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruc
 namespace FungleAPI.Teams
 {
     [FungleIgnore]
-    public class ModdedTeam
+    public abstract class ModdedTeam
     {
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
@@ -42,13 +42,13 @@ namespace FungleAPI.Teams
             }
             return null;
         }
-        public virtual Color TeamColor => Palette.CrewmateBlue;
-        public virtual StringNames TeamName => StringNames.None;
-        public virtual StringNames PluralName => StringNames.None;
+        public abstract Color TeamColor { get; }
+        public abstract StringNames TeamName { get; }
+        public abstract StringNames PluralName { get; }
+        public abstract string VictoryText { get; }
+        public abstract CustomGameOver DefaultGameOver { get; }
         public virtual bool FriendlyFire => true;
         public virtual bool KnowMembers => false;
-        public virtual CustomGameOver DefaultGameOver { get; }
-        public virtual string VictoryText { get; }
         public virtual uint MaxCount => 3;
         public virtual uint DefaultCount => 1;
         public virtual uint DefaultPriority => 1;

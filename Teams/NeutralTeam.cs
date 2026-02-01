@@ -18,6 +18,7 @@ namespace FungleAPI.Teams
         public override Color TeamColor => Color.gray;
         public override StringNames TeamName { get; } = FungleTranslation.NeutralText;
         public override StringNames PluralName { get; } = FungleTranslation.NeutralsText;
+        public override string VictoryText => FungleTranslation.NeutralGameOver.GetString();
         public override CustomGameOver DefaultGameOver => GameOverManager.Instance<NeutralGameOver>();
         public override uint MaxCount => 50;
     }

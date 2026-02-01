@@ -53,7 +53,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void ReEnableGameplayPostfix()
         {
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 button.Reset(CustomAbilityButton.ResetType.EndMeeting);
             }

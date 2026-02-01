@@ -11,29 +11,20 @@ using FungleAPI.PluginLoading;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace FungleAPI.Event
 {
     public static class EventManager
     {
         public static List<Type> EventTypes = new List<Type>();
-        public static Dictionary<Type, List<MethodInfo>> AllEvents = new Dictionary<Type, List<MethodInfo>>();
+        public static Dictionary<Type, Action<FungleEvent>> AllEvents = new Dictionary<Type, Action<FungleEvent>>();
         public static void CallEvent<T>(T value) where T : FungleEvent
         {
             Type eventType = typeof(T);
             if (AllEvents.ContainsKey(eventType))
             {
-                foreach (MethodInfo methodInfo in AllEvents[eventType])
-                {
-                    try
-                    {
-                        methodInfo.Invoke(null, new object[] { value });
-                    }
-                    catch (Exception ex)
-                    {
-                        FungleAPIPlugin.Instance.Log.LogError(ex);
-                    }
-                }
+                AllEvents[eventType](value);
             }
         }
         public static void RegisterEvents(ModPlugin plugin)
@@ -54,11 +45,17 @@ namespace FungleAPI.Event
                                 {
                                     if (AllEvents.ContainsKey(parameterType))
                                     {
-                                        AllEvents[parameterType].Add(methodInfo);
+                                        AllEvents[parameterType] += delegate (FungleEvent fungleEvent)
+                                        {
+                                            methodInfo.Invoke(null, new object[] { fungleEvent });
+                                        };
                                     }
                                     else
                                     {
-                                        AllEvents.Add(parameterType, new List<MethodInfo>() { methodInfo });
+                                        AllEvents.Add(parameterType, delegate (FungleEvent fungleEvent)
+                                        {
+                                            methodInfo.Invoke(null, new object[] { fungleEvent });
+                                        });
                                     }
                                     plugin.BasePlugin.Log.LogInfo(type.Name + "." + methodInfo.Name + " added to EventManager, Event: " + parameterType.Name);
                                 }

@@ -193,9 +193,15 @@ namespace FungleAPI.PluginLoading
         }
         public static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
         {
-            LastGameOverId++;
             CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
-            gameOver.GameOverId = LastGameOverId;
+            if (plugin == FungleAPIPlugin.Plugin)
+            {
+                gameOver.GameOverId = (int)gameOver.Reason;
+            }
+            else
+            {
+                gameOver.GameOverId = (int)GameOverManager.GetValidGameOver();
+            }
             plugin.GameOvers.Add(gameOver);
             plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             GameOverManager.AllCustomGameOver.Add(gameOver);
@@ -213,7 +219,7 @@ namespace FungleAPI.PluginLoading
         public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)
         {
             CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
-            CustomAbilityButton.Buttons.Add(type, button);
+            HudHelper.Buttons.Add(type, button);
             plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
             return button;
         }
@@ -277,7 +283,6 @@ namespace FungleAPI.PluginLoading
             return AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
         }
         internal static int LastRpcId = int.MinValue;
-        internal static int LastGameOverId = int.MinValue;
         internal static int LastTeamId = int.MinValue;
         internal static int LastRoleId = 30;
     }

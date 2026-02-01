@@ -5,6 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Epic.OnlineServices;
 using FungleAPI.Attributes;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
+using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
@@ -36,9 +39,13 @@ namespace FungleAPI.Components
                 button.SetNewAction(delegate
                 {
                     string errorText;
-                    if (!this.vent.TryMoveToVent(vent, out errorText))
+                    if (!CheckForMoveVent(vent, out errorText))
                     {
                         FungleAPIPlugin.Instance.Log.LogError("Local Player failed to move to " + vent.name + " because of " + errorText);
+                    }
+                    else
+                    {
+                        Rpc<RpcMoveToVent>.Instance.Send(vent.TryGetHelper(), PlayerControl.LocalPlayer);
                     }
                 });
             }
@@ -51,6 +58,58 @@ namespace FungleAPI.Components
             if (Vents.Count != vent.Buttons.Count)
             {
                 Start();
+            }
+        }
+        public bool CheckForMoveVent(Vent otherVent, out string error)
+        {
+            if (otherVent == null)
+            {
+                error = "Vent does not exist";
+                return false;
+            }
+            PlayerControl localPlayer = PlayerControl.LocalPlayer;
+            if (!localPlayer.inVent)
+            {
+                error = "Player is not currently inside a vent";
+                return false;
+            }
+            if (localPlayer.walkingToVent || localPlayer.Visible)
+            {
+                error = "Player was still in the middle of animating into current vent; not allowed to move vents that fast";
+                return false;
+            }
+            error = "";
+            return true;
+        }
+        public void ChangeCurrentVent(PlayerControl playerControl, Vent otherVent)
+        {
+            if (Players.Contains(playerControl))
+            {
+                Players.Remove(playerControl);
+            }
+            VentHelper other = otherVent.TryGetHelper();
+            if (!other.Players.Contains(playerControl))
+            {
+                other.Players.Add(playerControl);
+            }
+            playerControl.GetPlayerComponent<PlayerHelper>().__CurrentVent = otherVent;
+        }
+        public void MoveToVent(PlayerControl playerControl, Vent otherVent)
+        {
+            ChangeCurrentVent(playerControl, otherVent);
+            Vector3 vector = otherVent.transform.position;
+            vector -= (Vector3)playerControl.Collider.offset;
+            playerControl.NetTransform.SnapTo(vector);
+            if (playerControl.AmOwner)
+            {
+                if (Constants.ShouldPlaySfx())
+                {
+                    SoundManager.Instance.PlaySound(ShipStatus.Instance.VentMoveSounds[UnityEngine.Random.RandomRangeInt(0, ShipStatus.Instance.VentMoveSounds.Count - 1)], false, 1f, null).pitch = FloatRange.Next(0.8f, 1.2f);
+                }
+                vent.SetButtons(false);
+                otherVent.SetButtons(true);
+                Vent.currentVent = otherVent;
+                VentilationSystem.Update(VentilationSystem.Operation.Move, Vent.currentVent.Id);
             }
         }
     }

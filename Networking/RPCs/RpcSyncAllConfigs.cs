@@ -18,6 +18,7 @@ using FungleAPI.Utilities;
 using Hazel;
 using Il2CppInterop.Generator.Extensions;
 using Il2CppSystem.Runtime.Remoting.Messaging;
+using InnerNet;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Networking.RPCs
@@ -46,12 +47,6 @@ namespace FungleAPI.Networking.RPCs
                 writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetCount());
                 writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetPriority());
             }
-            writer.Write(GameData.Instance.AllPlayers.Count);
-            foreach (NetworkedPlayerInfo networkedPlayerInfo in GameData.Instance.AllPlayers)
-            {
-                writer.Write(networkedPlayerInfo.NetId);
-                writer.Write(networkedPlayerInfo.DefaultOutfit.ColorId);
-            }
         }
         public override void Handle(MessageReader reader)
         {
@@ -77,21 +72,11 @@ namespace FungleAPI.Networking.RPCs
                     c.SetCount(reader.ReadInt32());
                     c.SetPriority(reader.ReadInt32());
                 }
-                int count4 = reader.ReadInt32();
-                for (int i = 0; i < count4; i++)
-                {
-                    uint client = reader.ReadUInt32();
-                    int color = reader.ReadInt32();
-                    if (PlayerControlPatch.CachedColors.ContainsKey(client))
-                    {
-                        PlayerControlPatch.CachedColors.Remove(client);
-                    }
-                    PlayerControlPatch.CachedColors.Add(client, color);
-                }
             }
-            catch 
+            catch (Exception ex)
             {
                 AmongUsClient.Instance.HandleDisconnect(HandShakeManager.FailedToSyncOptions);
+                FungleAPIPlugin.Instance.Log.LogError(ex);
             }
         }
     }

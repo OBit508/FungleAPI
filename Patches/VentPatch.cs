@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FungleAPI.Components;
+﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Types;
+using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
@@ -14,6 +10,11 @@ using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using PowerTools;
 using Rewired.Utils.Classes.Data;
 using Sentry.Unity.NativeUtils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using static Rewired.UI.ControlMapper.ControlMapper;
 using static UnityEngine.UIElements.MouseCaptureDispatchingStrategy;
@@ -109,7 +110,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void EnterVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
         {
-            pc.GetComponent<PlayerHelper>().__CurrentVent = __instance;
+            pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = __instance;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (!players.Contains(pc))
             {
@@ -121,7 +122,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void ExitVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
         {
-            pc.GetComponent<PlayerHelper>().__CurrentVent = null;
+            pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = null;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (players.Contains(pc))
             {

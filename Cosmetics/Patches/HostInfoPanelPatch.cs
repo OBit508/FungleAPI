@@ -12,6 +12,14 @@ namespace FungleAPI.Cosmetics.Patches
     [HarmonyPatch(typeof(HostInfoPanel), "SetUp")]
     internal static class HostInfoPanelPatch
     {
+        public static bool Prefix(HostInfoPanel __instance)
+        {
+            if (CosmeticManager.IsInvalid(__instance.player.ColorId))
+            {
+                return false;
+            }
+            return true;
+        }
         public static void Postfix(HostInfoPanel __instance)
         {
             NetworkedPlayerInfo host = GameData.Instance.GetHost();

@@ -17,7 +17,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void StartPostfix(MeetingHud __instance)
         {
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 if (button.Button != null)
                 {

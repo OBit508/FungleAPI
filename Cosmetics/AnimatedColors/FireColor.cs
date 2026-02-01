@@ -30,8 +30,8 @@ namespace FungleAPI.Cosmetics.AnimatedColors
            : base(CosmeticManager.GetValidProxyColor(), CosmeticManager.GetValidProxyColor(), colorName) { }
         public override void UpdateMaterial(Material material)
         {
-            material.SetColor(PlayerMaterial.BackColor, BaseColor);
-            material.SetColor(PlayerMaterial.BodyColor, Utilities.Helpers.Dark(BaseColor, 0.5f));
+            material.SetColor(PlayerMaterial.BodyColor, BaseColor);
+            material.SetColor(PlayerMaterial.BackColor, Utilities.Helpers.Dark(BaseColor, 0.5f));
             material.SetColor(PlayerMaterial.VisorColor, Palette.VisorColor);
         }
     }

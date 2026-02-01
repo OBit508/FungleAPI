@@ -1,10 +1,11 @@
-﻿using System;
+﻿using FungleAPI.Cosmetics.Helpers;
+using HarmonyLib;
+using Innersloth.Assets;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Cosmetics.Helpers;
-using Innersloth.Assets;
 using UnityEngine;
 
 namespace FungleAPI.Cosmetics
@@ -19,6 +20,18 @@ namespace FungleAPI.Cosmetics
         {
             specialColor = (SpecialColor)SpecialColors.FirstOrDefault(c => c.ColorId == colorId);
             return specialColor != null;
+        }
+        public static bool IsCustom(int colorId)
+        {
+            return !FungleAPIPlugin.Plugin.Cosmetics.Colors.Any(c => c.ColorId == colorId);
+        }
+        public static bool IsInvalid(int colorId)
+        {
+            if (colorId == 255 && AllColors.Count < 244)
+            {
+                return true;
+            }
+            return false;
         }
         public static void Add(ModCosmetics modCosmetics)
         {
@@ -58,6 +71,8 @@ namespace FungleAPI.Cosmetics
             Palette.PlayerColors = PlayerColors.ToArray();
             Palette.ShadowColors = ShadowColors.ToArray();
             Palette.ColorNames = ColorsNames.ToArray();
+            Palette.TextColors = PlayerColors.ToArray();
+            Palette.TextOutlineColors = ShadowColors.ToArray();
         }
     }
 }

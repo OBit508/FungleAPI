@@ -1,5 +1,6 @@
 ﻿using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using System;
@@ -18,6 +19,7 @@ namespace FungleAPI.Teams
         public override Color TeamColor => Palette.CrewmateBlue;
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
+        public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
         public override CustomGameOver DefaultGameOver => GameOverManager.Instance<CrewmatesByTask>();
         public override bool AssignOnlyEnabledRoles => false;
         public override uint DefaultCount => uint.MaxValue;

@@ -399,7 +399,7 @@ namespace FungleAPI.Translation
                 return remainText.StringName;
             }
         }
-        public static StringNames neutralGameOver
+        public static StringNames NeutralGameOver
         {
             get
             {

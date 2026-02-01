@@ -58,6 +58,7 @@
     <Compile Include="Event\Types\OnSetRole.cs" />
     <Compile Include="Event\Types\OnStartMeeting.cs" />
     <Compile Include="Event\Types\OnUpdateSystem.cs" />
+    <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
     <Compile Include="Hud\Patches\TaskPanelBehaviourPatch.cs" />
@@ -70,9 +71,9 @@
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
     <Compile Include="Networking\RPCs\RpcEndGame.cs" />
+    <Compile Include="Networking\RPCs\RpcMoveToVent.cs" />
     <Compile Include="Networking\RPCs\RpcRequestForEndGame.cs" />
     <Compile Include="Patches\AirshipStatusPatch.cs" />
-    <Compile Include="Patches\PlayerBanDataPatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />
     <Compile Include="Role\LightSourceConfig.cs" />
     <Compile Include="Role\MiraRoleTabConfig.cs" />

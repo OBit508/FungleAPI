@@ -8,13 +8,6 @@ namespace FungleAPI.Hud
     [FungleIgnore]
     public abstract class CustomAbilityButton
     {
-        internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
-        public static T Instance<T>() where T : CustomAbilityButton
-        {
-            CustomAbilityButton button;
-            Buttons.TryGetValue(typeof(T), out button);
-            return button.SimpleCast<T>();
-        }
         public abstract string OverrideText { get; }
         public abstract Color32 TextOutlineColor { get; }
         public abstract Sprite ButtonSprite { get; }

@@ -45,7 +45,7 @@ namespace FungleAPI.Hud.Patches
             HudHelper.BottomLeft.name = "BottomLeft";
             gridArrange.Alignment = GridArrange.StartAlign.Right;
             aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 button.CreateButton();
                 button.Button.ToggleVisible(false);
@@ -166,7 +166,7 @@ namespace FungleAPI.Hud.Patches
                 }
                 __instance.TaskPanel.SetTaskText(__instance.tasksString.ToString());
             }
-            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 if (button.Button != null && button.Button.isActiveAndEnabled)
                 {
@@ -192,7 +192,7 @@ namespace FungleAPI.Hud.Patches
                                 __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && HudHelper.Active);
                                 __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
                                 __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
-                                foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+                                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
                                 {
                                     if (button.Button != null)
                                     {
@@ -207,7 +207,7 @@ namespace FungleAPI.Hud.Patches
                             __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != AmongUs.GameOptions.RoleTypes.Engineer && HudHelper.Active);
                             __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && HudHelper.Active);
                             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && HudHelper.Active);
-                            foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+                            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
                             {
                                 if (button.Button != null)
                                 {
@@ -252,7 +252,7 @@ namespace FungleAPI.Hud.Patches
                 __instance.ImpostorVentButton.ToggleVisible(role.CanVent() && !localPlayer.Data.IsDead && role.Role != RoleTypes.Engineer && isActive);
                 __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
                 __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
-                foreach (CustomAbilityButton button in CustomAbilityButton.Buttons.Values)
+                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
                 {
                     if (button.Button != null)
                     {
