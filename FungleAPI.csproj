@@ -14,6 +14,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Compile Include="Attributes\TranslationHelper.cs" />
     <Compile Include="Attributes\FungleIgnore.cs" />
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
     <Compile Include="Base\Buttons\RoleButton.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Role\SabotageButtonConfig.cs" />
     <Compile Include="Role\VentButtonConfig.cs" />
     <Compile Include="Teams\Team.cs" />
+    <Compile Include="Translation\TranslationManager.cs" />
     <Compile Include="Utilities\Assets\LateAsset.cs" />
     <Compile Include="Utilities\HarmonyHelper.cs" />
     <Compile Include="Configuration\Presets\PluginPreset.cs" />

@@ -19,7 +19,6 @@ namespace FungleAPI.Role
         StringNames RoleName { get; }
         StringNames RoleBlur { get; }
         StringNames RoleBlurMed { get; }
-        StringNames RoleBlurLong { get; }
         Color RoleColor { get; }
         List<ModdedOption> Options { get { return Save[GetType()].Options.Value; } }
         RoleCountAndChance CountAndChance { get { return Save[GetType()].CountAndChance.Value; } }
@@ -28,6 +27,7 @@ namespace FungleAPI.Role
             string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return exileController.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + exileController.initData.networkedPlayer.Role.NiceName;
         }
+        StringNames RoleBlurLong => RoleBlurMed;
         SabotageButtonConfig CreateSabotageConfig() => null;
         ReportButtonConfig CreateReportConfig() => null;
         VentButtonConfig CreateVentConfig() => null;

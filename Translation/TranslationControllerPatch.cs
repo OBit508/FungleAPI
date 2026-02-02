@@ -18,13 +18,10 @@ namespace FungleAPI.Translation
         [HarmonyPrefix]
         public static bool GetPrefix([HarmonyArgument(0)] StringNames id, [HarmonyArgument(1)] Il2CppReferenceArray<Il2CppSystem.Object> parts, ref string __result)
         {
-            foreach (Translator s in Translator.All)
+            if (TranslationManager.Translators.TryGetValue(id, out Translator translator))
             {
-                if (s.StringName == id)
-                {
-                    __result = s.GetString();
-                    return false;
-                }
+                __result = translator.GetString();
+                return false;
             }
             return !ReactorSupport.LocalizationManager_TryGetTextFormatted(id, parts, out __result);
         }

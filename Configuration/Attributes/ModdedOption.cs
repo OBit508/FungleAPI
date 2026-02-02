@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using FungleAPI.Attributes;
 using FungleAPI.Translation;
 using System;
 using System.Reflection;
@@ -10,15 +11,27 @@ namespace FungleAPI.Configuration.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedOption : Attribute
     {
+        private Translator __translator;
+        private string __translationID;
         public BaseGameSetting Data;
-        public Translator ConfigName;
         public PropertyInfo Property;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
         protected ModdedOption(string configName)
         {
-            ConfigName = new Translator(configName);
+            __translator = new Translator(configName);
+        }
+        public Translator ConfigName
+        {
+            get
+            {
+                if (__translationID != null && TranslationManager.TranslationIDs.TryGetValue(__translationID, out Translator translator))
+                {
+                    return translator;
+                }
+                return __translator;
+            }
         }
         public string GetValue()
         {
@@ -87,6 +100,11 @@ namespace FungleAPI.Configuration.Attributes
         public virtual void Initialize(PropertyInfo property)
         {
             Property = property;
+            TranslationHelper attributeTranslationID = property.GetCustomAttribute<TranslationHelper>();
+            if (attributeTranslationID != null)
+            {
+                __translationID = attributeTranslationID.TranslationID;
+            }
         }
         public virtual object GetReturnedValue()
         {

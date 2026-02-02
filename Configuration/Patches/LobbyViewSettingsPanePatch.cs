@@ -300,7 +300,7 @@ namespace FungleAPI.Configuration.Patches
             foreach (SettingsGroup group in pluginChanger.CurrentPlugin.Settings.Groups)
             {
                 CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin);
-                categoryHeaderMasked.SetHeader(group.GroupName, 61);
+                categoryHeaderMasked.SetHeader(group.GroupName.StringName, 61);
                 categoryHeaderMasked.transform.SetParent(menu.settingsContainer);
                 categoryHeaderMasked.transform.localScale = Vector3.one;
                 categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);

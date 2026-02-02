@@ -151,7 +151,7 @@ namespace FungleAPI.Role
                 color = role.TeamColor;
             }
             sb.AppendLine(color.Value.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + role.NiceName + "</b>.</color>");
-            sb.AppendLine("<size=70%>" + role.BlurbLong);
+            sb.AppendLine("<size=70%>" + role.Blurb);
         }
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {

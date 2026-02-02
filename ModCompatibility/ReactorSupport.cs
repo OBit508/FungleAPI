@@ -156,8 +156,8 @@ namespace FungleAPI.ModCompatibility
         }
         public static bool CustomStringName_Create_Prefix(ref StringNames __result)
         {
-            __result = (StringNames)Translator.validId;
-            Translator.validId++;
+            __result = (StringNames)TranslationManager.validId;
+            TranslationManager.validId++;
             return false;
         }
         public static bool LocalizationManager_TryGetTextFormatted(StringNames stringName, Il2CppReferenceArray<Il2CppSystem.Object> parts, out string text)

@@ -7,16 +7,13 @@ namespace FungleAPI.Translation
         public Translator(string defaultText)
         {
             Default = defaultText;
-            StringName = (StringNames)validId;
-            validId++;
-            All.Add(this);
+            StringName = (StringNames)TranslationManager.validId;
+            TranslationManager.validId++;
+            TranslationManager.Translators.Add(StringName, this);
         }
-        internal static int validId = int.MinValue;
-        internal static List<Translator> All = new List<Translator>();
-        internal string Default;
+        public string Default;
         public StringNames StringName;
-        internal Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
-        public static Translator None = new Translator("STRMISS");
+        public Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
             if (!Strings.ContainsKey(lang))

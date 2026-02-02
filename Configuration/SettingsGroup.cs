@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices;
+using FungleAPI.Attributes;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -16,7 +17,17 @@ namespace FungleAPI.Configuration
     public class SettingsGroup
     {
         public List<ModdedOption> Options = new List<ModdedOption>();
-        public StringNames GroupName => groupName.StringName;
+        public Translator GroupName
+        {
+            get
+            {
+                if (__translationID != null && TranslationManager.TranslationIDs.TryGetValue(__translationID, out Translator translator))
+                {
+                    return translator;
+                }
+                return __groupName;
+            }
+        }
         public virtual void Initialize()
         {
             Type type = GetType();
@@ -35,8 +46,14 @@ namespace FungleAPI.Configuration
                     Options.Add(att);
                 }
             }
-            groupName = new Translator(type.Name);
+            TranslationHelper attributeTranslationID = type.GetCustomAttribute<TranslationHelper>();
+            if (attributeTranslationID != null)
+            {
+                __translationID = attributeTranslationID.TranslationID;
+            }
+            __groupName = new Translator(type.Name);
         }
-        private Translator groupName;
+        private Translator __groupName;
+        private string __translationID;
     }
 }
