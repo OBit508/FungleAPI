@@ -19,7 +19,6 @@ namespace FungleAPI.Configuration.Attributes
         {
             Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
-            stringGameSetting.Title = ConfigName.StringName;
             stringGameSetting.Type = OptionTypes.String;
             Values = defaultValue.Split("|");
             List<StringNames> stringNames = new List<StringNames>();

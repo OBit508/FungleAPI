@@ -11,28 +11,17 @@ namespace FungleAPI.Configuration.Attributes
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedOption : Attribute
     {
-        private Translator __translator;
-        private string __translationID;
         public BaseGameSetting Data;
         public PropertyInfo Property;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
+        internal string defaultName;
         protected ModdedOption(string configName)
         {
-            __translator = new Translator(configName);
+            defaultName = configName;
         }
-        public Translator ConfigName
-        {
-            get
-            {
-                if (__translationID != null && TranslationManager.TranslationIDs.TryGetValue(__translationID, out Translator translator))
-                {
-                    return translator;
-                }
-                return __translator;
-            }
-        }
+        public Translator ConfigName;
         public string GetValue()
         {
             if (AmongUsClient.Instance.AmHost)
@@ -101,10 +90,15 @@ namespace FungleAPI.Configuration.Attributes
         {
             Property = property;
             TranslationHelper attributeTranslationID = property.GetCustomAttribute<TranslationHelper>();
-            if (attributeTranslationID != null)
+            if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {
-                __translationID = attributeTranslationID.TranslationID;
+                ConfigName = translator;
             }
+            else
+            {
+                ConfigName = new Translator(defaultName);
+            }
+            Data.Title = ConfigName.StringName;
         }
         public virtual object GetReturnedValue()
         {

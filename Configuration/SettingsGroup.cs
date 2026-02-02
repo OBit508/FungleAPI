@@ -17,17 +17,7 @@ namespace FungleAPI.Configuration
     public class SettingsGroup
     {
         public List<ModdedOption> Options = new List<ModdedOption>();
-        public Translator GroupName
-        {
-            get
-            {
-                if (__translationID != null && TranslationManager.TranslationIDs.TryGetValue(__translationID, out Translator translator))
-                {
-                    return translator;
-                }
-                return __groupName;
-            }
-        }
+        public Translator GroupName;
         public virtual void Initialize()
         {
             Type type = GetType();
@@ -47,13 +37,14 @@ namespace FungleAPI.Configuration
                 }
             }
             TranslationHelper attributeTranslationID = type.GetCustomAttribute<TranslationHelper>();
-            if (attributeTranslationID != null)
+            if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {
-                __translationID = attributeTranslationID.TranslationID;
+                GroupName = translator;
             }
-            __groupName = new Translator(type.Name);
+            else
+            {
+                GroupName = new Translator(type.Name);
+            }
         }
-        private Translator __groupName;
-        private string __translationID;
     }
 }

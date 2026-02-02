@@ -18,7 +18,6 @@ namespace FungleAPI.Configuration.Attributes
         {
             Data = ScriptableObject.CreateInstance<CheckboxGameSetting>().DontUnload();
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
-            checkboxGameSetting.Title = ConfigName.StringName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
         }
         public override void Initialize(PropertyInfo property)

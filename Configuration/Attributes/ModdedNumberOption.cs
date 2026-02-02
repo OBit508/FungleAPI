@@ -19,7 +19,6 @@ namespace FungleAPI.Configuration.Attributes
             Data = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
             floatGameSetting.Type = OptionTypes.Float;
-            floatGameSetting.Title = ConfigName.StringName;
             floatGameSetting.Increment = increment;
             floatGameSetting.ValidRange = new FloatRange(minValue, maxValue);
             floatGameSetting.FormatString = formatString;
