@@ -11,14 +11,23 @@ using UnityEngine;
 
 namespace FungleAPI.Base.Roles
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     [RegisterTypeInIl2Cpp]
     public class RoleBaseHelper : RoleBehaviour
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual bool ValidTarget(NetworkedPlayerInfo target)
         {
             return !(target == null) && !target.Disconnected && !target.IsDead && target.PlayerId != this.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override PlayerControl FindClosestTarget()
         {
             Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = GetPlayersInAbilityRangeSorted(GetTempPlayerList().ToSystemList(), false);
@@ -28,6 +37,9 @@ namespace FungleAPI.Base.Roles
             }
             return playersInAbilityRangeSorted[0];
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Il2CppSystem.Collections.Generic.List<PlayerControl> GetPlayersInAbilityRangeSorted(List<PlayerControl> outputList, bool ignoreColliders)
         {
             outputList.Clear();
@@ -67,6 +79,9 @@ namespace FungleAPI.Base.Roles
             });
             return outputList.ToIl2CppList();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void AppendHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {
             if (this.GetHintType() == RoleHintType.MiraAPI_RoleTab)
@@ -76,6 +91,9 @@ namespace FungleAPI.Base.Roles
             }
             base.AppendTaskHint(taskStringBuilder);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override DeadBody FindClosestBody()
         {
             return Player.GetClosestDeadBody(GetAbilityDistance());

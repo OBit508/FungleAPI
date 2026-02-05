@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Configuration.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RoleCountAndChance
     {
         public string Name;

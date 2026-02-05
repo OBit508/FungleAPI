@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [RegisterTypeInIl2Cpp]
     public class Updater : MonoBehaviour
     {

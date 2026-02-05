@@ -7,19 +7,26 @@ using System.Collections.Generic;
 
 namespace FungleAPI.Base.Roles
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class CrewmateBase : RoleBaseHelper
     {
-        public virtual bool DoTasks => false;
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool IsDead => false;
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanUse(IUsable usable)
         {
-            if (usable.SafeCast<ZiplineConsole>() != null || usable.SafeCast<Ladder>() != null || usable.SafeCast<PlatformConsole>() != null || usable.SafeCast<Console>() != null || usable.SafeCast<DoorConsole>() != null)
-            {
-                return DoTasks;
-            }
-            return true;
+            return usable.SafeCast<ZiplineConsole>() != null || usable.SafeCast<Ladder>() != null || usable.SafeCast<PlatformConsole>() != null || usable.SafeCast<Console>() != null || usable.SafeCast<DoorConsole>() != null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool DidWin(GameOverReason gameOverReason)
         {
             return GameManager.Instance.DidHumansWin(gameOverReason);

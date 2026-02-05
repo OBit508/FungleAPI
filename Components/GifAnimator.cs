@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [RegisterTypeInIl2Cpp]
     public class GifAnimator : MonoBehaviour
     {
@@ -18,14 +21,23 @@ namespace FungleAPI.Components
         public float speed = 1;
         public float timer;
         public bool stoped;
+        /// <summary>
+        /// 
+        /// </summary>
         public void Play(float speed = 1)
         {
             this.speed = speed;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void Pause()
         {
             speed = 0;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void Stop()
         {
             stoped = true;

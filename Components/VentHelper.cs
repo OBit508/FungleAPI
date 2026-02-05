@@ -17,6 +17,9 @@ using UnityEngine;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class VentHelper : VentComponent
     {
         internal static Dictionary<Vent, VentHelper> ShipVents = new Dictionary<Vent, VentHelper>();
@@ -60,6 +63,9 @@ namespace FungleAPI.Components
                 Start();
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool CheckForMoveVent(Vent otherVent, out string error)
         {
             if (otherVent == null)
@@ -81,6 +87,9 @@ namespace FungleAPI.Components
             error = "";
             return true;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void ChangeCurrentVent(PlayerControl playerControl, Vent otherVent)
         {
             if (Players.Contains(playerControl))
@@ -94,6 +103,9 @@ namespace FungleAPI.Components
             }
             playerControl.GetPlayerComponent<PlayerHelper>().__CurrentVent = otherVent;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void MoveToVent(PlayerControl playerControl, Vent otherVent)
         {
             ChangeCurrentVent(playerControl, otherVent);

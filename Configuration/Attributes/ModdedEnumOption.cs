@@ -10,10 +10,16 @@ using UnityEngine;
 
 namespace FungleAPI.Configuration.Attributes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [HarmonyPatch(typeof(StringOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedEnumOption : ModdedOption
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ModdedEnumOption(string configName, string defaultValue)
             : base(configName)
         {
@@ -28,16 +34,14 @@ namespace FungleAPI.Configuration.Attributes
             }
             stringGameSetting.Values = stringNames.ToArray();
         }
-        public override void Initialize(PropertyInfo property)
+        public override void Initialize(PropertyInfo property, ModPlugin modPlugin)
         {
-            base.Initialize(property);
-            if (property.PropertyType == typeof(int) || property.PropertyType == typeof(string))
+            base.Initialize(property, modPlugin);
+            if (IsValidType(property.PropertyType))
             {
-                ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
                 int value = property.PropertyType == typeof(int) ? (int)property.GetValue(null) : Values.GetIndex((string)property.GetValue(null));
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + property.DeclaringType.FullName, ConfigName.Default, value.ToString());
+                localValue = modPlugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
-                FullConfigName = plugin.ModName + property.DeclaringType.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<StringGameSetting>().Index = int.Parse(localValue.Value);
             }
         }
@@ -58,17 +62,20 @@ namespace FungleAPI.Configuration.Attributes
         }
         public override object GetReturnedValue()
         {
-            Type type = Property.PropertyType;
-            if (Property.PropertyType == typeof(int) || Property.PropertyType == typeof(string))
+            if (IsValidType(Property.PropertyType))
             {
                 return Property.PropertyType == typeof(int) ? int.Parse(GetValue()) : Values[int.Parse(GetValue())];
             }
             return GetValue();
         }
+        public override bool IsValidType(Type type)
+        {
+            return type == typeof(int) || type == typeof(string);
+        }
         public string[] Values;
         [HarmonyPatch("Initialize")]
         [HarmonyPrefix]
-        public static bool InitializePrefix(StringOption __instance)
+        internal static bool InitializePrefix(StringOption __instance)
         {
             if (__instance.name == "ModdedOption")
             {
@@ -81,7 +88,7 @@ namespace FungleAPI.Configuration.Attributes
         }
         [HarmonyPatch("UpdateValue")]
         [HarmonyPrefix]
-        public static bool UpdateValuePrefix(StringOption __instance)
+        internal static bool UpdateValuePrefix(StringOption __instance)
         {
             return __instance.name != "ModdedOption";
         }

@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Configuration.Presets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PluginPreset
     {
         public ConfigEntry<string> CurrentPresetVersion;

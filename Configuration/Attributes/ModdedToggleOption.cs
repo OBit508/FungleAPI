@@ -9,10 +9,16 @@ using FungleAPI.PluginLoading;
 
 namespace FungleAPI.Configuration.Attributes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [HarmonyPatch(typeof(ToggleOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedToggleOption : ModdedOption
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ModdedToggleOption(string configName)
             : base(configName) 
         {
@@ -20,16 +26,15 @@ namespace FungleAPI.Configuration.Attributes
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
         }
-        public override void Initialize(PropertyInfo property)
+        public override void Initialize(PropertyInfo property, ModPlugin modPlugin)
         {
-            base.Initialize(property);
-            if (property.PropertyType == typeof(bool))
+            base.Initialize(property, modPlugin);
+            if (IsValidType(property.PropertyType))
             {
                 ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
-                bool value = (bool)property.GetValue(null);
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + property.DeclaringType.FullName, ConfigName.Default, value.ToString());
+                bool value = property.PropertyType == typeof(bool) ? (bool)property.GetValue(null) : property.PropertyType == typeof(int) ? (int)property.GetValue(null) == 1 : (float)property.GetValue(null) == 1;
+                localValue = plugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
-                FullConfigName = plugin.ModName + property.DeclaringType.FullName + property.Name + value.GetType().FullName;
             }
         }
         public override object GetReturnedValue()
@@ -45,6 +50,10 @@ namespace FungleAPI.Configuration.Attributes
                 return value ? 1 : 0;
             }
             return GetValue();
+        }
+        public override bool IsValidType(Type type)
+        {
+            return type == typeof(int) || type == typeof(float) || type == typeof(bool);
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {

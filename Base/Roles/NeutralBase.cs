@@ -13,11 +13,23 @@ using UnityEngine;
 
 namespace FungleAPI.Base.Roles
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class NeutralBase : RoleBaseHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual bool DoTasks => false;
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool IsDead => false;
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Deinitialize(PlayerControl targetPlayer)
         {
             PlayerTask playerTask = targetPlayer.myTasks.ToSystemList().FirstOrDefault((PlayerTask t) => t.name == "ImpostorRole");
@@ -27,6 +39,9 @@ namespace FungleAPI.Base.Roles
                 GameObject.Destroy(playerTask.gameObject);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override void SpawnTaskHeader(PlayerControl playerControl)
         {
             if (playerControl != PlayerControl.LocalPlayer || !DoTasks)
@@ -55,6 +70,9 @@ namespace FungleAPI.Base.Roles
                     return;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanUse(IUsable usable)
         {
             if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
@@ -64,6 +82,9 @@ namespace FungleAPI.Base.Roles
             Console console = usable.SafeCast<Console>();
             return console == null || DoTasks;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool DidWin(GameOverReason gameOverReason)
         {
             if (!Player.Data.IsDead && this.CanKill())

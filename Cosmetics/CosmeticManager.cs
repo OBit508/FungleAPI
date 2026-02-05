@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace FungleAPI.Cosmetics
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class CosmeticManager
     {
         internal const float r = 0.618033988749895f;
@@ -41,6 +44,9 @@ namespace FungleAPI.Cosmetics
                 SpecialColors = SpecialColors.Concat(modCosmetics.Colors.FindAll(c => c is SpecialColor)).ToList();
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Color GetBaseColor(int colorId)
         {
             CustomColor color = AllColors.FirstOrDefault(c => c.ColorId == colorId);
@@ -50,6 +56,9 @@ namespace FungleAPI.Cosmetics
             }
             return color == null ? Color.black : color.Color;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Color GetValidProxyColor()
         {
             hue = (hue + r) % 1f;

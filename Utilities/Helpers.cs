@@ -246,10 +246,7 @@ namespace FungleAPI.Utilities
             vent.Center = null;
             vent.Left = null;
             vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
-            if (nearbyVents != null)
-            {
-                Connecteds.Add(vent, (nearbyVents, connectBoth));
-            }
+            VentPatch.DoStart(vent);
             return vent;
         }
         public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)

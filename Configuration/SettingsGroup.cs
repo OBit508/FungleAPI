@@ -1,6 +1,7 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Attributes;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -14,28 +15,17 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Configuration
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SettingsGroup
     {
-        public List<ModdedOption> Options = new List<ModdedOption>();
+        public List<ModdedOption> Options;
         public Translator GroupName;
-        public virtual void Initialize()
+        public virtual void Initialize(ModPlugin modPlugin)
         {
             Type type = GetType();
-            foreach (PropertyInfo property in type.GetProperties())
-            {
-                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
-                if (att != null)
-                {
-                    att.Initialize(property);
-                    MethodInfo method = property.GetGetMethod(true);
-                    if (method != null)
-                    {
-                        HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
-                    }
-                    Options.Add(att);
-                }
-            }
+            Options = ConfigurationManager.RegisterAllOptions(type, modPlugin);
             TranslationHelper attributeTranslationID = type.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {

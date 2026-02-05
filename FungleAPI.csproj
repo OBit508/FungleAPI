@@ -119,10 +119,8 @@
     <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
-    <Compile Include="Components\ModdedConsole.cs" />
     <Compile Include="Components\VentComponent.cs" />
     <Compile Include="Components\VentHelper.cs" />
-    <Compile Include="Components\HerePointBehaviour.cs" />
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="GameOver\GameOverManager.cs" />

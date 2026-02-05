@@ -1,10 +1,13 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using System;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using xCloud;
+using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
 namespace FungleAPI.Configuration.Attributes
 {
@@ -13,15 +16,16 @@ namespace FungleAPI.Configuration.Attributes
     {
         public BaseGameSetting Data;
         public PropertyInfo Property;
+        public ModPlugin Plugin;
         internal string FullConfigName;
         internal string onlineValue;
         internal ConfigEntry<string> localValue;
         internal string defaultName;
-        protected ModdedOption(string configName)
+        public Translator ConfigName;
+        public ModdedOption(string configName)
         {
             defaultName = configName;
         }
-        public Translator ConfigName;
         public string GetValue()
         {
             if (AmongUsClient.Instance.AmHost)
@@ -86,9 +90,11 @@ namespace FungleAPI.Configuration.Attributes
         {
             return null;
         }
-        public virtual void Initialize(PropertyInfo property)
+        public virtual void Initialize(PropertyInfo property, ModPlugin modPlugin)
         {
+            Plugin = modPlugin;
             Property = property;
+            FullConfigName = modPlugin.ModName + " - " + property.DeclaringType.FullName;
             TranslationHelper attributeTranslationID = property.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {
@@ -100,9 +106,19 @@ namespace FungleAPI.Configuration.Attributes
             }
             Data.Title = ConfigName.StringName;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual object GetReturnedValue()
         {
             return null;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool IsValidType(Type type)
+        {
+            return false;
         }
     }
 }

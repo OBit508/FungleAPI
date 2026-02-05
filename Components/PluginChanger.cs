@@ -10,6 +10,9 @@ using UnityEngine;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Attributes.RegisterTypeInIl2Cpp]
     public class PluginChanger : MonoBehaviour
     {

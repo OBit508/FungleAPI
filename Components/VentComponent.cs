@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class VentComponent : MonoBehaviour
     {

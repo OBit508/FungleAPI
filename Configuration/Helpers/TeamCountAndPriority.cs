@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Configuration.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class TeamCountAndPriority
     {
         public ModdedTeam Team;

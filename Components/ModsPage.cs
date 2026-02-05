@@ -13,6 +13,9 @@ using static Il2CppSystem.DateTimeParse;
 
 namespace FungleAPI.Components
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Attributes.RegisterTypeInIl2Cpp]
     public class ModsPage : MonoBehaviour
     {
@@ -62,6 +65,9 @@ namespace FungleAPI.Components
             }));
             UpdatePage();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void UpdatePage()
         {
             List<(string, string)> currentPage = Pages[Page];

@@ -128,15 +128,7 @@ namespace FungleAPI.Role
                 ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
                 if (att != null)
                 {
-                    att.Initialize(property);
-                    MethodInfo method = property.GetGetMethod(true);
-                    if (method != null)
-                    {
-                        ConfigurationManager.Options.Add(att);
-                        plugin.Options.Add(att);
-                        HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
-                    }
+                    ConfigurationManager.RegisterModdedOption(att);
                     if (obj.CustomRole() != null)
                     {
                         obj.CustomRole().Options.Add(att);

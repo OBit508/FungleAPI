@@ -28,14 +28,49 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Configuration
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ConfigurationManager
     {
-        public const string NullId = "Nenhuma versão ainda :D";
+        public const string NullId = "null";
         public const string CurrentVersion = "1.0";
         public static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         public static List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
         public static List<ModdedOption> Options = new List<ModdedOption>();
         public static string FunglePath = Path.Combine(Application.persistentDataPath, "FungleAPI");
+        /// <summary>
+        /// 
+        /// </summary>
+        public static List<ModdedOption> RegisterAllOptions(Type type, ModPlugin modPlugin)
+        {
+            List<ModdedOption> moddedOptions = new List<ModdedOption>();
+            foreach (PropertyInfo propertyInfo in type.GetProperties())
+            {
+                ModdedOption moddedOption = propertyInfo.GetCustomAttribute<ModdedOption>();
+                if (moddedOption != null)
+                {
+                    RegisterModdedOption(moddedOption, modPlugin, propertyInfo);
+                    moddedOptions.Add(moddedOption);
+                }
+            }
+            return moddedOptions;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void RegisterModdedOption(ModdedOption moddedOption, ModPlugin plugin, PropertyInfo propertyInfo)
+        {
+            moddedOption.Initialize(propertyInfo, plugin);
+            MethodInfo method = propertyInfo.GetGetMethod(true);
+            if (method != null)
+            {
+                Options.Add(moddedOption);
+                plugin.Options.Add(moddedOption);
+                HarmonyHelper.Patches.Add(method, new Func<object>(moddedOption.GetReturnedValue));
+                FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
+            }
+        }
         public static void InitializeRoleCountAndChances(Type roleType, ModPlugin plugin)
         {
             RoleCountAndChance roleCountAndChance = ICustomRole.Save[roleType].CountAndChance.Value;

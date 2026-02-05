@@ -1,18 +1,25 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Prefabs;
+using HarmonyLib;
 using System;
 using System.Reflection;
 using UnityEngine;
-using HarmonyLib;
-using FungleAPI.Utilities.Prefabs;
-using FungleAPI.PluginLoading;
+using xCloud;
 
 namespace FungleAPI.Configuration.Attributes
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [HarmonyPatch(typeof(NumberOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedNumberOption : ModdedOption
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
             : base(configName)
         {
@@ -26,16 +33,14 @@ namespace FungleAPI.Configuration.Attributes
             floatGameSetting.SuffixType = suffixType;
             floatGameSetting.OptionName = FloatOptionNames.Invalid;
         }
-        public override void Initialize(PropertyInfo property)
+        public override void Initialize(PropertyInfo property, ModPlugin modPlugin)
         {
-            base.Initialize(property);
-            if (property.PropertyType == typeof(float) || property.PropertyType == typeof(int))
+            base.Initialize(property, modPlugin);
+            if (IsValidType(property.PropertyType))
             {
-                ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
                 float value = float.Parse(property.GetValue(null).ToString());
-                localValue = plugin.BasePlugin.Config.Bind(plugin.ModName + " - " + property.DeclaringType.FullName + " - Option", ConfigName.Default, value.ToString());
+                localValue = modPlugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
                 onlineValue = value.ToString();
-                FullConfigName = plugin.ModName + property.DeclaringType.FullName + property.Name + value.GetType().FullName;
                 Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);
             }
         }
@@ -51,6 +56,10 @@ namespace FungleAPI.Configuration.Attributes
                 return float.Parse(GetValue());
             }
             return GetValue();
+        }
+        public override bool IsValidType(Type type)
+        {
+            return type == typeof(float) || type == typeof(int);
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {

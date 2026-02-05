@@ -1,6 +1,7 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Attributes;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.PluginLoading;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,16 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Configuration
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class ModSettings
     {
         public List<ModdedOption> Options = new List<ModdedOption>();
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
         public bool initialized;
-        public virtual void Initialize()
+        public virtual void Initialize(ModPlugin modPlugin)
         {
             if (!initialized)
             {
@@ -27,7 +31,7 @@ namespace FungleAPI.Configuration
                     if (typeof(SettingsGroup).IsAssignableFrom(t))
                     {
                         SettingsGroup group = (SettingsGroup)Activator.CreateInstance(t);
-                        group.Initialize();
+                        group.Initialize(modPlugin);
                         Options.AddRange(group.Options);
                         Groups.Add(group);
                     }

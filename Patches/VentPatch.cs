@@ -197,23 +197,6 @@ namespace FungleAPI.Patches
                 VentHelper.ArrowPrefab = PrefabUtils.SkeldPrefab.AllVents[0].Buttons[0];
             }
             VentHelper.ShipVents.Add(vent, helper);
-            (List<Vent>, bool) connected;
-            if (Helpers.Connecteds.TryGetValue(vent, out connected))
-            {
-                helper.Vents = connected.Item1;
-                if (connected.Item2)
-                {
-                    foreach (Vent v in connected.Item1)
-                    {
-                        v.ConnectVent(v, false);
-                    }
-                }
-                Helpers.Connecteds.Remove(vent);
-            }
-            else
-            {
-                helper.Vents = new List<Vent>();
-            }
             if (vent.Right != null)
             {
                 helper.Vents.Add(vent.Right);

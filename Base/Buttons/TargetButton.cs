@@ -4,18 +4,34 @@ using Rewired.Utils;
 
 namespace FungleAPI.Base.Buttons
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public abstract class TargetButton<T> : CustomAbilityButton where T : UnityEngine.Object
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public T Target;
+        /// <summary>
+        /// 
+        /// </summary>
         public override bool CanUse() => base.CanUse() && Target != null;
-        public virtual void SetOutline(T target, bool active)
-        {
-        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void SetOutline(T target, bool active) { }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual T GetTarget()
         {
             return default;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public override void Update()
         {
             base.Update();

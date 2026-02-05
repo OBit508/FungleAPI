@@ -11,14 +11,26 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Base.Rpc
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class RpcHelper
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public int RpcId;
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual void __handle(InnerNetObject innerNetObject, MessageReader messageReader)
         {
         }
     }
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class BaseRpcHelper<TNetObject> : RpcHelper where TNetObject : InnerNetObject
     {
