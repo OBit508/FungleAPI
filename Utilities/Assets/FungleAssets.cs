@@ -20,7 +20,6 @@ namespace FungleAPI.Utilities.Assets
         public static Sprite Empty;
         public static Sprite NextButton;
         public static Sprite PluginChangerBackground;
-        public static Sprite CreditsBackground;
         public static Sprite Highlight;
         public static Sprite Folder;
         public static Sprite Inactive;
@@ -38,7 +37,6 @@ namespace FungleAPI.Utilities.Assets
             Empty = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
             PluginChangerBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.pluginChangerBackground", 100);
             NextButton = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.nextButton", 100);
-            CreditsBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.creditsBackground", 100);
             Highlight = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.highlight", 100);
             Folder = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.folder", 100);
             Inactive = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.inactive", 100);
@@ -138,7 +136,6 @@ namespace FungleAPI.Utilities.Assets
             ModsPagePrefab = new Prefab<GameObject>(new GameObject("ModsPage"));
             ModsPage page = ModsPagePrefab.prefab.AddComponent<ModsPage>();
             page.gameObject.layer = 5;
-            page.gameObject.AddComponent<SpriteRenderer>().sprite = CreditsBackground;
             TextMeshPro text = new GameObject("ModsText").AddComponent<TextMeshPro>();
             text.alignment = TextAlignmentOptions.Center;
             text.characterSpacing = 7;
@@ -169,6 +166,11 @@ namespace FungleAPI.Utilities.Assets
                 modsText.transform.SetParent(page.transform);
                 modsText.transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
                 modsText.transform.localPosition = new Vector3(0, 1.25f - i * 0.27f, -0.1f);
+                modsText.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
+                ButtonRolloverHandler buttonRolloverHandler = modsText.gameObject.AddComponent<ButtonRolloverHandler>();
+                buttonRolloverHandler.TargetText = modsText;
+                buttonRolloverHandler.OverColor = Color.cyan;
+                modsText.gameObject.AddComponent<PassiveButton>().ClickSound = SelectSound;
             }
         }
         private static void CreatePluginChanger()

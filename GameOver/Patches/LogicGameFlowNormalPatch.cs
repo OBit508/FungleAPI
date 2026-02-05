@@ -18,14 +18,9 @@ namespace FungleAPI.GameOver.Patches
     {
         public static bool Prefix()
         {
-            CheckEndCriteria();
-            return false;
-        }
-        public static void CheckEndCriteria()
-        {
             if (!GameData.Instance)
             {
-                return;
+                return false;
             }
             ISystemType systemType;
             if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.LifeSupp, out systemType))
@@ -36,7 +31,7 @@ namespace FungleAPI.GameOver.Patches
                     if (!TutorialManager.InstanceExists)
                     {
                         GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, !DataManager.Player.Ads.HasPurchasedAdRemoval);
-                        return;
+                        return false;
                     }
                     HudManager.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverSabotage));
                     lifeSuppSystemType.Countdown = 10000f;
@@ -50,7 +45,7 @@ namespace FungleAPI.GameOver.Patches
                     if (!TutorialManager.InstanceExists)
                     {
                         GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, !DataManager.Player.Ads.HasPurchasedAdRemoval);
-                        return;
+                        return false;
                     }
                     HudManager.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverSabotage));
                     criticalSabotage.ClearSabotage();
@@ -112,7 +107,7 @@ namespace FungleAPI.GameOver.Patches
                             {
                                 gameManager.RpcEndGame<ImpostorDisconnect>();
                             }
-                            return;
+                            return false;
                         }
                         if (TutorialManager.InstanceExists)
                         {
@@ -131,7 +126,7 @@ namespace FungleAPI.GameOver.Patches
                         if (customRole != null && customRole.NeutralGameOver != null)
                         {
                             gameManager.RpcEndGame(customRole.NeutralGameOver);
-                            return;
+                            return false;
                         }
                         gameManager.RpcEndGame(customRole.NeutralGameOver);
                     }
@@ -163,7 +158,7 @@ namespace FungleAPI.GameOver.Patches
                                         break;
                                 }
                             }
-                            return;
+                            return false;
                         }
                         if (TutorialManager.InstanceExists)
                         {
@@ -192,7 +187,7 @@ namespace FungleAPI.GameOver.Patches
                     gameManager.CheckEndGameViaTasks();
                 }
             }
-            return;
+            return false;
         }
     }
 }

@@ -131,6 +131,7 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
+                    plugin.PageLink = "https://github.com/OBit508/FungleAPI";
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
                     plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = Instance.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
                     if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)

@@ -219,9 +219,6 @@
     <EmbeddedResource Include="Resources\UI_Select.wav" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\creditsBackground.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Resources\pluginChangerBackground.png" />
     <EmbeddedResource Include="Resources\nextButton.png" />
   </ItemGroup>

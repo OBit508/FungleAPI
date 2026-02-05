@@ -29,10 +29,17 @@ namespace FungleAPI.Utilities
                 }
             }
         }
-        public static void Remove_FungleAPI_HarmonyLib_Patch(string TypeName, string MethodName)
+        public static void Remove_FungleAPI_HarmonyLib_Patch(MethodInfo original, string TypeName, string MethodName)
         {
-            FungleAPIPlugin.Harmony.Unpatch(null, FungleAPIPlugin.Plugin.AllTypes.FirstOrDefault(x => x.Name == TypeName).GetMethods().FirstOrDefault(x => x.Name == MethodName));
-            FungleAPIPlugin.Instance.Log.LogWarning("Unpatched " + TypeName + "." + MethodName);
+            Type type = FungleAPIPlugin.Plugin.AllTypes.FirstOrDefault(t => t.Name == TypeName);
+            if (type != null)
+            {
+                MethodInfo methodInfo = type.GetMethod(MethodName, AccessTools.all);
+                if (methodInfo != null)
+                {
+                    FungleAPIPlugin.Harmony.Unpatch(original, methodInfo);
+                }
+            }
         }
         public static bool GetPrefix(MethodBase __originalMethod, ref object __result)
         {
