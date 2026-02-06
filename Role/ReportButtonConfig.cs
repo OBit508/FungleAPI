@@ -3,9 +3,18 @@ using UnityEngine;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ReportButtonConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static ReportButtonConfig Default { get; } = new ReportButtonConfig();
+        /// <summary>
+        /// 
+        /// </summary>
         public static Sprite DefaultSprite;
         public ReportButtonConfig()
         {
@@ -45,11 +54,29 @@ namespace FungleAPI.Role
                 Button.graphic.sprite = DefaultSprite;
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<bool> CanUse;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<bool> SetActive;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action DoClick;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action ResetButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action InitializeButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public ReportButton Button => HudManager.Instance.ReportButton;
     }
 }

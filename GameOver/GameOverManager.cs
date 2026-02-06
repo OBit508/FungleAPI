@@ -38,7 +38,7 @@ namespace FungleAPI.GameOver
         }
         public static CustomGameOver GetGameOverInstance(Type type)
         {
-            return AllCustomGameOver.FirstOrDefault(g => g.GetType() == type).SimpleCast<T>();
+            return AllCustomGameOver.FirstOrDefault(g => g.GetType() == type);
         }
         public static CustomGameOver GetGameOver(this GameOverReason gameOverReason)
         {
@@ -50,7 +50,7 @@ namespace FungleAPI.GameOver
         }
         public static void RpcEndGame<T>(this GameManager gameManager) where T : CustomGameOver
         {
-            RpcEndGame(gameManager, Instance<T>());
+            RpcEndGame(gameManager, GetGameOverInstance<T>());
         }
         public static void RpcEndGame(this GameManager gameManager, CustomGameOver gameOver)
         {

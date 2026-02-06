@@ -6,14 +6,38 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class RoleConfigManager
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static KillButtonConfig KillConfig { get; private set; } = KillButtonConfig.Default;
+        /// <summary>
+        /// 
+        /// </summary>
         public static LightSourceConfig LightConfig { get; private set; } = LightSourceConfig.Default;
+        /// <summary>
+        /// 
+        /// </summary>
         public static MiraRoleTabConfig RoleTabConfig { get; private set; } = new MiraRoleTabConfig();
+        /// <summary>
+        /// 
+        /// </summary>
         public static ReportButtonConfig ReportConfig { get; private set; } = ReportButtonConfig.Default;
+        /// <summary>
+        /// 
+        /// </summary>
         public static SabotageButtonConfig SabotageConfig { get; private set; } = SabotageButtonConfig.Default;
+        /// <summary>
+        /// 
+        /// </summary>
         public static VentButtonConfig VentConfig { get; private set; } = VentButtonConfig.Default;
+        /// <summary>
+        /// 
+        /// </summary>
         public static void UpdateByRole(RoleBehaviour role)
         {
             if (role == null)
@@ -72,6 +96,5 @@ namespace FungleAPI.Role
                 VentConfig = VentButtonConfig.Default;
             }
         }
-
     }
 }

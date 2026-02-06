@@ -12,6 +12,9 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CrewmateTeam : ModdedTeam
     {
         public override bool FriendlyFire => true;
@@ -20,7 +23,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
         public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
-        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<CrewmatesByTask>();
+        public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<CrewmatesByTask>();
         public override bool AssignOnlyEnabledRoles => false;
         public override uint DefaultCount => uint.MaxValue;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)

@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NeutralTeam : ModdedTeam
     {
         public override bool FriendlyFire => true;
@@ -19,7 +22,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName { get; } = FungleTranslation.NeutralText;
         public override StringNames PluralName { get; } = FungleTranslation.NeutralsText;
         public override string VictoryText => FungleTranslation.NeutralGameOver.GetString();
-        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<NeutralGameOver>();
+        public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
         public override uint MaxCount => 50;
     }
 }

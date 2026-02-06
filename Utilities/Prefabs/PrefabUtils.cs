@@ -13,6 +13,9 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace FungleAPI.Utilities.Prefabs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class PrefabUtils
     {
         private static Transform __prefabs;
@@ -136,6 +139,9 @@ namespace FungleAPI.Utilities.Prefabs
                 yield return null;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T Prefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object
         {
             if (predicate == null)
@@ -144,11 +150,29 @@ namespace FungleAPI.Utilities.Prefabs
             }
             return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T))).FirstOrDefault(x => predicate(x.SafeCast<T>())).SafeCast<T>();
         }
-        public static SkeldShipStatus SkeldPrefab;
-        public static MiraShipStatus MiraPrefab;
-        public static PolusShipStatus PolusPrefab;
-        public static SkeldShipStatus AprilShipPrefab;
-        public static AirshipStatus AirshipPrefab;
-        public static FungleShipStatus FunglePrefab;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static SkeldShipStatus SkeldPrefab { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static MiraShipStatus MiraPrefab { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static PolusShipStatus PolusPrefab { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static SkeldShipStatus AprilShipPrefab { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static AirshipStatus AirshipPrefab { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static FungleShipStatus FunglePrefab { get; internal set; }
     }
 }

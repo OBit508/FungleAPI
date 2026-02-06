@@ -2,6 +2,9 @@
 
 namespace FungleAPI.Translation
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Translator
     {
         public Translator(string defaultText)
@@ -14,6 +17,9 @@ namespace FungleAPI.Translation
         public string Default;
         public StringNames StringName;
         public Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
+        /// <summary>
+        /// 
+        /// </summary>
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
             if (!Strings.ContainsKey(lang))
@@ -22,6 +28,9 @@ namespace FungleAPI.Translation
             }
             return this;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public string GetString()
         {
             foreach (KeyValuePair<SupportedLangs, string> pair in Strings)

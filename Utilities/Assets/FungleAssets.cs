@@ -14,6 +14,9 @@ using xCloud;
 
 namespace FungleAPI.Utilities.Assets
 {
+    /// <summary>
+    /// FungleAPI assets
+    /// </summary>
     public static class FungleAssets
     {
         public static Sprite Cog;

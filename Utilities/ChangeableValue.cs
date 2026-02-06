@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Utilities
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ChangeableValue<T>
     {
         public T Value;

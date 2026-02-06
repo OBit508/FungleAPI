@@ -28,7 +28,7 @@ namespace FungleAPI.Player
         /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
-            CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer);
+            Rpc<RpcCustomMurder>.Instance.Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer);
         }
         /// <summary>
         /// 
@@ -231,7 +231,7 @@ namespace FungleAPI.Player
             }
             if (createDeadBody)
             {
-                DeadBody deadBody = Helpers.CreateCustomBody(target, GameManager.Instance.GetDeadBody(source.Data.Role).SafeCast<ViperDeadBody>() != null ? DeadBodyType.Viper : DeadBodyType.Normal);
+                DeadBody deadBody = Helpers.CreateDeadBody(target, GameManager.Instance.GetDeadBody(source.Data.Role).SafeCast<ViperDeadBody>() != null ? DeadBodyType.Viper : DeadBodyType.Normal);
                 source.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Translation
 {
+    /// <summary>
+    /// FungleAPI translations
+    /// </summary>
     public static class FungleTranslation
     {
         private static Translator edit;
@@ -509,7 +512,7 @@ namespace FungleAPI.Translation
             {
                 if (teamConfigButton == null)
                 {
-                    teamConfigButton = new Translator("Teams Configurations");
+                    teamConfigButton = new Translator("Teams Settings");
                     teamConfigButton.AddTranslation(SupportedLangs.Latam, "Configuraciones de equipos");
                     teamConfigButton.AddTranslation(SupportedLangs.Brazilian, "Configurações dos Times");
                     teamConfigButton.AddTranslation(SupportedLangs.Portuguese, "Configurações das Equipes");

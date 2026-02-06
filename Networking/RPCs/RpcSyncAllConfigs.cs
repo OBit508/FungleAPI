@@ -33,7 +33,7 @@ namespace FungleAPI.Networking.RPCs
             writer.Write(ConfigurationManager.Options.Count);
             for (int i = 0; i < ConfigurationManager.Options.Count; i++)
             {
-                writer.WriteConfig(ConfigurationManager.Options.ToArray()[i]);
+                writer.WriteOption(ConfigurationManager.Options.ToArray()[i]);
                 writer.Write(ConfigurationManager.Options.ToArray()[i].GetValue());
             }
             writer.Write(ConfigurationManager.RoleCountsAndChances.Count);
@@ -58,7 +58,7 @@ namespace FungleAPI.Networking.RPCs
                 int count = reader.ReadInt32();
                 for (int i = 0; i < count; i++)
                 {
-                    ModdedOption option = reader.ReadConfig();
+                    ModdedOption option = reader.ReadOption();
                     option.SetValue(reader.ReadString());
                 }
                 int count2 = reader.ReadInt32();

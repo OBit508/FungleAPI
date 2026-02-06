@@ -61,27 +61,34 @@ namespace FungleAPI.Configuration.Attributes
         {
             return type == typeof(float) || type == typeof(int);
         }
+        public static NumberOption CreateNumberOption(Transform transform, FloatGameSetting data, Action<NumberOption> onChange)
+        {
+            NumberOption option = GameObject.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
+            option.SetUpFromData(data, 20);
+            option.OnValueChanged = new Action<OptionBehaviour>(delegate
+            {
+                onChange(option);
+            });
+            option.Title = data.Title;
+            option.Increment = data.Increment;
+            option.ValidRange = data.ValidRange;
+            option.FormatString = data.FormatString;
+            option.ZeroIsInfinity = data.ZeroIsInfinity;
+            option.SuffixType = data.SuffixType;
+            option.floatOptionName = FloatOptionNames.Invalid;
+            FixOption(option);
+            return option;
+        }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            NumberOption numberOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
-            FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
-            numberOption.SetUpFromData(Data, 20);
-            numberOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();
+            NumberOption option = CreateNumberOption(transform, setting, delegate (NumberOption option)
             {
-                SetValue(numberOption.Value);
-                floatGameSetting.Value = numberOption.Value;
+                SetValue(option.Value);
+                setting.Value = option.Value;
             });
-            numberOption.Title = floatGameSetting.Title;
-            numberOption.Value = float.Parse(localValue.Value);
-            numberOption.oldValue = numberOption.oldValue;
-            numberOption.Increment = floatGameSetting.Increment;
-            numberOption.ValidRange = floatGameSetting.ValidRange;
-            numberOption.FormatString = floatGameSetting.FormatString;
-            numberOption.ZeroIsInfinity = floatGameSetting.ZeroIsInfinity;
-            numberOption.SuffixType = floatGameSetting.SuffixType;
-            numberOption.floatOptionName = FloatOptionNames.Invalid;
-            FixOption(numberOption);
-            return numberOption;
+            option.Value = float.Parse(localValue.Value);
+            return option;
         }
         [HarmonyPatch("Initialize")]
         [HarmonyPrefix]

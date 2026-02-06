@@ -24,111 +24,113 @@ namespace FungleAPI.Networking.RPCs
     /// </summary>
     public class RpcSyncSettings : AdvancedRpc<(SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team)>
     {
-        public static void Notify(string text1, string text2, bool playSound)
+        private static void Notify(string text1, string text2, bool playSound)
         {
-            HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, StringNames.LobbyChangeSettingNotification.GetString().Replace("{0}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + text1 + "</font>").Replace("{1}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + text2 + "</font>"), playSound);
+            HudManager.Instance.Notifier.SettingsChangeMessageLogic(
+                StringNames.None,
+                StringNames.LobbyChangeSettingNotification.GetString()
+                    .Replace("{0}", $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{text1}</font>")
+                    .Replace("{1}", $"<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">{text2}</font>"),
+                playSound
+            );
+        }
+        private static string FormatRoleText(RoleBehaviour role, ModdedOption option)
+        {
+            return $"{role.TeamColor.ToTextColor()}({role.NiceName}) {option.ConfigName.GetString()}</color>";
+        }
+        private static string FormatTeamText(ModdedTeam team, StringNames name)
+        {
+            return $"{team.TeamColor.ToTextColor()}({team.TeamName.GetString()}) {name.GetString()}</color>";
+        }
+        private static (StringNames name, string value) GetTeamValue(SyncTextType type, ModdedTeam team, ModdedOption option)
+        {
+            return type switch
+            {
+                SyncTextType.TeamOption => (option.ConfigName.StringName, option.GetValue()),
+                SyncTextType.TeamCount => (FungleTranslation.CountText, team.CountAndPriority.GetCount().ToString()),
+                SyncTextType.TeamPriority => (FungleTranslation.PriorityText, team.CountAndPriority.GetPriority().ToString()),
+                _ => throw new ArgumentOutOfRangeException(nameof(type))
+            };
         }
         public override void Write(MessageWriter writer, (SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team) value)
         {
-            List<ModdedOption> options = ConfigurationManager.Options;
-            writer.Write(options.Count);
-            for (int i = 0; i < options.Count; i++)
+            writer.Write(ConfigurationManager.Options.Count);
+            foreach (var opt in ConfigurationManager.Options)
             {
-                writer.WriteConfig(options[i]);
-                writer.Write(options[i].GetValue());
+                writer.WriteOption(opt);
+                writer.Write(opt.GetValue());
             }
             writer.Write(ConfigurationManager.TeamCountAndPriorities.Count);
-            for (int i = 0; i < ConfigurationManager.TeamCountAndPriorities.Count; i++)
+            foreach (var t in ConfigurationManager.TeamCountAndPriorities)
             {
-                writer.WriteCountAndPriority(ConfigurationManager.TeamCountAndPriorities[i]);
-                writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetCount());
-                writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetPriority());
+                writer.WriteCountAndPriority(t);
+                writer.Write(t.GetCount());
+                writer.Write(t.GetPriority());
             }
             writer.Write((int)value.type);
-            if (value.type == SyncTextType.Option || value.type == SyncTextType.RoleOption)
+            switch (value.type)
             {
-                writer.WriteConfig(value.option);
-                if (value.type == SyncTextType.RoleOption)
-                {
+                case SyncTextType.Option:
+                    writer.WriteOption(value.option);
+                    Notify(value.option.ConfigName.GetString(), value.option.GetValue(), false);
+                    break;
+
+                case SyncTextType.RoleOption:
+                    writer.WriteOption(value.option);
                     writer.WriteRole(value.role);
-                    Notify(value.role.TeamColor.ToTextColor() + "(" + value.role.NiceName + ") " + value.option.ConfigName.GetString() + "</color>", value.option.GetValue(), false);
-                    return;
-                }
-                Notify(value.option.ConfigName.GetString(), value.option.GetValue(), false);
-            }
-            else if (value.type == SyncTextType.TeamOption || value.type == SyncTextType.TeamCount || value.type == SyncTextType.TeamPriority)
-            {
-                StringNames name;
-                string v;
-                writer.WriteCountAndPriority(value.team.CountAndPriority);
-                if (value.type == SyncTextType.TeamOption)
-                {
-                    writer.WriteConfig(value.option);
-                    name = value.option.ConfigName.StringName;
-                    v = value.option.GetValue();
-                }
-                else if (value.type == SyncTextType.TeamCount)
-                {
-                    name = FungleTranslation.CountText;
-                    v = value.team.CountAndPriority.GetCount().ToString();
-                }
-                else
-                {
-                    name = FungleTranslation.PriorityText;
-                    v = value.team.CountAndPriority.GetPriority().ToString();
-                }
-                Notify(value.team.TeamColor.ToTextColor() + "(" + value.team.TeamName.GetString() + ") " + name.GetString() + "</color>", v, false);
+                    Notify(FormatRoleText(value.role, value.option), value.option.GetValue(), false);
+                    break;
+                case SyncTextType.TeamOption:
+                case SyncTextType.TeamCount:
+                case SyncTextType.TeamPriority:
+                    writer.WriteCountAndPriority(value.team.CountAndPriority);
+                    if (value.type == SyncTextType.TeamOption)
+                    {
+                        writer.WriteOption(value.option);
+                    }
+                    (StringNames name, string value) teamValue = GetTeamValue(value.type, value.team, value.option);
+                    Notify(FormatTeamText(value.team, teamValue.name), teamValue.value, false);
+                    break;
             }
         }
         public override void Handle(MessageReader reader)
         {
-            int count = reader.ReadInt32();
-            for (int i = 0; i < count; i++)
+            for (int i = reader.ReadInt32(); i > 0; i--)
             {
-                ModdedOption option = reader.ReadConfig();
-                option.SetValue(reader.ReadString());
+                reader.ReadOption().SetValue(reader.ReadString());
             }
-            int count2 = reader.ReadInt32();
-            for (int i = 0; i < count2; i++)
+            for (int i = reader.ReadInt32(); i > 0; i--)
             {
-                TeamCountAndPriority c = reader.ReadCountAndPriority();
+                var c = reader.ReadCountAndPriority();
                 c.SetCount(reader.ReadInt32());
                 c.SetPriority(reader.ReadInt32());
             }
             SyncTextType type = (SyncTextType)reader.ReadInt32();
-            if (type == SyncTextType.Option || type == SyncTextType.RoleOption)
+            switch (type)
             {
-                ModdedOption option = reader.ReadConfig();
-                if (type == SyncTextType.RoleOption)
-                {
-                    RoleBehaviour role = reader.ReadRole();
-                    Notify(role.TeamColor.ToTextColor() + "(" + role.NiceName + ") " + option.ConfigName.GetString() + "</color>", option.GetValue(), true);
-                    return;
-                }
-                Notify(option.ConfigName.GetString(), option.GetValue(), true);
-            }
-            else if (type == SyncTextType.TeamOption ||type == SyncTextType.TeamCount || type == SyncTextType.TeamPriority)
-            {
-                StringNames name;
-                string v;
-                ModdedTeam team = reader.ReadCountAndPriority().Team;
-                if (type == SyncTextType.TeamOption)
-                {
-                    ModdedOption option = reader.ReadConfig();
-                    name = option.ConfigName.StringName;
-                    v = option.GetValue();
-                }
-                else if (type == SyncTextType.TeamCount)
-                {
-                    name = FungleTranslation.CountText;
-                    v = team.CountAndPriority.GetCount().ToString();
-                }
-                else
-                {
-                    name = FungleTranslation.PriorityText;
-                    v = team.CountAndPriority.GetPriority().ToString();
-                }
-                Notify(team.TeamColor.ToTextColor() + "(" + team.TeamName.GetString() + ") " + name.GetString() + "</color>", v, true);
+                case SyncTextType.Option:
+                    {
+                        ModdedOption opt = reader.ReadOption();
+                        Notify(opt.ConfigName.GetString(), opt.GetValue(), true);
+                        break;
+                    }
+                case SyncTextType.RoleOption:
+                    {
+                        ModdedOption opt = reader.ReadOption();
+                        RoleBehaviour role = reader.ReadRole();
+                        Notify(FormatRoleText(role, opt), opt.GetValue(), true);
+                        break;
+                    }
+                case SyncTextType.TeamOption:
+                case SyncTextType.TeamCount:
+                case SyncTextType.TeamPriority:
+                    {
+                        ModdedTeam team = reader.ReadCountAndPriority().Team;
+                        ModdedOption opt = type == SyncTextType.TeamOption ? reader.ReadOption() : null;
+                        (StringNames name, string value) teamValue = GetTeamValue(type, team, opt);
+                        Notify(FormatTeamText(team, teamValue.name), teamValue.value, true);
+                        break;
+                    }
             }
         }
     }

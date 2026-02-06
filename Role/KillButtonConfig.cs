@@ -3,8 +3,14 @@ using UnityEngine;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class KillButtonConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static KillButtonConfig Default { get; } = new KillButtonConfig();
         public KillButtonConfig()
         {
@@ -77,14 +83,41 @@ namespace FungleAPI.Role
                 }
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<bool> CanUse;
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<float> Cooldown;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<PlayerControl> CheckClick;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<PlayerControl> SetTarget;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action DoClick;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action Update;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action ResetButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action InitializeButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public KillButton Button => HudManager.Instance.KillButton;
     }
 }

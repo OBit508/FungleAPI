@@ -29,12 +29,18 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Utilities
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Helpers
     {
         internal static GenericPopup Popup;
         internal static EditName Screen;
         internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
+        /// <summary>
+        /// 
+        /// </summary>
         public static List<DeadBody> AllDeadBodies
         {
             get
@@ -43,6 +49,9 @@ namespace FungleAPI.Utilities
                 return allDeadBodies;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void ShowPopup(string text)
         {
             if (Popup == null)
@@ -57,6 +66,9 @@ namespace FungleAPI.Utilities
             }
             Popup.Show(text);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void ShowEditNameScreen(string tittleText, string defaultText, Action<string> OnSubmit = null, Action<string> OnBack = null)
         {
             if (Screen == null)
@@ -91,7 +103,10 @@ namespace FungleAPI.Utilities
             Screen.gameObject.SetActive(true);
             Screen.StartCoroutine(Screen.Show());
         }
-        public static DeadBody CreateCustomBody(PlayerControl from, DeadBodyType deadBodyType)
+        /// <summary>
+        /// 
+        /// </summary>
+        public static DeadBody CreateDeadBody(PlayerControl from, DeadBodyType deadBodyType)
         {
             DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[deadBodyType == DeadBodyType.Normal ? 0 : 1]);
             body.enabled = false;
@@ -107,16 +122,25 @@ namespace FungleAPI.Utilities
             body.enabled = true;
             return body;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
         {
             ref T ptr = ref obj;
             ptr.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T SimpleCast<T>(this object obj)
         {
             return (T)obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static PlayerControl GetPlayerById(byte id)
         {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -128,6 +152,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static DeadBody GetBodyById(byte id)
         {
             foreach (DeadBody body in AllDeadBodies)
@@ -139,6 +166,9 @@ namespace FungleAPI.Utilities
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
         {
             T result = obj.GetComponent<T>();
@@ -148,10 +178,16 @@ namespace FungleAPI.Utilities
             }
             return result;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static string GetString(this StringNames s)
         {
             return TranslationController.Instance.GetString(s);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void SetNewAction(this PassiveButton button, Action action)
         {
             button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
@@ -160,6 +196,9 @@ namespace FungleAPI.Utilities
                 action();
             }));
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void SetNewAction(this ButtonBehavior button, Action action)
         {
             button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
@@ -168,6 +207,9 @@ namespace FungleAPI.Utilities
                 action();
             }));
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static int GetIndex<T>(this T[] list, T thing)
         {
             for (int i = 0; i < list.Count(); i++)
@@ -179,6 +221,9 @@ namespace FungleAPI.Utilities
             }
             return -1;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Color Dark(this Color color, float num = 0.5f)
         {
             num = Mathf.Clamp01(num);
@@ -189,6 +234,9 @@ namespace FungleAPI.Utilities
                 color.a
             );
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Color Light(this Color color, float num = 0.5f)
         {
             return new Color(
@@ -198,12 +246,18 @@ namespace FungleAPI.Utilities
                 color.a
                 );
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T DontDestroy<T>(this T obj) where T : UnityEngine.Object
         {
             obj.hideFlags |= HideFlags.HideAndDontSave;
-            UnityEngine.Object.DontDestroyOnLoad(obj);
+            GameObject.DontDestroyOnLoad(obj);
             return obj;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
             try
@@ -219,6 +273,9 @@ namespace FungleAPI.Utilities
                 return null;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Vent CreateVent(VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
             Vent vent = GameObject.Instantiate<Vent>(type == VentType.Skeld ? PrefabUtils.SkeldPrefab.AllVents[0] : type == VentType.Polus ? PrefabUtils.PolusPrefab.AllVents[0] : PrefabUtils.FunglePrefab.AllVents[0], ShipStatus.Instance.transform);
@@ -232,6 +289,9 @@ namespace FungleAPI.Utilities
             VentPatch.DoStart(vent);
             return vent;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)
         {
             VentHelper helper = vent.TryGetHelper();
@@ -245,6 +305,9 @@ namespace FungleAPI.Utilities
                 helper2.Vents.Add(vent);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void DisconnectVent(this Vent vent, Vent target, bool disconnectBoth = true)
         {
             VentHelper helper = vent.TryGetHelper();
@@ -258,6 +321,9 @@ namespace FungleAPI.Utilities
                 helper2.Vents.Remove(vent);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static VentHelper TryGetHelper(this Vent target)
         {
             try
@@ -275,49 +341,9 @@ namespace FungleAPI.Utilities
                 return ventHelper;
             }
         }
-        [Comment("MiraAPI method")]
-        public static MethodBase GetStateMachineMoveNext<T>(string methodName)
-        {
-            string typeName = typeof(T).FullName;
-            Type showRoleStateMachine = typeof(T).GetNestedTypes().FirstOrDefault((Type x) => x.Name.Contains(methodName));
-            bool flag;
-            if (showRoleStateMachine == null)
-            {
-                BepInExErrorLogInterpolatedStringHandler bepInExErrorLogInterpolatedStringHandler = new BepInExErrorLogInterpolatedStringHandler(34, 2, out flag);
-                if (flag)
-                {
-                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral("Failed to find ");
-                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
-                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral(" state machine for ");
-                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(typeName);
-                }
-                FungleAPIPlugin.Instance.Log.LogError(bepInExErrorLogInterpolatedStringHandler);
-                return null;
-            }
-            MethodInfo moveNext = AccessTools.Method(showRoleStateMachine, "MoveNext", null, null);
-            if (moveNext == null)
-            {
-                BepInExErrorLogInterpolatedStringHandler bepInExErrorLogInterpolatedStringHandler = new BepInExErrorLogInterpolatedStringHandler(36, 2, out flag);
-                if (flag)
-                {
-                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral("Failed to find MoveNext method for ");
-                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(typeName);
-                    bepInExErrorLogInterpolatedStringHandler.AppendLiteral(".");
-                    bepInExErrorLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
-                }
-                FungleAPIPlugin.Instance.Log.LogError(bepInExErrorLogInterpolatedStringHandler);
-                return null;
-            }
-            BepInExInfoLogInterpolatedStringHandler bepInExInfoLogInterpolatedStringHandler = new BepInExInfoLogInterpolatedStringHandler(15, 1, out flag);
-            if (flag)
-            {
-                bepInExInfoLogInterpolatedStringHandler.AppendLiteral("Found ");
-                bepInExInfoLogInterpolatedStringHandler.AppendFormatted<string>(methodName);
-                bepInExInfoLogInterpolatedStringHandler.AppendLiteral(".MoveNext");
-            }
-            FungleAPIPlugin.Instance.Log.LogInfo(bepInExInfoLogInterpolatedStringHandler);
-            return moveNext;
-        }
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool IsCurrentServerOfficial()
         {
             try
@@ -335,6 +361,9 @@ namespace FungleAPI.Utilities
                 return true;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void StartCoroutine(System.Collections.IEnumerator enumerator)
         {
             FungleAPIPlugin.Helper.StartCoroutine(FungleAPIPlugin.Helper.Play(enumerator).WrapToIl2Cpp());

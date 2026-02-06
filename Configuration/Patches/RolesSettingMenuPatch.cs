@@ -165,7 +165,7 @@ namespace FungleAPI.Configuration.Patches
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {
-                    CustomRpcManager.Instance<RpcSyncRoleCountAndChance>().Send(role as RoleBehaviour, PlayerControl.LocalPlayer);
+                    Rpc<RpcSyncRoleCountAndChance>.Instance.Send(role as RoleBehaviour, PlayerControl.LocalPlayer);
                 }
             });
             option.roleMaxCount = role.MaxRoleCount;
@@ -223,7 +223,7 @@ namespace FungleAPI.Configuration.Patches
                 op.SetClickMask(menu.ButtonClickMask);
                 op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
-                    CustomRpcManager.Instance<RpcSyncSettings>().Send((SyncTextType.RoleOption, config, role as RoleBehaviour, null), PlayerControl.LocalPlayer);
+                    Rpc<RpcSyncSettings>.Instance.Send((SyncTextType.RoleOption, config, role as RoleBehaviour, null), PlayerControl.LocalPlayer);
                 });
                 op.transform.localPosition = new Vector3(2.17f, num, -2f);
                 menu.advancedSettingChildren.Add(op);

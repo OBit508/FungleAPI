@@ -43,11 +43,12 @@ using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using static FungleAPI.PluginLoading.ModPlugin;
-using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruction;
 
 namespace FungleAPI
 {
+    /// <summary>
+    /// 
+    /// </summary>
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
 	public class FungleAPIPlugin : BasePlugin
@@ -57,39 +58,73 @@ namespace FungleAPI
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
-		public override void Load()
-		{
+        internal static ModPlugin plugin;
+        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
+        private static bool rolesRegistered;
+        internal static bool loaddedAssets;
+        /// <summary>
+        /// 
+        /// </summary>
+        public static ModPlugin Plugin
+        {
+            get
+            {
+                if (plugin == null)
+                {
+                    plugin = new ModPlugin();
+                    ModPluginManager.Register(plugin, Instance);
+                    plugin.ModName = "Vanilla";
+                    plugin.ModVersion = ModV;
+                    plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
+                    plugin.PageLink = "https://github.com/OBit508/FungleAPI";
+                    plugin.LocalMod = new ModPlugin.Mod(plugin);
+                    plugin.PluginPreset = new Configuration.Presets.PluginPreset()
+                    {
+                        Plugin = plugin,
+                        CurrentPresetVersion = Instance.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId)
+                    };
+                    if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
+                    {
+                        plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
+                    }
+                    plugin.PluginPreset.Initialize();
+                    ModPlugin.AllPlugins.Add(plugin);
+                }
+                return plugin;
+            }
+        }
+        public override void Load()
+        {
             Instance = this;
             if (Plugin == null)
             {
                 Log.LogError("Failed creating ModPlugin from API");
             }
             Harmony.PatchAll();
-            IL2CPPChainloader.Instance.PluginLoad += new Action<PluginInfo, Assembly, BasePlugin>(delegate (PluginInfo pluginInfo, Assembly assembly, BasePlugin basePlugin)
+            IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) =>
             {
-                IFungleBasePlugin fungleBasePlugin = basePlugin as IFungleBasePlugin;
-                if (fungleBasePlugin != null)
+                if (basePlugin is IFungleBasePlugin fungle)
                 {
-                    ModPluginManager.RegisterMod(basePlugin, fungleBasePlugin.ModVersion, new Action(fungleBasePlugin.LoadAssets), fungleBasePlugin.ModName, fungleBasePlugin.ModCredits);
-                    fungleBasePlugin.OnRegisterInFungleAPI();
+                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.LoadAssets, fungle.ModName, fungle.ModCredits);
+                    fungle.OnRegisterInFungleAPI();
                 }
-            });
-            IL2CPPChainloader.Instance.Finished += new Action(delegate
+            };
+            IL2CPPChainloader.Instance.Finished += () =>
             {
-                List<ModPlugin> ordered = AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
+                List<ModPlugin> ordered = ModPlugin.AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
                 ordered.Remove(Plugin);
-                AllPlugins.Clear();
-                AllPlugins.Add(Plugin);
-                AllPlugins.AddRange(ordered);
-                foreach (ModPlugin modPlugin in AllPlugins)
+                ModPlugin.AllPlugins.Clear();
+                ModPlugin.AllPlugins.Add(Plugin);
+                ModPlugin.AllPlugins.AddRange(ordered);
+                foreach (ModPlugin mod in ModPlugin.AllPlugins)
                 {
-                    ModPluginManager.RegisterTypes(modPlugin);
+                    ModPluginManager.RegisterTypes(mod);
                 }
                 ReactorSupport.Initialize();
                 LevelImpostorSupport.Initialize();
                 CosmeticManager.SetPaletta();
-            });
-            SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode _)
+            };
+            SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
                 if (!loaddedAssets)
                 {
@@ -98,7 +133,10 @@ namespace FungleAPI
                     Type type = typeof(Constants);
                     HarmonyLib.Patches patches = Harmony.GetPatchInfo(type.GetMethod("GetBroadcastVersion"));
                     HarmonyLib.Patches patches2 = Harmony.GetPatchInfo(type.GetMethod("IsVersionModded"));
-                    if (patches.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) || patches.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) || patches2.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) || patches2.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly))
+                    if (patches.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
+                        patches.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
+                        patches2.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
+                        patches2.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly))
                     {
                         CustomRpcManager.SafeModEnabled = true;
                     }
@@ -118,34 +156,6 @@ namespace FungleAPI
             SetErrorMessages();
             Helper = AddComponent<FungleHelper>();
         }
-        private static bool rolesRegistered;
-        internal static bool loaddedAssets;
-        internal static ModPlugin plugin;
-		public static ModPlugin Plugin 
-        {
-            get
-            {
-                if (plugin == null)
-                {
-                    plugin = new ModPlugin();
-                    ModPluginManager.Register(plugin, Instance);
-                    plugin.ModName = "Vanilla";
-                    plugin.ModVersion = ModV;
-                    plugin.ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
-                    plugin.PageLink = "https://github.com/OBit508/FungleAPI";
-                    plugin.LocalMod = new ModPlugin.Mod(plugin);
-                    plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = Instance.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
-                    if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
-                    {
-                        plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
-                    }
-                    plugin.PluginPreset.Initialize();
-                    ModPlugin.AllPlugins.Add(plugin);
-                }
-                return plugin;
-            }
-        }
-        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
         internal static void SetErrorMessages()
         {
             Translator errorMessage = new Translator("Missing mods were found on the host's client.\nMods: ");

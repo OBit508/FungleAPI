@@ -13,6 +13,9 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ImpostorTeam : ModdedTeam
     {
         public override bool FriendlyFire => false;
@@ -21,7 +24,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName => StringNames.Impostor;
         public override StringNames PluralName { get; } = FungleTranslation.ImpostorsText;
         public override string VictoryText => FungleTranslation.ImpostorGameOver.GetString();
-        public override CustomGameOver DefaultGameOver => GameOverManager.Instance<ImpostorsByKill>();
+        public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<ImpostorsByKill>();
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);

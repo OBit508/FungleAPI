@@ -85,7 +85,7 @@ namespace FungleAPI.Configuration.Patches
                             menu.GameOptionsMenu.RolesMenu.RefreshChildren();
                             ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
                             menu.ConfirmPresetPopUp.Close();
-                            CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer);
+                            Rpc<RpcUpdatePreset>.Instance.Send(preset, PlayerControl.LocalPlayer);
                         });
                     }
                 });
@@ -124,7 +124,7 @@ namespace FungleAPI.Configuration.Patches
                         menu.GameOptionsMenu.RolesMenu.RefreshChildren();
                         ControllerManager.Instance.CloseOverlayMenu(menu.ConfirmPresetPopUp.name);
                         menu.ConfirmPresetPopUp.Close();
-                        CustomRpcManager.Instance<RpcUpdatePreset>().Send(preset, PlayerControl.LocalPlayer);
+                        Rpc<RpcUpdatePreset>.Instance.Send(preset, PlayerControl.LocalPlayer);
                     });
                 });
                 Collider2D collider = load.GetComponent<Collider2D>();

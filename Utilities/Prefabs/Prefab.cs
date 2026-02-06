@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace FungleAPI.Utilities.Prefabs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Prefab<T> where T : UnityEngine.Object
     {
         public T prefab;

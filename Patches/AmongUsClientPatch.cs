@@ -35,7 +35,7 @@ namespace FungleAPI.Patches
             }
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
-                plugin.Settings.Initialize();
+                plugin.Settings.Initialize(plugin);
                 plugin.Options.AddRange(plugin.Settings.Options);
             }
         }

@@ -19,7 +19,6 @@ namespace FungleAPI.Role
 {
     public class NeutralGhost : CrewmateGhostRole, ICustomRole
     {
-        public EndGameResult end = new EndGameResult(GameOverReason.CrewmatesByVote, false);
         public RoleBehaviour OldRole 
         {
             get
@@ -100,12 +99,6 @@ namespace FungleAPI.Role
         public bool IsGhostRole => true;
         public bool HideInFreeplayComputer => true;
         public bool HideRole => true;
-        public override void AppendTaskHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
-        {
-        }
-        public override void SpawnTaskHeader(PlayerControl playerControl)
-        {
-        }
         public void Start()
         {
             CrewmateGhostRole crewmateGhost = RoleManager.Instance.AllRoles.FirstOrDefault(r => r.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>();

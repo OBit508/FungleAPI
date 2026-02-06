@@ -81,6 +81,9 @@ namespace FungleAPI.Utilities.Sound
                 soundPlayers[i].Update(Time.deltaTime);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static AudioSource PlayDynamicSound(string name, AudioClip clip, bool loop, DynamicSound.GetDynamicsFunction volumeFunc, AudioMixerGroup channel)
         {
             DynamicSound dynamicSound = null;

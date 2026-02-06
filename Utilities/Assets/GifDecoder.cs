@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace FungleAPI.Utilities.Assets
 {
+    [Comment("Thanks to null guy")]
     internal class GifDecoder
     {
         public List<Texture2D> Frames = new List<Texture2D>();
@@ -178,7 +179,6 @@ namespace FungleAPI.Utilities.Assets
                     prevCode = -1;
                     continue;
                 }
-
                 List<byte> entry = null;
                 if (code < dictionary.Count)
                 {

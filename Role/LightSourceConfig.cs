@@ -9,8 +9,14 @@ using UnityEngine;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LightSourceConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static LightSourceConfig Default { get; } = new LightSourceConfig();
         public LightSourceConfig()
         {
@@ -90,12 +96,33 @@ namespace FungleAPI.Role
                 return GameOptionsManager.Instance.CurrentGameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag) && flag;
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<NetworkedPlayerInfo, bool, float> CalculateLightRadius;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<PlayerControl> AdjustLighting;
+        /// <summary>
+        /// 
+        /// </summary>
         public Predicate<PlayerControl> IsFlashlightEnabled;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action Update;
+        /// <summary>
+        /// 
+        /// </summary>
         public PlayerControl Player => PlayerControl.LocalPlayer;
+        /// <summary>
+        /// 
+        /// </summary>
         public ShipStatus Ship => ShipStatus.Instance;
+        /// <summary>
+        /// 
+        /// </summary>
         public LightSource Light => Player.lightSource;
     }
 }

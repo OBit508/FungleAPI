@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Teams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Team<TeamT> where TeamT : ModdedTeam
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static TeamT Instance => ModdedTeam.Instance<TeamT>();
     }
 }

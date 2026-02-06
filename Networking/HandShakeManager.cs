@@ -110,7 +110,7 @@ namespace FungleAPI.Networking
                     }
                     if (clientId != amongUsClient.HostId)
                     {
-                        CustomRpcManager.Instance<RpcSyncAllConfigs>().Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
+                        Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
                     }
                 }
                 else if (disconnect)

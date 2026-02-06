@@ -1,4 +1,10 @@
-﻿using AmongUs.GameOptions;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Attributes;
 using FungleAPI.Configuration;
@@ -12,25 +18,90 @@ using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppSystem.Linq.Expressions;
 using MonoMod.Cil;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static Il2CppSystem.Globalization.CultureInfo;
-using static Il2CppSystem.Linq.Expressions.Interpreter.NullableMethodCallInstruction;
 
 namespace FungleAPI.Teams
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public abstract class ModdedTeam
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
+        /// <summary>
+        /// 
+        /// </summary>
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
+        /// <summary>
+        /// 
+        /// </summary>
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
+        public static List<ModdedTeam> Teams = new List<ModdedTeam>();
+        public TeamCountAndPriority CountAndPriority;
+        public FloatGameSetting CountData;
+        public FloatGameSetting PriorityData;
+        public List<ModdedOption> ExtraConfigs;
+        public bool Initialized;
+        /// <summary>
+        /// 
+        /// </summary>
+        public int TeamId;
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract Color TeamColor { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract StringNames TeamName { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract StringNames PluralName { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract string VictoryText { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public abstract CustomGameOver DefaultGameOver { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual RoleTypes DefaultRole { get; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool FriendlyFire => true;
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool KnowMembers => false;
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual uint MaxCount => 3;
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual uint DefaultCount => 1;
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual uint DefaultPriority => 1;
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual bool AssignOnlyEnabledRoles => true;
+        /// <summary>
+        /// 
+        /// </summary>
         public static T Instance<T>() where T : ModdedTeam
         {
             foreach (ModdedTeam team in Teams)
@@ -40,23 +111,23 @@ namespace FungleAPI.Teams
                     return team.SimpleCast<T>();
                 }
             }
+
             return null;
         }
-        public abstract Color TeamColor { get; }
-        public abstract StringNames TeamName { get; }
-        public abstract StringNames PluralName { get; }
-        public abstract string VictoryText { get; }
-        public abstract CustomGameOver DefaultGameOver { get; }
-        public virtual bool FriendlyFire => true;
-        public virtual bool KnowMembers => false;
-        public virtual uint MaxCount => 3;
-        public virtual uint DefaultCount => 1;
-        public virtual uint DefaultPriority => 1;
-        public virtual RoleTypes DefaultRole { get; }
-        public virtual bool AssignOnlyEnabledRoles => true;
+        public virtual void Initialize(ModPlugin plugin)
+        {
+            if (!Initialized)
+            {
+                ExtraConfigs = ConfigurationManager.RegisterAllOptions(GetType(), plugin);
+                Initialized = true;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
-            CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
+            CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
             categoryHeaderEditRole.SetHeader(StringNames.None, 20);
             categoryHeaderEditRole.Background.color = TeamColor.Light(0.7f);
             categoryHeaderEditRole.countLabel.color = TeamColor;
@@ -67,9 +138,12 @@ namespace FungleAPI.Teams
             categoryHeaderEditRole.Title.enabled = true;
             return categoryHeaderEditRole;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
         {
-            CategoryHeaderRoleVariant categoryHeaderRoleVariant = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
+            CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
             string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
             categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + TeamName.GetString();
@@ -82,82 +156,33 @@ namespace FungleAPI.Teams
             }
             return categoryHeaderRoleVariant;
         }
-        public virtual void Initialize(ModPlugin plugin)
-        {
-            if (!initialized)
-            {
-                Type type = GetType();
-                ExtraConfigs = new List<ModdedOption>();
-                foreach (PropertyInfo property in type.GetProperties())
-                {
-                    ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
-                    if (att != null)
-                    {
-                        att.Initialize(property);
-                        MethodInfo method = property.GetGetMethod(true);
-                        if (method != null)
-                        {
-                            ConfigurationManager.Options.Add(att);
-                            plugin.Options.Add(att);
-                            HarmonyHelper.Patches.Add(method, new Func<object>(att.GetReturnedValue));
-                            FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
-                        }
-                        ExtraConfigs.Add(att);
-                    }
-                }
-                initialized = true;
-            }
-        }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual OptionBehaviour CreateCountOption(Transform transform)
         {
-            NumberOption numberOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
-            numberOption.SetUpFromData(CountData, 20);
-            numberOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            NumberOption option = ModdedNumberOption.CreateNumberOption(transform, CountData, delegate (NumberOption option)
             {
                 if (this == Impostors)
                 {
-                    GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)numberOption.Value);
+                    GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }
-                CountAndPriority.SetCount((int)numberOption.Value);
+                CountAndPriority.SetCount((int)option.Value);
             });
-            numberOption.Title = CountData.Title;
-            numberOption.Value = CountAndPriority.GetCount();
-            numberOption.oldValue = numberOption.oldValue;
-            numberOption.Increment = CountData.Increment;
-            numberOption.ValidRange = CountData.ValidRange;
-            numberOption.FormatString = CountData.FormatString;
-            numberOption.ZeroIsInfinity = CountData.ZeroIsInfinity;
-            numberOption.SuffixType = CountData.SuffixType;
-            numberOption.floatOptionName = FloatOptionNames.Invalid;
-            ModdedOption.FixOption(numberOption);
-            return numberOption;
+            option.Value = CountAndPriority.GetCount();
+            return option;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public virtual OptionBehaviour CreatePriorityOption(Transform transform)
         {
-            NumberOption numberOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
-            numberOption.SetUpFromData(CountData, 20);
-            numberOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            NumberOption option = ModdedNumberOption.CreateNumberOption(transform, PriorityData, delegate (NumberOption option)
             {
-                CountAndPriority.SetPriority((int)numberOption.Value);
+                CountAndPriority.SetPriority((int)option.Value);
             });
-            numberOption.Title = PriorityData.Title;
-            numberOption.Value = CountAndPriority.GetPriority();
-            numberOption.oldValue = numberOption.oldValue;
-            numberOption.Increment = PriorityData.Increment;
-            numberOption.ValidRange = PriorityData.ValidRange;
-            numberOption.FormatString = PriorityData.FormatString;
-            numberOption.ZeroIsInfinity = PriorityData.ZeroIsInfinity;
-            numberOption.SuffixType = PriorityData.SuffixType;
-            numberOption.floatOptionName = FloatOptionNames.Invalid;
-            ModdedOption.FixOption(numberOption);
-            return numberOption;
+            option.Value = CountAndPriority.GetPriority();
+            return option;
         }
-        public TeamCountAndPriority CountAndPriority;
-        public FloatGameSetting CountData;
-        public FloatGameSetting PriorityData;
-        public List<ModdedOption> ExtraConfigs;
-        public bool initialized;
-        public int TeamId;
-        public static List<ModdedTeam> Teams = new List<ModdedTeam>();
     }
 }

@@ -3,9 +3,18 @@ using UnityEngine;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SabotageButtonConfig
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static SabotageButtonConfig Default { get; } = new SabotageButtonConfig();
+        /// <summary>
+        /// 
+        /// </summary>
         public static Sprite DefaultSprite;
         public SabotageButtonConfig()
         {
@@ -79,16 +88,49 @@ namespace FungleAPI.Role
                 SetTimer(Timer - Time.deltaTime);
             };
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<float> Cooldown;
+        /// <summary>
+        /// 
+        /// </summary>
         public Func<bool> CanUse;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<float> SetTimer;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action<bool> ResetTimer;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action Refresh;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action DoClick;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action Update;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action ResetButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public Action InitializeButton;
+        /// <summary>
+        /// 
+        /// </summary>
         public float Timer;
+        /// <summary>
+        /// 
+        /// </summary>
         public SabotageButton Button => HudManager.Instance.SabotageButton;
     }
 }

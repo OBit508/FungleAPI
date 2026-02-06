@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Utilities.Assets
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class LateAsset<T>
     {
         public Func<T> Create;
+        /// <summary>
+        /// 
+        /// </summary>
         public T Asset;
         public LateAsset(Func<T> create)
         {
