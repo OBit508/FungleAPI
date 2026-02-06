@@ -97,41 +97,5 @@ namespace FungleAPI.Role.Patches
                 __instance.ImpostorText.text += pair.Value.Value.ToString() + " " + pair.Key.TeamColor.ToTextColor() + (pair.Value.Value == 1 ? pair.Key.TeamName.GetString() : pair.Key.PluralName.GetString()) + "</color>" + (pair.Key == teams.Last().Key ? "" : ", ");
             }
         }
-        [Comment("MiraAPI patch")]
-        [HarmonyPatch]
-        public static class IntroCutsceneDestroyPatch
-        {
-            public static MethodBase TargetMethod()
-            {
-                MethodInfo onDestroy = AccessTools.Method(typeof(IntroCutscene), "OnDestroy", null, null);
-                if (onDestroy != null)
-                {
-                    _usedFallback = false;
-                    FungleAPIPlugin.Instance.Log.LogInfo("Using OnDestroy for IntroCutsceneDestroyPatch");
-                    return onDestroy;
-                }
-                _usedFallback = true;
-                return Helpers.GetStateMachineMoveNext<IntroCutscene>("CoBegin");
-            }
-            public static void Postfix(Il2CppObjectBase __instance)
-            {
-                IntroCutscene introCutscene;
-                if (_usedFallback)
-                {
-                    StateMachineWrapper<IntroCutscene> wrapper = new StateMachineWrapper<IntroCutscene>(__instance);
-                    if (wrapper.GetState() != -1)
-                    {
-                        return;
-                    }
-                    introCutscene = wrapper.Instance;
-                }
-                else
-                {
-                    introCutscene = __instance.Cast<IntroCutscene>();
-                }
-                EventManager.CallEvent(new OnIntroEnd() { Intro = introCutscene });
-            }
-            private static bool _usedFallback;
-        }
     }
 }

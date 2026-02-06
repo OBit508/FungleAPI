@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Event.Types
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OnIntroBegin : FungleEvent
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public IntroCutscene Intro { get; internal set; }
     }
 }

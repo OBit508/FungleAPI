@@ -15,6 +15,9 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcSyncRoleCountAndChance : AdvancedRpc<RoleBehaviour>
     {
         public override void Handle(MessageReader reader)

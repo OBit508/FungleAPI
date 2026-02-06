@@ -1,15 +1,19 @@
-﻿using System;
+﻿using BepInEx;
+using BepInEx.Unity.IL2CPP;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using BepInEx;
-using BepInEx.Unity.IL2CPP;
-using HarmonyLib;
+using static Il2CppSystem.Xml.Schema.FacetsChecker.FacetsCompiler;
 
 namespace FungleAPI.ModCompatibility
 {
+    /// <summary>
+    /// This class was created to allow LevelImpostor to load map prefabs independently without FungleAPI interference
+    /// </summary>
     public static class LevelImpostorSupport
     {
         public static Assembly LevelImpostorAssembly;

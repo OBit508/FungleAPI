@@ -13,6 +13,9 @@ using FungleAPI.GameOver.Ends;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public interface ICustomRole
     {
         ModdedTeam Team { get; }
@@ -55,7 +58,7 @@ namespace FungleAPI.Role
         public RoleTypes Role => CustomRoleManager.RolesToRegister[GetType()];
         bool CanKill => UseVanillaKillButton;
         public Color OutlineColor => RoleColor;
-        public CustomGameOver NeutralGameOver => GameOverManager.Instance<NeutralGameOver>();
+        public CustomGameOver NeutralGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
         internal static Dictionary<Type, (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
     }
 }

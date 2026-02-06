@@ -12,7 +12,10 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
-    internal class RpcMoveToVent : AdvancedRpc<VentHelper, PlayerControl>
+    /// <summary>
+    /// 
+    /// </summary>
+    public class RpcMoveToVent : AdvancedRpc<VentHelper, PlayerControl>
     {
         public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, VentHelper value)
         {

@@ -23,6 +23,9 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcSyncAllConfigs : SimpleRpc
     {
         public override void Write(MessageWriter writer)

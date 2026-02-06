@@ -13,6 +13,9 @@ using UnityEngine;
 
 namespace FungleAPI.Freeplay
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class ModFolderConfig
     {
@@ -67,6 +70,9 @@ namespace FungleAPI.Freeplay
             }
             return taskAddButton;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
         public class Item : Attribute
         {

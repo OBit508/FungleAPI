@@ -7,6 +7,9 @@ using FungleAPI.Attributes;
 
 namespace FungleAPI.Event.Types
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class FungleEvent
     {

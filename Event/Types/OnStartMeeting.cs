@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Event.Types
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OnStartMeeting : FungleEvent
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public MeetingHud Meeting { get; internal set; }
     }
 }

@@ -19,11 +19,17 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Networking
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [HarmonyPatch]
     public static class CustomRpcManager
     {
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         internal static bool SafeModEnabled;
+        /// <summary>
+        /// 
+        /// </summary>
         public static bool ModdedProtocolActive 
         { 
             get
@@ -49,7 +55,10 @@ namespace FungleAPI.Networking
         }
         public static ModdedProtocolUsage ModdedProtocol = ModdedProtocolUsage.Never;
         public static bool UseSafeMode = true;
-        public static T Instance<T>() where T : RpcHelper
+        /// <summary>
+        /// 
+        /// </summary>
+        public static T GetRpcInstance<T>() where T : RpcHelper
         {
             foreach (RpcHelper rpc in AllRpc)
             {
@@ -60,21 +69,27 @@ namespace FungleAPI.Networking
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void SendRpc(InnerNetObject innerNetObject, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, 240, sendOption, targetClientId);
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        internal static List<Type> InnerNetObjectTypes { get; } = (from x in typeof(InnerNetObject).Assembly.GetTypes() where x.IsSubclassOf(typeof(InnerNetObject)) select x).ToList<Type>();
-        public static IEnumerable<MethodBase> TargetMethods()
+        internal static void PatchInnetNetObjects()
         {
-            return from x in InnerNetObjectTypes
-                   select x.GetMethod("HandleRpc", AccessTools.allDeclared) into m
-                   where m != null
-                   select m;
+            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().ToList().FindAll(t => t.IsSubclassOf(typeof(InnerNetObject))))
+            {
+                MethodInfo methodInfo = type.GetMethod("HandleRpc");
+                if (methodInfo != null)
+                {
+                    FungleAPIPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
+                }
+            }
         }
-        public static bool Prefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
+        private static bool HandleRpcPrefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
         {
             if (callId == 240)
             {
@@ -83,13 +98,6 @@ namespace FungleAPI.Networking
                 return false;
             }
             return true;
-        }
-        public enum ModdedProtocolUsage
-        {
-            Always,
-            OnVanillaServers,
-            OnModdedServers,
-            Never
         }
         [HarmonyPatch(typeof(Constants))]
         internal static class ConstantsPatch
@@ -119,6 +127,13 @@ namespace FungleAPI.Networking
                 __result = true;
                 return false;
             }
+        }
+        public enum ModdedProtocolUsage
+        {
+            Always,
+            OnVanillaServers,
+            OnModdedServers,
+            Never
         }
     }
 }

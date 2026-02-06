@@ -19,13 +19,15 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcSyncSettings : AdvancedRpc<(SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team)>
     {
         public static void Notify(string text1, string text2, bool playSound)
         {
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, StringNames.LobbyChangeSettingNotification.GetString().Replace("{0}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + text1 + "</font>").Replace("{1}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + text2 + "</font>"), playSound);
         }
-
         public override void Write(MessageWriter writer, (SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team) value)
         {
             List<ModdedOption> options = ConfigurationManager.Options;

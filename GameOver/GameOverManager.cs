@@ -18,6 +18,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [HarmonyPatch(typeof(EndGameResult))]
     public static class GameOverManager
     {
@@ -29,9 +32,13 @@ namespace FungleAPI.GameOver
             gameOverId++;
             return (GameOverReason)gameOverId;
         }
-        public static T Instance<T>() where T : CustomGameOver
+        public static T GetGameOverInstance<T>() where T : CustomGameOver
         {
-            return AllCustomGameOver.FirstOrDefault(g => g.GetType() == typeof(T)).SimpleCast<T>();
+            return GetGameOverInstance(typeof(T)).SimpleCast<T>();
+        }
+        public static CustomGameOver GetGameOverInstance(Type type)
+        {
+            return AllCustomGameOver.FirstOrDefault(g => g.GetType() == type).SimpleCast<T>();
         }
         public static CustomGameOver GetGameOver(this GameOverReason gameOverReason)
         {

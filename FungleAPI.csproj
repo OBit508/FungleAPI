@@ -30,16 +30,12 @@
     <Compile Include="Base\Rpc\SimpleRpc.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
-    <Compile Include="Cosmetics\AnimatedColors\FireColor.cs" />
-    <Compile Include="Cosmetics\AnimatedColors\GalaxyColor.cs" />
-    <Compile Include="Cosmetics\AnimatedColors\HSBColor.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
     <Compile Include="Cosmetics\Helpers\ModCosmetics.cs" />
     <Compile Include="Cosmetics\Patches\HostInfoPanelPatch.cs" />
     <Compile Include="Cosmetics\Patches\PlayerMaterialPatch.cs" />
     <Compile Include="Cosmetics\Helpers\SpecialColor.cs" />
-    <Compile Include="Cosmetics\AnimatedColors\RainbowColor.cs" />
     <Compile Include="Cosmetics\Patches\PlayerTabPatch.cs" />
     <Compile Include="Cosmetics\VanillaCosmetics.cs" />
     <Compile Include="Event\EventManager.cs" />
@@ -52,7 +48,6 @@
     <Compile Include="Event\Types\OnEnterVent.cs" />
     <Compile Include="Event\Types\OnExitVent.cs" />
     <Compile Include="Event\Types\OnIntroBegin.cs" />
-    <Compile Include="Event\Types\OnIntroEnd.cs" />
     <Compile Include="Event\Types\OnPlayerDie.cs" />
     <Compile Include="Event\Types\OnPlayerMurdered.cs" />
     <Compile Include="Event\Types\OnReportBody.cs" />
@@ -71,7 +66,6 @@
     <Compile Include="Networking\Patches\InnerNetClient_HandleGameDataInner_d__165Patch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
-    <Compile Include="Networking\RPCs\RpcEndGame.cs" />
     <Compile Include="Networking\RPCs\RpcMoveToVent.cs" />
     <Compile Include="Networking\RPCs\RpcRequestForEndGame.cs" />
     <Compile Include="Patches\AirshipStatusPatch.cs" />
@@ -200,7 +194,6 @@
     <Compile Include="Role\RoleHintType.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
-    <Compile Include="Utilities\StateMachineWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\folder.png" />

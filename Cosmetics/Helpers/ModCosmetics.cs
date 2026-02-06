@@ -7,6 +7,9 @@ using FungleAPI.Attributes;
 
 namespace FungleAPI.Cosmetics.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class ModCosmetics
     {

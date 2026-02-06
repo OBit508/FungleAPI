@@ -11,57 +11,69 @@ using HarmonyLib;
 using Il2CppInterop.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
 
 namespace FungleAPI.Role
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class CustomRoleManager
     {
-        public static RoleBehaviour NeutralGhost => Instance<NeutralGhost>();
-        public static List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
-        public static List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
-        public static T Instance<T>() where T : RoleBehaviour
+        /// <summary>
+        /// 
+        /// </summary>
+        public static RoleBehaviour NeutralGhost => GetRole<NeutralGhost>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
+        /// <summary>
+        /// 
+        /// </summary>
+        public static RoleBehaviour GetRole(Type type)
         {
-            foreach (RoleBehaviour role in RoleManager.Instance.AllRoles)
-            {
-                if (role.GetType() == typeof(T))
-                {
-                    return role.SafeCast<T>();
-                }
-            }
-            return null;
+            return AllRoles.FirstOrDefault(r => r.GetType() == type);
         }
-        public static RoleTypes GetType<T>() where T : RoleBehaviour
+        /// <summary>
+        /// 
+        /// </summary>
+        public static T GetRole<T>() where T : RoleBehaviour
         {
-            return RolesToRegister[typeof(T)];
+            return GetRole(typeof(T)).SafeCast<T>();
         }
-        public static RoleTypes GetType(Type type)
+        /// <summary>
+        /// 
+        /// </summary>
+        public static RoleTypes GetRoleType(Type type)
         {
-            return RolesToRegister[type];
+            return GetRole(type).Role;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static RoleTypes GetRoleType<T>() where T : RoleBehaviour
+        {
+            return GetRoleType(typeof(T));
+        }
+        /// <summary>
+        /// 
+        /// </summary>
         public static ICustomRole CustomRole(this RoleBehaviour role)
         {
             return role as ICustomRole;
         }
-        public static ICustomRole GetRole(RoleTypes type)
-        {
-            return RoleManager.Instance.GetRole(type).CustomRole();
-        }
-        public static int CaculeCountByChance(this RoleBehaviour role, IRoleOptionsCollection roleOptions)
-        {
-            int count = 0;
-            for (int i = 0; i < roleOptions.GetNumPerGame(role.Role); i++)
-            {
-                if (new System.Random().Next(0, 100) < roleOptions.GetChancePerGame(role.Role))
-                {
-                    count++;
-                }
-            }
-            return count;
-        }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void UpdateRole(RoleBehaviour role)
         {
             if (role == null)
@@ -89,12 +101,103 @@ namespace FungleAPI.Role
                 RoleConfigManager.UpdateByRole(role);
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static ModPlugin GetRolePlugin(this RoleBehaviour role)
+        {
+            ICustomRole customRole = role.CustomRole();
+            if (customRole != null)
+            {
+                return ModPluginManager.GetModPlugin(role.GetType().Assembly);
+            }
+            return FungleAPIPlugin.Plugin;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static RoleHintType GetHintType(this RoleBehaviour role)
+        {
+            if (role.CustomRole() != null)
+            {
+                return role.CustomRole().HintType;
+            }
+            return RoleHintType.TaskHint;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static ModdedTeam GetTeam(this RoleBehaviour role)
+        {
+            if (role.CustomRole() != null)
+            {
+                return role.CustomRole().Team;
+            }
+            return RoleManager.IsImpostorRole(role.Role) ? ModdedTeam.Impostors : ModdedTeam.Crewmates;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool CanSabotage(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CanSabotage;
+            }
+            return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool CanKill(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CanKill;
+            }
+            return roleBehaviour.CanUseKillButton;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool UseKillButton(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().UseVanillaKillButton;
+            }
+            return roleBehaviour.CanUseKillButton;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static bool CanVent(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CanUseVent;
+            }
+            return roleBehaviour.CanVent;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static void AppendHint(RoleBehaviour roleBehaviour, Il2CppSystem.Text.StringBuilder stringBuilder)
+        {
+            RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();
+            if (roleBaseHelper != null)
+            {
+                roleBaseHelper.AppendHint(stringBuilder);
+                return;
+            }
+            roleBehaviour.AppendTaskHint(stringBuilder);
+        }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
             (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance) pair = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            InitializeRoleOptions(role, plugin);
+            pair.Options.Value.AddRange(ConfigurationManager.RegisterAllOptions(type, plugin));
             ConfigurationManager.InitializeRoleCountAndChances(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
@@ -119,98 +222,6 @@ namespace FungleAPI.Role
                 RoleManager.GhostRoles.Add(roleType);
             }
             return role;
-        }
-        internal static void InitializeRoleOptions(RoleBehaviour obj, ModPlugin plugin)
-        {
-            Type type = obj.GetType();
-            foreach (PropertyInfo property in type.GetProperties())
-            {
-                ModdedOption att = (ModdedOption)property.GetCustomAttribute(typeof(ModdedOption));
-                if (att != null)
-                {
-                    ConfigurationManager.RegisterModdedOption(att);
-                    if (obj.CustomRole() != null)
-                    {
-                        obj.CustomRole().Options.Add(att);
-                    }
-                }
-            }
-        }
-        public static void CreateForRole(Il2CppSystem.Text.StringBuilder sb, RoleBehaviour role, Color? color = null)
-        {
-            if (color == null)
-            {
-                color = role.TeamColor;
-            }
-            sb.AppendLine(color.Value.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + role.NiceName + "</b>.</color>");
-            sb.AppendLine("<size=70%>" + role.BlurbMed);
-        }
-        public static ModPlugin GetRolePlugin(this RoleBehaviour role)
-        {
-            ICustomRole customRole = role.CustomRole();
-            if (customRole != null)
-            {
-                return ModPluginManager.GetModPlugin(role.GetType().Assembly);
-            }
-            return FungleAPIPlugin.Plugin;
-        }
-        public static RoleHintType GetHintType(this RoleBehaviour role)
-        {
-            if (role.CustomRole() != null)
-            {
-                return role.CustomRole().HintType;
-            }
-            return RoleHintType.TaskHint;
-        }
-        public static ModdedTeam GetTeam(this RoleBehaviour role)
-        {
-            if (role.CustomRole() != null)
-            {
-                return role.CustomRole().Team;
-            }
-            return RoleManager.IsImpostorRole(role.Role) ? ModdedTeam.Impostors : ModdedTeam.Crewmates;
-        }
-        public static bool CanSabotage(this RoleBehaviour roleBehaviour)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().CanSabotage;
-            }
-            return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
-        }
-        public static bool CanKill(this RoleBehaviour roleBehaviour)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().CanKill;
-            }
-            return roleBehaviour.CanUseKillButton;
-        }
-        public static bool UseKillButton(this RoleBehaviour roleBehaviour)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().UseVanillaKillButton;
-            }
-            return roleBehaviour.CanUseKillButton;
-        }
-        public static bool CanVent(this RoleBehaviour roleBehaviour)
-        {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().CanUseVent;
-            }
-            return roleBehaviour.CanVent;
-        }
-        public static void AppendHint(RoleBehaviour roleBehaviour, Il2CppSystem.Text.StringBuilder stringBuilder)
-        {
-            RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();
-            if (roleBaseHelper != null)
-            {
-                roleBaseHelper.AppendHint(stringBuilder);
-                return;
-            }
-            roleBehaviour.AppendTaskHint(stringBuilder);
         }
     }
 }

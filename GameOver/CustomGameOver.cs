@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public class CustomGameOver
     {

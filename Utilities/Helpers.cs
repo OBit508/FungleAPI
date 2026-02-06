@@ -91,23 +91,6 @@ namespace FungleAPI.Utilities
             Screen.gameObject.SetActive(true);
             Screen.StartCoroutine(Screen.Show());
         }
-        public static ModdedConsole CreateConsole(float distance, Predicate<PlayerControl> predicate, Action onUse, Sprite sprite)
-        {
-            ModdedConsole console = new GameObject("CustomConsole").AddComponent<ModdedConsole>();
-            console.gameObject.layer = 12;
-            console.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
-            console.Image = console.gameObject.AddComponent<SpriteRenderer>();
-            console.gameObject.AddComponent<PassiveButton>().SetNewAction(console.Use);
-            console.MinigamePrefab = RoleManager.Instance.AllRoles.ToSystemList().FirstOrDefault(obj => obj.Role == AmongUs.GameOptions.RoleTypes.Scientist).SafeCast<ScientistRole>().VitalsPrefab;
-            console.Image.material = new Material(Shader.Find("Sprites/Outline"));
-            console.Predicate = predicate;
-            console.OnUse = onUse;
-            console.Image.sprite = sprite;
-            console.usableDistance = distance;
-            console.transform.localScale = Vector3.one;
-            console.transform.position = Vector3.zero;
-            return console;
-        }
         public static DeadBody CreateCustomBody(PlayerControl from, DeadBodyType deadBodyType)
         {
             DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[deadBodyType == DeadBodyType.Normal ? 0 : 1]);

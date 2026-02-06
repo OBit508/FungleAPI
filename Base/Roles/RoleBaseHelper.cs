@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Player;
 using FungleAPI.Role;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -86,7 +87,8 @@ namespace FungleAPI.Base.Roles
         {
             if (this.GetHintType() == RoleHintType.MiraAPI_RoleTab)
             {
-                CustomRoleManager.CreateForRole(taskStringBuilder, this);
+                taskStringBuilder.AppendLine(TeamColor.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + NiceName + "</b>.</color>");
+                taskStringBuilder.AppendLine("<size=70%>" + BlurbMed);
                 return;
             }
             base.AppendTaskHint(taskStringBuilder);

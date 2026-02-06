@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Event.Types
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class OnEnterVent : FungleEvent
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public PlayerControl Player { get; internal set; }
+        /// <summary>
+        /// 
+        /// </summary>
         public Vent Vent { get; internal set; }
     }
 }

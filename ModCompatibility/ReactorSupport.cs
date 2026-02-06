@@ -16,6 +16,9 @@ using Rewired.Internal.Localization;
 
 namespace FungleAPI.ModCompatibility
 {
+    /// <summary>
+    /// FungleAPI doesn't use Reactor, so this class was created to allow Reactor and its mods to work together with FungleAPI
+    /// </summary>
     public static class ReactorSupport
     {
         public static string ReactorCreditsText => ReactorCredits_GetText == null ? null : (string)ReactorCredits_GetText.Invoke(null, new object[] { ReactorCredits_Location_PingTracker });

@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcRequestForEndGame : AdvancedRpc<CustomGameOver, PlayerControl>
     {
         public override void Write(PlayerControl innerNetObejct, MessageWriter messageWriter, CustomGameOver value)

@@ -34,10 +34,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
 using xCloud;
-using static FungleAPI.PluginLoading.ModPlugin;
 
 namespace FungleAPI.PluginLoading
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class ModPluginManager
     {
         internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
@@ -225,7 +227,7 @@ namespace FungleAPI.PluginLoading
         }
         public static ModPlugin GetModPlugin(Assembly assembly)
         {
-            foreach (ModPlugin mod in AllPlugins)
+            foreach (ModPlugin mod in ModPlugin.AllPlugins)
             {
                 if (mod.ModAssembly == assembly)
                 {
@@ -246,7 +248,7 @@ namespace FungleAPI.PluginLoading
                     plugin.ModName = ModName;
                     plugin.RealName = ModName;
                 }
-                AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
+                ModPlugin.AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
                 {
                     if (pl.RealName == plugin.RealName)
                     {
@@ -258,7 +260,7 @@ namespace FungleAPI.PluginLoading
                     plugin.ModName += " (" + sameNamePlugins.Count + ")";
                 }
                 plugin.ModVersion = modVersion;
-                AllPlugins.Add(plugin);
+                ModPlugin.AllPlugins.Add(plugin);
             }
             if (ModCredits == null)
             {
@@ -269,7 +271,7 @@ namespace FungleAPI.PluginLoading
             {
                 FungleAPIPlugin.loadAssets += loadAssets;
             }
-            plugin.LocalMod = new Mod(plugin);
+            plugin.LocalMod = new ModPlugin.Mod(plugin);
             plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = basePlugin.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
             if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
             {
@@ -280,7 +282,7 @@ namespace FungleAPI.PluginLoading
         }
         public static ModPlugin GetByNameAndGUID(string modName, string modVersion)
         {
-            return AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
+            return ModPlugin.AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
         }
         internal static int LastRpcId = int.MinValue;
         internal static int LastTeamId = int.MinValue;

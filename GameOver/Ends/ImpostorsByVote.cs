@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ImpostorsByVote : ImpostorsByKill
     {
         public override GameOverReason Reason => GameOverReason.ImpostorsByVote;

@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace FungleAPI.Hud
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class HudHelper
     {
         internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
@@ -16,11 +19,17 @@ namespace FungleAPI.Hud
         internal static bool Active;
         public static Transform BottomLeft;
         public static Transform BottomRight;
+        /// <summary>
+        /// 
+        /// </summary>
         public static void SetUpdateFlag(HudUpdateFlag flag, float delay = 0)
         {
             UpdateFlag = flag;
             UpdateDelay = delay;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T GetButtonInstance<T>() where T : CustomAbilityButton
         {
             if (Buttons.TryGetValue(typeof(T), out CustomAbilityButton button))

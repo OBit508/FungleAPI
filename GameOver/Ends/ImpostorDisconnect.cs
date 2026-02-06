@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ImpostorDisconnect : CustomGameOver
     {
         public override string WinText => StringNames.ImpostorDisconnected.GetString();

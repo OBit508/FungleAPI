@@ -20,15 +20,19 @@ using static UnityEngine.GraphicsBuffer;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Player;
 using FungleAPI.Base.Rpc;
+using InnerNet;
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcCustomMurder : AdvancedRpc<(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)>
     {
         public override void Write(MessageWriter writer, (PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound) value)
         {
-            writer.WritePlayer(value.killer);
-            writer.WritePlayer(value.target);
+            writer.WriteNetObject(value.killer);
+            writer.WriteNetObject(value.target);
             writer.Write((int)value.resultFlags);
             writer.Write(value.resetKillTimer);
             writer.Write(value.createDeadBody);
@@ -39,8 +43,8 @@ namespace FungleAPI.Networking.RPCs
         }
         public override void Handle(MessageReader reader)
         {
-            PlayerControl killer = reader.ReadPlayer();
-            PlayerControl target = reader.ReadPlayer();
+            PlayerControl killer = reader.ReadNetObject<PlayerControl>();
+            PlayerControl target = reader.ReadNetObject<PlayerControl>();
             MurderResultFlags resultFlags = (MurderResultFlags)reader.ReadInt32();
             bool resetKillTimer = reader.ReadBoolean();
             bool createDeadBody = reader.ReadBoolean();

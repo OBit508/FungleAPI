@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using UnityEngine;
 namespace FungleAPI.Hud
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [FungleIgnore]
     public abstract class CustomAbilityButton
     {

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class HideAndSeek_CrewmatesByTimer : CrewmatesByVote
     {
         public override GameOverReason Reason => GameOverReason.HideAndSeek_CrewmatesByTimer;

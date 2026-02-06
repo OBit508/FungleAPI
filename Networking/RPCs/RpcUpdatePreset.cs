@@ -21,6 +21,9 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Networking.RPCs
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class RpcUpdatePreset : AdvancedRpc<PresetV1>
     {
         public override void Write(MessageWriter writer, PresetV1 value)

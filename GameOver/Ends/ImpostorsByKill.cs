@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ImpostorsByKill : CustomGameOver
     {
         public override string WinText => FungleTranslation.ImpostorGameOver.GetString();

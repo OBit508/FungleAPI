@@ -18,12 +18,21 @@ using UnityEngine;
 
 namespace FungleAPI.Player
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class PlayerUtils
     {
+        /// <summary>
+        /// 
+        /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             CustomRpcManager.Instance<RpcCustomMurder>().Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             List<DeadBody> bodies = new List<DeadBody>();
@@ -36,6 +45,9 @@ namespace FungleAPI.Player
             }
             return bodies;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static DeadBody GetClosestDeadBody(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             DeadBody closest = null;
@@ -51,10 +63,16 @@ namespace FungleAPI.Player
             }
             return closest;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static DeadBody GetBody(this PlayerControl player)
         {
             return Helpers.GetBodyById(player.PlayerId);
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static PlayerVoteArea GetVoteArea(this PlayerControl player)
         {
             if (MeetingHud.Instance)
@@ -69,6 +87,9 @@ namespace FungleAPI.Player
             }
             return null;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static List<ChatBubble> GetChatBubble(this PlayerControl player)
         {
             List<ChatBubble> list = new List<ChatBubble>();
@@ -81,6 +102,9 @@ namespace FungleAPI.Player
             }
             return list;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
         {
             T comp = player.GetComponent<T>();
@@ -91,6 +115,9 @@ namespace FungleAPI.Player
             }
             return comp;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static Vent GetCurrentVent(this PlayerControl player)
         {
             if (player.AmOwner)
@@ -99,6 +126,9 @@ namespace FungleAPI.Player
             }
             return player.GetPlayerComponent<PlayerHelper>().CurrentVent;
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {
             killer.isKilling = false;

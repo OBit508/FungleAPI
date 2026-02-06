@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace FungleAPI.Cosmetics.Helpers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SpecialColor : CustomColor
     {
         public SpecialColor(Color color, Color backColor, StringNames colorName)

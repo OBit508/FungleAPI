@@ -33,9 +33,32 @@ using xCloud;
 
 namespace FungleAPI.PluginLoading
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ModPlugin
     {
-        public static List<ModPlugin> AllPlugins = new List<ModPlugin>();
+        public readonly static List<ModPlugin> AllPlugins = new List<ModPlugin>();
+        public string RealName;
+        public string ModName;
+        public string ModVersion;
+        public string ModCredits;
+        public string PageLink;
+        public Assembly ModAssembly;
+        public BasePlugin BasePlugin;
+        public PluginPreset PluginPreset;
+        public List<Type> AllTypes = new List<Type>();
+        public List<CustomGameOver> GameOvers = new List<CustomGameOver>();
+        public List<RpcHelper> RPCs = new List<RpcHelper>();
+        public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
+        public List<ModdedTeam> Teams = new List<ModdedTeam>();
+        public List<ModdedOption> Options = new List<ModdedOption>();
+        public List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
+        public List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
+        public ModCosmetics Cosmetics = new ModCosmetics();
+        public ModSettings Settings = new ModSettings();
+        public ModFolderConfig FolderConfig = new ModFolderConfig();
+        public Mod LocalMod;
         internal ModPlugin()
         {
         }
@@ -68,33 +91,14 @@ namespace FungleAPI.PluginLoading
             }
             return teams;
         }
-        public ConfigEntry<T> CreateConfig<T>(string Name, T value)
-        {
-            return BasePlugin.Config.Bind(ModName + " - Configs", Name, value);
-        }
-        internal string RealName;
-        public string ModName;
-        public string ModVersion;
-        public string ModCredits;
-        public string PageLink;
-        public Assembly ModAssembly;
-        public BasePlugin BasePlugin;
-        public PluginPreset PluginPreset;
-        public List<Type> AllTypes = new List<Type>();
-        public List<CustomGameOver> GameOvers = new List<CustomGameOver>();
-        public List<RpcHelper> RPCs = new List<RpcHelper>();
-        public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
-        public List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public List<ModdedOption> Options = new List<ModdedOption>();
-        public List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
-        public List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
-        public ModCosmetics Cosmetics = new ModCosmetics();
-        public ModSettings Settings = new ModSettings();
-        public ModFolderConfig FolderConfig = new ModFolderConfig();
-        public Mod LocalMod;
         public class Mod
         {
             public static List<Mod> AllMods = new List<Mod>();
+            public string Version;
+            public string Name;
+            public string RealName;
+            public string GUID;
+            public ModPlugin Plugin;
             public Mod(ModPlugin plugin)
             {
                 Plugin = plugin;
@@ -115,11 +119,6 @@ namespace FungleAPI.PluginLoading
                 }
                 AllMods.Add(this);
             }
-            public string Version;
-            public string Name;
-            public string RealName;
-            public string GUID;
-            public ModPlugin Plugin;
         }
     }
 }

@@ -106,6 +106,7 @@ namespace FungleAPI
                 if (scene.name == "MainMenu" && !rolesRegistered)
                 {
                     Plugin.Roles = RoleManager.Instance.DontDestroy().AllRoles.ToArray().Concat(Plugin.Roles).ToList();
+                    CustomRoleManager.AllRoles.AddRange(RoleManager.Instance.AllRoles.ToSystemList());
                     foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
                     {
                         RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPluginManager.GetModPlugin(pair.Key.Assembly), pair.Value));

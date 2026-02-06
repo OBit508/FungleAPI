@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CrewmatesByTask : CrewmatesByVote
     {
         public override GameOverReason Reason => GameOverReason.CrewmatesByTask;

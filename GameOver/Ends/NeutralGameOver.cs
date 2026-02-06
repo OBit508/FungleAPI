@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class NeutralGameOver : CustomGameOver
     {
         public string win;

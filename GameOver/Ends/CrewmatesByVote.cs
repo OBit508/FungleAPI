@@ -9,6 +9,9 @@ using UnityEngine;
 
 namespace FungleAPI.GameOver.Ends
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class CrewmatesByVote : CustomGameOver
     {
         public override string WinText => FungleTranslation.CrewmateGameOver.GetString();
