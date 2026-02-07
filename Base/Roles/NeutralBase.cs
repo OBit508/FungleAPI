@@ -14,22 +14,16 @@ using UnityEngine;
 namespace FungleAPI.Base.Roles
 {
     /// <summary>
-    /// 
+    /// Base class to create a neutral role
     /// </summary>
     [FungleIgnore]
     public class NeutralBase : RoleBaseHelper
     {
         /// <summary>
-        /// 
+        /// Indicates whether the player with this role can open and use task consoles
         /// </summary>
         public virtual bool DoTasks => false;
-        /// <summary>
-        /// 
-        /// </summary>
         public override bool IsDead => false;
-        /// <summary>
-        /// 
-        /// </summary>
         public override void Deinitialize(PlayerControl targetPlayer)
         {
             PlayerTask playerTask = targetPlayer.myTasks.ToSystemList().FirstOrDefault((PlayerTask t) => t.name == "ImpostorRole");
@@ -39,9 +33,6 @@ namespace FungleAPI.Base.Roles
                 GameObject.Destroy(playerTask.gameObject);
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public override void SpawnTaskHeader(PlayerControl playerControl)
         {
             if (playerControl != PlayerControl.LocalPlayer || !DoTasks)
@@ -55,24 +46,21 @@ namespace FungleAPI.Base.Roles
                 case GameModes.NormalFools:
                     orCreateTask.Text = string.Concat(new string[]
                     {
-                DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.ImpostorTask),
+                StringNames.ImpostorTask.GetString(),
                 "\r\n",
                 Palette.ImpostorRed.ToTextColor(),
-                DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FakeTasks),
+                StringNames.FakeTasks.GetString(),
                 "</color>"
                     });
                     return;
                 case GameModes.HideNSeek:
                 case GameModes.SeekFools:
-                    orCreateTask.Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RuleOneImpostor);
+                    StringNames.RuleOneImpostor.GetString();
                     return;
                 default:
                     return;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public override bool CanUse(IUsable usable)
         {
             if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
@@ -82,9 +70,6 @@ namespace FungleAPI.Base.Roles
             Console console = usable.SafeCast<Console>();
             return console == null || DoTasks;
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public override bool DidWin(GameOverReason gameOverReason)
         {
             if (!Player.Data.IsDead && this.CanKill())

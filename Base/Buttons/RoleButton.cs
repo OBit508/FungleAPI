@@ -4,7 +4,7 @@ using FungleAPI.Hud;
 namespace FungleAPI.Base.Buttons
 {
     /// <summary>
-    /// Base class for creating a button for a role.
+    /// Base class to create a button for a role
     /// </summary>
     /// <typeparam name="T">Role assigned to the button</typeparam>
     [FungleIgnore]
