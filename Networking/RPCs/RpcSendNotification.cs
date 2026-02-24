@@ -11,7 +11,7 @@ using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPro
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc that sends a notification
     /// </summary>
     public class RpcSendNotification : AdvancedRpc<(string text, bool playSound, bool handlePlaySound)>
     {

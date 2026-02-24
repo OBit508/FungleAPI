@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc used to request a game over for the host
     /// </summary>
     public class RpcRequestForEndGame : AdvancedRpc<CustomGameOver, PlayerControl>
     {

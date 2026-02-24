@@ -20,7 +20,7 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 namespace FungleAPI.Networking
 {
     /// <summary>
-    /// 
+    /// A class that helps the rpc system to work
     /// </summary>
     [HarmonyPatch]
     public static class CustomRpcManager
@@ -28,9 +28,9 @@ namespace FungleAPI.Networking
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         internal static bool SafeModEnabled;
         /// <summary>
-        /// 
+        /// Returns whether the host authority is active
         /// </summary>
-        public static bool ModdedProtocolActive 
+        public static bool HostAuthorityActive
         { 
             get
             {
@@ -38,14 +38,14 @@ namespace FungleAPI.Networking
                 {
                     return true;
                 }
-                if (ModdedProtocol == ModdedProtocolUsage.Never || UseSafeMode && SafeModEnabled || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
+                if (HostAuthority == HostAuthorityUsage.Never || UseSafeMode && SafeModEnabled || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
                 {
                     return false;
                 }
-                if (ModdedProtocol != ModdedProtocolUsage.Always)
+                if (HostAuthority != HostAuthorityUsage.Always)
                 {
                     bool isOfficial = Helpers.IsCurrentServerOfficial();
-                    if ((isOfficial && ModdedProtocol != ModdedProtocolUsage.OnVanillaServers) || (!isOfficial && ModdedProtocol != ModdedProtocolUsage.OnModdedServers))
+                    if ((isOfficial && HostAuthority != HostAuthorityUsage.OnVanillaServers) || (!isOfficial && HostAuthority != HostAuthorityUsage.OnModdedServers))
                     {
                         return false;
                     }
@@ -53,10 +53,10 @@ namespace FungleAPI.Networking
                 return true;
             } 
         }
-        public static ModdedProtocolUsage ModdedProtocol = ModdedProtocolUsage.Never;
+        public static HostAuthorityUsage HostAuthority = HostAuthorityUsage.OnVanillaServers;
         public static bool UseSafeMode = true;
         /// <summary>
-        /// 
+        /// Returns the instance of the given type
         /// </summary>
         public static T GetRpcInstance<T>() where T : RpcHelper
         {
@@ -70,7 +70,7 @@ namespace FungleAPI.Networking
             return null;
         }
         /// <summary>
-        /// 
+        /// Send a rpc
         /// </summary>
         public static void SendRpc(InnerNetObject innerNetObject, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
@@ -78,7 +78,7 @@ namespace FungleAPI.Networking
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        internal static void PatchInnetNetObjects()
+        internal static void PatchInnerNetObjects()
         {
             foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().ToList().FindAll(t => t.IsSubclassOf(typeof(InnerNetObject))))
             {
@@ -106,7 +106,7 @@ namespace FungleAPI.Networking
             [HarmonyPostfix]
             public static void GetBroadcastVersionPostfix(ref int __result)
             {
-                if (!ModdedProtocolActive)
+                if (!HostAuthorityActive)
                 {
                     return;
                 }
@@ -115,12 +115,11 @@ namespace FungleAPI.Networking
                     __result += 25;
                 }
             }
-
             [HarmonyPatch("IsVersionModded")]
             [HarmonyPrefix]
             public static bool IsVersionModdedPrefix(ref bool __result)
             {
-                if (!ModdedProtocolActive)
+                if (!HostAuthorityActive)
                 {
                     return true;
                 }
@@ -128,7 +127,7 @@ namespace FungleAPI.Networking
                 return false;
             }
         }
-        public enum ModdedProtocolUsage
+        public enum HostAuthorityUsage
         {
             Always,
             OnVanillaServers,

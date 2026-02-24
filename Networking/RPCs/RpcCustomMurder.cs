@@ -25,7 +25,7 @@ using InnerNet;
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc used to perform custom kills
     /// </summary>
     public class RpcCustomMurder : AdvancedRpc<(PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)>
     {

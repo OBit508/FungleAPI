@@ -24,7 +24,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc that sync the current host settings with others players
     /// </summary>
     public class RpcSyncAllConfigs : SimpleRpc
     {
@@ -39,14 +39,14 @@ namespace FungleAPI.Networking.RPCs
             writer.Write(ConfigurationManager.RoleCountsAndChances.Count);
             for (int i = 0; i < ConfigurationManager.RoleCountsAndChances.Count; i++)
             {
-                writer.WriteCountAndChance(ConfigurationManager.RoleCountsAndChances[i]);
+                writer.WriteConfigHelper(ConfigurationManager.RoleCountsAndChances[i]);
                 writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetCount());
                 writer.Write(ConfigurationManager.RoleCountsAndChances[i].GetChance());
             }
             writer.Write(ConfigurationManager.TeamCountAndPriorities.Count);
             for (int i = 0; i < ConfigurationManager.TeamCountAndPriorities.Count; i++)
             {
-                writer.WriteCountAndPriority(ConfigurationManager.TeamCountAndPriorities[i]);
+                writer.WriteConfigHelper(ConfigurationManager.TeamCountAndPriorities[i]);
                 writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetCount());
                 writer.Write(ConfigurationManager.TeamCountAndPriorities[i].GetPriority());
             }
@@ -64,14 +64,14 @@ namespace FungleAPI.Networking.RPCs
                 int count2 = reader.ReadInt32();
                 for (int i = 0; i < count2; i++)
                 {
-                    RoleCountAndChance c = reader.ReadCountAndChance();
+                    RoleCountAndChance c = reader.ReadConfigHelper<RoleCountAndChance>();
                     c.SetCount(reader.ReadInt32());
                     c.SetChance(reader.ReadInt32());
                 }
                 int count3 = reader.ReadInt32();
                 for (int i = 0; i < count3; i++)
                 {
-                    TeamCountAndPriority c = reader.ReadCountAndPriority();
+                    TeamCountAndPriority c = reader.ReadConfigHelper<TeamCountAndPriority>();
                     c.SetCount(reader.ReadInt32());
                     c.SetPriority(reader.ReadInt32());
                 }

@@ -38,6 +38,7 @@ namespace FungleAPI.Configuration
         public const string CurrentVersion = "1.0";
         public static List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
         public static List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
+        public static List<ConfigHelper> ConfigHelpers = new List<ConfigHelper>();
         public static List<ModdedOption> Options = new List<ModdedOption>();
         public static string FunglePath = Path.Combine(Application.persistentDataPath, "FungleAPI");
         /// <summary>
@@ -77,6 +78,7 @@ namespace FungleAPI.Configuration
             RoleCountAndChance roleCountAndChance = ICustomRole.Save[roleType].CountAndChance.Value;
             roleCountAndChance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName, roleType);
             RoleCountsAndChances.Add(roleCountAndChance);
+            ConfigHelpers.Add(roleCountAndChance);
             plugin.RoleCountsAndChances.Add(roleCountAndChance);
         }
         public static void InitializeTeamCountAndPriority(ModdedTeam team, ModPlugin plugin)
@@ -84,6 +86,7 @@ namespace FungleAPI.Configuration
             team.CountAndPriority = new TeamCountAndPriority();
             team.CountAndPriority.Initialize(plugin.BasePlugin.Config, team, plugin.ModName + " - " + team.GetType().FullName);
             TeamCountAndPriorities.Add(team.CountAndPriority);
+            ConfigHelpers.Add(team.CountAndPriority);
             plugin.TeamCountAndPriorities.Add(team.CountAndPriority);
         }
     }

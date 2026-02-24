@@ -20,7 +20,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc that sync some option
     /// </summary>
     public class RpcSyncSettings : AdvancedRpc<(SyncTextType type, ModdedOption option, RoleBehaviour role, ModdedTeam team)>
     {
@@ -63,7 +63,7 @@ namespace FungleAPI.Networking.RPCs
             writer.Write(ConfigurationManager.TeamCountAndPriorities.Count);
             foreach (var t in ConfigurationManager.TeamCountAndPriorities)
             {
-                writer.WriteCountAndPriority(t);
+                writer.WriteConfigHelper(t);
                 writer.Write(t.GetCount());
                 writer.Write(t.GetPriority());
             }
@@ -83,7 +83,7 @@ namespace FungleAPI.Networking.RPCs
                 case SyncTextType.TeamOption:
                 case SyncTextType.TeamCount:
                 case SyncTextType.TeamPriority:
-                    writer.WriteCountAndPriority(value.team.CountAndPriority);
+                    writer.WriteTeam(value.team);
                     if (value.type == SyncTextType.TeamOption)
                     {
                         writer.WriteOption(value.option);
@@ -101,7 +101,7 @@ namespace FungleAPI.Networking.RPCs
             }
             for (int i = reader.ReadInt32(); i > 0; i--)
             {
-                var c = reader.ReadCountAndPriority();
+                TeamCountAndPriority c = reader.ReadConfigHelper<TeamCountAndPriority>();
                 c.SetCount(reader.ReadInt32());
                 c.SetPriority(reader.ReadInt32());
             }
@@ -125,7 +125,7 @@ namespace FungleAPI.Networking.RPCs
                 case SyncTextType.TeamCount:
                 case SyncTextType.TeamPriority:
                     {
-                        ModdedTeam team = reader.ReadCountAndPriority().Team;
+                        ModdedTeam team = reader.ReadTeam();
                         ModdedOption opt = type == SyncTextType.TeamOption ? reader.ReadOption() : null;
                         (StringNames name, string value) teamValue = GetTeamValue(type, team, opt);
                         Notify(FormatTeamText(team, teamValue.name), teamValue.value, true);

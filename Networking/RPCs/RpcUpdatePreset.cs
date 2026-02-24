@@ -22,7 +22,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc that change the current host preset
     /// </summary>
     public class RpcUpdatePreset : AdvancedRpc<PresetV1>
     {

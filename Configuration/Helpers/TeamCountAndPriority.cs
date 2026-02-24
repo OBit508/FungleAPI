@@ -11,10 +11,9 @@ namespace FungleAPI.Configuration.Helpers
     /// <summary>
     /// Helper class to teams
     /// </summary>
-    public class TeamCountAndPriority
+    public class TeamCountAndPriority : ConfigHelper
     {
         public ModdedTeam Team;
-        public string Name;
         internal ConfigEntry<int> localPriority;
         internal int onlinePriority;
         internal ConfigEntry<int> localCount;
@@ -61,8 +60,8 @@ namespace FungleAPI.Configuration.Helpers
             onlineCount = localCount.Value;
             localPriority = configFile.Bind(name, "Priority", team.GetType() != typeof(CrewmateTeam) ? priority : -1);
             onlinePriority = localPriority.Value;
-            Name = name;
             Team = team;
+            Name = name;
         }
     }
 }

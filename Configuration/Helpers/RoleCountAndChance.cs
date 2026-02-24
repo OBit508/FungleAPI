@@ -10,9 +10,8 @@ namespace FungleAPI.Configuration.Helpers
     /// <summary>
     /// Helper class to roles
     /// </summary>
-    public class RoleCountAndChance
+    public class RoleCountAndChance : ConfigHelper
     {
-        public string Name;
         internal ConfigEntry<int> localChance;
         internal int onlineChance;
         internal ConfigEntry<int> localCount;

@@ -30,6 +30,7 @@
     <Compile Include="Base\Rpc\SimpleRpc.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
+    <Compile Include="Configuration\Helpers\ConfigHelper.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
     <Compile Include="Cosmetics\Helpers\ModCosmetics.cs" />

@@ -25,219 +25,197 @@ using UnityEngine;
 namespace FungleAPI.Networking
 {
     /// <summary>
-    /// 
+    /// A class to help send and read values ​​in Hazel
     /// </summary>
     public static class MessageExtension
     {
         /// <summary>
-        /// 
+        /// Write a dead body
         /// </summary>
-        public static void WriteDeadBody(this MessageWriter Writer, DeadBody value)
+        public static void WriteDeadBody(this MessageWriter messageWriter, DeadBody value)
         {
-            Writer.Write(value.ParentId);
+            messageWriter.Write(value.ParentId);
         }
         /// <summary>
-        /// 
+        /// Write a vector2
         /// </summary>
-        public static void WriteVector2(this MessageWriter Writer, Vector2 vector)
+        public static void WriteVector2(this MessageWriter messageWriter, Vector2 vector)
         {
-            Writer.Write(vector.x);
-            Writer.Write(vector.y);
+            messageWriter.Write(vector.x);
+            messageWriter.Write(vector.y);
         }
         /// <summary>
-        /// 
+        /// Write a vector3
         /// </summary>
-        public static void WriteVector3(this MessageWriter Writer, Vector3 vector)
+        public static void WriteVector3(this MessageWriter messageWriter, Vector3 vector)
         {
-            Writer.Write(vector.x);
-            Writer.Write(vector.y);
-            Writer.Write(vector.z);
+            messageWriter.Write(vector.x);
+            messageWriter.Write(vector.y);
+            messageWriter.Write(vector.z);
         }
         /// <summary>
-        /// 
+        /// Write a option
         /// </summary>
-        public static void WriteOption(this MessageWriter Writer, ModdedOption config)
+        public static void WriteOption(this MessageWriter messageWriter, ModdedOption config)
         {
-            Writer.Write(config.FullConfigName);
+            messageWriter.Write(config.FullConfigName);
         }
         /// <summary>
-        /// 
+        ///  Write a color
         /// </summary>
-        public static void WriteCountAndChance(this MessageWriter Writer, RoleCountAndChance count)
+        public static void WriteColor(this MessageWriter messageWriter, Color color)
         {
-            Writer.Write(count.Name);
+            messageWriter.Write(color.r);
+            messageWriter.Write(color.g);
+            messageWriter.Write(color.b);
+            messageWriter.Write(color.a);
         }
         /// <summary>
-        /// 
+        /// Write a mod
         /// </summary>
-        public static void WriteColor(this MessageWriter Writer, Color color)
+        public static void WriteMod(this MessageWriter messageWriter, ModPlugin.Mod mod)
         {
-            Writer.Write(color.r);
-            Writer.Write(color.g);
-            Writer.Write(color.b);
-            Writer.Write(color.a);
+            messageWriter.Write(mod.GUID);
         }
         /// <summary>
-        /// 
+        /// Write a game over
         /// </summary>
-        public static void WriteMod(this MessageWriter Writer, ModPlugin.Mod mod)
+        public static void WriteGameOver(this MessageWriter messageWriter, CustomGameOver customGameOver)
         {
-            Writer.Write(mod.GUID);
+            messageWriter.Write(customGameOver.GameOverId);
         }
         /// <summary>
-        /// 
+        /// Write a role
         /// </summary>
-        public static void WriteGameOver(this MessageWriter Writer, CustomGameOver customGameOver)
+        public static void WriteRole(this MessageWriter messageWriter, RoleBehaviour role)
         {
-            Writer.Write(customGameOver.GameOverId);
+            messageWriter.Write((int)role.Role);
         }
         /// <summary>
-        /// 
+        /// Write a team
         /// </summary>
-        public static void WriteRole(this MessageWriter Writer, RoleBehaviour role)
+        public static void WriteTeam(this MessageWriter messageWriter, ModdedTeam team)
         {
-            Writer.Write((int)role.Role);
+            messageWriter.Write(team.TeamId);
         }
         /// <summary>
-        /// 
+        /// Write a rpc
         /// </summary>
-        public static void WriteCountAndPriority(this MessageWriter Writer, TeamCountAndPriority count)
+        public static void WriteRPC(this MessageWriter messageWriter, RpcHelper rpcHelper)
         {
-            Writer.Write(count.Name);
+            messageWriter.Write(rpcHelper.RpcId);
         }
         /// <summary>
-        /// 
+        /// Write a plugin
         /// </summary>
-        public static void WriteTeam(this MessageWriter Writer, ModdedTeam team)
+        public static void WritePlugin(this MessageWriter messageWriter, ModPlugin plugin)
         {
-            Writer.Write(team.TeamId);
+            messageWriter.WriteMod(plugin.LocalMod);
         }
         /// <summary>
-        /// 
+        /// Write a config helper
         /// </summary>
-        public static void WriteRPC(this MessageWriter Writer, RpcHelper rpcHelper)
+        public static void WriteConfigHelper(this MessageWriter messageWriter, ConfigHelper configHelper)
         {
-            Writer.Write(rpcHelper.RpcId);
+            messageWriter.Write(configHelper.Name);
         }
         /// <summary>
-        /// 
+        /// Read a body
         /// </summary>
-        public static void WritePlugin(this MessageWriter Writer, ModPlugin plugin)
+        public static DeadBody ReadBody(this MessageReader messageReader)
         {
-            Writer.WriteMod(plugin.LocalMod);
+            return Helpers.GetBodyById(messageReader.ReadByte());
         }
         /// <summary>
-        /// 
+        /// Read a vector2
         /// </summary>
-        public static Vector2 ReadVector2(this MessageReader Reader)
+        public static Vector2 ReadVector2(this MessageReader messageReader)
         {
-            float x = Reader.ReadSingle();
-            float y = Reader.ReadSingle();
+            float x = messageReader.ReadSingle();
+            float y = messageReader.ReadSingle();
             return new Vector2(x, y);
         }
         /// <summary>
-        /// 
+        /// Read a vector3
         /// </summary>
-        public static Vector2 ReadVector3(this MessageReader Reader)
+        public static Vector2 ReadVector3(this MessageReader messageReader)
         {
-            float x = Reader.ReadSingle();
-            float y = Reader.ReadSingle();
-            float z = Reader.ReadSingle();
+            float x = messageReader.ReadSingle();
+            float y = messageReader.ReadSingle();
+            float z = messageReader.ReadSingle();
             return new Vector3(x, y, z);
         }
         /// <summary>
-        /// 
+        /// Read a option
         /// </summary>
-        public static DeadBody ReadBody(this MessageReader Reader)
+        public static ModdedOption ReadOption(this MessageReader messageReader)
         {
-            return Helpers.GetBodyById(Reader.ReadByte());
+            string fullConfigName = messageReader.ReadString();
+            return ConfigurationManager.Options.FirstOrDefault(c => c.FullConfigName == fullConfigName);
         }
         /// <summary>
-        /// 
+        /// Read a color
         /// </summary>
-        public static ModdedOption ReadOption(this MessageReader Reader)
+        public static Color ReadColor(this MessageReader messageReader)
         {
-            string fullConfigName = Reader.ReadString();
-            foreach (ModdedOption config in ConfigurationManager.Options)
-            {
-                if (config.FullConfigName == fullConfigName)
-                {
-                    return config;
-                }
-            }
-            return null;
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public static RoleCountAndChance ReadCountAndChance(this MessageReader Reader)
-        {
-            string fullCountName = Reader.ReadString();
-            return ConfigurationManager.RoleCountsAndChances.FirstOrDefault(count => count.Name == fullCountName);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public static Color ReadColor(this MessageReader Reader)
-        {
-            float r = Reader.ReadSingle();
-            float g = Reader.ReadSingle();
-            float b = Reader.ReadSingle();
-            float a = Reader.ReadSingle();
+            float r = messageReader.ReadSingle();
+            float g = messageReader.ReadSingle();
+            float b = messageReader.ReadSingle();
+            float a = messageReader.ReadSingle();
             return new Color(r, g, b, a);
         }
         /// <summary>
-        /// 
+        /// Read a mod
         /// </summary>
-        public static ModPlugin.Mod ReadMod(this MessageReader Reader)
+        public static ModPlugin.Mod ReadMod(this MessageReader messageReader)
         {
-            string GUID = Reader.ReadString();
+            string GUID = messageReader.ReadString();
             return ModPlugin.Mod.AllMods.FirstOrDefault(m => m.GUID == GUID);
         }
         /// <summary>
-        /// 
+        /// Read a game over
         /// </summary>
-        public static CustomGameOver ReadGameOver(this MessageReader Reader)
+        public static CustomGameOver ReadGameOver(this MessageReader messageReader)
         {
-            return GameOverManager.GetGameOverById(Reader.ReadInt32());
+            return GameOverManager.GetGameOverById(messageReader.ReadInt32());
         }
         /// <summary>
-        /// 
+        /// Read a role
         /// </summary>
-        public static RoleBehaviour ReadRole(this MessageReader Reader)
+        public static RoleBehaviour ReadRole(this MessageReader messageReader)
         {
-            return RoleManager.Instance.GetRole((RoleTypes)Reader.ReadInt32());
+            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadInt32());
         }
         /// <summary>
-        /// 
+        /// Read a team
         /// </summary>
-        public static TeamCountAndPriority ReadCountAndPriority(this MessageReader Reader)
+        public static ModdedTeam ReadTeam(this MessageReader messageReader)
         {
-            string fullCountName = Reader.ReadString();
-            return ConfigurationManager.TeamCountAndPriorities.FirstOrDefault(count => count.Name == fullCountName);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        public static ModdedTeam ReadTeam(this MessageReader Reader)
-        {
-            int id = Reader.ReadInt32();
+            int id = messageReader.ReadInt32();
             return ModdedTeam.Teams.FirstOrDefault(t => t.TeamId == id);
         }
         /// <summary>
-        /// 
+        /// Read a rpc
         /// </summary>
-        public static RpcHelper ReadRPC(this MessageReader Reader)
+        public static RpcHelper ReadRPC(this MessageReader messageReader)
         {
-            int id = Reader.ReadInt32();
+            int id = messageReader.ReadInt32();
             return CustomRpcManager.AllRpc.FirstOrDefault(r => r.RpcId == id);
         }
         /// <summary>
-        /// 
+        /// Read a plugin
         /// </summary>
-        public static ModPlugin ReadPlugin(this MessageReader Reader)
+        public static ModPlugin ReadPlugin(this MessageReader messageReader)
         {
-            return Reader.ReadMod().Plugin;
+            return messageReader.ReadMod().Plugin;
+        }
+        /// <summary>
+        /// Read a config helper
+        /// </summary>
+        public static T ReadConfigHelper<T>(this MessageReader messageReader) where T : ConfigHelper
+        {
+            string name = messageReader.ReadString();
+            return ConfigurationManager.ConfigHelpers.FirstOrDefault(c => c.Name == name).SimpleCast<T>();
         }
     }
 }

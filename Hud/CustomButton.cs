@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Hud
 {
     /// <summary>
-    /// A class to easily retrieve the instance of a given type
+    /// A class to easily get the instance of a given type
     /// </summary>
     public class CustomButton<TButton> where TButton : CustomAbilityButton
     {

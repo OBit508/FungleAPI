@@ -16,7 +16,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc that sync a role count and chance
     /// </summary>
     public class RpcSyncRoleCountAndChance : AdvancedRpc<RoleBehaviour>
     {

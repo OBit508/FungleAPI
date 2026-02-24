@@ -101,6 +101,7 @@ namespace FungleAPI
                 Log.LogError("Failed creating ModPlugin from API");
             }
             Harmony.PatchAll();
+            CustomRpcManager.PatchInnerNetObjects();
             IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) =>
             {
                 if (basePlugin is IFungleBasePlugin fungle)

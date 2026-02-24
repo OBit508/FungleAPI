@@ -13,7 +13,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 namespace FungleAPI.Networking.RPCs
 {
     /// <summary>
-    /// 
+    /// Rpc used to update a player's current vent
     /// </summary>
     public class RpcMoveToVent : AdvancedRpc<VentHelper, PlayerControl>
     {
