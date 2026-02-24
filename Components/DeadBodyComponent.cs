@@ -10,7 +10,7 @@ using UnityEngine;
 namespace FungleAPI.Components
 {
     /// <summary>
-    /// 
+    /// A base component for creating components that are automatically added to dead bodies
     /// </summary>
     [FungleIgnore]
     public class DeadBodyComponent : MonoBehaviour

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Epic.OnlineServices;
+﻿using Epic.OnlineServices;
 using FungleAPI.Attributes;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
@@ -13,12 +8,20 @@ using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Channels;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Rendering.VirtualTexturing;
+using static Rewired.Controller;
 
 namespace FungleAPI.Components
 {
     /// <summary>
-    /// 
+    /// A component that helps modified ventilation systems to work
     /// </summary>
     public class VentHelper : VentComponent
     {
@@ -64,7 +67,7 @@ namespace FungleAPI.Components
             }
         }
         /// <summary>
-        /// 
+        /// Checks if the local player can move to the given ventilation shaft
         /// </summary>
         public bool CheckForMoveVent(Vent otherVent, out string error)
         {
@@ -88,7 +91,7 @@ namespace FungleAPI.Components
             return true;
         }
         /// <summary>
-        /// 
+        /// Changes the current ventilation of the given player
         /// </summary>
         public void ChangeCurrentVent(PlayerControl playerControl, Vent otherVent)
         {
@@ -104,7 +107,7 @@ namespace FungleAPI.Components
             playerControl.GetPlayerComponent<PlayerHelper>().__CurrentVent = otherVent;
         }
         /// <summary>
-        /// 
+        /// Move the player from the current vent to another
         /// </summary>
         public void MoveToVent(PlayerControl playerControl, Vent otherVent)
         {

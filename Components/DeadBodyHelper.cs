@@ -9,13 +9,10 @@ using FungleAPI.Attributes;
 
 namespace FungleAPI.Components
 {
-    /// <summary>
-    /// 
-    /// </summary>
     [RegisterTypeInIl2Cpp]
-    public class DeadBodyHelper : MonoBehaviour
+    internal class DeadBodyHelper : MonoBehaviour
     {
-        internal static List<Il2CppSystem.Type> AllBodyComponents = new List<Il2CppSystem.Type>();
+        public static List<Il2CppSystem.Type> AllBodyComponents = new List<Il2CppSystem.Type>();
         public void Awake()
         {
             DeadBody body = GetComponent<DeadBody>();

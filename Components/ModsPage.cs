@@ -14,7 +14,7 @@ using static Il2CppSystem.DateTimeParse;
 namespace FungleAPI.Components
 {
     /// <summary>
-    /// 
+    /// The component used on the home screen mods page
     /// </summary>
     [Attributes.RegisterTypeInIl2Cpp]
     public class ModsPage : MonoBehaviour
@@ -66,7 +66,7 @@ namespace FungleAPI.Components
             UpdatePage();
         }
         /// <summary>
-        /// 
+        /// Update the mods page
         /// </summary>
         public void UpdatePage()
         {

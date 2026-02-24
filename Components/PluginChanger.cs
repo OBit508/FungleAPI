@@ -11,7 +11,7 @@ using UnityEngine;
 namespace FungleAPI.Components
 {
     /// <summary>
-    /// 
+    /// The component used in the lobby tab selectors
     /// </summary>
     [Attributes.RegisterTypeInIl2Cpp]
     public class PluginChanger : MonoBehaviour
