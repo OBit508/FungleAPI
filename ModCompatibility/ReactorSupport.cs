@@ -1,18 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.InnerNet.GameDataMessages;
+﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Networking;
+using FungleAPI.Networking.RPCs;
+using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
 using Rewired.Internal.Localization;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace FungleAPI.ModCompatibility
 {
@@ -24,15 +27,9 @@ namespace FungleAPI.ModCompatibility
         public static string ReactorCreditsText => ReactorCredits_GetText == null ? null : (string)ReactorCredits_GetText.Invoke(null, new object[] { ReactorCredits_Location_PingTracker });
         public static bool DisableServerAuthority => DisableServerAuthorityPatch_Enabled == null ? false : (bool)DisableServerAuthorityPatch_Enabled.GetValue(null);
         public static PropertyInfo DisableServerAuthorityPatch_Enabled;
-        public static PropertyInfo ModList_Current;
         public static MethodInfo ReactorCredits_GetText;
-        public static MethodInfo ModdedHandshakeC2S_Serialize;
-        public static MethodInfo ModdedHandshakeC2S_Deserialize;
         public static MethodInfo Reactor_LocalizationManager_TryGetTextFormatted;
         public static object ReactorCredits_Location_PingTracker;
-        public static Type ReactorConnection;
-        public static Type Mod;
-        public static Type ReactorClientData;
         public static Assembly ReactorAssembly;
         public static BasePlugin ReactorPlugin;
         public static Harmony ReactorHarmony;
@@ -65,38 +62,6 @@ namespace FungleAPI.ModCompatibility
                         ReactorHarmony.Unpatch(typeof(PingTracker).GetMethod("Update"), type.GetMethod("Postfix"));
                         FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Patches.Miscellaneous.PingTrackerPatch.Postfix");
                     }
-                    else if (type.FullName == "Reactor.Networking.Mod")
-                    {
-                        Mod = type;
-                    }
-                    else if (type.FullName == "Reactor.Networking.Messages.ModdedHandshakeC2S")
-                    {
-                        ModdedHandshakeC2S_Serialize = type.GetMethod("Serialize");
-                        ModdedHandshakeC2S_Deserialize = type.GetMethod("Deserialize");
-                    }
-                    else if (type.FullName == "Reactor.Networking.ModList")
-                    {
-                        ModList_Current = type.GetProperty("Current");
-                    }
-                    else if (type.FullName == "Reactor.Networking.Patches.ReactorClientData")
-                    {
-                        ReactorClientData = type;
-                    }
-                    else if (type.FullName == "Reactor.Networking.Patches.ClientPatches")
-                    {
-                        ReactorHarmony.Unpatch(typeof(InnerNetClient._CoHandleSpawn_d__166).GetMethod("MoveNext"), type.GetNestedType("CoHandleSpawnPatch").GetMethod("Postfix"));
-                        FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ClientPatche.CoHandleSpawnPatch.Postfix");
-                        ReactorHarmony.Unpatch(typeof(InnerNetClient._HandleGameDataInner_d__165).GetMethod("MoveNext"), type.GetNestedType("HandleGameDataInnerPatch").GetMethod("Prefix"));
-                        FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ClientPatche.HandleGameDataInnerPatch.Prefix");
-                        ReactorHarmony.Unpatch(typeof(InnerNetClient._CoSendSceneChange_d__156).GetMethod("MoveNext"), type.GetNestedType("CoSendSceneChangePatch").GetMethod("Prefix"));
-                        FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ClientPatche.CoSendSceneChangePatch.Prefix");
-                        ReactorHarmony.Unpatch(typeof(SpawnGameDataMessage).GetMethod("SerializeValues"), type.GetNestedType("SpawnGameDataMessagePatch").GetMethod("Prefix"));
-                        FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ClientPatche.SpawnGameDataMessagePatch.Prefix");
-                    }
-                    else if (type.FullName == "Reactor.Networking.Patches.ReactorConnection")
-                    {
-                        ReactorConnection = type;
-                    }
                     else if (type.FullName == "Reactor.Localization.Utilities.CustomStringName")
                     {
                         FungleAPIPlugin.Harmony.Patch(type.GetMethod("Create"), new HarmonyMethod(typeof(ReactorSupport).GetMethod("CustomStringName_Create_Prefix")));
@@ -112,50 +77,17 @@ namespace FungleAPI.ModCompatibility
                         ReactorHarmony.Unpatch(typeof(TranslationController).GetMethod("GetStringWithDefault", new Type[] { typeof(StringNames), typeof(string), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) }), type.GetMethod("StringNamesPatch"));
                         FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Localization.Patches.GetStringPatch.StringNamesPatch");
                     }
-                }                
-            }
-        }
-        public static void SendHandShakeMessage(MessageWriter messageWriter)
-        {
-            if (ModdedHandshakeC2S_Serialize != null)
-            {
-                FungleAPIPlugin.Instance.Log.LogDebug("[Reactor] Injecting ReactorHandshakeC2S to CoSendSceneChange");
-                ModdedHandshakeC2S_Serialize.Invoke(null, new object[] { messageWriter, ModList_Current.GetValue(null) });
-            }
-        }
-        public static void ReadHandShakeMessage(MessageReader messageReader, ClientData clientData)
-        {
-            if (ReactorClientData != null)
-            {
-                object[] mods;
-                object[] args = new object[] { messageReader, null };
-                ModdedHandshakeC2S_Deserialize.Invoke(null, args);
-                mods = (object[])args[1];
-                ReactorClientData.GetMethod("Set", AccessTools.all).Invoke(null, new object[] { clientData.Id, Activator.CreateInstance(ReactorClientData, new object[] { clientData, mods }) });
-                FungleAPIPlugin.Instance.Log.LogDebug("[Reactor] Received reactor handshake for " + clientData.PlayerName);
-                if (AmongUsClient.Instance.AmHost)
-                {
-                    object[] args2 = new object[] { mods, ModList_Current.GetValue(null), null };
-                    if ((bool)Mod.GetMethod("Validate", AccessTools.all).Invoke(null, args2))
+                    else if (type.FullName == "Reactor.Networking.Patches.ReactorClientData")
                     {
-                        AmongUsClient.Instance.KickWithReason(clientData.Id, (string)args2[2]);
+                        FungleAPIPlugin.Harmony.Patch(type.GetMethod("Set"), null, new HarmonyMethod(typeof(ReactorSupport).GetMethod("ReactorClientData_Set_Postfix")));
+                        FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ReactorClientData");
                     }
-                }
+                }   
             }
         }
-        public static void ReadSetKickReasonMessage(MessageReader messageReader)
+        public static void ReactorClientData_Set_Postfix([HarmonyArgument(0)] int clientId)
         {
-            if (ReactorConnection != null)
-            {
-                string reason = messageReader.ReadString();
-                FungleAPIPlugin.Instance.Log.LogDebug("[Reactor] Received SetKickReason: " + reason);
-                object Instance = ReactorConnection.GetProperty("Instance").GetValue(null);
-                if (Instance != null)
-                {
-                    ReactorConnection.GetProperty("LastKickReason").SetValue(Instance, reason);
-                }
-            }
-            messageReader.Recycle();
+            Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
         }
         public static bool CustomStringName_Create_Prefix(ref StringNames __result)
         {
@@ -174,21 +106,6 @@ namespace FungleAPI.ModCompatibility
             }
             text = "";
             return false;
-        }
-        internal static void KickWithReason(this InnerNetClient innerNetClient, int targetClientId, string reason)
-        {
-            MessageWriter writer = MessageWriter.Get(SendOption.Reliable);
-            writer.StartMessage(Tags.GameDataTo);
-            writer.Write(innerNetClient.GameId);
-            writer.WritePacked(targetClientId);
-            writer.StartMessage(byte.MaxValue);
-            writer.Write(0);
-            writer.Write(reason);
-            writer.EndMessage();
-            writer.EndMessage();
-            innerNetClient.SendOrDisconnect(writer);
-            writer.Recycle();
-            innerNetClient.KickPlayer(targetClientId, false);
         }
     }
 }

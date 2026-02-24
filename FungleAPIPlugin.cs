@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Core.Logging.Interpolation;
@@ -38,11 +33,19 @@ using Il2CppSystem.Text;
 using InnerNet;
 using Microsoft.VisualBasic;
 using Steamworks;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using TMPro;
 using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using static BepInEx.BepInDependency;
+
+[assembly: AssemblyMetadata("Reactor.ModFlags", "RequireOnAllClients")]
 
 namespace FungleAPI
 {
@@ -51,7 +54,8 @@ namespace FungleAPI
     /// </summary>
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
-	public class FungleAPIPlugin : BasePlugin
+    [BepInDependency("gg.reactor.api", DependencyFlags.SoftDependency)]
+    public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.8";
@@ -124,6 +128,10 @@ namespace FungleAPI
                 ReactorSupport.Initialize();
                 LevelImpostorSupport.Initialize();
                 CosmeticManager.SetPaletta();
+                if (ReactorSupport.ReactorAssembly == null)
+                {
+                    HandShakeManager.PatchHandShake();
+                }
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {

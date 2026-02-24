@@ -1,21 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.Data;
+﻿using AmongUs.Data;
 using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
 using InnerNet;
 using Steamworks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
@@ -140,6 +142,13 @@ namespace FungleAPI.Networking
                 return true;
             }
         }
+        public static void PatchHandShake()
+        {
+            FungleAPIPlugin.Harmony.Patch(typeof(InnerNetClient._CoSendSceneChange_d__156).GetMethod("MoveNext"), new HarmonyMethod(typeof(HandShakeManager).GetMethod("InnerNetClient_CoSendSceneChange_d__156_MoveNext_Prefix")));
+            FungleAPIPlugin.Harmony.Patch(typeof(InnerNetClient._CoHandleSpawn_d__166).GetMethod("MoveNext"), null, new HarmonyMethod(typeof(HandShakeManager).GetMethod("InnerNetClient_CoHandleSpawn_d__166_MoveNext_Postfix")));
+            FungleAPIPlugin.Harmony.Patch(typeof(InnerNetClient._HandleGameDataInner_d__165).GetMethod("MoveNext"), new HarmonyMethod(typeof(HandShakeManager).GetMethod("InnerNetClient_HandleGameDataInner_d__165_MoveNext_Prefix")));
+            FungleAPIPlugin.Harmony.Patch(typeof(InnerNetClient._CoHandleSpawn_d__166).GetMethod("MoveNext"), null, new HarmonyMethod(typeof(HandShakeManager).GetMethod("SpawnGameDataMessage_SerializeValues_Postfix")));
+        }
         public static void KickPlayer(int clientId, DisconnectReasons disconnectReason, string extraText = "", string extraText2 = "")
         {
             AmongUsClient.Instance.KickPlayer(clientId, disconnectReason, extraText, extraText2);
@@ -166,6 +175,113 @@ namespace FungleAPI.Networking
                 innerNetClient.SendOrDisconnect(messageWriter);
                 messageWriter.Recycle();
             }
+        }
+        public static void SpawnGameDataMessage_SerializeValues_Postfix(SpawnGameDataMessage __instance, MessageWriter msg)
+        {
+            if (AmongUsClient.Instance.ClientId != __instance.ownerId && __instance.NetObjectType == Il2CppType.From(typeof(PlayerControl)))
+            {
+                FungleAPIPlugin.Instance.Log.LogInfo("Deserializing mods - Client");
+                HandShakeManager.SendMods(msg);
+            }
+        }
+        public static bool InnerNetClient_HandleGameDataInner_d__165_MoveNext_Prefix(InnerNetClient._HandleGameDataInner_d__165 __instance, ref bool __result)
+        {
+            InnerNetClient innerNetClient = __instance.__4__this;
+            MessageReader reader = __instance.reader;
+            if (__instance.__1__state != 0)
+            {
+                return true;
+            }
+            if (reader.Tag == 6)
+            {
+                int clientId = reader.ReadPackedInt32();
+                ClientData clientData = innerNetClient.FindClientById(clientId);
+                string sceneName = reader.ReadString();
+                if (clientData != null && !string.IsNullOrWhiteSpace(sceneName))
+                {
+                    if (reader.BytesRemaining >= 0)
+                    {
+                        HandShakeManager.ReadModsAndCheck(reader, clientId);
+                    }
+                    else if (innerNetClient.AmHost)
+                    {
+                        innerNetClient.KickPlayer(clientId, false);
+                        __result = false;
+                        return false;
+                    }
+                    innerNetClient.StartCoroutine(innerNetClient.CoOnPlayerChangedScene(clientData, sceneName));
+                }
+                else
+                {
+                    UnityEngine.Debug.Log($"Couldn't find client {clientId} to change scene to {sceneName}");
+                    reader.Recycle();
+                }
+                __result = false;
+                return false;
+            }
+            if (reader.Tag == 200)
+            {
+                DisconnectReasons reason = (DisconnectReasons)reader.ReadByte();
+                string extraText = reader.ReadString();
+                string extraText2 = reader.ReadString();
+                string text = DisconnectPopup.ErrorMessages[reason].GetString();
+                if (!string.IsNullOrEmpty(extraText2) && !string.IsNullOrEmpty(extraText))
+                {
+                    text = text.Replace("0", extraText) + extraText2;
+                }
+                else if (!string.IsNullOrEmpty(extraText))
+                {
+                    text += extraText;
+                }
+                innerNetClient.Dispatcher.Add(new Action(delegate
+                {
+                    innerNetClient.HandleDisconnect(DisconnectReasons.Custom, text);
+                    innerNetClient.LastCustomDisconnect = text;
+                }));
+                __result = false;
+                return false;
+            }
+            return true;
+        }
+        public static void InnerNetClient_CoHandleSpawn_d__166_MoveNext_Postfix(InnerNetClient._CoHandleSpawn_d__166 __instance, bool __result)
+        {
+            if (ReactorSupport.ReactorAssembly == null && !__result && !AmongUsClient.Instance.AmHost && __instance._ownerId_5__2 == AmongUsClient.Instance.ClientId)
+            {
+                Hazel.MessageReader reader = __instance.reader;
+                if (reader.BytesRemaining > 0)
+                {
+                    HandShakeManager.ReadModsAndCheck(reader, __instance._ownerId_5__2);
+                    return;
+                }
+                AmongUsClient.Instance.HandleDisconnect(HandShakeManager.HostIsNotModded);
+            }
+        }
+        public static bool InnerNetClient_CoSendSceneChange_d__156_MoveNext_Prefix(InnerNetClient._CoSendSceneChange_d__156 __instance, ref bool __result)
+        {
+            InnerNetClient innerNetClient = __instance.__4__this;
+            if (!innerNetClient.AmHost && innerNetClient.connection.State == Hazel.ConnectionState.Connected && innerNetClient.ClientId >= 0)
+            {
+                ClientData clientData = innerNetClient.FindClientById(innerNetClient.ClientId);
+                if (clientData != null)
+                {
+                    MessageWriter writer = MessageWriter.Get(SendOption.Reliable);
+                    writer.StartMessage(Tags.GameData);
+                    writer.Write(innerNetClient.GameId);
+                    writer.StartMessage(6);
+                    writer.WritePacked(innerNetClient.ClientId);
+                    writer.Write(__instance.sceneName);
+                    HandShakeManager.SendMods(writer);
+                    writer.EndMessage();
+                    writer.EndMessage();
+                    innerNetClient.SendOrDisconnect(writer);
+                    writer.Recycle();
+                    innerNetClient.StartCoroutine(innerNetClient.CoOnPlayerChangedScene(clientData, __instance.sceneName));
+                    __instance.__1__state = -1;
+                    __result = false;
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
