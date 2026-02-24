@@ -12,9 +12,6 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class CrewmateTeam : ModdedTeam
     {
         public override bool FriendlyFire => true;

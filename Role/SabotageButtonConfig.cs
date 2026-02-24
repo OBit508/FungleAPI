@@ -4,16 +4,16 @@ using UnityEngine;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// Configuration class for the Sabotage button behavior
     /// </summary>
     public class SabotageButtonConfig
     {
         /// <summary>
-        /// 
+        /// Default sabotage button configuration instance
         /// </summary>
         public static SabotageButtonConfig Default { get; } = new SabotageButtonConfig();
         /// <summary>
-        /// 
+        /// Default sprite used by the sabotage button
         /// </summary>
         public static Sprite DefaultSprite;
         public SabotageButtonConfig()
@@ -89,47 +89,47 @@ namespace FungleAPI.Role
             };
         }
         /// <summary>
-        /// 
+        /// Gets the sabotage cooldown duration
         /// </summary>
         public Func<float> Cooldown;
         /// <summary>
-        /// 
+        /// Determines whether the sabotage button can be used
         /// </summary>
         public Func<bool> CanUse;
         /// <summary>
-        /// 
+        /// Sets the sabotage cooldown timer
         /// </summary>
         public Action<float> SetTimer;
         /// <summary>
-        /// 
+        /// Resets the sabotage timer
         /// </summary>
         public Action<bool> ResetTimer;
         /// <summary>
-        /// 
+        /// Refreshes the sabotage button state
         /// </summary>
         public Action Refresh;
         /// <summary>
-        /// 
+        /// Executes the sabotage button action
         /// </summary>
         public Action DoClick;
         /// <summary>
-        /// 
+        /// Updates the sabotage button
         /// </summary>
         public Action Update;
         /// <summary>
-        /// 
+        /// Resets the sabotage button to its default state
         /// </summary>
         public Action ResetButton;
         /// <summary>
-        /// 
+        /// Initializes the sabotage button
         /// </summary>
         public Action InitializeButton;
         /// <summary>
-        /// 
+        /// Current sabotage cooldown timer value
         /// </summary>
         public float Timer;
         /// <summary>
-        /// 
+        /// Gets the current SabotageButton instance from the Hud
         /// </summary>
         public SabotageButton Button => HudManager.Instance.SabotageButton;
     }

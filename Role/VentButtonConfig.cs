@@ -4,21 +4,18 @@ using UnityEngine;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// Configuration class for the Vent button behavior
     /// </summary>
     public class VentButtonConfig
     {
         /// <summary>
-        /// 
+        /// Default vent button configuration instance
         /// </summary>
         public static VentButtonConfig Default { get; } = new VentButtonConfig();
         /// <summary>
-        /// 
+        /// Default sprite used by the vent button
         /// </summary>
         public static Sprite DefaultSprite;
-        /// <summary>
-        /// 
-        /// </summary>
         public VentButtonConfig()
         {
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.IsOnCooldown && !PlayerControl.LocalPlayer.Data.IsDead;
@@ -75,47 +72,47 @@ namespace FungleAPI.Role
             };
         }
         /// <summary>
-        /// 
+        /// Determines whether the vent button can be used
         /// </summary>
         public Func<bool> CanUse;
         /// <summary>
-        /// 
+        /// Returns the vent cooldown value
         /// </summary>
         public Func<float> Cooldown;
         /// <summary>
-        /// 
+        /// Determines whether the vent outline should be shown
         /// </summary>
         public Func<bool> ShowOutline;
         /// <summary>
-        /// 
+        /// Sets the current vent target
         /// </summary>
         public Action<Vent> SetTarget;
         /// <summary>
-        /// 
+        /// Sets the vent cooldown timer
         /// </summary>
         public Action<float> SetTimer;
         /// <summary>
-        /// 
+        /// Executes the vent button action
         /// </summary>
         public Action DoClick;
         /// <summary>
-        /// 
+        /// Updates the vent button state
         /// </summary>
         public Action Update;
         /// <summary>
-        /// 
+        /// Resets the vent button to its default state
         /// </summary>
         public Action ResetButton;
         /// <summary>
-        /// 
+        /// Initializes the vent button
         /// </summary>
         public Action InitializeButton;
         /// <summary>
-        /// 
+        /// Current cooldown timer value
         /// </summary>
         public float Timer;
         /// <summary>
-        /// 
+        /// Gets the current VentButton instance from the Hud
         /// </summary>
         public VentButton Button => HudManager.Instance.ImpostorVentButton;
     }

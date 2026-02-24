@@ -2,9 +2,6 @@
 
 namespace FungleAPI.Translation
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class Translator
     {
         public Translator(string defaultText)
@@ -18,7 +15,7 @@ namespace FungleAPI.Translation
         public StringNames StringName;
         public Dictionary<SupportedLangs, string> Strings = new Dictionary<SupportedLangs, string>();
         /// <summary>
-        /// 
+        /// Adds a translation for a specific language
         /// </summary>
         public Translator AddTranslation(SupportedLangs lang, string text)
         {
@@ -29,7 +26,7 @@ namespace FungleAPI.Translation
             return this;
         }
         /// <summary>
-        /// 
+        /// Gets the translated string for the current language
         /// </summary>
         public string GetString()
         {

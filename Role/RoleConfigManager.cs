@@ -7,36 +7,36 @@ using System.Threading.Tasks;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// A class that helps the role config system to work
     /// </summary>
     public static class RoleConfigManager
     {
         /// <summary>
-        /// 
+        /// Current kill button configuration
         /// </summary>
         public static KillButtonConfig KillConfig { get; private set; } = KillButtonConfig.Default;
         /// <summary>
-        /// 
+        /// Current light source configuration
         /// </summary>
         public static LightSourceConfig LightConfig { get; private set; } = LightSourceConfig.Default;
         /// <summary>
-        /// 
+        /// Current role tab configuration
         /// </summary>
         public static MiraRoleTabConfig RoleTabConfig { get; private set; } = new MiraRoleTabConfig();
         /// <summary>
-        /// 
+        /// Current report button configuration
         /// </summary>
         public static ReportButtonConfig ReportConfig { get; private set; } = ReportButtonConfig.Default;
         /// <summary>
-        /// 
+        /// Current sabotage button configuration
         /// </summary>
         public static SabotageButtonConfig SabotageConfig { get; private set; } = SabotageButtonConfig.Default;
         /// <summary>
-        /// 
+        /// Current vent button configuration
         /// </summary>
         public static VentButtonConfig VentConfig { get; private set; } = VentButtonConfig.Default;
         /// <summary>
-        /// 
+        /// Updates all configurations based on the provided role
         /// </summary>
         public static void UpdateByRole(RoleBehaviour role)
         {

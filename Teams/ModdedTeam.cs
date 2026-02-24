@@ -24,21 +24,21 @@ using UnityEngine.UIElements;
 namespace FungleAPI.Teams
 {
     /// <summary>
-    /// 
+    /// Base class to create a team
     /// </summary>
     [FungleIgnore]
     public abstract class ModdedTeam
     {
         /// <summary>
-        /// 
+        /// Gets the Crewmates team instance
         /// </summary>
         public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
         /// <summary>
-        /// 
+        /// Gets the Impostors team instance
         /// </summary>
         public static ModdedTeam Impostors => Instance<ImpostorTeam>();
         /// <summary>
-        /// 
+        /// Gets the Neutrals team instance
         /// </summary>
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
         public static List<ModdedTeam> Teams = new List<ModdedTeam>();
@@ -48,59 +48,59 @@ namespace FungleAPI.Teams
         public List<ModdedOption> ExtraConfigs;
         public bool Initialized;
         /// <summary>
-        /// 
+        /// Team id
         /// </summary>
         public int TeamId;
         /// <summary>
-        /// 
+        /// Team color
         /// </summary>
         public abstract Color TeamColor { get; }
         /// <summary>
-        /// 
+        /// Team name
         /// </summary>
         public abstract StringNames TeamName { get; }
         /// <summary>
-        /// 
+        /// Plural team name
         /// </summary>
         public abstract StringNames PluralName { get; }
         /// <summary>
-        /// 
+        /// Victory screen text
         /// </summary>
         public abstract string VictoryText { get; }
         /// <summary>
-        /// 
+        /// Default game over
         /// </summary>
         public abstract CustomGameOver DefaultGameOver { get; }
         /// <summary>
-        /// 
+        /// Default role assigned to this team
         /// </summary>
         public virtual RoleTypes DefaultRole { get; }
         /// <summary>
-        /// 
+        /// Determines whether friendly fire is enabled
         /// </summary>
         public virtual bool FriendlyFire => true;
         /// <summary>
-        /// 
+        /// Determines whether members know each other
         /// </summary>
         public virtual bool KnowMembers => false;
         /// <summary>
-        /// 
+        /// Maximum number of players allowed in this team
         /// </summary>
         public virtual uint MaxCount => 3;
         /// <summary>
-        /// 
+        /// Default number of players in this team
         /// </summary>
         public virtual uint DefaultCount => 1;
         /// <summary>
-        /// 
+        /// Default priority value for team assignment
         /// </summary>
         public virtual uint DefaultPriority => 1;
         /// <summary>
-        /// 
+        /// Determines whether only enabled roles can be assigned
         /// </summary>
         public virtual bool AssignOnlyEnabledRoles => true;
         /// <summary>
-        /// 
+        /// Returns the instance of the given type
         /// </summary>
         public static T Instance<T>() where T : ModdedTeam
         {
@@ -111,7 +111,6 @@ namespace FungleAPI.Teams
                     return team.SimpleCast<T>();
                 }
             }
-
             return null;
         }
         public virtual void Initialize(ModPlugin plugin)
@@ -123,7 +122,7 @@ namespace FungleAPI.Teams
             }
         }
         /// <summary>
-        /// 
+        /// Creates the category header
         /// </summary>
         public virtual CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
@@ -139,7 +138,7 @@ namespace FungleAPI.Teams
             return categoryHeaderEditRole;
         }
         /// <summary>
-        /// 
+        /// Creates the category header
         /// </summary>
         public virtual CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
         {
@@ -157,7 +156,7 @@ namespace FungleAPI.Teams
             return categoryHeaderRoleVariant;
         }
         /// <summary>
-        /// 
+        /// Creates the team count option
         /// </summary>
         public virtual OptionBehaviour CreateCountOption(Transform transform)
         {
@@ -173,7 +172,7 @@ namespace FungleAPI.Teams
             return option;
         }
         /// <summary>
-        /// 
+        /// Creates the team priority option
         /// </summary>
         public virtual OptionBehaviour CreatePriorityOption(Transform transform)
         {

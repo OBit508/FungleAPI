@@ -13,9 +13,6 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class ImpostorTeam : ModdedTeam
     {
         public override bool FriendlyFire => false;

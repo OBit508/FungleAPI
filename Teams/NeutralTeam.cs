@@ -11,9 +11,6 @@ using UnityEngine;
 
 namespace FungleAPI.Teams
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class NeutralTeam : ModdedTeam
     {
         public override bool FriendlyFire => true;

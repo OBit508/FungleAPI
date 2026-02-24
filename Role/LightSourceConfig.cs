@@ -10,12 +10,12 @@ using UnityEngine;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// Configuration class for player light source behavior
     /// </summary>
     public class LightSourceConfig
     {
         /// <summary>
-        /// 
+        /// Default light source configuration instance
         /// </summary>
         public static LightSourceConfig Default { get; } = new LightSourceConfig();
         public LightSourceConfig()
@@ -97,31 +97,31 @@ namespace FungleAPI.Role
             };
         }
         /// <summary>
-        /// 
+        /// Calculates the light radius for a player
         /// </summary>
         public Func<NetworkedPlayerInfo, bool, float> CalculateLightRadius;
         /// <summary>
-        /// 
+        /// Adjusts lighting settings for the given player
         /// </summary>
         public Action<PlayerControl> AdjustLighting;
         /// <summary>
-        /// 
+        /// Determines whether the flashlight is enabled for the player
         /// </summary>
         public Predicate<PlayerControl> IsFlashlightEnabled;
         /// <summary>
-        /// 
+        /// Updates the light source configuration
         /// </summary>
         public Action Update;
         /// <summary>
-        /// 
+        /// Gets the local player
         /// </summary>
         public PlayerControl Player => PlayerControl.LocalPlayer;
         /// <summary>
-        /// 
+        /// Gets the current ship status instance
         /// </summary>
         public ShipStatus Ship => ShipStatus.Instance;
         /// <summary>
-        /// 
+        /// Gets the player's light source component
         /// </summary>
         public LightSource Light => Player.lightSource;
     }

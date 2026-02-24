@@ -4,12 +4,12 @@ using UnityEngine;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// Configuration class for the Kill button behavior
     /// </summary>
     public class KillButtonConfig
     {
         /// <summary>
-        /// 
+        /// Default kill button configuration instance
         /// </summary>
         public static KillButtonConfig Default { get; } = new KillButtonConfig();
         public KillButtonConfig()
@@ -79,44 +79,43 @@ namespace FungleAPI.Role
                         return;
                     }
                     Button.SetDisabled();
-
                 }
             };
         }
         /// <summary>
-        /// 
+        /// Determines whether the kill button can currently be used
         /// </summary>
         public Func<bool> CanUse;
         /// <summary>
-        /// 
+        /// Returns the current kill cooldown value
         /// </summary>
         public Func<float> Cooldown;
         /// <summary>
-        /// 
+        /// Handles click validation for a target player
         /// </summary>
         public Action<PlayerControl> CheckClick;
         /// <summary>
-        /// 
+        /// Sets the current target for the kill button
         /// </summary>
         public Action<PlayerControl> SetTarget;
         /// <summary>
-        /// 
+        /// Executes the kill button action
         /// </summary>
         public Action DoClick;
         /// <summary>
-        /// 
+        /// Updates the kill button state
         /// </summary>
         public Action Update;
         /// <summary>
-        /// 
+        /// Resets the kill button to its default visual and cooldown state
         /// </summary>
         public Action ResetButton;
         /// <summary>
-        /// 
+        /// Initializes the kill button
         /// </summary>
         public Action InitializeButton;
         /// <summary>
-        /// 
+        /// Gets the current KillButton instance from the Hud
         /// </summary>
         public KillButton Button => HudManager.Instance.KillButton;
     }
