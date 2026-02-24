@@ -10,15 +10,9 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Utilities
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public static class HarmonyHelper
     {
         public static Dictionary<MethodBase, Func<object>> Patches = new Dictionary<MethodBase, Func<object>>();
-        /// <summary>
-        /// 
-        /// </summary>
         public static void Remove_FungleAPI_HarmonyLib_Patch(MethodInfo original, string TypeName, string MethodName)
         {
             Type type = FungleAPIPlugin.Plugin.AllTypes.FirstOrDefault(t => t.Name == TypeName);

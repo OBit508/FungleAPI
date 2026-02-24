@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Utilities
 {
     /// <summary>
-    /// 
+    /// A helper class that have a change able value
     /// </summary>
     public class ChangeableValue<T>
     {

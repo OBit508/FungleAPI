@@ -47,14 +47,14 @@ using UnityEngine.UIElements;
 namespace FungleAPI
 {
     /// <summary>
-    /// 
+    /// The API BasePlugin class
     /// </summary>
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
 	public class FungleAPIPlugin : BasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.7";
+        public const string ModV = "0.2.8";
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
@@ -63,7 +63,7 @@ namespace FungleAPI
         private static bool rolesRegistered;
         internal static bool loaddedAssets;
         /// <summary>
-        /// 
+        /// The API Plugin
         /// </summary>
         public static ModPlugin Plugin
         {
@@ -262,16 +262,6 @@ namespace FungleAPI
             DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToVerifyMods, errorMessage5.StringName);
             DisconnectPopup.ErrorMessages.Add(HandShakeManager.FailedToSyncOptions, errorMessage6.StringName);
         }
-        internal class FungleHelper : MonoBehaviour
-        {
-            public IEnumerator Play(IEnumerator enumerator)
-            {
-                try
-                {
-                    yield return enumerator;
-                }
-                finally { }
-            }
-        }
+        internal class FungleHelper : MonoBehaviour { }
     }
 }

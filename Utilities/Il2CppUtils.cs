@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Utilities
 {
     /// <summary>
-    /// 
+    /// A Il2cpp helper class
     /// </summary>
     public static class Il2CppUtils
     {

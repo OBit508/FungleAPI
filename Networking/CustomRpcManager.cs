@@ -42,18 +42,10 @@ namespace FungleAPI.Networking
                 {
                     return false;
                 }
-                if (HostAuthority != HostAuthorityUsage.Always)
-                {
-                    bool isOfficial = Helpers.IsCurrentServerOfficial();
-                    if ((isOfficial && HostAuthority != HostAuthorityUsage.OnVanillaServers) || (!isOfficial && HostAuthority != HostAuthorityUsage.OnModdedServers))
-                    {
-                        return false;
-                    }
-                }
                 return true;
             } 
         }
-        public static HostAuthorityUsage HostAuthority = HostAuthorityUsage.OnVanillaServers;
+        public static HostAuthorityUsage HostAuthority = HostAuthorityUsage.Always;
         public static bool UseSafeMode = true;
         /// <summary>
         /// Returns the instance of the given type
@@ -130,8 +122,6 @@ namespace FungleAPI.Networking
         public enum HostAuthorityUsage
         {
             Always,
-            OnVanillaServers,
-            OnModdedServers,
             Never
         }
     }

@@ -28,22 +28,25 @@ using xCloud;
 namespace FungleAPI.Utilities.Assets
 {
     /// <summary>
-    /// 
+    /// A asset loader class
     /// </summary>
     public static class ResourceHelper
     {
         /// <summary>
-        /// 
+        /// Reads an embedded text resource from the plugin assembly
         /// </summary>
         public static string ReadText(ModPlugin plugin, string resource)
         {
-            using (StreamReader sr = new StreamReader(plugin.ModAssembly.GetManifestResourceStream(resource)))
+            using (Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
             {
-                return sr.ReadToEnd();
+                using (StreamReader sr = new StreamReader(stream))
+                {
+                    return sr.ReadToEnd();
+                }
             }
         }
         /// <summary>
-        /// 
+        /// Loads an asset from an AssetBundle with optional DontUnload flag
         /// </summary>
         public static T LoadAsset<T>(this AssetBundle bundle, string name, bool dontUnload = true) where T : UnityEngine.Object
         {
@@ -55,7 +58,7 @@ namespace FungleAPI.Utilities.Assets
             return asset;
         }
         /// <summary>
-        /// 
+        /// Loads an AssetBundle from an embedded resource
         /// </summary>
         public static AssetBundle LoadBundle(ModPlugin plugin, string resource)
         {
@@ -69,7 +72,7 @@ namespace FungleAPI.Utilities.Assets
             }
         }
         /// <summary>
-        /// 
+        /// Loads a WAV audio clip from an embedded resource
         /// </summary>
         public static AudioClip LoadAudio(ModPlugin plugin, string resource, string clipName, bool dontUnload = true)
         {
@@ -118,7 +121,7 @@ namespace FungleAPI.Utilities.Assets
             }
         }
         /// <summary>
-        /// 
+        /// Loads a GIF file from an embedded resource and converts it into a GifFile
         /// </summary>
         public static GifFile LoadGif(ModPlugin plugin, string resource, float PixelPerUnit, bool loop = true)
         {
@@ -144,7 +147,7 @@ namespace FungleAPI.Utilities.Assets
             }
         }
         /// <summary>
-        /// 
+        /// Loads a PNG sprite from an embedded resource
         /// </summary>
         public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)
         {
@@ -166,6 +169,9 @@ namespace FungleAPI.Utilities.Assets
                 }
             }
         }
+        /// <summary>
+        /// Converts an array of sprites into a GifFile with uniform delay
+        /// </summary>
         public static GifFile ToGif(Sprite[] sprites, float delay, bool loop = true)
         {
             GifFile animation = new GifFile();

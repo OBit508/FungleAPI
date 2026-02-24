@@ -30,7 +30,7 @@ using static UnityEngine.GraphicsBuffer;
 namespace FungleAPI.Utilities
 {
     /// <summary>
-    /// 
+    /// A utility class
     /// </summary>
     public static class Helpers
     {
@@ -39,7 +39,7 @@ namespace FungleAPI.Utilities
         internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
         /// <summary>
-        /// 
+        /// Returns all the dead bodies
         /// </summary>
         public static List<DeadBody> AllDeadBodies
         {
@@ -50,7 +50,7 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// 
+        /// Show a popup on the screen
         /// </summary>
         public static void ShowPopup(string text)
         {
@@ -67,7 +67,7 @@ namespace FungleAPI.Utilities
             Popup.Show(text);
         }
         /// <summary>
-        /// 
+        /// Show the edit name screen
         /// </summary>
         public static void ShowEditNameScreen(string tittleText, string defaultText, Action<string> OnSubmit = null, Action<string> OnBack = null)
         {
@@ -104,7 +104,7 @@ namespace FungleAPI.Utilities
             Screen.StartCoroutine(Screen.Show());
         }
         /// <summary>
-        /// 
+        /// Create a dead body
         /// </summary>
         public static DeadBody CreateDeadBody(PlayerControl from, DeadBodyType deadBodyType)
         {
@@ -123,23 +123,22 @@ namespace FungleAPI.Utilities
             return body;
         }
         /// <summary>
-        /// 
+        /// Add DontUnloadUnusedAsset flag
         /// </summary>
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
         {
-            ref T ptr = ref obj;
-            ptr.hideFlags |= HideFlags.DontUnloadUnusedAsset;
+            obj.hideFlags |= HideFlags.DontUnloadUnusedAsset;
             return obj;
         }
         /// <summary>
-        /// 
+        /// Cast something
         /// </summary>
         public static T SimpleCast<T>(this object obj)
         {
             return (T)obj;
         }
         /// <summary>
-        /// 
+        /// Get a player by the Id
         /// </summary>
         public static PlayerControl GetPlayerById(byte id)
         {
@@ -153,7 +152,7 @@ namespace FungleAPI.Utilities
             return null;
         }
         /// <summary>
-        /// 
+        /// Get a dead body by the Id
         /// </summary>
         public static DeadBody GetBodyById(byte id)
         {
@@ -167,7 +166,7 @@ namespace FungleAPI.Utilities
             return null;
         }
         /// <summary>
-        /// 
+        /// Get or Add a component to a GameObject
         /// </summary>
         public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
         {
@@ -179,14 +178,14 @@ namespace FungleAPI.Utilities
             return result;
         }
         /// <summary>
-        /// 
+        /// Get the translated string
         /// </summary>
         public static string GetString(this StringNames s)
         {
             return TranslationController.Instance.GetString(s);
         }
         /// <summary>
-        /// 
+        /// Set a new action to this button
         /// </summary>
         public static void SetNewAction(this PassiveButton button, Action action)
         {
@@ -197,7 +196,7 @@ namespace FungleAPI.Utilities
             }));
         }
         /// <summary>
-        /// 
+        /// Set a new action to this button
         /// </summary>
         public static void SetNewAction(this ButtonBehavior button, Action action)
         {
@@ -208,10 +207,11 @@ namespace FungleAPI.Utilities
             }));
         }
         /// <summary>
-        /// 
+        /// Get the index of something inside a 
         /// </summary>
-        public static int GetIndex<T>(this T[] list, T thing)
+        public static int GetIndex<T>(this IEnumerable<T> values, T thing)
         {
+            T[] list = values.ToArray();
             for (int i = 0; i < list.Count(); i++)
             {
                 if (list[i].Equals(thing))
@@ -222,7 +222,7 @@ namespace FungleAPI.Utilities
             return -1;
         }
         /// <summary>
-        /// 
+        /// Make a color be more darker
         /// </summary>
         public static Color Dark(this Color color, float num = 0.5f)
         {
@@ -235,7 +235,7 @@ namespace FungleAPI.Utilities
             );
         }
         /// <summary>
-        /// 
+        /// Make a color be more lighter
         /// </summary>
         public static Color Light(this Color color, float num = 0.5f)
         {
@@ -247,7 +247,7 @@ namespace FungleAPI.Utilities
                 );
         }
         /// <summary>
-        /// 
+        /// Add HideAndDontSave flag
         /// </summary>
         public static T DontDestroy<T>(this T obj) where T : UnityEngine.Object
         {
@@ -256,7 +256,7 @@ namespace FungleAPI.Utilities
             return obj;
         }
         /// <summary>
-        /// 
+        /// Cast something without errors
         /// </summary>
         public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
@@ -274,7 +274,7 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// 
+        /// Create a vent
         /// </summary>
         public static Vent CreateVent(VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
@@ -287,10 +287,11 @@ namespace FungleAPI.Utilities
             vent.Left = null;
             vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
             VentPatch.DoStart(vent);
+            vent.TryGetHelper().Vents.AddRange(nearbyVents);
             return vent;
         }
         /// <summary>
-        /// 
+        /// Connect this vent with another vent
         /// </summary>
         public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)
         {
@@ -306,7 +307,7 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// 
+        /// Disconnect this vent with another vent
         /// </summary>
         public static void DisconnectVent(this Vent vent, Vent target, bool disconnectBoth = true)
         {
@@ -322,7 +323,7 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// 
+        /// Get the VentHelper without errors
         /// </summary>
         public static VentHelper TryGetHelper(this Vent target)
         {
@@ -342,31 +343,25 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// 
+        /// Start a coroutine
         /// </summary>
-        public static bool IsCurrentServerOfficial()
+        public static Coroutine StartCoroutine(System.Collections.IEnumerator enumerator)
         {
-            try
-            {
-                IRegionInfo currentRegion = DestroyableSingleton<ServerManager>.Instance.CurrentRegion;
-                StaticHttpRegionInfo regionInfo = (currentRegion != null) ? currentRegion.TryCast<StaticHttpRegionInfo>() : null;
-                if (regionInfo != null && regionInfo.PingServer.EndsWith("among.us", StringComparison.Ordinal))
-                {
-                    return regionInfo.Servers.All((ServerInfo serverInfo) => serverInfo.Ip.EndsWith("among.us", StringComparison.Ordinal));
-                }
-                return false;
-            }
-            catch
-            {
-                return true;
-            }
+            return FungleAPIPlugin.Helper.StartCoroutine(enumerator.WrapToIl2Cpp());
         }
         /// <summary>
-        /// 
+        /// Start a coroutine
         /// </summary>
-        public static void StartCoroutine(System.Collections.IEnumerator enumerator)
+        public static Coroutine StartCoroutine(Il2CppSystem.Collections.IEnumerator enumerator)
         {
-            FungleAPIPlugin.Helper.StartCoroutine(FungleAPIPlugin.Helper.Play(enumerator).WrapToIl2Cpp());
+            return FungleAPIPlugin.Helper.StartCoroutine(enumerator);
+        }
+        /// <summary>
+        /// Stop a coroutine
+        /// </summary>
+        public static void StopCoroutine(Coroutine coroutine)
+        {
+            FungleAPIPlugin.Helper.StopCoroutine(coroutine);
         }
         public enum VentType 
         {

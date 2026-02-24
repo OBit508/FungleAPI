@@ -27,7 +27,7 @@ namespace FungleAPI.Components
     {
         internal static Dictionary<Vent, VentHelper> ShipVents = new Dictionary<Vent, VentHelper>();
         public static ButtonBehavior ArrowPrefab;
-        public List<Vent> Vents;
+        public List<Vent> Vents = new List<Vent>();
         public List<PlayerControl> Players = new List<PlayerControl>();
         public void Start()
         {

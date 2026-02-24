@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace FungleAPI.Utilities.Assets
 {
     /// <summary>
-    /// 
+    /// An asset that is created later during the loadAssets event
     /// </summary>
     public class LateAsset<T>
     {
         public Func<T> Create;
         /// <summary>
-        /// 
+        /// The created asset instance
         /// </summary>
         public T Asset;
         public LateAsset(Func<T> create)

@@ -8,9 +8,6 @@ using static Il2CppSystem.Xml.Schema.FacetsChecker.FacetsCompiler;
 
 namespace FungleAPI.Utilities.Assets
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class GifFile
     {
         public bool Loop;
@@ -18,7 +15,7 @@ namespace FungleAPI.Utilities.Assets
         public Sprite[] Sprites;
         public float maxTime;
         /// <summary>
-        /// 
+        /// Returns the sprite corresponding to the given time
         /// </summary>
         public Sprite GetSprite(float time)
         {
@@ -37,7 +34,7 @@ namespace FungleAPI.Utilities.Assets
             return Sprites[Sprites.Length - 1];
         }
         /// <summary>
-        /// 
+        /// Sets the sprite frames and their respective delays
         /// </summary>
         public void SetGif(Sprite[] sprites, float[] delays)
         {
