@@ -14,7 +14,7 @@ using UnityEngine;
 namespace FungleAPI.Freeplay
 {
     /// <summary>
-    /// 
+    /// Class used to create the mod folder in freeplay
     /// </summary>
     [FungleIgnore]
     public class ModFolderConfig
@@ -71,7 +71,7 @@ namespace FungleAPI.Freeplay
             return taskAddButton;
         }
         /// <summary>
-        /// 
+        /// Attribute used to create a file with an Action
         /// </summary>
         [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
         public class Item : Attribute
@@ -80,32 +80,9 @@ namespace FungleAPI.Freeplay
             {
                 ItemName = itemName;
                 FolderName = folderName;
-                try
-                {
-                    hexColor = hexColor.Replace("#", "");
-                    byte r = 255;
-                    byte g = 255;
-                    byte b = 255;
-                    byte a = 255;
-                    if (hexColor.Length == 6)
-                    {
-                        r = byte.Parse(hexColor.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                        g = byte.Parse(hexColor.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                        b = byte.Parse(hexColor.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                    }
-                    else if (hexColor.Length == 8)
-                    {
-                        r = byte.Parse(hexColor.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                        g = byte.Parse(hexColor.Substring(2, 2), System.Globalization.NumberStyles.HexNumber);
-                        b = byte.Parse(hexColor.Substring(4, 2), System.Globalization.NumberStyles.HexNumber);
-                        a = byte.Parse(hexColor.Substring(6, 2), System.Globalization.NumberStyles.HexNumber);
-                    }
-                    ItemColor = new Color(r, g, b, a);
-                }
-                catch
-                {
-                    ItemColor = Color.white;
-                }
+                Color color = Color.white;
+                ColorUtility.TryParseHtmlString(hexColor, out color);
+                ItemColor = color;
             }
             public string ItemName;
             public Color ItemColor;

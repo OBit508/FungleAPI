@@ -7,19 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using static PlayerMaterial;
 
 namespace FungleAPI.Configuration.Attributes
 {
     /// <summary>
-    /// 
+    /// Attribute used in properties to transform them into enum settings
     /// </summary>
     [HarmonyPatch(typeof(StringOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedEnumOption : ModdedOption
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public ModdedEnumOption(string configName, string defaultValue)
             : base(configName)
         {

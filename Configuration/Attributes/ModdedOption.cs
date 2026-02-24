@@ -106,16 +106,10 @@ namespace FungleAPI.Configuration.Attributes
             }
             Data.Title = ConfigName.StringName;
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public virtual object GetReturnedValue()
         {
             return null;
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public virtual bool IsValidType(Type type)
         {
             return false;

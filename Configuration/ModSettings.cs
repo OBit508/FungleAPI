@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Configuration
 {
     /// <summary>
-    /// 
+    /// Class used to create the mod tab settings
     /// </summary>
     [FungleIgnore]
     public class ModSettings

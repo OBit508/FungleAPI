@@ -8,7 +8,7 @@ using UnityEngine;
 namespace FungleAPI.Cosmetics.Helpers
 {
     /// <summary>
-    /// 
+    /// Base class to create a color
     /// </summary>
     public class CustomColor
     {

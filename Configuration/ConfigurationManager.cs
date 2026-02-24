@@ -25,11 +25,12 @@ using System.Threading.Tasks;
 using UnityEngine;
 using xCloud;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
+using static PlayerMaterial;
 
 namespace FungleAPI.Configuration
 {
     /// <summary>
-    /// 
+    /// A class that helps the configuration system to work
     /// </summary>
     public static class ConfigurationManager
     {
@@ -40,7 +41,7 @@ namespace FungleAPI.Configuration
         public static List<ModdedOption> Options = new List<ModdedOption>();
         public static string FunglePath = Path.Combine(Application.persistentDataPath, "FungleAPI");
         /// <summary>
-        /// 
+        /// Registers all properties with ModdedOption of the given Type in the given Plugin as settings
         /// </summary>
         public static List<ModdedOption> RegisterAllOptions(Type type, ModPlugin modPlugin)
         {
@@ -57,7 +58,7 @@ namespace FungleAPI.Configuration
             return moddedOptions;
         }
         /// <summary>
-        /// 
+        /// Register the property using ModdedOption in the Plugin as a setting
         /// </summary>
         public static void RegisterModdedOption(ModdedOption moddedOption, ModPlugin plugin, PropertyInfo propertyInfo)
         {

@@ -11,7 +11,7 @@ using UnityEngine;
 namespace FungleAPI.Cosmetics
 {
     /// <summary>
-    /// 
+    /// A class that helps the cosmetic system to work
     /// </summary>
     public static class CosmeticManager
     {

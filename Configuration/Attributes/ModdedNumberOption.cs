@@ -7,19 +7,17 @@ using System;
 using System.Reflection;
 using UnityEngine;
 using xCloud;
+using static PlayerMaterial;
 
 namespace FungleAPI.Configuration.Attributes
 {
     /// <summary>
-    /// 
+    /// Attribute used in properties to transform them into number settings
     /// </summary>
     [HarmonyPatch(typeof(NumberOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedNumberOption : ModdedOption
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public ModdedNumberOption(string configName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
             : base(configName)
         {

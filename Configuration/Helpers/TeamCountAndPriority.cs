@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Configuration.Helpers
 {
     /// <summary>
-    /// 
+    /// Helper class to teams
     /// </summary>
     public class TeamCountAndPriority
     {

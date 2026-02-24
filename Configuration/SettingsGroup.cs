@@ -16,7 +16,7 @@ using static Il2CppSystem.Globalization.CultureInfo;
 namespace FungleAPI.Configuration
 {
     /// <summary>
-    /// 
+    /// Group with options (used in ModSettings)
     /// </summary>
     public class SettingsGroup
     {

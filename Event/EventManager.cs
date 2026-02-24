@@ -16,7 +16,7 @@ using UnityEngine.UIElements;
 namespace FungleAPI.Event
 {
     /// <summary>
-    /// 
+    /// A class that helps the event system to work
     /// </summary>
     public static class EventManager
     {

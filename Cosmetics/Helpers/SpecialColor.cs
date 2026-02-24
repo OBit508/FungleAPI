@@ -9,7 +9,7 @@ using UnityEngine;
 namespace FungleAPI.Cosmetics.Helpers
 {
     /// <summary>
-    /// 
+    /// Base class to create a animated color
     /// </summary>
     public class SpecialColor : CustomColor
     {

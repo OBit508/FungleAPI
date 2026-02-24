@@ -1,24 +1,22 @@
-﻿using FungleAPI.Utilities;
+﻿using FungleAPI.PluginLoading;
+using FungleAPI.Utilities;
+using FungleAPI.Utilities.Prefabs;
+using HarmonyLib;
 using System;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
-using FungleAPI.Utilities.Prefabs;
-using HarmonyLib;
-using FungleAPI.PluginLoading;
+using static PlayerMaterial;
 
 namespace FungleAPI.Configuration.Attributes
 {
     /// <summary>
-    /// 
+    /// Attribute used in properties to transform them into boolean settings
     /// </summary>
     [HarmonyPatch(typeof(ToggleOption))]
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
     public class ModdedToggleOption : ModdedOption
     {
-        /// <summary>
-        /// 
-        /// </summary>
         public ModdedToggleOption(string configName)
             : base(configName) 
         {

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Configuration.Presets
 {
     /// <summary>
-    /// 
+    /// The class that stores the corresponding plugin presets
     /// </summary>
     public class PluginPreset
     {

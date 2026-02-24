@@ -8,7 +8,7 @@ using FungleAPI.Attributes;
 namespace FungleAPI.Cosmetics.Helpers
 {
     /// <summary>
-    /// 
+    /// Class used to add custom cosmetics
     /// </summary>
     [FungleIgnore]
     public class ModCosmetics
