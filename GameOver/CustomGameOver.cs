@@ -12,7 +12,7 @@ using UnityEngine;
 namespace FungleAPI.GameOver
 {
     /// <summary>
-    /// 
+    /// Base class to create a custom game over
     /// </summary>
     [FungleIgnore]
     public class CustomGameOver

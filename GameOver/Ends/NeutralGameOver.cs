@@ -12,7 +12,7 @@ using UnityEngine;
 namespace FungleAPI.GameOver.Ends
 {
     /// <summary>
-    /// 
+    /// Used to give the victory to the last neutral assassin alive
     /// </summary>
     public class NeutralGameOver : CustomGameOver
     {

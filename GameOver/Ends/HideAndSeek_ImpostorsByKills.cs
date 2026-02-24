@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.GameOver.Ends
 {
     /// <summary>
-    /// 
+    /// Class equivalent to the value of the GameOverReason enum
     /// </summary>
     public class HideAndSeek_ImpostorsByKills : ImpostorsByKill
     {
