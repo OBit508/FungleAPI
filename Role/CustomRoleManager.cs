@@ -15,64 +15,65 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using UnityEngine;
+using xCloud;
 
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// 
+    /// A class that helps the role system to work
     /// </summary>
     public static class CustomRoleManager
     {
         internal static Dictionary<Type, RoleTypes> RolesToRegister = new Dictionary<Type, RoleTypes>();
         /// <summary>
-        /// 
+        /// Returns the NeutralGhost role created by the API
         /// </summary>
         public static RoleBehaviour NeutralGhost => GetRole<NeutralGhost>();
         /// <summary>
-        /// 
+        /// Returns all game roles
         /// </summary>
         public static readonly List<RoleBehaviour> AllRoles = new List<RoleBehaviour>();
         /// <summary>
-        /// 
+        /// Returns all custom roles
         /// </summary>
         public static readonly List<ICustomRole> AllCustomRoles = new List<ICustomRole>();
         /// <summary>
-        /// 
+        /// Returns a role instance
         /// </summary>
         public static RoleBehaviour GetRole(Type type)
         {
             return AllRoles.FirstOrDefault(r => r.GetType() == type);
         }
         /// <summary>
-        /// 
+        /// Returns a role instance
         /// </summary>
         public static T GetRole<T>() where T : RoleBehaviour
         {
             return GetRole(typeof(T)).SafeCast<T>();
         }
         /// <summary>
-        /// 
+        /// Returns a role type
         /// </summary>
         public static RoleTypes GetRoleType(Type type)
         {
             return GetRole(type).Role;
         }
         /// <summary>
-        /// 
+        /// Returns a role type
         /// </summary>
         public static RoleTypes GetRoleType<T>() where T : RoleBehaviour
         {
             return GetRoleType(typeof(T));
         }
         /// <summary>
-        /// 
+        /// Converts a RoleBehavior into an ICustomRole
         /// </summary>
         public static ICustomRole CustomRole(this RoleBehaviour role)
         {
             return role as ICustomRole;
         }
         /// <summary>
-        /// 
+        /// Update the fields of a role and the configs
         /// </summary>
         public static void UpdateRole(RoleBehaviour role)
         {
@@ -102,19 +103,14 @@ namespace FungleAPI.Role
             }
         }
         /// <summary>
-        /// 
+        /// Returns the plugin that registered this role
         /// </summary>
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {
-            ICustomRole customRole = role.CustomRole();
-            if (customRole != null)
-            {
-                return ModPluginManager.GetModPlugin(role.GetType().Assembly);
-            }
-            return FungleAPIPlugin.Plugin;
+            return ModPlugin.AllPlugins.FirstOrDefault(p => p.Roles.Contains(role));
         }
         /// <summary>
-        /// 
+        /// Returns the role hint type
         /// </summary>
         public static RoleHintType GetHintType(this RoleBehaviour role)
         {
@@ -125,7 +121,7 @@ namespace FungleAPI.Role
             return RoleHintType.TaskHint;
         }
         /// <summary>
-        /// 
+        /// Returns the role team
         /// </summary>
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {
@@ -136,7 +132,7 @@ namespace FungleAPI.Role
             return RoleManager.IsImpostorRole(role.Role) ? ModdedTeam.Impostors : ModdedTeam.Crewmates;
         }
         /// <summary>
-        /// 
+        /// Returns if the role can sabotage
         /// </summary>
         public static bool CanSabotage(this RoleBehaviour roleBehaviour)
         {
@@ -147,7 +143,7 @@ namespace FungleAPI.Role
             return roleBehaviour.TeamType == RoleTeamTypes.Impostor;
         }
         /// <summary>
-        /// 
+        /// Returns if the role can kill
         /// </summary>
         public static bool CanKill(this RoleBehaviour roleBehaviour)
         {
@@ -158,7 +154,7 @@ namespace FungleAPI.Role
             return roleBehaviour.CanUseKillButton;
         }
         /// <summary>
-        /// 
+        /// Returns if the role can use the vanilla kill button
         /// </summary>
         public static bool UseKillButton(this RoleBehaviour roleBehaviour)
         {
@@ -169,7 +165,7 @@ namespace FungleAPI.Role
             return roleBehaviour.CanUseKillButton;
         }
         /// <summary>
-        /// 
+        /// Returns if the role can vent
         /// </summary>
         public static bool CanVent(this RoleBehaviour roleBehaviour)
         {
@@ -179,9 +175,6 @@ namespace FungleAPI.Role
             }
             return roleBehaviour.CanVent;
         }
-        /// <summary>
-        /// 
-        /// </summary>
         public static void AppendHint(RoleBehaviour roleBehaviour, Il2CppSystem.Text.StringBuilder stringBuilder)
         {
             RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();

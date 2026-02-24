@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
@@ -27,6 +21,13 @@ using FungleAPI.Utilities.Assets;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using InnerNet;
+using Sentry.Protocol;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UIElements;
 using xCloud;
@@ -34,7 +35,7 @@ using xCloud;
 namespace FungleAPI.PluginLoading
 {
     /// <summary>
-    /// 
+    /// A class used throughout the API that represents the registered mod
     /// </summary>
     public class ModPlugin
     {

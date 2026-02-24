@@ -9,6 +9,7 @@ using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
+using Il2CppSystem.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,21 +20,21 @@ using UnityEngine;
 namespace FungleAPI.Player
 {
     /// <summary>
-    /// 
+    /// A player helper class
     /// </summary>
     public static class PlayerUtils
     {
         /// <summary>
-        /// 
+        /// Perform a custom kill
         /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             Rpc<RpcCustomMurder>.Instance.Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer);
         }
         /// <summary>
-        /// 
+        /// Get all nearby dead bodies
         /// </summary>
-        public static List<DeadBody> GetClosestsDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
+        public static List<DeadBody> GetAllNearbyDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             List<DeadBody> bodies = new List<DeadBody>();
             foreach (DeadBody body in Helpers.AllDeadBodies)
@@ -46,13 +47,13 @@ namespace FungleAPI.Player
             return bodies;
         }
         /// <summary>
-        /// 
+        /// Get the cosest dead body
         /// </summary>
         public static DeadBody GetClosestDeadBody(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             DeadBody closest = null;
             float dis = distance;
-            foreach (DeadBody body in GetClosestsDeadBodies(target, distance, includeReporteds))
+            foreach (DeadBody body in GetAllNearbyDeadBodies(target, distance, includeReporteds))
             {
                 float d = Vector2.Distance(target.GetTruePosition(), body.TruePosition);
                 if (dis > d)
@@ -64,14 +65,14 @@ namespace FungleAPI.Player
             return closest;
         }
         /// <summary>
-        /// 
+        /// Get the dead body
         /// </summary>
         public static DeadBody GetBody(this PlayerControl player)
         {
             return Helpers.GetBodyById(player.PlayerId);
         }
         /// <summary>
-        /// 
+        /// Get the vote area on meeting
         /// </summary>
         public static PlayerVoteArea GetVoteArea(this PlayerControl player)
         {
@@ -88,7 +89,7 @@ namespace FungleAPI.Player
             return null;
         }
         /// <summary>
-        /// 
+        /// Get the chat bubble on the chat tab
         /// </summary>
         public static List<ChatBubble> GetChatBubble(this PlayerControl player)
         {
@@ -103,7 +104,7 @@ namespace FungleAPI.Player
             return list;
         }
         /// <summary>
-        /// 
+        /// Get a PlayerComponent
         /// </summary>
         public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
         {
@@ -116,7 +117,7 @@ namespace FungleAPI.Player
             return comp;
         }
         /// <summary>
-        /// 
+        /// Get the current vent
         /// </summary>
         public static Vent GetCurrentVent(this PlayerControl player)
         {
@@ -127,7 +128,7 @@ namespace FungleAPI.Player
             return player.GetPlayerComponent<PlayerHelper>().CurrentVent;
         }
         /// <summary>
-        /// 
+        /// Perform a custom kill
         /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {

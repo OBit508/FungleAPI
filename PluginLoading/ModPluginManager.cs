@@ -38,7 +38,7 @@ using xCloud;
 namespace FungleAPI.PluginLoading
 {
     /// <summary>
-    /// 
+    /// A class that helps the mod system to work
     /// </summary>
     public static class ModPluginManager
     {
