@@ -100,22 +100,28 @@ namespace FungleAPI
         public override void Load()
         {
             Instance = this;
+
+            // Cria o ModPlugin da API
             if (Plugin == null)
             {
                 Log.LogError("Failed creating ModPlugin from API");
             }
             Harmony.PatchAll();
+
+            // Da patch nos InnerNetObjects para o sistema de Rpc
             CustomRpcManager.PatchInnerNetObjects();
-            IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) =>
+            IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) => // Chamado quando um mod é carregado
             {
+                // Se o mod tiver a interface de registro da API ele auto registra e não precisa chamar direto no ModPluginManager
                 if (basePlugin is IFungleBasePlugin fungle)
                 {
                     ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.LoadAssets, fungle.ModName, fungle.ModCredits);
                     fungle.OnRegisterInFungleAPI();
                 }
             };
-            IL2CPPChainloader.Instance.Finished += () =>
+            IL2CPPChainloader.Instance.Finished += () => // Chamado quando o BeplnEx termina de carregar os mods
             {
+                // Organiza os mods registrados por GUID
                 List<ModPlugin> ordered = ModPlugin.AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
                 ordered.Remove(Plugin);
                 ModPlugin.AllPlugins.Clear();
@@ -125,9 +131,15 @@ namespace FungleAPI
                 {
                     ModPluginManager.RegisterTypes(mod);
                 }
+
+                // Inicializa o suporte para alguns mods
                 ReactorSupport.Initialize();
                 LevelImpostorSupport.Initialize();
+
+                // Carrega as cores (futuramente mais cosméticos)
                 CosmeticManager.SetPaletta();
+
+                // Se não tiver Reactor a API ativa o próprio handshake (garante que todos do lobby tenham os mesmos mods)
                 if (ReactorSupport.ReactorAssembly == null)
                 {
                     HandShakeManager.PatchHandShake();
@@ -135,6 +147,7 @@ namespace FungleAPI
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
+                // Carrega os arquivos assim que o jogo realmente abre
                 if (!loaddedAssets)
                 {
                     loadAssets();
@@ -150,6 +163,8 @@ namespace FungleAPI
                         CustomRpcManager.SafeModEnabled = true;
                     }
                 }
+
+                // Registra as funções
                 if (scene.name == "MainMenu" && !rolesRegistered)
                 {
                     Plugin.Roles = RoleManager.Instance.DontDestroy().AllRoles.ToArray().Concat(Plugin.Roles).ToList();
@@ -162,7 +177,11 @@ namespace FungleAPI
                 }
             }));
             Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");
+
+            // Carrega as mensagens de erro do handshake
             SetErrorMessages();
+
+            // Adiciona um MonoBehaviour no BasePlugin para alguns metodos do Helpers
             Helper = AddComponent<FungleHelper>();
         }
         internal static void SetErrorMessages()
