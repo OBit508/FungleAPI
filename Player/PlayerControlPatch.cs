@@ -9,7 +9,6 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Epic.OnlineServices.Presence;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
@@ -48,7 +47,7 @@ namespace FungleAPI.Player
         }
         [HarmonyPatch("SetKillTimer")]
         [HarmonyPrefix]
-        public static bool SetKillTimerPrefix(PlayerControl __instance, [HarmonyArgument(0)] float time)
+        public static bool SetKillTimerPrefix(PlayerControl __instance, float time)
         {
             if (__instance.Data.Role.CanUseKillButton)
             {
@@ -64,14 +63,14 @@ namespace FungleAPI.Player
         }
         [HarmonyPatch("RpcMurderPlayer")]
         [HarmonyPrefix]
-        public static bool RpcMurderPlayerPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] bool didSucceed)
+        public static bool RpcMurderPlayerPrefix(PlayerControl __instance, PlayerControl target, bool didSucceed)
         {
             __instance.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError));
             return false;
         }
         [HarmonyPatch("MurderPlayer")]
         [HarmonyPrefix]
-        public static bool MurderPlayerPrefix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target, [HarmonyArgument(1)] MurderResultFlags resultFlags)
+        public static bool MurderPlayerPrefix(PlayerControl __instance, PlayerControl target, MurderResultFlags resultFlags)
         {
             __instance.CustomMurderPlayer(target, resultFlags, true, true, true, true, true);
             return false;
@@ -83,20 +82,17 @@ namespace FungleAPI.Player
             PlayerTask task = __instance.myTasks.ToArray().First(t => t.Id == idx);
             if (task != null)
             {
-                EventManager.CallEvent(new OnCompleteTask() { Player = __instance, Task = task });
             }
         }
         [HarmonyPatch("Die")]
         [HarmonyPostfix]
         public static void DiePostfix(PlayerControl __instance, DeathReason reason)
         {
-            EventManager.CallEvent(new OnPlayerDie() { Player = __instance, Reason = reason });
         }
         [HarmonyPatch("ReportDeadBody")]
         [HarmonyPostfix]
-        public static void ReportDeadBodyPostfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target)
+        public static void ReportDeadBodyPostfix(PlayerControl __instance, NetworkedPlayerInfo target)
         {
-            EventManager.CallEvent(new OnReportBody() { Reporter = __instance, Target = target, Body = target != null ? Helpers.GetBodyById(target.PlayerId) : null });
         }
         [HarmonyPatch("AdjustLighting")]
         [HarmonyPrefix]

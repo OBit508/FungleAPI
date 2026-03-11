@@ -10,7 +10,6 @@ using FungleAPI.Configuration.Helpers;
 using FungleAPI.Cosmetics;
 using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
@@ -127,10 +126,6 @@ namespace FungleAPI.PluginLoading
                             ClassInjector.RegisterTypeInIl2Cpp(type);
                             VentPatch.AllVentComponents.Add(Il2CppType.From(type));
                         }
-                        else if (typeof(FungleEvent).IsAssignableFrom(type))
-                        {
-                            RegisterEvent(type, plugin);
-                        }
                         else if (typeof(ModCosmetics).IsAssignableFrom(type))
                         {
                             plugin.Cosmetics = RegisterCosmetics(type, plugin);
@@ -149,11 +144,6 @@ namespace FungleAPI.PluginLoading
             CosmeticManager.Add(cosmetics);
             plugin.BasePlugin.Log.LogInfo("Registered Cosmetics " + type.Name);
             return cosmetics;
-        }
-        public static void RegisterEvent(Type type, ModPlugin plugin)
-        {
-            EventManager.EventTypes.Add(type);
-            plugin.BasePlugin.Log.LogInfo("Registered Event " + type.Name);
         }
         public static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
         {

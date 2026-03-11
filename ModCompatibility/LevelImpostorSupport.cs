@@ -17,6 +17,7 @@ namespace FungleAPI.ModCompatibility
     public static class LevelImpostorSupport
     {
         public static Assembly LevelImpostorAssembly;
+        public static Type LIShipStatus;
         public static PropertyInfo Instance;
         public static FieldInfo IsInit;
         public static void Initialize()
@@ -28,6 +29,7 @@ namespace FungleAPI.ModCompatibility
                 Type type = LevelImpostorAssembly.GetType("LevelImposter.DB.AssetDB");
                 Instance = type.GetProperty("Instance");
                 IsInit = type.GetField("_isInit", AccessTools.all);
+                LIShipStatus = LevelImpostorAssembly.GetType("LevelImposter.Core.LIShipStatus");
             }
         }
         public static System.Collections.IEnumerator CoUnsafeWaitForMapLoading()

@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Utilities
+namespace FungleAPI.Ship
 {
-    public enum DeadBodyType
+    public enum VentType
     {
-        Normal,
-        Viper
+        Skeld,
+        Polus,
+        Fungle
     }
 }

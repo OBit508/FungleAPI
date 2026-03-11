@@ -4,7 +4,6 @@ using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
@@ -20,10 +19,24 @@ using UnityEngine;
 namespace FungleAPI.Player
 {
     /// <summary>
-    /// A player helper class
+    /// A player utility class
     /// </summary>
     public static class PlayerUtils
     {
+        /// <summary>
+        /// Get a player by the Id
+        /// </summary>
+        public static PlayerControl GetPlayerById(byte id)
+        {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                if (player.PlayerId == id)
+                {
+                    return player;
+                }
+            }
+            return null;
+        }
         /// <summary>
         /// Perform a custom kill
         /// </summary>
@@ -37,7 +50,7 @@ namespace FungleAPI.Player
         public static List<DeadBody> GetAllNearbyDeadBodies(this PlayerControl target, float distance, bool includeReporteds = false)
         {
             List<DeadBody> bodies = new List<DeadBody>();
-            foreach (DeadBody body in Helpers.AllDeadBodies)
+            foreach (DeadBody body in BodyUtils.AllDeadBodies)
             {
                 if (body != null && body.myCollider.enabled && !PhysicsHelpers.AnythingBetween(target.GetTruePosition(), body.TruePosition, Constants.ShipAndObjectsMask, false) && (!body.Reported || includeReporteds) && Vector2.Distance(target.GetTruePosition(), body.TruePosition) <= distance)
                 {
@@ -69,7 +82,7 @@ namespace FungleAPI.Player
         /// </summary>
         public static DeadBody GetBody(this PlayerControl player)
         {
-            return Helpers.GetBodyById(player.PlayerId);
+            return BodyUtils.GetBodyById(player.PlayerId);
         }
         /// <summary>
         /// Get the vote area on meeting
@@ -219,7 +232,6 @@ namespace FungleAPI.Player
         }
         public static System.Collections.IEnumerator CoPerformCustomKill(KillAnimation anim, PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool createDeadBody, bool teleportMurderer)
         {
-            OnPlayerMurdered onPlayerMurdered = new OnPlayerMurdered() { Killer = source, Target = target, ResultFlags = resultFlags };
             FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
             bool isParticipant = PlayerControl.LocalPlayer == source || PlayerControl.LocalPlayer == target;
             PlayerPhysics sourcePhys = source.MyPhysics;
@@ -232,14 +244,13 @@ namespace FungleAPI.Player
             }
             if (createDeadBody)
             {
-                DeadBody deadBody = Helpers.CreateDeadBody(target, GameManager.Instance.GetDeadBody(source.Data.Role).SafeCast<ViperDeadBody>() != null ? DeadBodyType.Viper : DeadBodyType.Normal);
+                DeadBody deadBody = BodyUtils.CreateDeadBody(target, GameManager.Instance.GetDeadBody(source.Data.Role).SafeCast<ViperDeadBody>() != null ? DeadBodyType.Viper : DeadBodyType.Normal);
                 source.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)
                 {
                     (PlayerControl.LocalPlayer.Data.Role as DetectiveRole).KillAnimSpecialSetup(deadBody, source, target);
                 }
-                onPlayerMurdered.Body = deadBody;
             }
             if (isParticipant)
             {
@@ -265,7 +276,6 @@ namespace FungleAPI.Player
                 PlayerControl.LocalPlayer.isKilling = false;
                 source.isKilling = false;
             }
-            EventManager.CallEvent(onPlayerMurdered);
             yield break;
         }
     }

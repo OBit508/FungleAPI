@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Player;
+using FungleAPI.Ship;
 using FungleAPI.Utilities;
 using Hazel;
 using System;

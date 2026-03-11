@@ -13,7 +13,7 @@ namespace FungleAPI.Hud.Patches
     {
         [HarmonyPatch("SetActive")]
         [HarmonyPrefix]
-        public static bool SetActivePrefix(ReportButton __instance, [HarmonyArgument(0)] bool isActive)
+        public static bool SetActivePrefix(ReportButton __instance, bool isActive)
         {
             RoleConfigManager.ReportConfig.SetActive?.Invoke(isActive);
             return false;

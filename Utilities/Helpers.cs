@@ -36,19 +36,6 @@ namespace FungleAPI.Utilities
     {
         internal static GenericPopup Popup;
         internal static EditName Screen;
-        internal static Dictionary<Vent, (List<Vent>, bool)> Connecteds = new Dictionary<Vent, (List<Vent>, bool)>();
-        private static List<DeadBody> allDeadBodies = new List<DeadBody>();
-        /// <summary>
-        /// Returns all the dead bodies
-        /// </summary>
-        public static List<DeadBody> AllDeadBodies
-        {
-            get
-            {
-                allDeadBodies.RemoveAll(body => body == null || body.IsDestroyedOrNull());
-                return allDeadBodies;
-            }
-        }
         /// <summary>
         /// Show a popup on the screen
         /// </summary>
@@ -104,25 +91,6 @@ namespace FungleAPI.Utilities
             Screen.StartCoroutine(Screen.Show());
         }
         /// <summary>
-        /// Create a dead body
-        /// </summary>
-        public static DeadBody CreateDeadBody(PlayerControl from, DeadBodyType deadBodyType)
-        {
-            DeadBody body = GameObject.Instantiate<DeadBody>(GameManager.Instance.deadBodyPrefab[deadBodyType == DeadBodyType.Normal ? 0 : 1]);
-            body.enabled = false;
-            body.ParentId = from.PlayerId;
-            body.bodyRenderers.ToList().ForEach(delegate (SpriteRenderer b)
-            {
-                from.SetPlayerMaterialColors(b);
-            });
-            from.SetPlayerMaterialColors(body.bloodSplatter);
-            Vector3 vector = from.transform.position + from.KillAnimations[0].BodyOffset;
-            vector.z = vector.y / 1000f;
-            body.transform.position = vector;
-            body.enabled = true;
-            return body;
-        }
-        /// <summary>
         /// Add DontUnloadUnusedAsset flag
         /// </summary>
         public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
@@ -136,34 +104,6 @@ namespace FungleAPI.Utilities
         public static T SimpleCast<T>(this object obj)
         {
             return (T)obj;
-        }
-        /// <summary>
-        /// Get a player by the Id
-        /// </summary>
-        public static PlayerControl GetPlayerById(byte id)
-        {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-            {
-                if (player.PlayerId == id)
-                {
-                    return player;
-                }
-            }
-            return null;
-        }
-        /// <summary>
-        /// Get a dead body by the Id
-        /// </summary>
-        public static DeadBody GetBodyById(byte id)
-        {
-            foreach (DeadBody body in AllDeadBodies)
-            {
-                if (body.ParentId == id)
-                {
-                    return body;
-                }
-            }
-            return null;
         }
         /// <summary>
         /// Get or Add a component to a GameObject
@@ -274,75 +214,6 @@ namespace FungleAPI.Utilities
             }
         }
         /// <summary>
-        /// Create a vent
-        /// </summary>
-        public static Vent CreateVent(VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
-        {
-            Vent vent = GameObject.Instantiate<Vent>(type == VentType.Skeld ? PrefabUtils.SkeldPrefab.AllVents[0] : type == VentType.Polus ? PrefabUtils.PolusPrefab.AllVents[0] : PrefabUtils.FunglePrefab.AllVents[0], ShipStatus.Instance.transform);
-            vent.gameObject.SetActive(true);
-            vent.Id = ShipStatus.Instance.AllVents.Count;
-            ShipStatus.Instance.AllVents = ShipStatus.Instance.AllVents.Concat(new Vent[] { vent }).ToArray();
-            vent.Right = null;
-            vent.Center = null;
-            vent.Left = null;
-            vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
-            VentPatch.DoStart(vent);
-            vent.TryGetHelper().Vents.AddRange(nearbyVents);
-            return vent;
-        }
-        /// <summary>
-        /// Connect this vent with another vent
-        /// </summary>
-        public static void ConnectVent(this Vent vent, Vent target, bool connectBoth = true)
-        {
-            VentHelper helper = vent.TryGetHelper();
-            if (!helper.Vents.Contains(target))
-            {
-                helper.Vents.Add(target);
-            }
-            VentHelper helper2 = target.TryGetHelper();
-            if (connectBoth && !helper2.Vents.Contains(vent))
-            {
-                helper2.Vents.Add(vent);
-            }
-        }
-        /// <summary>
-        /// Disconnect this vent with another vent
-        /// </summary>
-        public static void DisconnectVent(this Vent vent, Vent target, bool disconnectBoth = true)
-        {
-            VentHelper helper = vent.TryGetHelper();
-            if (helper.Vents.Contains(target))
-            {
-                helper.Vents.Remove(target);
-            }
-            VentHelper helper2 = target.TryGetHelper();
-            if (disconnectBoth && helper2.Vents.Contains(vent))
-            {
-                helper2.Vents.Remove(vent);
-            }
-        }
-        /// <summary>
-        /// Get the VentHelper without errors
-        /// </summary>
-        public static VentHelper TryGetHelper(this Vent target)
-        {
-            try
-            {
-                return VentHelper.ShipVents[target];
-            }
-            catch
-            {
-                VentHelper ventHelper = target.GetComponent<VentHelper>();
-                if (ventHelper == null)
-                {
-                    VentPatch.DoStart(target);
-                    ventHelper = target.GetComponent<VentHelper>();
-                }
-                return ventHelper;
-            }
-        }
-        /// <summary>
         /// Start a coroutine
         /// </summary>
         public static Coroutine StartCoroutine(System.Collections.IEnumerator enumerator)
@@ -362,12 +233,6 @@ namespace FungleAPI.Utilities
         public static void StopCoroutine(Coroutine coroutine)
         {
             FungleAPIPlugin.Helper.StopCoroutine(coroutine);
-        }
-        public enum VentType 
-        {
-            Skeld,
-            Polus,
-            Fungle
         }
     }
 }

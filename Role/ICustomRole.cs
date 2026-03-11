@@ -3,6 +3,7 @@ using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;

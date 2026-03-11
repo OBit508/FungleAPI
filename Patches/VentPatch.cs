@@ -1,8 +1,8 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Player;
 using FungleAPI.Role;
+using FungleAPI.Ship;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
@@ -27,7 +27,7 @@ namespace FungleAPI.Patches
         public static List<Il2CppSystem.Type> AllVentComponents = new List<Il2CppSystem.Type>();
         [HarmonyPatch("SetOutline")]
         [HarmonyPrefix]
-        public static bool SetOutlinePrefix(Vent __instance, [HarmonyArgument(0)] bool on, [HarmonyArgument(1)] bool mainTarget)
+        public static bool SetOutlinePrefix(Vent __instance, bool on, bool mainTarget)
         {
             if (!RoleConfigManager.VentConfig.ShowOutline())
             {
@@ -108,7 +108,7 @@ namespace FungleAPI.Patches
         }
         [HarmonyPatch("EnterVent")]
         [HarmonyPostfix]
-        public static void EnterVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
+        public static void EnterVentPostfix(Vent __instance, PlayerControl pc)
         {
             pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = __instance;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
@@ -116,11 +116,10 @@ namespace FungleAPI.Patches
             {
                 players.Add(pc);
             }
-            EventManager.CallEvent(new OnEnterVent() { Vent = __instance, Player = pc });
         }
         [HarmonyPatch("ExitVent")]
         [HarmonyPostfix]
-        public static void ExitVentPostfix(Vent __instance, [HarmonyArgument(0)] PlayerControl pc)
+        public static void ExitVentPostfix(Vent __instance, PlayerControl pc)
         {
             pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = null;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
@@ -128,7 +127,6 @@ namespace FungleAPI.Patches
             {
                 players.Remove(pc);
             }
-            EventManager.CallEvent(new OnExitVent() { Vent = __instance, Player = pc });
         }
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
@@ -141,7 +139,7 @@ namespace FungleAPI.Patches
         }
         [HarmonyPatch("SetButtons")]
         [HarmonyPrefix]
-        public static bool SetButtonsPrefix(Vent __instance, [HarmonyArgument(0)] bool enabled)
+        public static bool SetButtonsPrefix(Vent __instance, bool enabled)
         {
             if (enabled)
             {

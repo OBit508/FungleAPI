@@ -38,8 +38,8 @@ namespace FungleAPI.Utilities.Prefabs
             {
                 if (ship.name == "AprilShip")
                 {
-                    AprilShipPrefab = ship.SafeCast<SkeldShipStatus>();
-                    FungleAPIPlugin.Instance.Log.LogInfo("Loaded AprilShipPrefab");
+                    FungleAPIPlugin.Instance.Log.LogInfo("Skiped AprilShipPrefab");
+                    return;
                 }
                 SkeldPrefab = ship.SafeCast<SkeldShipStatus>();
                 FungleAPIPlugin.Instance.Log.LogInfo("Loaded SkeldPrefab");
@@ -79,7 +79,7 @@ namespace FungleAPI.Utilities.Prefabs
                 ChangeableValue<bool> done = new ChangeableValue<bool>(false);
                 System.Collections.IEnumerator WaitFor()
                 {
-                    foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs)
+                    foreach (AssetReference shipRef in AmongUsClient.Instance.ShipPrefabs.ToArray())
                     {
                         while (shipRef.Asset == null && shipRef.AssetGUID != "Submerged")
                         {
@@ -162,10 +162,6 @@ namespace FungleAPI.Utilities.Prefabs
         /// Cached Polus ship prefab
         /// </summary>
         public static PolusShipStatus PolusPrefab { get; internal set; }
-        /// <summary>
-        /// Cached April Skeld ship prefab
-        /// </summary>
-        public static SkeldShipStatus AprilShipPrefab { get; internal set; }
         /// <summary>
         /// Cached Airship prefab
         /// </summary>

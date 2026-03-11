@@ -135,6 +135,7 @@ namespace FungleAPI
                 // Inicializa o suporte para alguns mods
                 ReactorSupport.Initialize();
                 LevelImpostorSupport.Initialize();
+                SubmergedSupport.Initialize();
 
                 // Carrega as cores (futuramente mais cosméticos)
                 CosmeticManager.SetPaletta();

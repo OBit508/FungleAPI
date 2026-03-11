@@ -13,7 +13,7 @@ namespace FungleAPI.Hud.Patches
     {
         [HarmonyPatch("SetTarget")]
         [HarmonyPrefix]
-        public static bool SetTargetPrefix(VentButton __instance, [HarmonyArgument(0)] Vent target)
+        public static bool SetTargetPrefix(VentButton __instance, Vent target)
         {
             RoleConfigManager.VentConfig.SetTarget?.Invoke(target);
             return false;

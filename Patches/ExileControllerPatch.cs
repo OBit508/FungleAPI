@@ -11,7 +11,6 @@ using FungleAPI.Translation;
 using FungleAPI.Hud;
 using FungleAPI.Teams;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 
 namespace FungleAPI.Patches
 {
@@ -47,7 +46,6 @@ namespace FungleAPI.Patches
             {
                 __instance.ImpostorText.text += pair.Value.Value.ToString() + " " + pair.Key.TeamColor.ToTextColor() + (pair.Value.Value == 1 ? pair.Key.TeamName.GetString() : pair.Key.PluralName.GetString()) + "</color>" + (pair.Key == teams.Last().Key ? "" : ", ");
             }
-            EventManager.CallEvent(new OnEject() { Controller = __instance, Target = __instance.initData.networkedPlayer });
         }
         [HarmonyPatch("ReEnableGameplay")]
         [HarmonyPostfix]

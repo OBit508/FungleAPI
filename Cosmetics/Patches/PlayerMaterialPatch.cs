@@ -16,7 +16,7 @@ namespace FungleAPI.Cosmetics.Patches
     {
         [HarmonyPatch("SetColors", new Type[] { typeof(int), typeof(Renderer) })]
         [HarmonyPostfix]
-        public static void SetColorsPostfix([HarmonyArgument(0)] int colorId, [HarmonyArgument(1)] Renderer rend)
+        public static void SetColorsPostfix(int colorId, Renderer rend)
         {
             SpecialColorBehaviour specialColorBehaviour;
             if (CosmeticManager.IsSpecialColor(colorId, out SpecialColor color))

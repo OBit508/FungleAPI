@@ -79,13 +79,13 @@ namespace FungleAPI.ModCompatibility
                     }
                     else if (type.FullName == "Reactor.Networking.Patches.ReactorClientData")
                     {
-                        FungleAPIPlugin.Harmony.Patch(type.GetMethod("Set"), null, new HarmonyMethod(typeof(ReactorSupport).GetMethod("ReactorClientData_Set_Postfix")));
+                        FungleAPIPlugin.Harmony.Patch(type.GetMethod("Set", AccessTools.all), null, new HarmonyMethod(typeof(ReactorSupport).GetMethod("ReactorClientData_Set_Postfix")));
                         FungleAPIPlugin.Instance.Log.LogWarning("Patched Reactor.Networking.Patches.ReactorClientData");
                     }
                 }   
             }
         }
-        public static void ReactorClientData_Set_Postfix([HarmonyArgument(0)] int clientId)
+        public static void ReactorClientData_Set_Postfix(int clientId)
         {
             Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
         }

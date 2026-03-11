@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.GameOver;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -89,7 +88,6 @@ namespace FungleAPI.Role.Patches
                 RoleConfigManager.VentConfig.InitializeButton?.Invoke();
             }
             RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
-            EventManager.CallEvent(new OnSetRole() { Player = targetPlayer, Role = role });
             return false;
         }
         [HarmonyPrefix]

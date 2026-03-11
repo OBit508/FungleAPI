@@ -8,7 +8,6 @@ using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -31,7 +30,6 @@ namespace FungleAPI.Role.Patches
         [HarmonyPatch("CoBegin")]
         public static void CoBeginnPatch(IntroCutscene __instance)
         {
-            EventManager.CallEvent(new OnIntroBegin() { Intro = __instance });
         }
         [HarmonyPatch("BeginCrewmate")]
         [HarmonyPrefix]

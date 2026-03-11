@@ -1,6 +1,5 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
 using FungleAPI.Role;
 using HarmonyLib;
 using System;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.Ship.Patches
 {
     [HarmonyPatch(typeof(ShipStatus))]
     internal static class ShipStatusPatch
@@ -29,19 +28,17 @@ namespace FungleAPI.Patches
         }
         [HarmonyPatch("CloseDoorsOfType")]
         [HarmonyPostfix]
-        public static void CloseDoorsOfTypePostfix([HarmonyArgument(0)] SystemTypes room)
+        public static void CloseDoorsOfTypePostfix(SystemTypes room)
         {
-            EventManager.CallEvent(new OnCloseDoor() { Room = room });
         }
         [HarmonyPatch("UpdateSystem", new Type[] { typeof(SystemTypes), typeof(PlayerControl), typeof(byte) })]
         [HarmonyPostfix]
-        public static void UpdateSystemPostfix([HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] byte amount)
+        public static void UpdateSystemPostfix(SystemTypes systemType, PlayerControl player, byte amount)
         {
-            EventManager.CallEvent(new OnUpdateSystem() { Amount = amount, Player = player, SystemType = systemType });
         }
         [HarmonyPatch("CalculateLightRadius")]
         [HarmonyPrefix]
-        public static bool CalculateLightRadiusPrefix([HarmonyArgument(0)] NetworkedPlayerInfo player, ref float __result)
+        public static bool CalculateLightRadiusPrefix(NetworkedPlayerInfo player, ref float __result)
         {
             __result = RoleConfigManager.LightConfig.CalculateLightRadius(player, false);
             return false;
