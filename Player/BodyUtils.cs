@@ -12,6 +12,8 @@ namespace FungleAPI.Player
     /// </summary>
     public static class BodyUtils
     {
+        internal static Dictionary<DeadBodyType, DeadBody> BodiePrefabs = new Dictionary<DeadBodyType, DeadBody>();
+        private static int __lastBodyId = int.MinValue;
         private static List<DeadBody> allDeadBodies = new List<DeadBody>();
         /// <summary>
         /// Returns all the dead bodies
@@ -56,6 +58,16 @@ namespace FungleAPI.Player
             body.transform.position = vector;
             body.enabled = true;
             return body;
+        }
+        /// <summary>
+        /// Register a dead body
+        /// </summary>
+        public static DeadBodyType RegisterBody(DeadBody deadBody)
+        {
+            DeadBodyType type = (DeadBodyType)__lastBodyId;
+            __lastBodyId++;
+            BodiePrefabs.Add(type, deadBody);
+            return type;
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FungleAPI.Utilities;
 using UnityEngine;
 using FungleAPI.Attributes;
+using FungleAPI.Player;
 
 namespace FungleAPI.Components
 {
@@ -24,7 +25,7 @@ namespace FungleAPI.Components
             {
                 gameObject.AddComponent(type).SafeCast<DeadBodyComponent>().deadBody = body;
             }
-            Helpers.AllDeadBodies.Add(body);
+            BodyUtils.AllDeadBodies.Add(body);
         }
     }
 }

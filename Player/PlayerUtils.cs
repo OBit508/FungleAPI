@@ -244,7 +244,7 @@ namespace FungleAPI.Player
             }
             if (createDeadBody)
             {
-                DeadBody deadBody = BodyUtils.CreateDeadBody(target, GameManager.Instance.GetDeadBody(source.Data.Role).SafeCast<ViperDeadBody>() != null ? DeadBodyType.Viper : DeadBodyType.Normal);
+                DeadBody deadBody = BodyUtils.CreateDeadBody(target, source.Data.Role.GetCreatedDeadBody());
                 source.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)

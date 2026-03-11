@@ -3,6 +3,7 @@ using FungleAPI.Base.Roles;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
+using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
@@ -108,6 +109,21 @@ namespace FungleAPI.Role
         public static ModPlugin GetRolePlugin(this RoleBehaviour role)
         {
             return ModPlugin.AllPlugins.FirstOrDefault(p => p.Roles.Contains(role));
+        }
+        /// <summary>
+        /// Returns the created dead body type
+        /// </summary>
+        public static DeadBodyType GetCreatedDeadBody(this RoleBehaviour role)
+        {
+            if (role.CustomRole() != null)
+            {
+                return role.CustomRole().CreatedDeadBodyOnKill;
+            }
+            if (role.SafeCast<ViperRole>() != null)
+            {
+                return DeadBodyType.Viper;
+            }
+            return DeadBodyType.Normal;
         }
         /// <summary>
         /// Returns the role hint type

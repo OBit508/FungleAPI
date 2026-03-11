@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.GameOver;
+using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -19,6 +14,12 @@ using Hazel;
 using Il2CppInterop.Generator.Extensions;
 using Il2CppInterop.Runtime;
 using Il2CppSystem.Runtime.Serialization;
+using System;
+using System.Collections.Generic;
+using System.Formats.Asn1;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Unity.Services.Analytics.Internal;
 using UnityEngine;
 
@@ -124,7 +125,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static DeadBody ReadBody(this MessageReader messageReader)
         {
-            return Helpers.GetBodyById(messageReader.ReadByte());
+            return BodyUtils.GetBodyById(messageReader.ReadByte());
         }
         /// <summary>
         /// Read a vector2

@@ -15,7 +15,7 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(GameManager __instance, RoleBehaviour impostorRole, ref DeadBody __result)
         {
-            __result = __instance.deadBodyPrefab[impostorRole.Role == RoleTypes.Viper || impostorRole.CustomRole() != null && impostorRole.CustomRole().CreatedDeadBodyOnKill == DeadBodyType.Viper ? 1 : 0];
+            __result = __instance.deadBodyPrefab[impostorRole.GetCreatedDeadBody() == DeadBodyType.Viper ? 1 : 0];
             return false;
         }
     }
