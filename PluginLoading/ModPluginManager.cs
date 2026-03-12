@@ -20,6 +20,7 @@ using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
@@ -259,7 +260,7 @@ namespace FungleAPI.PluginLoading
             plugin.ModCredits = ModCredits;
             if (loadAssets != null)
             {
-                FungleAPIPlugin.loadAssets += loadAssets;
+                ResourceHelper.LoadAssets += loadAssets;
             }
             plugin.LocalMod = new ModPlugin.Mod(plugin);
             plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = basePlugin.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };

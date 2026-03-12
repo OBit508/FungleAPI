@@ -36,6 +36,7 @@ namespace FungleAPI.Utilities
     {
         internal static GenericPopup Popup;
         internal static EditName Screen;
+        public static bool GameIsRunning { get; internal set; }
         /// <summary>
         /// Show a popup on the screen
         /// </summary>

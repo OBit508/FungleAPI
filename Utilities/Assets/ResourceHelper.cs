@@ -4,6 +4,7 @@ using FungleAPI.Components;
 using FungleAPI.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Assets.Late;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Il2CppSystem.Resources;
@@ -32,13 +33,20 @@ namespace FungleAPI.Utilities.Assets
     /// </summary>
     public static class ResourceHelper
     {
-        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
+        public static bool AssetsLoadeds { get; private set; }
+        public static event Action LoadAssets = new Action(FungleAssets.LoadAll);
+        internal static void CallLoadAssets()
+        {
+            LoadAssets();
+            LoadAssets = null;
+            AssetsLoadeds = true;
+        }
         /// <summary>
         /// Reads an embedded text resource from the plugin assembly
         /// </summary>
-        public static string ReadText(ModPlugin plugin, string resource)
+        public static string ReadText(Assembly assembly, string resource)
         {
-            using (Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
+            using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
                 using (StreamReader sr = new StreamReader(stream))
                 {
@@ -61,9 +69,9 @@ namespace FungleAPI.Utilities.Assets
         /// <summary>
         /// Loads an AssetBundle from an embedded resource
         /// </summary>
-        public static AssetBundle LoadBundle(ModPlugin plugin, string resource)
+        public static AssetBundle LoadBundle(Assembly assembly, string resource)
         {
-            using (Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
+            using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
                 using (MemoryStream ms = new MemoryStream())
                 {
@@ -75,10 +83,10 @@ namespace FungleAPI.Utilities.Assets
         /// <summary>
         /// Loads a WAV audio clip from an embedded resource
         /// </summary>
-        public static AudioClip LoadAudio(ModPlugin plugin, string resource, string clipName, bool dontUnload = true)
+        public static AudioClip LoadAudio(Assembly assembly, string resource, string clipName, bool dontUnload = true)
         {
             resource += ".wav";
-            using (Stream stream = plugin.ModAssembly.GetManifestResourceStream(resource))
+            using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
                 using (BinaryReader reader = new BinaryReader(stream))
                 {
@@ -124,13 +132,13 @@ namespace FungleAPI.Utilities.Assets
         /// <summary>
         /// Loads a GIF file from an embedded resource and converts it into a GifFile
         /// </summary>
-        public static GifFile LoadGif(ModPlugin plugin, string resource, float PixelPerUnit, bool loop = true)
+        public static GifFile LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
         {
             resource += ".gif";
             GifDecoder decoder = new GifDecoder();
             using (MemoryStream stream = new MemoryStream())
             {
-                using (Stream s = plugin.ModAssembly.GetManifestResourceStream(resource))
+                using (Stream s = assembly.GetManifestResourceStream(resource))
                 {
                     s.CopyTo(stream);
                     decoder.LoadGif(stream.ToArray());
@@ -150,10 +158,10 @@ namespace FungleAPI.Utilities.Assets
         /// <summary>
         /// Loads a PNG sprite from an embedded resource
         /// </summary>
-        public static Sprite LoadSprite(ModPlugin plugin, string resource, float PixelPerUnit, bool dontUnload = true)
+        public static Sprite LoadSprite(Assembly assembly, string resource, float PixelPerUnit, bool dontUnload = true)
         {
             resource = resource + ".png";
-            using (Stream manifestResourceStream = plugin.ModAssembly.GetManifestResourceStream(resource))
+            using (Stream manifestResourceStream = assembly.GetManifestResourceStream(resource))
             {
                 Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
                 using (MemoryStream memoryStream = new MemoryStream())
@@ -173,7 +181,7 @@ namespace FungleAPI.Utilities.Assets
         /// <summary>
         /// Converts an array of sprites into a GifFile with uniform delay
         /// </summary>
-        public static GifFile ToGif(Sprite[] sprites, float delay, bool loop = true)
+        public static GifFile ToGIF(Sprite[] sprites, float delay, bool loop = true)
         {
             GifFile animation = new GifFile();
             animation.Sprites = sprites;

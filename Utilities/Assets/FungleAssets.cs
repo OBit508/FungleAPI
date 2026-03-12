@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Configuration.Patches;
+using FungleAPI.Utilities.Assets.Late;
 using FungleAPI.Utilities.Prefabs;
 using System;
 using System.Collections.Generic;
@@ -19,16 +20,16 @@ namespace FungleAPI.Utilities.Assets
     /// </summary>
     public static class FungleAssets
     {
-        public static Sprite Cog;
-        public static Sprite Empty;
-        public static Sprite NextButton;
-        public static Sprite PluginChangerBackground;
-        public static Sprite Highlight;
-        public static Sprite Folder;
-        public static Sprite Inactive;
-        public static Sprite XMark;
-        public static AudioClip HoverSound;
-        public static AudioClip SelectSound;
+        public static LateSprite Cog = new LateSprite("FungleAPI.Resources.cog", 90);
+        public static LateSprite Empty = new LateSprite("FungleAPI.Resources.empty", 100);
+        public static LateSprite NextButton = new LateSprite("FungleAPI.Resources.pluginChangerBackground", 100);
+        public static LateSprite PluginChangerBackground = new LateSprite("FungleAPI.Resources.nextButton", 100);
+        public static LateSprite Highlight = new LateSprite("FungleAPI.Resources.highlight", 100);
+        public static LateSprite Folder = new LateSprite("FungleAPI.Resources.folder", 100);
+        public static LateSprite Inactive = new LateSprite("FungleAPI.Resources.inactive", 100);
+        public static LateSprite XMark = new LateSprite("FungleAPI.Resources.xMark", 100);
+        public static LateAudio HoverSound = new LateAudio("FungleAPI.Resources.UI_Hover");
+        public static LateAudio SelectSound = new LateAudio("FungleAPI.Resources.UI_Select");
         public static Prefab<GameObject> PluginChangerPrefab;
         public static Prefab<GameObject> ModsPagePrefab;
         public static Prefab<GameObject> CogPrefab;
@@ -36,16 +37,6 @@ namespace FungleAPI.Utilities.Assets
         public static Prefab<GameObject> SaveButtonPrefab;
         public static void LoadAll()
         {
-            Cog = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.cog", 400f);
-            Empty = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.empty", 100);
-            PluginChangerBackground = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.pluginChangerBackground", 100);
-            NextButton = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.nextButton", 100);
-            Highlight = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.highlight", 100);
-            Folder = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.folder", 100);
-            Inactive = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.inactive", 100);
-            XMark = ResourceHelper.LoadSprite(FungleAPIPlugin.Plugin, "FungleAPI.Resources.xMark", 100);
-            HoverSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Hover", "UI_Hover");
-            SelectSound = ResourceHelper.LoadAudio(FungleAPIPlugin.Plugin, "FungleAPI.Resources.UI_Select", "UI_Select");
             CreatePluginChanger();
             CreateModsPage();
             CreateCog();

@@ -64,7 +64,6 @@ namespace FungleAPI
         internal static FungleHelper Helper;
         internal static ModPlugin plugin;
         private static bool rolesRegistered;
-        internal static bool loaddedAssets;
         /// <summary>
         /// The API Plugin
         /// </summary>
@@ -148,11 +147,9 @@ namespace FungleAPI
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
                 // Carrega os arquivos assim que o jogo realmente abre
-                if (!loaddedAssets)
+                if (!Helpers.GameIsRunning)
                 {
-                    ResourceHelper.loadAssets();
-                    ResourceHelper.loadAssets = null;
-                    loaddedAssets = true;
+                    Helpers.GameIsRunning = true;
                     Type type = typeof(Constants);
                     HarmonyLib.Patches patches = Harmony.GetPatchInfo(type.GetMethod("GetBroadcastVersion"));
                     HarmonyLib.Patches patches2 = Harmony.GetPatchInfo(type.GetMethod("IsVersionModded"));
@@ -163,6 +160,7 @@ namespace FungleAPI
                     {
                         CustomRpcManager.SafeModEnabled = true;
                     }
+                    ResourceHelper.CallLoadAssets();
                 }
 
                 // Registra as funções

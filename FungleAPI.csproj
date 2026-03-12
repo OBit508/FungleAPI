@@ -65,8 +65,10 @@
     <Compile Include="Ship\VentType.cs" />
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Translation\TranslationManager.cs" />
-    <Compile Include="Utilities\Assets\LateAsset.cs" />
-    <Compile Include="Utilities\Assets\LateSprite.cs" />
+    <Compile Include="Utilities\Assets\Late\LateAsset.cs" />
+    <Compile Include="Utilities\Assets\Late\LateAudio.cs" />
+    <Compile Include="Utilities\Assets\Late\LateGIF.cs" />
+    <Compile Include="Utilities\Assets\Late\LateSprite.cs" />
     <Compile Include="Utilities\ColorExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\HarmonyHelper.cs" />
@@ -188,6 +190,9 @@
     <Compile Include="Utilities\UnityEngineObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\cog.png" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Resources\folder.png" />
   </ItemGroup>
   <ItemGroup>
@@ -207,9 +212,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\empty.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\cog.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
