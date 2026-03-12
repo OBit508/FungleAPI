@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 namespace FungleAPI.Utilities
 {
     /// <summary>
-    /// A Il2cpp helper class
+    /// Extensions for the Il2cpp things
     /// </summary>
-    public static class Il2CppUtils
+    public static class Il2CppExtensions
     {
         public static bool Exists<T>(this List<T> list, Predicate<T> match)
         {

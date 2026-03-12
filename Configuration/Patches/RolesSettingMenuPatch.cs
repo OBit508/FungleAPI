@@ -214,7 +214,7 @@ namespace FungleAPI.Configuration.Patches
             menu.roleDescriptionText.text = role.RoleBlurLong.GetString();
             menu.roleTitleText.text = role.RoleName.GetString();
             float num = -0.872f;
-            menu.roleHeaderSprite.color = Utilities.Helpers.Light(role.RoleColor);
+            menu.roleHeaderSprite.color = role.RoleColor.Lighten();
             menu.roleHeaderText.color = role.RoleColor;
             menu.roleHeaderText.text = role.RoleName.GetString();
             foreach (ModdedOption config in role.Options)

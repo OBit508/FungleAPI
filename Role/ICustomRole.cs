@@ -152,7 +152,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Role type
         /// </summary>
-        public RoleTypes Role => CustomRoleManager.RolesToRegister[GetType()];
+        public RoleTypes Role => (this as RoleBehaviour).Role;
         /// <summary>
         /// Returns whether the role can kill
         /// </summary>

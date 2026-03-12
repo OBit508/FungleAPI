@@ -226,7 +226,7 @@ namespace FungleAPI.Player
                     target.RpcSetScanner(false);
                 }
                 DestroyableSingleton<AchievementManager>.Instance.OnMurder(killer.AmOwner, target.AmOwner, killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted, killer.shapeshiftTargetPlayerId, (int)target.PlayerId);
-                killer.MyPhysics.StartCoroutine(CoPerformCustomKill(killer.KillAnimations[new System.Random().Next(0, killer.KillAnimations.Count - 1)], killer, target, resultFlags, createDeadBody, teleportMurderer).WrapToIl2Cpp());
+                killer.MyPhysics.StartCoroutine(CoPerformCustomKill(killer.KillAnimations.Random(), killer, target, resultFlags, createDeadBody, teleportMurderer).WrapToIl2Cpp());
                 killer.logger.Debug(string.Format("{0} succeeded in murdering {1}", killer.PlayerId, target.PlayerId), null);
             }
         }

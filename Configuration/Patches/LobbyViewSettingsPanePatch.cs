@@ -202,7 +202,7 @@ namespace FungleAPI.Configuration.Patches
                                 );
                                 if (pluginChanger.CurrentPlugin != FungleAPIPlugin.Plugin)
                                 {
-                                    viewPanel.chanceBackground.color = Utilities.Helpers.Dark(roleBehaviour.TeamColor);
+                                    viewPanel.chanceBackground.color = roleBehaviour.TeamColor.Darken();
                                     viewPanel.background.color = viewPanel.chanceBackground.color;
                                 }
                                 __instance.settingsInfo.Add(viewPanel.gameObject);
@@ -267,7 +267,7 @@ namespace FungleAPI.Configuration.Patches
         {
             advancedRoleViewPanel.header.SetHeader(role.RoleName, maskLayer);
             advancedRoleViewPanel.header.Background.color = role.RoleColor;
-            advancedRoleViewPanel.header.Title.color = Utilities.Helpers.Dark(role.RoleColor);
+            advancedRoleViewPanel.header.Title.color = role.RoleColor.Darken();
             advancedRoleViewPanel.divider.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
             float num = advancedRoleViewPanel.yPosStart;
             float num2 = 1.08f;

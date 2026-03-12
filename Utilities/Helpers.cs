@@ -91,12 +91,22 @@ namespace FungleAPI.Utilities
             Screen.StartCoroutine(Screen.Show());
         }
         /// <summary>
-        /// Add DontUnloadUnusedAsset flag
+        /// Cast something without errors
         /// </summary>
-        public static T DontUnload<T>(this T obj) where T : UnityEngine.Object
+        public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
         {
-            obj.hideFlags |= HideFlags.DontUnloadUnusedAsset;
-            return obj;
+            try
+            {
+                if (obj == null || obj.TryCast<T>() == null)
+                {
+                    return null;
+                }
+                return obj.Cast<T>();
+            }
+            catch
+            {
+                return null;
+            }
         }
         /// <summary>
         /// Cast something
@@ -104,18 +114,6 @@ namespace FungleAPI.Utilities
         public static T SimpleCast<T>(this object obj)
         {
             return (T)obj;
-        }
-        /// <summary>
-        /// Get or Add a component to a GameObject
-        /// </summary>
-        public static T GetOrAddComponent<T>(this GameObject obj) where T : Component
-        {
-            T result = obj.GetComponent<T>();
-            if (result == null)
-            {
-                result = obj.AddComponent<T>();
-            }
-            return result;
         }
         /// <summary>
         /// Get the translated string
@@ -145,73 +143,6 @@ namespace FungleAPI.Utilities
             {
                 action();
             }));
-        }
-        /// <summary>
-        /// Get the index of something inside a 
-        /// </summary>
-        public static int GetIndex<T>(this IEnumerable<T> values, T thing)
-        {
-            T[] list = values.ToArray();
-            for (int i = 0; i < list.Count(); i++)
-            {
-                if (list[i].Equals(thing))
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-        /// <summary>
-        /// Make a color be more darker
-        /// </summary>
-        public static Color Dark(this Color color, float num = 0.5f)
-        {
-            num = Mathf.Clamp01(num);
-            return new Color(
-                color.r * num,
-                color.g * num,
-                color.b * num,
-                color.a
-            );
-        }
-        /// <summary>
-        /// Make a color be more lighter
-        /// </summary>
-        public static Color Light(this Color color, float num = 0.5f)
-        {
-            return new Color(
-                Mathf.Clamp01(color.r * num),
-                Mathf.Clamp01(color.g * num),
-                Mathf.Clamp01(color.b * num),
-                color.a
-                );
-        }
-        /// <summary>
-        /// Add HideAndDontSave flag
-        /// </summary>
-        public static T DontDestroy<T>(this T obj) where T : UnityEngine.Object
-        {
-            obj.hideFlags |= HideFlags.HideAndDontSave;
-            GameObject.DontDestroyOnLoad(obj);
-            return obj;
-        }
-        /// <summary>
-        /// Cast something without errors
-        /// </summary>
-        public static T SafeCast<T>(this Il2CppObjectBase obj) where T : Il2CppObjectBase
-        {
-            try
-            {
-                if (obj == null || obj.TryCast<T>() == null)
-                {
-                    return null;
-                }
-                return obj.Cast<T>();
-            }
-            catch
-            {
-                return null;
-            }
         }
         /// <summary>
         /// Start a coroutine

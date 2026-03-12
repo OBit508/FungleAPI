@@ -128,12 +128,12 @@ namespace FungleAPI.Teams
         {
             CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
             categoryHeaderEditRole.SetHeader(StringNames.None, 20);
-            categoryHeaderEditRole.Background.color = TeamColor.Light(0.7f);
+            categoryHeaderEditRole.Background.color = TeamColor.Lighten(0.7f);
             categoryHeaderEditRole.countLabel.color = TeamColor;
             categoryHeaderEditRole.chanceLabel.color = TeamColor;
-            categoryHeaderEditRole.blankLabel.color = TeamColor.Dark(0.7f);
+            categoryHeaderEditRole.blankLabel.color = TeamColor.Darken(0.7f);
             categoryHeaderEditRole.Title.text = PluralName.GetString();
-            categoryHeaderEditRole.Title.color = TeamColor.Light(0.9f);
+            categoryHeaderEditRole.Title.color = TeamColor.Lighten(0.9f);
             categoryHeaderEditRole.Title.enabled = true;
             return categoryHeaderEditRole;
         }
@@ -146,8 +146,8 @@ namespace FungleAPI.Teams
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
             string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
             categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + TeamName.GetString();
-            categoryHeaderRoleVariant.Background.color = TeamColor.Light();
-            categoryHeaderRoleVariant.Title.color = categoryHeaderRoleVariant.Background.color.Dark();
+            categoryHeaderRoleVariant.Background.color = TeamColor.Lighten();
+            categoryHeaderRoleVariant.Title.color = categoryHeaderRoleVariant.Background.color.Darken();
             categoryHeaderRoleVariant.Title.enabled = true;
             for (int i = 2; i < categoryHeaderRoleVariant.transform.GetChildCount(); i++)
             {
