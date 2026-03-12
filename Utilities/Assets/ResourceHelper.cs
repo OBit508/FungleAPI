@@ -32,6 +32,7 @@ namespace FungleAPI.Utilities.Assets
     /// </summary>
     public static class ResourceHelper
     {
+        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
         /// <summary>
         /// Reads an embedded text resource from the plugin assembly
         /// </summary>

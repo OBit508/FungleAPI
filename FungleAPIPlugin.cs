@@ -63,7 +63,6 @@ namespace FungleAPI
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
         internal static ModPlugin plugin;
-        internal static Action loadAssets = new Action(FungleAssets.LoadAll);
         private static bool rolesRegistered;
         internal static bool loaddedAssets;
         /// <summary>
@@ -151,7 +150,8 @@ namespace FungleAPI
                 // Carrega os arquivos assim que o jogo realmente abre
                 if (!loaddedAssets)
                 {
-                    loadAssets();
+                    ResourceHelper.loadAssets();
+                    ResourceHelper.loadAssets = null;
                     loaddedAssets = true;
                     Type type = typeof(Constants);
                     HarmonyLib.Patches patches = Harmony.GetPatchInfo(type.GetMethod("GetBroadcastVersion"));

@@ -19,7 +19,7 @@ namespace FungleAPI.Utilities.Assets
         public LateAsset(Func<T> create)
         {
             Create = create;
-            FungleAPIPlugin.loadAssets += delegate
+            ResourceHelper.loadAssets += delegate
             {
                 try
                 {

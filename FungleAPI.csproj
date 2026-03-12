@@ -66,6 +66,7 @@
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Translation\TranslationManager.cs" />
     <Compile Include="Utilities\Assets\LateAsset.cs" />
+    <Compile Include="Utilities\Assets\LateSprite.cs" />
     <Compile Include="Utilities\ColorExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\HarmonyHelper.cs" />
