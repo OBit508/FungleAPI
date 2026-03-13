@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Types.After;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Ship;
@@ -116,6 +117,7 @@ namespace FungleAPI.Patches
             {
                 players.Add(pc);
             }
+            EventManager.CallEvent(new AfterEnterVent(pc, __instance));
         }
         [HarmonyPatch("ExitVent")]
         [HarmonyPostfix]
@@ -127,6 +129,7 @@ namespace FungleAPI.Patches
             {
                 players.Remove(pc);
             }
+            EventManager.CallEvent(new AfterExitVent(pc, __instance));
         }
         [HarmonyPatch("Start")]
         [HarmonyPostfix]

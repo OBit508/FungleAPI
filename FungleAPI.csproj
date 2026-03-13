@@ -44,8 +44,11 @@
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\Types\After\AfterEnterVent.cs" />
     <Compile Include="Event\Types\After\AfterExitVent.cs" />
+    <Compile Include="Event\Types\After\AfterMoveVent.cs" />
     <Compile Include="Event\Types\After\AfterMurderEvent.cs" />
     <Compile Include="Event\Types\Before\BeforeEnterVent.cs" />
+    <Compile Include="Event\Types\Before\BeforeExitVent.cs" />
+    <Compile Include="Event\Types\Before\BeforeMoveVent.cs" />
     <Compile Include="Event\Types\Before\BeforeMurderEvent.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
@@ -59,6 +62,7 @@
     <Compile Include="Networking\RPCs\RpcMoveToVent.cs" />
     <Compile Include="Networking\RPCs\RpcRequestForEndGame.cs" />
     <Compile Include="Player\BodyUtils.cs" />
+    <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
     <Compile Include="Ship\Patches\AirshipStatusPatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />
     <Compile Include="Role\LightSourceConfig.cs" />
@@ -168,7 +172,7 @@
     <Compile Include="Patches\GameManagerPatch.cs" />
     <Compile Include="Hud\CustomAbilityButton.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
-    <Compile Include="Player\PlayerControlPatch.cs" />
+    <Compile Include="Player\Patches\PlayerControlPatch.cs" />
     <Compile Include="Utilities\Assets\ResourceHelper.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />

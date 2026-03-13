@@ -1,5 +1,8 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Attributes;
+using FungleAPI.Event;
+using FungleAPI.Event.Types.After;
+using FungleAPI.Event.Types.Before;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Player;
@@ -52,7 +55,10 @@ namespace FungleAPI.Components
                     }
                     else
                     {
-                        Rpc<RpcMoveToVent>.Instance.Send(vent.TryGetHelper(), PlayerControl.LocalPlayer);
+                        if (!EventManager.CallEvent(new BeforeMoveVent(this.vent, vent, PlayerControl.LocalPlayer)).Cancelled)
+                        {
+                            Rpc<RpcMoveToVent>.Instance.Send(vent.TryGetHelper(), PlayerControl.LocalPlayer);
+                        }
                     }
                 });
             }
@@ -127,6 +133,7 @@ namespace FungleAPI.Components
                 Vent.currentVent = otherVent;
                 VentilationSystem.Update(VentilationSystem.Operation.Move, Vent.currentVent.Id);
             }
+            EventManager.CallEvent(new AfterMoveVent(vent, otherVent, playerControl));
         }
     }
 }

@@ -30,7 +30,7 @@ using UnityEngine;
 using xCloud;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.Player
+namespace FungleAPI.Player.Patches
 {
     [HarmonyPatch(typeof(PlayerControl))]
     internal static class PlayerControlPatch

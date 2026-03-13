@@ -15,7 +15,7 @@ using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
-using FungleAPI.Player;
+using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Translation;

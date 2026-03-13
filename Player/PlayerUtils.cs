@@ -7,6 +7,7 @@ using FungleAPI.Event;
 using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
+using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using Il2CppSystem.Linq;

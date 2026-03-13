@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Event.Types.Before
 {
-    public class BeforeEnterVent : CancelableEvent
+    public class BeforeExitVent : CancelableEvent
     {
         public readonly PlayerControl Source;
         public readonly int VentId;
-        public BeforeEnterVent(PlayerControl source, int ventId)
+        public BeforeExitVent(PlayerControl source, int ventId)
         {
             Source = source;
             VentId = ventId;
