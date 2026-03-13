@@ -137,12 +137,6 @@ namespace FungleAPI
 
                 // Carrega as cores (futuramente mais cosméticos)
                 CosmeticManager.SetPaletta();
-
-                // Se não tiver Reactor a API ativa o próprio handshake (garante que todos do lobby tenham os mesmos mods)
-                if (ReactorSupport.ReactorAssembly == null)
-                {
-                    HandShakeManager.PatchHandShake();
-                }
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
