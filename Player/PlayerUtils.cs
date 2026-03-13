@@ -4,6 +4,7 @@ using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
@@ -145,6 +146,10 @@ namespace FungleAPI.Player
         /// </summary>
         public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
         {
+            if (EventManager.CallEvent(new BeforeMurderEvent(killer, target, resultFlags)).Cancelled)
+            {
+                return;
+            }
             killer.isKilling = false;
             killer.logger.Debug(string.Format("{0} trying to murder {1}", killer.PlayerId, target.PlayerId), null);
             NetworkedPlayerInfo data = target.Data;
@@ -242,9 +247,10 @@ namespace FungleAPI.Player
                 PlayerControl.LocalPlayer.isKilling = true;
                 source.isKilling = true;
             }
+            DeadBody deadBody = null;
             if (createDeadBody)
             {
-                DeadBody deadBody = BodyUtils.CreateDeadBody(target, source.Data.Role.GetCreatedDeadBody());
+                deadBody = BodyUtils.CreateDeadBody(target, source.Data.Role.GetCreatedDeadBody());
                 source.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)
@@ -276,6 +282,7 @@ namespace FungleAPI.Player
                 PlayerControl.LocalPlayer.isKilling = false;
                 source.isKilling = false;
             }
+            EventManager.CallEvent(new AfterMurderEvent(source, target, deadBody, resultFlags));
             yield break;
         }
     }

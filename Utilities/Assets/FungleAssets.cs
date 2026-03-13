@@ -22,8 +22,8 @@ namespace FungleAPI.Utilities.Assets
     {
         public static LateSprite Cog = new LateSprite("FungleAPI.Resources.cog", 90);
         public static LateSprite Empty = new LateSprite("FungleAPI.Resources.empty", 100);
-        public static LateSprite NextButton = new LateSprite("FungleAPI.Resources.pluginChangerBackground", 100);
-        public static LateSprite PluginChangerBackground = new LateSprite("FungleAPI.Resources.nextButton", 100);
+        public static LateSprite NextButton = new LateSprite("FungleAPI.Resources.nextButton", 100);
+        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Resources.pluginChangerBackground", 100);
         public static LateSprite Highlight = new LateSprite("FungleAPI.Resources.highlight", 100);
         public static LateSprite Folder = new LateSprite("FungleAPI.Resources.folder", 100);
         public static LateSprite Inactive = new LateSprite("FungleAPI.Resources.inactive", 100);

@@ -20,6 +20,8 @@
     <Compile Include="Base\Buttons\RoleButton.cs" />
     <Compile Include="Base\Buttons\RoleTargetButton.cs" />
     <Compile Include="Base\Buttons\TargetButton.cs" />
+    <Compile Include="Base\Events\CancelableEvent.cs" />
+    <Compile Include="Base\Events\FungleEvent.cs" />
     <Compile Include="Base\Roles\CrewmateBase.cs" />
     <Compile Include="Base\Roles\ImpostorBase.cs" />
     <Compile Include="Base\Roles\NeutralBase.cs" />
@@ -40,6 +42,11 @@
     <Compile Include="Cosmetics\Patches\PlayerTabPatch.cs" />
     <Compile Include="Cosmetics\VanillaCosmetics.cs" />
     <Compile Include="Event\EventManager.cs" />
+    <Compile Include="Event\Types\After\AfterEnterVent.cs" />
+    <Compile Include="Event\Types\After\AfterExitVent.cs" />
+    <Compile Include="Event\Types\After\AfterMurderEvent.cs" />
+    <Compile Include="Event\Types\Before\BeforeEnterVent.cs" />
+    <Compile Include="Event\Types\Before\BeforeMurderEvent.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
