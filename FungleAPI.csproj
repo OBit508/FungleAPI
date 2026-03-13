@@ -47,7 +47,7 @@
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
     <Compile Include="ModCompatibility\ReactorSupport.cs" />
     <Compile Include="ModCompatibility\SubmergedSupport.cs" />
-    <Compile Include="Networking\HandShakeManager.cs" />
+    <Compile Include="Networking\HostGameHelper.cs" />
     <Compile Include="Networking\Rpc.cs" />
     <Compile Include="Networking\RPCs\RpcMoveToVent.cs" />
     <Compile Include="Networking\RPCs\RpcRequestForEndGame.cs" />

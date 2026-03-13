@@ -3,6 +3,7 @@ using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
@@ -38,6 +39,16 @@ namespace FungleAPI.Patches
                 plugin.Settings.Initialize(plugin);
                 plugin.Options.AddRange(plugin.Settings.Options);
             }
+        }
+        [HarmonyPatch("CreatePlayer")]
+        [HarmonyPostfix]
+        public static void CreatePlayerPostfix(AmongUsClient __instance, ClientData clientData)
+        {
+            if (!__instance.AmHost || __instance.HostId == clientData.Id || ReactorSupport.ReactorAssembly != null)
+            {
+                return;
+            }
+            Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
         }
     }
 }

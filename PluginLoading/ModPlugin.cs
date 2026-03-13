@@ -120,6 +120,10 @@ namespace FungleAPI.PluginLoading
                 }
                 AllMods.Add(this);
             }
+            public override string ToString()
+            {
+                return GUID;
+            }
         }
     }
 }

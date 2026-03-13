@@ -14,6 +14,7 @@ using FungleAPI.Patches;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
 using Il2CppInterop.Generator.Extensions;
@@ -78,7 +79,7 @@ namespace FungleAPI.Networking.RPCs
             }
             catch (Exception ex)
             {
-                AmongUsClient.Instance.HandleDisconnect(HandShakeManager.FailedToSyncOptions);
+                AmongUsClient.Instance.HandleDisconnect((DisconnectReasons)244);
                 FungleAPIPlugin.Instance.Log.LogError(ex);
             }
         }

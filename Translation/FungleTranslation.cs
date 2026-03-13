@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Il2CppSystem.Runtime.Remoting.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -33,6 +34,33 @@ namespace FungleAPI.Translation
         private static Translator loadingPregabs;
         private static Translator publicRooms;
         private static Translator forcedDisconnection;
+        private static Translator failedToSync;
+        public static StringNames FailedToSyncSettings
+        {
+            get
+            {
+                if (failedToSync == null)
+                {
+                    failedToSync = new Translator("There was a failure while trying to sync the settings.");
+                    failedToSync.AddTranslation(SupportedLangs.Latam, "Hubo un fallo al intentar sincronizar la configuración.");
+                    failedToSync.AddTranslation(SupportedLangs.Brazilian, "Houve uma falha tentando sincronizar as configurações.");
+                    failedToSync.AddTranslation(SupportedLangs.Portuguese, "Houve uma falha ao tentar sincronizar as configurações.");
+                    failedToSync.AddTranslation(SupportedLangs.Korean, "설정을 동기화하는 동안 오류가 발생했습니다.");
+                    failedToSync.AddTranslation(SupportedLangs.Russian, "Произошла ошибка при попытке синхронизировать настройки.");
+                    failedToSync.AddTranslation(SupportedLangs.Dutch, "Er is een fout opgetreden bij het synchroniseren van de instellingen.");
+                    failedToSync.AddTranslation(SupportedLangs.Filipino, "Nagkaroon ng error habang sinusubukang i-sync ang mga setting.");
+                    failedToSync.AddTranslation(SupportedLangs.French, "Une erreur s’est produite lors de la synchronisation des paramètres.");
+                    failedToSync.AddTranslation(SupportedLangs.German, "Beim Synchronisieren der Einstellungen ist ein Fehler aufgetreten.");
+                    failedToSync.AddTranslation(SupportedLangs.Italian, "Si è verificato un errore durante il tentativo di sincronizzare le impostazioni.");
+                    failedToSync.AddTranslation(SupportedLangs.Japanese, "設定を同期しようとしてエラーが発生しました。");
+                    failedToSync.AddTranslation(SupportedLangs.Spanish, "Ocurrió un error al intentar sincronizar la configuración.");
+                    failedToSync.AddTranslation(SupportedLangs.SChinese, "尝试同步设置时发生错误。");
+                    failedToSync.AddTranslation(SupportedLangs.TChinese, "嘗試同步設定時發生錯誤。");
+                    failedToSync.AddTranslation(SupportedLangs.Irish, "Tharla earráid agus iarracht á déanamh na socruithe a shioncronú.");
+                }
+                return failedToSync.StringName;
+            }
+        }
         public static StringNames ForcedDisconnectionText 
         {
             get
