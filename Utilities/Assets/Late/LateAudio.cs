@@ -31,7 +31,7 @@ namespace FungleAPI.Utilities.Assets.Late
             AudioClip audioClip = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Created {__resource}");
+                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 audioClip = ResourceHelper.LoadAudio(__assembly, __resource, __clipName ?? __resource);
             }
             catch (Exception ex)

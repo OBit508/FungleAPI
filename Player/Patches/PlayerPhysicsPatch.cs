@@ -1,5 +1,5 @@
 ﻿using FungleAPI.Event;
-using FungleAPI.Event.Types.Before;
+using FungleAPI.Event.Types;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -16,13 +16,13 @@ namespace FungleAPI.Player.Patches
         [HarmonyPatch("RpcEnterVent")]
         public static bool RpcEnterVentPrefix(PlayerPhysics __instance, int ventId)
         {
-            return !EventManager.CallEvent(new BeforeEnterVent(__instance.myPlayer, ventId)).Cancelled;
+            return !EventManager.CallEvent(new BeforeEnterVent(ventId)).Cancelled;
         }
         [HarmonyPrefix]
         [HarmonyPatch("RpcExitVent")]
         public static bool RpcExitVentPrefix(PlayerPhysics __instance, int ventId)
         {
-            return !EventManager.CallEvent(new BeforeExitVent(__instance.myPlayer, ventId)).Cancelled;
+            return !EventManager.CallEvent(new BeforeExitVent(ventId)).Cancelled;
         }
     }
 }

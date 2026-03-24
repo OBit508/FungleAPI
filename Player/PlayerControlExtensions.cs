@@ -5,12 +5,13 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Types;
+using FungleAPI.GameOver;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
+using FungleAPI.Player.Networking;
+using FungleAPI.Player.Networking.Data;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
-using Il2CppSystem.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,81 @@ using UnityEngine;
 namespace FungleAPI.Player
 {
     /// <summary>
-    /// A player utility class
+    /// Extensions for the Player
     /// </summary>
-    public static class PlayerUtils
+    public static class PlayerControlExtensions
     {
+        // RPCs
+
+        /// <summary>
+        /// Request to the host to end the game
+        /// </summary>
+        public static void RpcRequestGameOver(this PlayerControl source, CustomGameOver customGameOver)
+        {
+            if (AmongUsClient.Instance.AmLocalHost || AmongUsClient.Instance.AmModdedHost)
+            {
+                GameManager.Instance?.RpcEndGame(customGameOver);
+                return;
+            }
+            Rpc<RpcRequestGameOver>.Instance.Send(customGameOver, source);
+        }
+        /// <summary>
+        /// Request to the host to end the game
+        /// </summary>
+        public static void RpcRequestGameOver<T>(this PlayerControl source) where T : CustomGameOver
+        {
+            Rpc<RpcRequestGameOver>.Instance.Send(GameOverManager.GetGameOverInstance<T>(), source);
+        }
+        /// <summary>
+        /// Request to the host to end the game
+        /// </summary>
+        public static void RpcRequestGameOver(this PlayerControl source, Type type)
+        {
+            Rpc<RpcRequestGameOver>.Instance.Send(GameOverManager.GetGameOverInstance(type), source);
+        }
+
+        /// <summary>
+        /// Makes the player move to the given vent
+        /// </summary>
+        public static void RpcMoveToVent(this PlayerControl source, VentHelper ventHelper)
+        {
+            if (EventManager.CallEvent(new BeforeMoveVent(ventHelper.vent)).Cancelled)
+            {
+                return;
+            }
+            Rpc<RpcMoveToVent>.Instance.Send(ventHelper, source);
+        }
+        /// <summary>
+        /// Get a player by the Id
+        /// </summary>
+        public static void RpcCustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            if (EventManager.CallEvent(new BeforeMurderEvent(target, resultFlags)).Cancelled)
+            {
+                return;
+            }
+            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+        }
+        /// <summary>
+        /// Get a player by the Id
+        /// </summary>
+        public static void CmdCheckCustomMurder(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            source.isKilling = true;
+            if (AmongUsClient.Instance.AmLocalHost || AmongUsClient.Instance.AmModdedHost)
+            {
+                source.CheckCustomMurder(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
+                return;
+            }
+            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+        }
+
+
+
+
+
+        // Utils
+
         /// <summary>
         /// Get a player by the Id
         /// </summary>
@@ -38,13 +110,6 @@ namespace FungleAPI.Player
                 }
             }
             return null;
-        }
-        /// <summary>
-        /// Perform a custom kill
-        /// </summary>
-        public static void RpcCustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
-        {
-            Rpc<RpcCustomMurder>.Instance.Send((killer, target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), killer);
         }
         /// <summary>
         /// Get all nearby dead bodies
@@ -119,19 +184,6 @@ namespace FungleAPI.Player
             return list;
         }
         /// <summary>
-        /// Get a PlayerComponent
-        /// </summary>
-        public static T GetPlayerComponent<T>(this PlayerControl player) where T : PlayerComponent
-        {
-            T comp = player.GetComponent<T>();
-            if (comp == null)
-            {
-                PlayerControlPatch.DoStart(player);
-                comp = player.GetComponent<T>();
-            }
-            return comp;
-        }
-        /// <summary>
         /// Get the current vent
         /// </summary>
         public static Vent GetCurrentVent(this PlayerControl player)
@@ -140,19 +192,50 @@ namespace FungleAPI.Player
             {
                 return Vent.currentVent;
             }
-            return player.GetPlayerComponent<PlayerHelper>().CurrentVent;
+            return player.GetComponent<PlayerHelper>().CurrentVent;
         }
-        /// <summary>
-        /// Perform a custom kill
-        /// </summary>
-        public static void CustomMurderPlayer(this PlayerControl killer, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer, bool createDeadBody, bool teleportMurderer, bool showKillAnim, bool playKillSound)
+
+
+
+
+
+        // Helpers
+
+        public static void CheckCustomMurder(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
-            if (EventManager.CallEvent(new BeforeMurderEvent(killer, target, resultFlags)).Cancelled)
+            source.logger.Debug(string.Format("Checking if {0} murdered {1}", source.PlayerId, (target == null) ? "null player" : target.PlayerId.ToString()), null);
+            source.isKilling = false;
+            if (AmongUsClient.Instance.IsGameOver || !AmongUsClient.Instance.AmHost)
             {
                 return;
             }
-            killer.isKilling = false;
-            killer.logger.Debug(string.Format("{0} trying to murder {1}", killer.PlayerId, target.PlayerId), null);
+            if (!target || source.Data.IsDead || !source.Data.Role.IsImpostor || source.Data.Disconnected)
+            {
+                int num = target ? ((int)target.PlayerId) : -1;
+                source.logger.Warning(string.Format("Bad kill from {0} to {1}", source.PlayerId, num), null);
+                source.RpcMurderPlayer(target, false);
+                return;
+            }
+            NetworkedPlayerInfo data = target.Data;
+            if (data == null || data.IsDead || target.inVent || target.MyPhysics.Animations.IsPlayingEnterVentAnimation() || target.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || target.inMovingPlat)
+            {
+                source.logger.Warning("Invalid target data for kill", null);
+                source.RpcMurderPlayer(target, false);
+                return;
+            }
+            if (MeetingHud.Instance)
+            {
+                source.logger.Warning("Tried to kill while a meeting was starting", null);
+                source.RpcMurderPlayer(target, false);
+                return;
+            }
+            source.isKilling = true;
+            source.RpcCustomMurderPlayer(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
+        }
+        public static void CustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        {
+            source.isKilling = false;
+            source.logger.Debug(string.Format("{0} trying to murder {1}", source.PlayerId, target.PlayerId), null);
             NetworkedPlayerInfo data = target.Data;
             if (resultFlags.HasFlag(MurderResultFlags.FailedError))
             {
@@ -167,25 +250,25 @@ namespace FungleAPI.Player
                     DataManager.Player.Stats.IncrementStat(StatID.Role_GuardianAngel_CrewmatesProtected);
                     DestroyableSingleton<AchievementManager>.Instance.OnProtectACrewmate();
                 }
-                if (killer.AmOwner || flag)
+                if (source.AmOwner || flag)
                 {
                     target.ShowFailedMurder();
                     if (resetKillTimer)
                     {
-                        killer.SetKillTimer(RoleConfigManager.KillConfig.Cooldown() / 2f);
+                        source.SetKillTimer(RoleConfigManager.KillConfig.Cooldown() / 2f);
                     }
                 }
                 else
                 {
                     target.RemoveProtection();
                 }
-                killer.logger.Debug(string.Format("{0} failed to murder {1} due to guardian angel protection", killer.PlayerId, target.PlayerId), null);
+                source.logger.Debug(string.Format("{0} failed to murder {1} due to guardian angel protection", source.PlayerId, target.PlayerId), null);
                 return;
             }
             if (resultFlags.HasFlag(MurderResultFlags.Succeeded) || resultFlags.HasFlag(MurderResultFlags.DecisionByHost))
             {
-                DestroyableSingleton<DebugAnalytics>.Instance.Analytics.Kill(target.Data, killer.Data);
-                if (killer.AmOwner)
+                DestroyableSingleton<DebugAnalytics>.Instance.Analytics.Kill(target.Data, source.Data);
+                if (source.AmOwner)
                 {
                     if (GameManager.Instance.IsHideAndSeek())
                     {
@@ -195,17 +278,17 @@ namespace FungleAPI.Player
                     {
                         DataManager.Player.Stats.IncrementStat(StatID.ImpostorKills);
                     }
-                    if (killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted)
+                    if (source.CurrentOutfitType == PlayerOutfitType.Shapeshifted)
                     {
                         DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);
                     }
                     if (Constants.ShouldPlaySfx() && playKillSound)
                     {
-                        SoundManager.Instance.PlaySound(killer.KillSfx, false, 0.8f, null);
+                        SoundManager.Instance.PlaySound(source.KillSfx, false, 0.8f, null);
                     }
                     if (resetKillTimer)
                     {
-                        killer.SetKillTimer(RoleConfigManager.KillConfig.Cooldown());
+                        source.SetKillTimer(RoleConfigManager.KillConfig.Cooldown());
                     }
                 }
                 DestroyableSingleton<UnityTelemetry>.Instance.WriteMurder();
@@ -226,17 +309,17 @@ namespace FungleAPI.Player
                     }
                     if (showKillAnim)
                     {
-                        DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(killer.Data, data);
+                        DestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(source.Data, data);
                     }
                     target.cosmetics.SetNameMask(false);
                     target.RpcSetScanner(false);
                 }
-                DestroyableSingleton<AchievementManager>.Instance.OnMurder(killer.AmOwner, target.AmOwner, killer.CurrentOutfitType == PlayerOutfitType.Shapeshifted, killer.shapeshiftTargetPlayerId, (int)target.PlayerId);
-                killer.MyPhysics.StartCoroutine(CoPerformCustomKill(killer.KillAnimations.Random(), killer, target, resultFlags, createDeadBody, teleportMurderer).WrapToIl2Cpp());
-                killer.logger.Debug(string.Format("{0} succeeded in murdering {1}", killer.PlayerId, target.PlayerId), null);
+                DestroyableSingleton<AchievementManager>.Instance.OnMurder(source.AmOwner, target.AmOwner, source.CurrentOutfitType == PlayerOutfitType.Shapeshifted, source.shapeshiftTargetPlayerId, (int)target.PlayerId);
+                source.MyPhysics.StartCoroutine(source.KillAnimations.Random().CoPerformCustomKill(source, target, resultFlags, createDeadBody, teleportMurderer).WrapToIl2Cpp());
+                source.logger.Debug(string.Format("{0} succeeded in murdering {1}", source.PlayerId, target.PlayerId), null);
             }
         }
-        public static System.Collections.IEnumerator CoPerformCustomKill(KillAnimation anim, PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool createDeadBody, bool teleportMurderer)
+        public static System.Collections.IEnumerator CoPerformCustomKill(this KillAnimation killAnimation, PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool createDeadBody, bool teleportMurderer)
         {
             FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
             bool isParticipant = PlayerControl.LocalPlayer == source || PlayerControl.LocalPlayer == target;
@@ -269,7 +352,7 @@ namespace FungleAPI.Player
                 }
             }
             target.Die(DeathReason.Kill, true);
-            yield return source.MyPhysics.Animations.CoPlayCustomAnimation(anim.BlurAnim);
+            yield return source.MyPhysics.Animations.CoPlayCustomAnimation(killAnimation.BlurAnim);
             if (teleportMurderer)
             {
                 source.NetTransform.SnapTo(target.transform.position);

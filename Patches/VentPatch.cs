@@ -1,6 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types.After;
+using FungleAPI.Event.Types;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Ship;
@@ -111,7 +111,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void EnterVentPostfix(Vent __instance, PlayerControl pc)
         {
-            pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = __instance;
+            pc.GetComponent<PlayerHelper>().__CurrentVent = __instance;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (!players.Contains(pc))
             {
@@ -123,7 +123,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void ExitVentPostfix(Vent __instance, PlayerControl pc)
         {
-            pc.GetPlayerComponent<PlayerHelper>().__CurrentVent = null;
+            pc.GetComponent<PlayerHelper>().__CurrentVent = null;
             List<PlayerControl> players = __instance.TryGetHelper().Players;
             if (players.Contains(pc))
             {

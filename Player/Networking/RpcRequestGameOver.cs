@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Base.Rpc;
 using FungleAPI.GameOver;
+using FungleAPI.Networking;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -7,12 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Player.Networking
 {
-    /// <summary>
-    /// Rpc used to request a game over for the host
-    /// </summary>
-    public class RpcRequestForEndGame : AdvancedRpc<CustomGameOver, PlayerControl>
+    internal class RpcRequestGameOver : AdvancedRpc<CustomGameOver, PlayerControl>
     {
         public override void Write(PlayerControl innerNetObejct, MessageWriter messageWriter, CustomGameOver value)
         {

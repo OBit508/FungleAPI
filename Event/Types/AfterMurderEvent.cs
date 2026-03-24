@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types.After
+namespace FungleAPI.Event.Types
 {
     public class AfterMurderEvent : FungleEvent
     {

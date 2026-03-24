@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types.Before
+namespace FungleAPI.Event.Types
 {
-    public class BeforeEnterVent : CancelableEvent
+    public class AfterEnterVent : FungleEvent
     {
         public readonly PlayerControl Source;
-        public readonly int VentId;
-        public BeforeEnterVent(PlayerControl source, int ventId)
+        public readonly Vent Vent;
+        public AfterEnterVent(PlayerControl source, Vent vent)
         {
             Source = source;
-            VentId = ventId;
+            Vent = vent;
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AmongUs.Data;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
+using FungleAPI.Player.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -57,7 +57,7 @@ namespace FungleAPI.GameOver
             AmongUsClient amongUsClient = AmongUsClient.Instance;
             if (!amongUsClient.AmHost && AllowNonHostGameOverRequest)
             {
-                Rpc<RpcRequestForEndGame>.Instance.Send(gameOver, PlayerControl.LocalPlayer, SendOption.Reliable, amongUsClient.HostId);
+                Rpc<RpcRequestGameOver>.Instance.Send(gameOver, PlayerControl.LocalPlayer, SendOption.Reliable, amongUsClient.HostId);
                 return;
             }
             gameManager.ShouldCheckForGameEnd = false;

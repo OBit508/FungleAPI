@@ -1,4 +1,5 @@
-﻿using FungleAPI.PluginLoading;
+﻿using FungleAPI.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
@@ -16,7 +17,7 @@ namespace FungleAPI.Components
     /// <summary>
     /// The component used on the home screen mods page
     /// </summary>
-    [Attributes.RegisterTypeInIl2Cpp]
+    [RegisterTypeInIl2Cpp]
     public class ModsPage : MonoBehaviour
     {
         public PassiveButton Arrow;

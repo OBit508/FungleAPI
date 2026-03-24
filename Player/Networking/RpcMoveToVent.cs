@@ -11,12 +11,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Player.Networking
 {
-    /// <summary>
-    /// Rpc used to update a player's current vent
-    /// </summary>
-    public class RpcMoveToVent : AdvancedRpc<VentHelper, PlayerControl>
+    internal class RpcMoveToVent : AdvancedRpc<VentHelper, PlayerControl>
     {
         public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, VentHelper value)
         {

@@ -1,4 +1,5 @@
-﻿using FungleAPI.PluginLoading;
+﻿using FungleAPI.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,7 @@ namespace FungleAPI.Components
     /// <summary>
     /// The component used in the lobby tab selectors
     /// </summary>
-    [Attributes.RegisterTypeInIl2Cpp]
+    [RegisterTypeInIl2Cpp]
     public class PluginChanger : MonoBehaviour
     {
         public int CurrentIndex;

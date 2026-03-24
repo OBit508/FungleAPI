@@ -31,7 +31,7 @@ namespace FungleAPI.Utilities.Assets.Late
             GifFile gifFile = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Created {__resource}");
+                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 gifFile = ResourceHelper.LoadGIF(__assembly, __resource, __pixelPerUnit);
             }
             catch (Exception ex)

@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types.After
+namespace FungleAPI.Event.Types
 {
-    public class AfterEnterVent : FungleEvent
+    public class PlayerDieEvent : FungleEvent
     {
         public readonly PlayerControl Source;
-        public readonly Vent Vent;
-        public AfterEnterVent(PlayerControl source, Vent vent)
+        public readonly DeathReason Reason;
+        public PlayerDieEvent(PlayerControl source, DeathReason reason)
         {
             Source = source;
-            Vent = vent;
+            Reason = reason;
         }
     }
 }

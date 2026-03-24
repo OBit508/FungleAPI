@@ -28,15 +28,15 @@ namespace FungleAPI.Base.Rpc
         /// <summary>
         /// Write the Rpc data into the message writer
         /// </summary>
-        public virtual void Write(MessageWriter messageWriter, DataT value)
+        public virtual void Write(MessageWriter messageWriter, DataT data)
         {
         }
         /// <summary>
         /// Write the Rpc data with access to the related InnerNetObject
         /// </summary>
-        public virtual void Write(InnerNetObject innerNetObject, MessageWriter messageWriter, DataT value)
+        public virtual void Write(InnerNetObject innerNetObject, MessageWriter messageWriter, DataT data)
         {
-            Write(messageWriter, value);
+            Write(messageWriter, data);
         }
     }
     /// <summary>
@@ -63,15 +63,15 @@ namespace FungleAPI.Base.Rpc
         /// <summary>
         /// Write the Rpc data into the message writer
         /// </summary>
-        public virtual void Write(MessageWriter messageWriter, DataT value)
+        public virtual void Write(MessageWriter messageWriter, DataT data)
         {
         }
         /// <summary>
         /// Write the Rpc data with access to the specific InnerNetObject type
         /// </summary>
-        public virtual void Write(TNetObject innerNetObject, MessageWriter messageWriter, DataT value)
+        public virtual void Write(TNetObject innerNetObject, MessageWriter messageWriter, DataT data)
         {
-            Write(messageWriter, value);
+            Write(messageWriter, data);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace FungleAPI.Utilities.Assets.Late
             Sprite sprite = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Created {__resource}");
+                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 sprite = ResourceHelper.LoadSprite(__assembly, __resource, __pixelPerUnit);
             }
             catch (Exception ex)

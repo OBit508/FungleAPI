@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using AsmResolver.PE.DotNet.ReadyToRun;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Epic.OnlineServices.Presence;
 using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Types;
 using FungleAPI.Networking;
 using FungleAPI.Networking.RPCs;
 using FungleAPI.Patches;
@@ -26,7 +22,13 @@ using Il2CppSystem.Net;
 using InnerNet;
 using Rewired;
 using Rewired.Utils;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Purchasing;
 using xCloud;
 using static UnityEngine.GraphicsBuffer;
 
@@ -65,34 +67,32 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool RpcMurderPlayerPrefix(PlayerControl __instance, PlayerControl target, bool didSucceed)
         {
-            __instance.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError));
-            return false;
+            return !EventManager.CallEvent(new BeforeMurderEvent(target, (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError) | MurderResultFlags.DecisionByHost)).Cancelled;
         }
         [HarmonyPatch("MurderPlayer")]
         [HarmonyPrefix]
         public static bool MurderPlayerPrefix(PlayerControl __instance, PlayerControl target, MurderResultFlags resultFlags)
         {
-            __instance.CustomMurderPlayer(target, resultFlags, true, true, true, true, true);
+            __instance.CustomMurderPlayer(target, resultFlags);
             return false;
         }
         [HarmonyPatch("CompleteTask")]
         [HarmonyPostfix]
         public static void CompleteTaskPostfix(PlayerControl __instance, uint idx)
         {
-            PlayerTask task = __instance.myTasks.ToArray().First(t => t.Id == idx);
-            if (task != null)
-            {
-            }
+            EventManager.CallEvent(new CompleteTaskEvent(idx));
         }
         [HarmonyPatch("Die")]
         [HarmonyPostfix]
         public static void DiePostfix(PlayerControl __instance, DeathReason reason)
         {
+            EventManager.CallEvent(new PlayerDieEvent(__instance, reason));
         }
         [HarmonyPatch("ReportDeadBody")]
         [HarmonyPostfix]
         public static void ReportDeadBodyPostfix(PlayerControl __instance, NetworkedPlayerInfo target)
         {
+            EventManager.CallEvent(new ReportBodyEvent(__instance, target));
         }
         [HarmonyPatch("AdjustLighting")]
         [HarmonyPrefix]

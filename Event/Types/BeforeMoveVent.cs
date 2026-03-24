@@ -5,18 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types.Before
+namespace FungleAPI.Event.Types
 {
     public class BeforeMoveVent : CancelableEvent
     {
-        public readonly Vent StarterVent;
         public readonly Vent TargetVent;
-        public readonly PlayerControl Source;
-        public BeforeMoveVent(Vent starterVent, Vent targetVent, PlayerControl source)
+        public BeforeMoveVent(Vent targetVent)
         {
-            StarterVent = starterVent;
             TargetVent = targetVent;
-            Source = source;
         }
     }
 }

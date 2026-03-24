@@ -5,16 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types.Before
+namespace FungleAPI.Event.Types
 {
     public class BeforeMurderEvent : CancelableEvent
     {
-        public readonly PlayerControl Source;
         public readonly PlayerControl Target;
         public readonly MurderResultFlags Flags;
-        public BeforeMurderEvent(PlayerControl source, PlayerControl target, MurderResultFlags flags)
+        public BeforeMurderEvent(PlayerControl target, MurderResultFlags flags)
         {
-            Source = source;
             Target = target;
             Flags = flags;
         }
