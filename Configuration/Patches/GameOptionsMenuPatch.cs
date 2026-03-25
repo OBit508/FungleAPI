@@ -1,8 +1,8 @@
 ﻿using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Configuration.Networking;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;

@@ -203,10 +203,10 @@ namespace FungleAPI.Role
         }
         internal static RoleBehaviour Register(Type type, ModPlugin plugin, RoleTypes roleType)
         {
-            (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance) pair = ICustomRole.Save[type];
+            ChangeableValue<RoleOptions> roleOptions = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            pair.Options.Value.AddRange(ConfigurationManager.RegisterAllOptions(type, plugin));
+            roleOptions.Value.Options.AddRange(ConfigurationManager.RegisterAllOptions(type, plugin));
             ConfigurationManager.InitializeRoleCountAndChances(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;

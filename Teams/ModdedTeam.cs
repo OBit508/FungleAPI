@@ -42,7 +42,7 @@ namespace FungleAPI.Teams
         /// </summary>
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
         public static List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public TeamCountAndPriority CountAndPriority;
+        public TeamOptions TeamOptions;
         public FloatGameSetting CountData;
         public FloatGameSetting PriorityData;
         public List<ModdedOption> ExtraConfigs;
@@ -166,9 +166,9 @@ namespace FungleAPI.Teams
                 {
                     GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }
-                CountAndPriority.SetCount((int)option.Value);
+                TeamOptions.SetCount((int)option.Value);
             });
-            option.Value = CountAndPriority.GetCount();
+            option.Value = TeamOptions.GetCount();
             return option;
         }
         /// <summary>
@@ -178,9 +178,9 @@ namespace FungleAPI.Teams
         {
             NumberOption option = ModdedNumberOption.CreateNumberOption(transform, PriorityData, delegate (NumberOption option)
             {
-                CountAndPriority.SetPriority((int)option.Value);
+                TeamOptions.SetPriority((int)option.Value);
             });
-            option.Value = CountAndPriority.GetPriority();
+            option.Value = TeamOptions.GetPriority();
             return option;
         }
     }

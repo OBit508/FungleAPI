@@ -13,7 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Configuration.Networking
 {
     /// <summary>
     /// Rpc that sync a role count and chance
@@ -25,7 +25,7 @@ namespace FungleAPI.Networking.RPCs
             RoleBehaviour role = reader.ReadRole();
             if (role.CustomRole() != null)
             {
-                RoleCountAndChance countAndChance = role.CustomRole().CountAndChance;
+                RoleOptions countAndChance = role.CustomRole().RoleOptions;
                 countAndChance.SetCount(reader.ReadInt32());
                 countAndChance.SetChance(reader.ReadInt32());
             }
@@ -37,8 +37,8 @@ namespace FungleAPI.Networking.RPCs
             writer.WriteRole(value);
             if (value.CustomRole() != null)
             {
-                writer.Write(value.CustomRole().CountAndChance.GetCount());
-                writer.Write(value.CustomRole().CountAndChance.GetChance());
+                writer.Write(value.CustomRole().RoleOptions.GetCount());
+                writer.Write(value.CustomRole().RoleOptions.GetChance());
             }
             IRoleOptionsCollection roleOptionsCollection = GameOptionsManager.Instance.currentGameOptions.RoleOptions;
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, StringNames.LobbyChangeSettingNotificationRole.GetString().Replace("{0}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + value.TeamColor.ToTextColor() + value.NiceName + "</color></font>").Replace("{1}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + roleOptionsCollection.GetNumPerGame(value.Role).ToString() + "</font>").Replace("{2}", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + roleOptionsCollection.GetChancePerGame(value.Role).ToString() + "</font>"), false);

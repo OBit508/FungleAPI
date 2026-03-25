@@ -4,7 +4,6 @@ using Discord;
 using Epic.OnlineServices;
 using FungleAPI.Utilities.Assets;
 using FungleAPI.Components;
-using FungleAPI.Networking.RPCs;
 using FungleAPI.Role;
 using FungleAPI.Networking;
 using FungleAPI.Utilities;
@@ -24,6 +23,7 @@ using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
+using FungleAPI.Configuration.Networking;
 
 namespace FungleAPI.Configuration.Patches
 {
@@ -160,8 +160,8 @@ namespace FungleAPI.Configuration.Patches
             option.SetRole(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions, role as RoleBehaviour, 20);
             option.OnValueChanged = new Action<OptionBehaviour>(delegate
             {
-                role.CountAndChance.SetCount(option.RoleMaxCount);
-                role.CountAndChance.SetChance(option.RoleChance);
+                role.RoleOptions.SetCount(option.RoleMaxCount);
+                role.RoleOptions.SetChance(option.RoleChance);
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {
@@ -174,11 +174,11 @@ namespace FungleAPI.Configuration.Patches
             option.transform.localPosition = new Vector3(-0.15f, yPos, -2f);
             option.titleText.text = role.RoleName.GetString();
             option.labelSprite.color = role.RoleColor;
-            int count = role.CountAndChance.GetCount();
-            int chance = role.CountAndChance.GetChance();
+            int count = role.RoleOptions.GetCount();
+            int chance = role.RoleOptions.GetChance();
             option.countText.text = count.ToString();
             option.chanceText.text = chance.ToString();
-            if (role.Options.Count > 0)
+            if (role.RoleOptions.Options.Count > 0)
             {
                 PassiveButton cog = FungleAssets.CogPrefab.Instantiate(option.transform).GetComponent<PassiveButton>();
                 cog.transform.localPosition = new Vector3(-1.278f, -0.3f, 0f);
@@ -217,7 +217,7 @@ namespace FungleAPI.Configuration.Patches
             menu.roleHeaderSprite.color = role.RoleColor.Lighten();
             menu.roleHeaderText.color = role.RoleColor;
             menu.roleHeaderText.text = role.RoleName.GetString();
-            foreach (ModdedOption config in role.Options)
+            foreach (ModdedOption config in role.RoleOptions.Options)
             {
                 OptionBehaviour op = config.CreateOption(menu.AdvancedRolesSettings.transform);
                 op.SetClickMask(menu.ButtonClickMask);

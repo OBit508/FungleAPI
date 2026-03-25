@@ -42,75 +42,12 @@ namespace FungleAPI.Configuration.Presets
         public string Path;
         public void SaveConfigs(string presetName)
         {
-            PresetName = presetName;
-            Plugin.Options.ForEach(new Action<ModdedOption>(delegate (ModdedOption option)
-            {
-                Configs.Add(option.FullConfigName);
-                ConfigValues.Add(option.localValue.Value);
-            }));
-            Plugin.RoleCountsAndChances.ForEach(new Action<RoleCountAndChance>(delegate (RoleCountAndChance roleCountAndChance)
-            {
-                RoleCountsAndChances.Add(roleCountAndChance.Name);
-                RoleCounts.Add(roleCountAndChance.localCount.Value);
-                RoleChances.Add(roleCountAndChance.localChance.Value);
-            }));
-            Plugin.TeamCountAndPriorities.ForEach(new Action<TeamCountAndPriority>(delegate (TeamCountAndPriority teamCountAndPriority)
-            {
-                TeamCountsAndPrioritys.Add(teamCountAndPriority.Name);
-                TeamCounts.Add(teamCountAndPriority.localCount.Value);
-                TeamPriorityes.Add(teamCountAndPriority.localPriority.Value);
-            }));
-            Empty = false;
-            if (this != Plugin.PluginPreset.GetDefault())
-            {
-                File.WriteAllText(Path, JsonSerializer.Serialize(this));
-            }
         }
         public void LoadConfigs()
         {
-            for (int i = 0; i < Configs.Count; i++)
-            {
-                ModdedOption option = Plugin.Options.FirstOrDefault(o => o.FullConfigName == Configs[i]);
-                if (option != null)
-                {
-                    option.SetValue(ConfigValues[i]);
-                }
-            }
-            for (int i = 0; i < RoleCountsAndChances.Count; i++)
-            {
-                RoleCountAndChance roleCountAndChance = Plugin.RoleCountsAndChances.FirstOrDefault(o => o.Name == RoleCountsAndChances[i]);
-                if (roleCountAndChance != null)
-                {
-                    roleCountAndChance.SetCount(RoleCounts[i]);
-                    roleCountAndChance.SetChance(RoleChances[i]);
-                }
-            }
-            for (int i = 0; i < TeamCountsAndPrioritys.Count; i++)
-            {
-                TeamCountAndPriority teamCountAndPriority = Plugin.TeamCountAndPriorities.FirstOrDefault(o => o.Name == TeamCountsAndPrioritys[i]);
-                if (teamCountAndPriority != null)
-                {
-                    teamCountAndPriority.SetCount(TeamCounts[i]);
-                    teamCountAndPriority.SetPriority(TeamPriorityes[i]);
-                }
-            }
         }
         public void CleanConfigs()
         {
-            PresetName = "";
-            Configs.Clear();
-            ConfigValues.Clear();
-            RoleCountsAndChances.Clear();
-            RoleCounts.Clear();
-            RoleChances.Clear();
-            TeamCountsAndPrioritys.Clear();
-            TeamCounts.Clear();
-            TeamPriorityes.Clear();
-            Empty = true;
-            if (this != Plugin.PluginPreset.GetDefault())
-            {
-                File.WriteAllText(Path, JsonSerializer.Serialize(this));
-            }
         }
         public override string ToString()
         {

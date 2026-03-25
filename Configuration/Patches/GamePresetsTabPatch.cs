@@ -1,7 +1,7 @@
 ﻿using FungleAPI.Components;
+using FungleAPI.Configuration.Networking;
 using FungleAPI.Configuration.Presets;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
@@ -74,7 +74,7 @@ namespace FungleAPI.Configuration.Patches
                         menu.ConfirmPresetPopUp.gameObject.SetActive(true);
                         menu.PresetConfirmButton.SetNewAction(delegate
                         {
-                            PresetV1 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
+                            PresetV2 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
                             preset.LoadConfigs();
                             foreach (PassiveButton button in Buttons)
                             {
@@ -98,7 +98,7 @@ namespace FungleAPI.Configuration.Patches
                 {
                     if (Selected > -1)
                     {
-                        PresetV1 ps = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
+                        PresetV2 ps = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets[Selected];
                         Utilities.Helpers.ShowEditNameScreen(FungleTranslation.PresetNameText.GetString(), ps.Empty ? "" : ps.PresetName, delegate (string text)
                         {
                             ps.PresetName = text;
@@ -118,7 +118,7 @@ namespace FungleAPI.Configuration.Patches
                     menu.ConfirmPresetPopUp.gameObject.SetActive(true);
                     menu.PresetConfirmButton.SetNewAction(delegate
                     {
-                        PresetV1 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.GetDefault();
+                        PresetV2 preset = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.GetDefault();
                         preset.LoadConfigs();
                         menu.GameOptionsMenu.RefreshChildren();
                         menu.GameOptionsMenu.RolesMenu.RefreshChildren();
@@ -147,11 +147,11 @@ namespace FungleAPI.Configuration.Patches
                 });
                 if (GameSettingMenu.Instance != null)
                 {
-                    List<PresetV1> presets = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets;
+                    List<PresetV2> presets = GameSettingMenuPatch.pluginChanger.CurrentPlugin.PluginPreset.Presets;
                     for (int i = 0; i < 5; i++)
                     {
                         int id = i;
-                        PresetV1 ps = presets[id];
+                        PresetV2 ps = presets[id];
                         PassiveButton preset = GameObject.Instantiate<PassiveButton>(GameSettingMenu.Instance.ControllerSelectable[0].SafeCast<PassiveButton>(), Parent);
                         preset.transform.localPosition = new Vector3(-1.35f, 1.7f - i * 0.75f, -2);
                         preset.transform.localScale = Vector3.one * 1.05f;

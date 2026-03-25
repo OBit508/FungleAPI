@@ -207,7 +207,7 @@ namespace FungleAPI.PluginLoading
             RoleTypes role = (RoleTypes)LastRoleId;
             CustomRoleManager.RolesToRegister.Add(type, role);
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, (new ChangeableValue<List<ModdedOption>>(new List<ModdedOption>()), new ChangeableValue<RoleCountAndChance>(new RoleCountAndChance())));
+            ICustomRole.Save.Add(type, new ChangeableValue<RoleOptions>(new RoleOptions()));
             return role;
         }
         public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)

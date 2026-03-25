@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Configuration.Networking
 {
     /// <summary>
     /// Rpc that sends a notification

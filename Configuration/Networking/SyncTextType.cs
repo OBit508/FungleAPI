@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Configuration.Networking
 {
     public enum SyncTextType
     {

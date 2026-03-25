@@ -48,11 +48,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Role options
         /// </summary>
-        List<ModdedOption> Options { get { return Save[GetType()].Options.Value; } }
-        /// <summary>
-        /// Role count and chance
-        /// </summary>
-        RoleCountAndChance CountAndChance { get { return Save[GetType()].CountAndChance.Value; } }
+        RoleOptions RoleOptions { get { return Save[GetType()].Value; } }
         /// <summary>
         /// Create the Sabotage button config for the role
         /// </summary>
@@ -173,6 +169,6 @@ namespace FungleAPI.Role
         /// Role neutral game over
         /// </summary>
         public CustomGameOver NeutralGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
-        internal static Dictionary<Type, (ChangeableValue<List<ModdedOption>> Options, ChangeableValue<RoleCountAndChance> CountAndChance)> Save = new();
+        internal static Dictionary<Type, ChangeableValue<RoleOptions>> Save = new();
     }
 }

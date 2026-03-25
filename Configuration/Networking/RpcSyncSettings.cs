@@ -4,6 +4,7 @@ using FungleAPI.Base.Rpc;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
+using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
@@ -17,7 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
 
-namespace FungleAPI.Networking.RPCs
+namespace FungleAPI.Configuration.Networking
 {
     /// <summary>
     /// Rpc that sync some option
@@ -47,8 +48,8 @@ namespace FungleAPI.Networking.RPCs
             return type switch
             {
                 SyncTextType.TeamOption => (option.ConfigName.StringName, option.GetValue()),
-                SyncTextType.TeamCount => (FungleTranslation.CountText, team.CountAndPriority.GetCount().ToString()),
-                SyncTextType.TeamPriority => (FungleTranslation.PriorityText, team.CountAndPriority.GetPriority().ToString()),
+                SyncTextType.TeamCount => (FungleTranslation.CountText, team.TeamOptions.GetCount().ToString()),
+                SyncTextType.TeamPriority => (FungleTranslation.PriorityText, team.TeamOptions.GetPriority().ToString()),
                 _ => throw new ArgumentOutOfRangeException(nameof(type))
             };
         }
@@ -60,12 +61,12 @@ namespace FungleAPI.Networking.RPCs
                 writer.WriteOption(opt);
                 writer.Write(opt.GetValue());
             }
-            writer.Write(ConfigurationManager.TeamCountAndPriorities.Count);
-            foreach (var t in ConfigurationManager.TeamCountAndPriorities)
+            writer.Write(ModdedTeam.Teams.Count);
+            foreach (ModdedTeam t in ModdedTeam.Teams)
             {
-                writer.WriteConfigHelper(t);
-                writer.Write(t.GetCount());
-                writer.Write(t.GetPriority());
+                writer.WriteConfigHelper(t.TeamOptions);
+                writer.Write(t.TeamOptions.GetCount());
+                writer.Write(t.TeamOptions.GetPriority());
             }
             writer.Write((int)value.type);
             switch (value.type)
@@ -101,7 +102,7 @@ namespace FungleAPI.Networking.RPCs
             }
             for (int i = reader.ReadInt32(); i > 0; i--)
             {
-                TeamCountAndPriority c = reader.ReadConfigHelper<TeamCountAndPriority>();
+                TeamOptions c = reader.ReadConfigHelper<TeamOptions>();
                 c.SetCount(reader.ReadInt32());
                 c.SetPriority(reader.ReadInt32());
             }

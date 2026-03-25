@@ -54,8 +54,8 @@ namespace FungleAPI.PluginLoading
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public List<ModdedOption> Options = new List<ModdedOption>();
-        public List<RoleCountAndChance> RoleCountsAndChances = new List<RoleCountAndChance>();
-        public List<TeamCountAndPriority> TeamCountAndPriorities = new List<TeamCountAndPriority>();
+        public List<RoleOptions> RoleOptions = new List<RoleOptions>();
+        public List<TeamOptions> TeamOptions = new List<TeamOptions>();
         public ModCosmetics Cosmetics = new ModCosmetics();
         public ModSettings Settings = new ModSettings();
         public ModFolderConfig FolderConfig = new ModFolderConfig();

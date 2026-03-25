@@ -271,9 +271,9 @@ namespace FungleAPI.Configuration.Patches
             advancedRoleViewPanel.divider.material.SetInt(PlayerMaterial.MaskLayer, maskLayer);
             float num = advancedRoleViewPanel.yPosStart;
             float num2 = 1.08f;
-            for (int i = 0; i < role.Options.Count; i++)
+            for (int i = 0; i < role.RoleOptions.Options.Count; i++)
             {
-                ModdedOption baseGameSetting = role.Options[i];
+                ModdedOption baseGameSetting = role.RoleOptions.Options[i];
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;
@@ -386,11 +386,11 @@ namespace FungleAPI.Configuration.Patches
                         }
                         else if (i == 0)
                         {
-                            viewSettingsInfoPanel.SetInfo(group.CountData.Title, group.CountAndPriority.GetCount().ToString(), 61);
+                            viewSettingsInfoPanel.SetInfo(group.CountData.Title, group.TeamOptions.GetCount().ToString(), 61);
                         }
                         else if (i == 1)
                         {
-                            viewSettingsInfoPanel.SetInfo(group.PriorityData.Title, group.CountAndPriority.GetPriority().ToString(), 61);
+                            viewSettingsInfoPanel.SetInfo(group.PriorityData.Title, group.TeamOptions.GetPriority().ToString(), 61);
                         }
                         menu.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
                     }

@@ -139,7 +139,7 @@ namespace FungleAPI.Role.Patches
                     }
                 }
                 List<ModdedTeam> teams = ModdedTeam.Teams.ToArray().ToList();
-                teams.Sort((a, b) => b.CountAndPriority.GetCount().CompareTo(a.CountAndPriority.GetCount()));
+                teams.Sort((a, b) => b.TeamOptions.GetCount().CompareTo(a.TeamOptions.GetCount()));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
                 foreach (ModdedTeam team in teams)
                 {
@@ -154,7 +154,7 @@ namespace FungleAPI.Role.Patches
                             roleList.Add(roleData.Role.Role);
                         }
                     }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.CountAndPriority.GetCount(), roleList, ref assignedCount);
+                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
                     roleList.Clear();
                     foreach (RoleManager.RoleAssignmentData roleData in availableRoles.Select(role => new { role, chance = roleOptions.GetChancePerGame(role.Role) }).Where(x => x.chance > 0 && x.chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.role, roleOptions.GetNumPerGame(x.role.Role), x.chance)))
                     {
@@ -166,12 +166,12 @@ namespace FungleAPI.Role.Patches
                             }
                         }
                     }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.CountAndPriority.GetCount(), roleList, ref assignedCount);
-                    while (roleList.Count < players.Count && roleList.Count + assignedCount < team.CountAndPriority.GetCount())
+                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
+                    while (roleList.Count < players.Count && roleList.Count + assignedCount < team.TeamOptions.GetCount())
                     {
                         roleList.Add(team.DefaultRole);
                     }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.CountAndPriority.GetCount(), roleList, ref assignedCount);
+                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
                 }
             }
         }

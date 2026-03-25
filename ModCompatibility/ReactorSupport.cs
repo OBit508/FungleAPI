@@ -1,8 +1,8 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Configuration.Networking;
 using FungleAPI.Networking;
-using FungleAPI.Networking.RPCs;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using HarmonyLib;
