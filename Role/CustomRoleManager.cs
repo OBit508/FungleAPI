@@ -206,7 +206,7 @@ namespace FungleAPI.Role
             ChangeableValue<RoleOptions> roleOptions = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
-            roleOptions.Value.Options.AddRange(ConfigurationManager.RegisterAllOptions(type, plugin));
+            roleOptions.Value.Options.AddRange(ConfigurationManager.RegisterAllOptions(type, ConfigFileType.RoleOptions, plugin));
             ConfigurationManager.InitializeRoleCountAndChances(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;

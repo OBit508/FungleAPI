@@ -35,14 +35,13 @@ namespace FungleAPI.Configuration
     public static class ConfigurationManager
     {
         public const string NullId = "null";
-        public const string CurrentVersion = "1.0";
+        public const string CurrentVersion = "2.0";
         public static List<ModdedOption> Options = new List<ModdedOption>();
         public static List<ConfigHelper> ConfigHelpers = new List<ConfigHelper>();
-        public static string FunglePath = Path.Combine(Application.persistentDataPath, "FungleAPI");
         /// <summary>
         /// Registers all properties with ModdedOption of the given Type in the given Plugin as settings
         /// </summary>
-        public static List<ModdedOption> RegisterAllOptions(Type type, ModPlugin modPlugin)
+        public static List<ModdedOption> RegisterAllOptions(Type type, ConfigFileType moddedOptionType, ModPlugin modPlugin)
         {
             List<ModdedOption> moddedOptions = new List<ModdedOption>();
             foreach (PropertyInfo propertyInfo in type.GetProperties())
@@ -50,7 +49,7 @@ namespace FungleAPI.Configuration
                 ModdedOption moddedOption = propertyInfo.GetCustomAttribute<ModdedOption>();
                 if (moddedOption != null)
                 {
-                    RegisterModdedOption(moddedOption, modPlugin, propertyInfo);
+                    RegisterModdedOption(moddedOption, moddedOptionType, modPlugin, propertyInfo);
                     moddedOptions.Add(moddedOption);
                 }
             }
@@ -59,8 +58,9 @@ namespace FungleAPI.Configuration
         /// <summary>
         /// Register the property using ModdedOption in the Plugin as a setting
         /// </summary>
-        public static void RegisterModdedOption(ModdedOption moddedOption, ModPlugin plugin, PropertyInfo propertyInfo)
+        public static void RegisterModdedOption(ModdedOption moddedOption, ConfigFileType moddedOptionType, ModPlugin plugin, PropertyInfo propertyInfo)
         {
+            moddedOption.OptionType = moddedOptionType;
             moddedOption.Initialize(propertyInfo, plugin);
             MethodInfo method = propertyInfo.GetGetMethod(true);
             if (method != null)
@@ -129,14 +129,14 @@ namespace FungleAPI.Configuration
         public static void InitializeRoleCountAndChances(Type roleType, ModPlugin plugin)
         {
             RoleOptions roleCountAndChance = ICustomRole.Save[roleType].Value;
-            roleCountAndChance.Initialize(plugin.BasePlugin.Config, plugin.ModName + " - " + roleType.FullName);
+            roleCountAndChance.Initialize(FileManager.GetConfigFile(plugin, ConfigFileType.RoleCountAndChance), $"{roleType.Name}:{roleType.GetShortUniqueId()}");
             plugin.RoleOptions.Add(roleCountAndChance);
             ConfigHelpers.Add(roleCountAndChance);
         }
         public static void InitializeTeamCountAndPriority(ModdedTeam team, ModPlugin plugin)
         {
-            team.TeamOptions = new TeamOptions();
-            team.TeamOptions.Initialize(plugin.BasePlugin.Config, team, plugin.ModName + " - " + team.GetType().FullName);
+            Type type = team.GetType();
+            team.TeamOptions.Initialize(FileManager.GetConfigFile(plugin, ConfigFileType.TeamCountAndPriority), team, $"{type.Name}:{type.GetShortUniqueId()}");
             plugin.TeamOptions.Add(team.TeamOptions);
             ConfigHelpers.Add(team.TeamOptions);
         }

@@ -236,7 +236,7 @@ namespace FungleAPI.Configuration.Patches
                     });
                     menu.Children.Add(priority);
                     num -= 0.45f;
-                    foreach (ModdedOption option in team.ExtraConfigs)
+                    foreach (ModdedOption option in team.TeamOptions.ExtraOptions)
                     {
                         OptionBehaviour op = option.CreateOption(menu.settingsContainer);
                         op.LabelBackground.enabled = true;

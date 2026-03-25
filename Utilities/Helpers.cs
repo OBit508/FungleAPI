@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using BepInEx.Core.Logging.Interpolation;
@@ -164,6 +166,14 @@ namespace FungleAPI.Utilities
         public static void StopCoroutine(Coroutine coroutine)
         {
             FungleAPIPlugin.Helper.StopCoroutine(coroutine);
+        }
+        public static string GetShortUniqueId(this Type type)
+        {
+            string key = type.AssemblyQualifiedName ?? type.FullName ?? type.Name;
+            using (MD5 md5 = MD5.Create())
+            {
+                return Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(key)), 0, 8).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+            }
         }
     }
 }

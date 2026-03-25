@@ -2,6 +2,8 @@
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.PluginLoading;
+using FungleAPI.Role;
+using FungleAPI.Teams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,7 +25,7 @@ namespace FungleAPI.Configuration.Presets
         private PresetV2 Default;
         public void Initialize()
         {
-            string path = Path.Combine(ConfigurationManager.FunglePath, Plugin.RealName + " - " + Plugin.LocalMod.GUID);
+            string path = FileManager.GetFolder(Plugin, FolderType.Presets);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -59,9 +61,38 @@ namespace FungleAPI.Configuration.Presets
         {
             if (Default == null)
             {
-                Default = new PresetV2();
+                Default = new PresetV2() { PresetName = "Default" };
                 Default.Plugin = Plugin;
-                Default.SaveConfigs("Default");
+                foreach (ModdedOption moddedOption in Plugin.Options)
+                {
+                    Default.Options[moddedOption.FullConfigName] = moddedOption.localValue.DefaultValue.ToString();
+                }
+                foreach (ICustomRole role in Plugin.Roles)
+                {
+                    RoleOptions roleOptions = role.RoleOptions;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (BinaryWriter bw = new BinaryWriter(ms))
+                        {
+                            bw.Write((int)roleOptions.localCount.DefaultValue);
+                            bw.Write((int)roleOptions.localChance.DefaultValue);
+                            Default.RoleOptions[roleOptions.Name] = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                    }
+                }
+                foreach (ModdedTeam team in Plugin.Teams)
+                {
+                    TeamOptions teamOptions = team.TeamOptions;
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (BinaryWriter bw = new BinaryWriter(ms))
+                        {
+                            bw.Write((int)teamOptions.localCount.DefaultValue);
+                            bw.Write((int)teamOptions.localPriority.DefaultValue);
+                            Default.TeamOptions[teamOptions.Name] = Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                    }
+                }
             }
             return Default;
         }

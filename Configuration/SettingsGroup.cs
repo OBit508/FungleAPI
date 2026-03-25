@@ -25,7 +25,7 @@ namespace FungleAPI.Configuration
         public virtual void Initialize(ModPlugin modPlugin)
         {
             Type type = GetType();
-            Options = ConfigurationManager.RegisterAllOptions(type, modPlugin);
+            Options = ConfigurationManager.RegisterAllOptions(type, ConfigFileType.GameOptions, modPlugin);
             TranslationHelper attributeTranslationID = type.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {

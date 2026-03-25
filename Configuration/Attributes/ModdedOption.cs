@@ -8,6 +8,8 @@ using TMPro;
 using UnityEngine;
 using xCloud;
 using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstructionNoT;
+using FungleAPI.Configuration.Helpers;
+using FungleAPI.Utilities;
 
 namespace FungleAPI.Configuration.Attributes
 {
@@ -22,6 +24,7 @@ namespace FungleAPI.Configuration.Attributes
         internal ConfigEntry<string> localValue;
         internal string defaultName;
         public Translator ConfigName;
+        public ConfigFileType OptionType;
         public ModdedOption(string configName)
         {
             defaultName = configName;
@@ -94,7 +97,7 @@ namespace FungleAPI.Configuration.Attributes
         {
             Plugin = modPlugin;
             Property = property;
-            FullConfigName = modPlugin.ModName + " - " + property.DeclaringType.FullName;
+            FullConfigName = $"{property.DeclaringType.Name}:{property.Name}:{property.DeclaringType.GetShortUniqueId()}";
             TranslationHelper attributeTranslationID = property.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {

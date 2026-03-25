@@ -42,10 +42,9 @@ namespace FungleAPI.Teams
         /// </summary>
         public static ModdedTeam Neutrals => Instance<NeutralTeam>();
         public static List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public TeamOptions TeamOptions;
+        public TeamOptions TeamOptions = new TeamOptions();
         public FloatGameSetting CountData;
         public FloatGameSetting PriorityData;
-        public List<ModdedOption> ExtraConfigs;
         public bool Initialized;
         /// <summary>
         /// Team id
@@ -117,7 +116,7 @@ namespace FungleAPI.Teams
         {
             if (!Initialized)
             {
-                ExtraConfigs = ConfigurationManager.RegisterAllOptions(GetType(), plugin);
+                TeamOptions.ExtraOptions = ConfigurationManager.RegisterAllOptions(GetType(), ConfigFileType.TeamOptions, plugin);
                 Initialized = true;
             }
         }

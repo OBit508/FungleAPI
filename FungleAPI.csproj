@@ -69,6 +69,9 @@
     <Compile Include="Player\Patches\KillAnimationPatch.cs" />
     <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
     <Compile Include="Player\PlayerControlExtensions.cs" />
+    <Compile Include="PluginLoading\ConfigFileType.cs" />
+    <Compile Include="PluginLoading\FileManager.cs" />
+    <Compile Include="PluginLoading\FolderType.cs" />
     <Compile Include="Ship\Patches\AirshipStatusPatch.cs" />
     <Compile Include="Role\KillButtonConfig.cs" />
     <Compile Include="Role\LightSourceConfig.cs" />

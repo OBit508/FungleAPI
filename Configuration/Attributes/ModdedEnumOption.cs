@@ -38,7 +38,7 @@ namespace FungleAPI.Configuration.Attributes
             if (IsValidType(property.PropertyType))
             {
                 int value = property.PropertyType == typeof(int) ? (int)property.GetValue(null) : Values.GetIndex((string)property.GetValue(null));
-                localValue = modPlugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
+                localValue = FileManager.GetConfigFile(modPlugin, OptionType).Bind(property.DeclaringType.Name, property.Name, value.ToString());
                 onlineValue = value.ToString();
                 Data.SafeCast<StringGameSetting>().Index = int.Parse(localValue.Value);
             }

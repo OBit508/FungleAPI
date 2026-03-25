@@ -1,4 +1,5 @@
-﻿using FungleAPI.Configuration.Attributes;
+﻿using Epic.OnlineServices.RTC;
+using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -28,20 +29,21 @@ namespace FungleAPI.Configuration.Presets
         public string Path;
         public void SaveConfigs(string presetName)
         {
+            CleanConfigs(false);
             PresetName = presetName;
             foreach (ModdedOption moddedOption in Plugin.Options)
             {
-                Options.Add(moddedOption.FullConfigName, moddedOption.localValue.Value);
+                Options[moddedOption.FullConfigName] = moddedOption.localValue.Value;
             }
             foreach (ICustomRole customRole in Plugin.Roles)
             {
                 RoleOptions roleOptions = customRole.RoleOptions;
-                RoleOptions.Add(roleOptions.Name, roleOptions.Compact());
+                RoleOptions[roleOptions.Name] = roleOptions.Compact();
             }
             foreach (ModdedTeam moddedTeam in Plugin.Teams)
             {
                 TeamOptions teamOptions = moddedTeam.TeamOptions;
-                TeamOptions.Add(teamOptions.Name, teamOptions.Compact());
+                TeamOptions[teamOptions.Name] = teamOptions.Compact();
             }
             Empty = false;
             if (this != Plugin.PluginPreset.GetDefault())
@@ -83,14 +85,14 @@ namespace FungleAPI.Configuration.Presets
                 }
             }
         }
-        public void CleanConfigs()
+        public void CleanConfigs(bool write = true)
         {
             PresetName = "";
             Options.Clear();
             RoleOptions.Clear();
             TeamOptions.Clear();
             Empty = true;
-            if (this != Plugin.PluginPreset.GetDefault())
+            if (write && this != Plugin.PluginPreset.GetDefault())
             {
                 File.WriteAllText(Path, JsonSerializer.Serialize(this));
             }

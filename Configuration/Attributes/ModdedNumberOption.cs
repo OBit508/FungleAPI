@@ -37,7 +37,7 @@ namespace FungleAPI.Configuration.Attributes
             if (IsValidType(property.PropertyType))
             {
                 float value = float.Parse(property.GetValue(null).ToString());
-                localValue = modPlugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
+                localValue = FileManager.GetConfigFile(modPlugin, OptionType).Bind(property.DeclaringType.Name, property.Name, value.ToString());
                 onlineValue = value.ToString();
                 Data.SafeCast<FloatGameSetting>().Value = float.Parse(localValue.Value);
             }

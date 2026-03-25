@@ -31,7 +31,7 @@ namespace FungleAPI.Configuration.Attributes
             {
                 ModPlugin plugin = ModPluginManager.GetModPlugin(property.DeclaringType.Assembly);
                 bool value = property.PropertyType == typeof(bool) ? (bool)property.GetValue(null) : property.PropertyType == typeof(int) ? (int)property.GetValue(null) == 1 : (float)property.GetValue(null) == 1;
-                localValue = plugin.BasePlugin.Config.Bind(FullConfigName, ConfigName.Default, value.ToString());
+                localValue = FileManager.GetConfigFile(modPlugin, OptionType).Bind(property.DeclaringType.Name, property.Name, value.ToString());
                 onlineValue = value.ToString();
             }
         }

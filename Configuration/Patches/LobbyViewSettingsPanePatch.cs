@@ -354,7 +354,7 @@ namespace FungleAPI.Configuration.Patches
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                     menu.settingsInfo.Add(categoryHeaderMasked.gameObject);
                     num -= 1.05f;
-                    for (int i = 0; i < group.ExtraConfigs.Count + 2; i++)
+                    for (int i = 0; i < group.TeamOptions.ExtraOptions.Count + 2; i++)
                     {
                         ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(menu.infoPanelOrigin);
                         viewSettingsInfoPanel.transform.SetParent(menu.settingsContainer);
@@ -375,13 +375,13 @@ namespace FungleAPI.Configuration.Patches
                         viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
                         if (i > 1)
                         {
-                            if (group.ExtraConfigs[i - 2].Data.Type == OptionTypes.Checkbox)
+                            if (group.TeamOptions.ExtraOptions[i - 2].Data.Type == OptionTypes.Checkbox)
                             {
-                                viewSettingsInfoPanel.SetInfoCheckbox(group.ExtraConfigs[i - 2].Data.Title, 61, bool.Parse(group.ExtraConfigs[i - 2].GetValue()));
+                                viewSettingsInfoPanel.SetInfoCheckbox(group.TeamOptions.ExtraOptions[i - 2].Data.Title, 61, bool.Parse(group.TeamOptions.ExtraOptions[i - 2].GetValue()));
                             }
                             else
                             {
-                                viewSettingsInfoPanel.SetInfo(group.ExtraConfigs[i - 2].Data.Title, group.ExtraConfigs[i - 2].GetValue(), 61);
+                                viewSettingsInfoPanel.SetInfo(group.TeamOptions.ExtraOptions[i - 2].Data.Title, group.TeamOptions.ExtraOptions[i - 2].GetValue(), 61);
                             }
                         }
                         else if (i == 0)

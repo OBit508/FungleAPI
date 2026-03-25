@@ -20,7 +20,7 @@ namespace FungleAPI.Configuration.Helpers
         internal ConfigEntry<int> localCount;
         internal int onlineCount;
 
-        public List<ModdedOption> Options = new List<ModdedOption>();
+        public List<ModdedOption> ExtraOptions = new List<ModdedOption>();
         public int GetCount()
         {
             if (AmongUsClient.Instance.AmHost)
