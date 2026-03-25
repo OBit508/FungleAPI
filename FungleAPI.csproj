@@ -68,7 +68,7 @@
     <Compile Include="Player\BodyUtils.cs" />
     <Compile Include="Player\Patches\KillAnimationPatch.cs" />
     <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
-    <Compile Include="Player\PlayerControlExtensions.cs" />
+    <Compile Include="Player\PlayerExtensions.cs" />
     <Compile Include="PluginLoading\ConfigFileType.cs" />
     <Compile Include="PluginLoading\FileManager.cs" />
     <Compile Include="PluginLoading\FolderType.cs" />

@@ -24,7 +24,7 @@ namespace FungleAPI.Player
     /// <summary>
     /// Extensions for the Player
     /// </summary>
-    public static class PlayerControlExtensions
+    public static class PlayerExtensions
     {
         // RPCs
 
@@ -45,14 +45,14 @@ namespace FungleAPI.Player
         /// </summary>
         public static void RpcRequestGameOver<T>(this PlayerControl source) where T : CustomGameOver
         {
-            Rpc<RpcRequestGameOver>.Instance.Send(GameOverManager.GetGameOverInstance<T>(), source);
+            source.RpcRequestGameOver(GameOverManager.GetGameOverInstance<T>());
         }
         /// <summary>
         /// Request to the host to end the game
         /// </summary>
         public static void RpcRequestGameOver(this PlayerControl source, Type type)
         {
-            Rpc<RpcRequestGameOver>.Instance.Send(GameOverManager.GetGameOverInstance(type), source);
+            source.RpcRequestGameOver(GameOverManager.GetGameOverInstance(type));
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace FungleAPI.Player
             Rpc<RpcMoveToVent>.Instance.Send(ventHelper, source);
         }
         /// <summary>
-        /// Get a player by the Id
+        /// Perform a custom murder
         /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
@@ -78,7 +78,7 @@ namespace FungleAPI.Player
             Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
         /// <summary>
-        /// Get a player by the Id
+        /// Perform a custom murder
         /// </summary>
         public static void CmdCheckCustomMurder(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
