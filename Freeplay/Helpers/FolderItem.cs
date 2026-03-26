@@ -14,5 +14,6 @@ namespace FungleAPI.Freeplay.Helpers
         public Color Color;
         public string Name;
         public Action OnClick;
+        public Func<bool> Overlay = () => false;
     }
 }

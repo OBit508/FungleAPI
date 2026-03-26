@@ -4,6 +4,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
+using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -37,17 +38,22 @@ namespace FungleAPI.Freeplay
             FolderName = modPlugin.ModName;
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> teams in modPlugin.GetTeamsAndRoles())
             {
-                Folder teamFolder = new Folder() { FolderName = teams.Key.TeamName.GetString(), FolderColor = teams.Key.TeamColor };
-                foreach (RoleBehaviour roleBehaviour in teams.Value)
+                teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().HideInFreeplayComputer);
+                if (teams.Value.Count > 0)
                 {
-                    teamFolder.Items.Add(new FolderItem()
+                    Folder teamFolder = new Folder() { FolderName = teams.Key.TeamName.GetString(), FolderColor = teams.Key.TeamColor };
+                    foreach (RoleBehaviour roleBehaviour in teams.Value)
                     {
-                        Name = $"Be_{roleBehaviour.NiceName}.exe",
-                        Color = roleBehaviour.TeamColor,
-                        OnClick = delegate { PlayerControl.LocalPlayer?.RpcSetRole(roleBehaviour.Role); }
-                    });
+                        teamFolder.Items.Add(new FolderItem()
+                        {
+                            Name = $"Be_{roleBehaviour.NiceName}.exe",
+                            Color = roleBehaviour.TeamColor,
+                            OnClick = delegate { PlayerControl.LocalPlayer?.RpcSetRole(roleBehaviour.Role);  },
+                            Overlay = () => PlayerControl.LocalPlayer.Data.RoleType == roleBehaviour.Role
+                        });
+                    }
+                    SubFolders.Add(teamFolder);
                 }
-                SubFolders.Add(teamFolder);
             }
             Initialized = true;
         }

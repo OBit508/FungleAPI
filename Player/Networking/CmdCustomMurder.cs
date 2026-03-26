@@ -20,7 +20,7 @@ namespace FungleAPI.Player.Networking
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
             MurderData murderData = new MurderData(messageReader);
-            innerNetObject.CheckCustomMurder(murderData.Target, murderData.MurderResult, murderData.ResetKillTimer, murderData.CreateDeadBody, murderData.Teleport, murderData.ShowAnim, murderData.PlayKillSound);
+            innerNetObject.CheckCustomMurder(murderData.Target, murderData.ResetKillTimer, murderData.CreateDeadBody, murderData.Teleport, murderData.ShowAnim, murderData.PlayKillSound);
         }
     }
 }

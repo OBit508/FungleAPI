@@ -68,6 +68,13 @@ namespace FungleAPI.Player.Patches
         {
             return !EventManager.CallEvent(new BeforeMurderEvent(target, (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError) | MurderResultFlags.DecisionByHost)).Cancelled;
         }
+        [HarmonyPatch("CheckMurder")]
+        [HarmonyPrefix]
+        public static bool CheckMurderPrefix(PlayerControl __instance, PlayerControl target)
+        {
+            __instance.CheckCustomMurder(target);
+            return false;
+        }
         [HarmonyPatch("MurderPlayer")]
         [HarmonyPrefix]
         public static bool MurderPlayerPrefix(PlayerControl __instance, PlayerControl target, MurderResultFlags resultFlags)

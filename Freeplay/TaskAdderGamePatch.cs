@@ -209,6 +209,9 @@ namespace FungleAPI.Freeplay
                     taskAddButton2.GetComponent<SpriteRenderer>().color = folderItem.Color;
                     taskAddButton2.RolloverHandler.OutColor = folderItem.Color;
                     taskAddButton2.Button?.SetNewAction(folderItem.OnClick.Invoke);
+                    taskAddButton2.enabled = false;
+                    taskAddButton2.Overlay.gameObject.SetActive(true);
+                    taskAddButton2.gameObject.AddComponent<Updater>().update = delegate { taskAddButton2.Overlay.enabled = folderItem.Overlay(); };
                     __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
                     if (taskAddButton2 != null && taskAddButton2.Button != null)
                     {

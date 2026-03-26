@@ -66,6 +66,7 @@
     <Compile Include="Event\Vanilla\UpdateSystemEvent.cs" />
     <Compile Include="Freeplay\Helpers\Folder.cs" />
     <Compile Include="Freeplay\Helpers\FolderItem.cs" />
+    <Compile Include="Freeplay\VanillaFolder.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
@@ -79,7 +80,6 @@
     <Compile Include="Player\Networking\RpcMoveToVent.cs" />
     <Compile Include="Player\Networking\RpcRequestGameOver.cs" />
     <Compile Include="Player\BodyUtils.cs" />
-    <Compile Include="Player\Patches\KillAnimationPatch.cs" />
     <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
     <Compile Include="Player\PlayerExtensions.cs" />
     <Compile Include="PluginLoading\ConfigFileType.cs" />

@@ -85,7 +85,7 @@ namespace FungleAPI.Player
             source.isKilling = true;
             if (AmongUsClient.Instance.AmLocalHost || AmongUsClient.Instance.AmModdedHost)
             {
-                source.CheckCustomMurder(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
+                source.CheckCustomMurder(target, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
                 return;
             }
             Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
@@ -201,7 +201,7 @@ namespace FungleAPI.Player
 
         // Helpers
 
-        public static void CheckCustomMurder(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        public static void CheckCustomMurder(this PlayerControl source, PlayerControl target, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             source.logger.Debug(string.Format("Checking if {0} murdered {1}", source.PlayerId, (target == null) ? "null player" : target.PlayerId.ToString()), null);
             source.isKilling = false;
@@ -209,7 +209,7 @@ namespace FungleAPI.Player
             {
                 return;
             }
-            if (!target || source.Data.IsDead || !source.Data.Role.IsImpostor || source.Data.Disconnected)
+            if (!target || source.Data.IsDead || source.Data.Disconnected)
             {
                 int num = target ? ((int)target.PlayerId) : -1;
                 source.logger.Warning(string.Format("Bad kill from {0} to {1}", source.PlayerId, num), null);
@@ -230,7 +230,7 @@ namespace FungleAPI.Player
                 return;
             }
             source.isKilling = true;
-            source.RpcCustomMurderPlayer(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
+            source.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | MurderResultFlags.Succeeded, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
         }
         public static void CustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
