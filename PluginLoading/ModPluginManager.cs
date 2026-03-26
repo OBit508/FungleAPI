@@ -175,7 +175,7 @@ namespace FungleAPI.PluginLoading
             team.CountData.OptionName = FloatOptionNames.Invalid;
             team.PriorityData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             team.PriorityData.Type = OptionTypes.Float;
-            team.PriorityData.Title = FungleTranslation.PriorityText;
+            team.PriorityData.Title = FungleTranslation.TeamPriorityText;
             team.PriorityData.Increment = 1;
             team.PriorityData.ValidRange = new FloatRange(0, 500);
             team.PriorityData.FormatString = null;

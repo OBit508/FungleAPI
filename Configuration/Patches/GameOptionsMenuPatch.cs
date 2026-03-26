@@ -195,7 +195,7 @@ namespace FungleAPI.Configuration.Patches
                     op.SetClickMask(menu.ButtonClickMask);
                     op.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        Rpc<RpcSyncSettings>.Instance.Send((SyncTextType.Option, option, null, null), PlayerControl.LocalPlayer);
+                        SyncManager.RpcSyncOption(option);
                     });
                     menu.Children.Add(op);
                     num -= 0.45f;
@@ -222,7 +222,7 @@ namespace FungleAPI.Configuration.Patches
                     count.SetClickMask(menu.ButtonClickMask);
                     count.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        Rpc<RpcSyncSettings>.Instance.Send((SyncTextType.TeamCount, null, null, team), PlayerControl.LocalPlayer);
+                        SyncManager.RpcSyncTeam(team);
                     });
                     menu.Children.Add(count);
                     num -= 0.45f;
@@ -232,7 +232,7 @@ namespace FungleAPI.Configuration.Patches
                     priority.SetClickMask(menu.ButtonClickMask);
                     priority.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        Rpc<RpcSyncSettings>.Instance.Send((SyncTextType.TeamPriority, null, null, team), PlayerControl.LocalPlayer);
+                        SyncManager.RpcSyncTeam(team);
                     });
                     menu.Children.Add(priority);
                     num -= 0.45f;
@@ -244,7 +244,7 @@ namespace FungleAPI.Configuration.Patches
                         op.SetClickMask(menu.ButtonClickMask);
                         op.OnValueChanged += new Action<OptionBehaviour>(delegate
                         {
-                            Rpc<RpcSyncSettings>.Instance.Send((SyncTextType.TeamOption, option, null, team), PlayerControl.LocalPlayer);
+                            SyncManager.RpcSyncOption(option);
                         });
                         menu.Children.Add(op);
                         num -= 0.45f;

@@ -37,7 +37,6 @@ namespace FungleAPI.Configuration
         public const string NullId = "null";
         public const string CurrentVersion = "2.0";
         public static List<ModdedOption> Options = new List<ModdedOption>();
-        public static List<ConfigHelper> ConfigHelpers = new List<ConfigHelper>();
         /// <summary>
         /// Registers all properties with ModdedOption of the given Type in the given Plugin as settings
         /// </summary>
@@ -71,74 +70,17 @@ namespace FungleAPI.Configuration
                 FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
             }
         }
-        public static void SerializeOptions(MessageWriter messageWriter)
-        {
-            messageWriter.WritePacked(Options.Count);
-            foreach (ModdedOption moddedOption in Options)
-            {
-                messageWriter.WriteOption(moddedOption);
-                messageWriter.Write(moddedOption.localValue.Value);
-            }
-        }
-        public static void DeserializeOptions(MessageReader messageReader)
-        {
-            int optionCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < optionCount; i++)
-            {
-                ModdedOption moddedOption = messageReader.ReadOption();
-                moddedOption.onlineValue = messageReader.ReadString();
-            }
-        }
-        public static void SerializeRoleOptions(MessageWriter messageWriter)
-        {
-            messageWriter.WritePacked(CustomRoleManager.AllCustomRoles.Count);
-            foreach (ICustomRole customRole in CustomRoleManager.AllCustomRoles)
-            {
-                RoleOptions roleOptions = customRole.RoleOptions;
-                messageWriter.WriteConfigHelper(roleOptions);
-                messageWriter.Write(roleOptions.Compact());
-            }
-        }
-        public static void DeserializeRoleOptions(MessageReader messageReader)
-        {
-            int roleOptionCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < roleOptionCount; i++)
-            {
-                RoleOptions roleOptions = messageReader.ReadConfigHelper<RoleOptions>();
-                roleOptions.Decompact(messageReader.ReadString(), false);
-            }
-        }
-        public static void SerializeTeamOptions(MessageWriter messageWriter)
-        {
-            messageWriter.WritePacked(ModdedTeam.Teams.Count);
-            foreach (ModdedTeam team in ModdedTeam.Teams)
-            {
-                messageWriter.WriteConfigHelper(team.TeamOptions);
-                messageWriter.Write(team.TeamOptions.Compact());
-            }
-        }
-        public static void DeserializeTeamOptions(MessageReader messageReader)
-        {
-            int teamOptionCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < teamOptionCount; i++)
-            {
-                TeamOptions teamOptions = messageReader.ReadConfigHelper<TeamOptions>();
-                teamOptions.Decompact(messageReader.ReadString(), false);
-            }
-        }
         public static void InitializeRoleCountAndChances(Type roleType, ModPlugin plugin)
         {
             RoleOptions roleCountAndChance = ICustomRole.Save[roleType].Value;
             roleCountAndChance.Initialize(FileManager.GetConfigFile(plugin, ConfigFileType.RoleCountAndChance), $"{roleType.Name}:{roleType.GetShortUniqueId()}");
             plugin.RoleOptions.Add(roleCountAndChance);
-            ConfigHelpers.Add(roleCountAndChance);
         }
         public static void InitializeTeamCountAndPriority(ModdedTeam team, ModPlugin plugin)
         {
             Type type = team.GetType();
             team.TeamOptions.Initialize(FileManager.GetConfigFile(plugin, ConfigFileType.TeamCountAndPriority), team, $"{type.Name}:{type.GetShortUniqueId()}");
             plugin.TeamOptions.Add(team.TeamOptions);
-            ConfigHelpers.Add(team.TeamOptions);
         }
     }
 }

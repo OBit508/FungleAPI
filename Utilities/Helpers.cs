@@ -167,6 +167,10 @@ namespace FungleAPI.Utilities
         {
             FungleAPIPlugin.Helper.StopCoroutine(coroutine);
         }
+        public static T[] AsArray<T>(this T obj)
+        {
+            return new T[] { obj };
+        }
         public static string GetShortUniqueId(this Type type)
         {
             string key = type.AssemblyQualifiedName ?? type.FullName ?? type.Name;

@@ -15,6 +15,7 @@ using FungleAPI.Patches;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
+using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
@@ -25,24 +26,21 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Configuration.Networking
 {
-    /// <summary>
-    /// Rpc that sync the current host settings with others players
-    /// </summary>
-    public class RpcSyncAllConfigs : SimpleRpc
+    internal class RpcSyncEverything : SimpleRpc
     {
-        public override void Write(MessageWriter writer)
+        public override void Write(MessageWriter messageWriter)
         {
-            ConfigurationManager.SerializeOptions(writer);
-            ConfigurationManager.SerializeRoleOptions(writer);
-            ConfigurationManager.SerializeTeamOptions(writer);
+            Rpc<RpcSyncGameOpt>.Instance.Write(messageWriter, ModPlugin.AllPlugins);
+            Rpc<RpcSyncTeam>.Instance.Write(messageWriter, ModdedTeam.Teams);
+            Rpc<RpcSyncRole>.Instance.Write(messageWriter, CustomRoleManager.AllCustomRoles);
         }
-        public override void Handle(MessageReader reader)
+        public override void Handle(MessageReader messageReader)
         {
             try
             {
-                ConfigurationManager.DeserializeOptions(reader);
-                ConfigurationManager.DeserializeRoleOptions(reader);
-                ConfigurationManager.DeserializeTeamOptions(reader);
+                Rpc<RpcSyncGameOpt>.Instance.Handle(messageReader);
+                Rpc<RpcSyncTeam>.Instance.Handle(messageReader);
+                Rpc<RpcSyncRole>.Instance.Handle(messageReader);
             }
             catch (Exception ex)
             {

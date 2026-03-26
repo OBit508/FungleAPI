@@ -114,13 +114,6 @@ namespace FungleAPI.Networking
             messageWriter.WriteMod(plugin.LocalMod);
         }
         /// <summary>
-        /// Write a config helper
-        /// </summary>
-        public static void WriteConfigHelper(this MessageWriter messageWriter, ConfigHelper configHelper)
-        {
-            messageWriter.Write(configHelper.Name);
-        }
-        /// <summary>
         /// Read a body
         /// </summary>
         public static DeadBody ReadBody(this MessageReader messageReader)
@@ -209,14 +202,6 @@ namespace FungleAPI.Networking
         public static ModPlugin ReadPlugin(this MessageReader messageReader)
         {
             return messageReader.ReadMod().Plugin;
-        }
-        /// <summary>
-        /// Read a config helper
-        /// </summary>
-        public static T ReadConfigHelper<T>(this MessageReader messageReader) where T : ConfigHelper
-        {
-            string name = messageReader.ReadString();
-            return ConfigurationManager.ConfigHelpers.FirstOrDefault(c => c.Name == name).SimpleCast<T>();
         }
     }
 }

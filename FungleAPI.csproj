@@ -31,7 +31,12 @@
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
     <Compile Include="Configuration\Helpers\ConfigHelper.cs" />
+    <Compile Include="Configuration\Networking\RpcSyncGameOpt.cs" />
+    <Compile Include="Configuration\Networking\RpcSyncOption.cs" />
+    <Compile Include="Configuration\Networking\RpcSyncRole.cs" />
+    <Compile Include="Configuration\Networking\RpcSyncTeam.cs" />
     <Compile Include="Configuration\Presets\PresetV2.cs" />
+    <Compile Include="Configuration\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
     <Compile Include="Cosmetics\Helpers\ModCosmetics.cs" />
@@ -138,9 +143,7 @@
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="GameOver\GameOverManager.cs" />
-    <Compile Include="Configuration\Networking\RpcSyncAllConfigs.cs" />
-    <Compile Include="Configuration\Networking\RpcSyncSettings.cs" />
-    <Compile Include="Configuration\Networking\SyncTextType.cs" />
+    <Compile Include="Configuration\Networking\RpcSyncEverything.cs" />
     <Compile Include="Patches\AmongUsClientPatch.cs" />
     <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
     <Compile Include="Configuration\Patches\GameOptionsMenuPatch.cs" />
@@ -150,7 +153,6 @@
     <Compile Include="Hud\Patches\KillButtonPatch.cs" />
     <Compile Include="Patches\MainMenuManager.cs" />
     <Compile Include="Patches\MeetingPatch.cs" />
-    <Compile Include="Configuration\Networking\RpcSendNotification.cs" />
     <Compile Include="Patches\ModManagerPatch.cs" />
     <Compile Include="Patches\PingTrackerPatch.cs" />
     <Compile Include="Ship\Patches\ShipStatusPatch.cs" />
@@ -179,7 +181,6 @@
     <Compile Include="Player\Networking\RpcCustomMurder.cs" />
     <Compile Include="Base\Rpc\RpcHelper.cs" />
     <Compile Include="Networking\MessageExtension.cs" />
-    <Compile Include="Configuration\Networking\RpcSyncRoleCountAndChance.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Utilities\Assets\GifDecoder.cs" />
     <Compile Include="Utilities\Assets\GifFile.cs" />

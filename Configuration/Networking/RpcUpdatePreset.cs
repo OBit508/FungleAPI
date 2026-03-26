@@ -22,23 +22,20 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Configuration.Networking
 {
-    /// <summary>
-    /// Rpc that change the current host preset
-    /// </summary>
-    public class RpcUpdatePreset : AdvancedRpc<PresetV2>
+    internal class RpcUpdatePreset : AdvancedRpc<PresetV2>
     {
-        public override void Write(MessageWriter writer, PresetV2 value)
+        public override void Write(MessageWriter messageWriter, PresetV2 value)
         {
-            writer.Write(JsonSerializer.Serialize(value));
-            writer.WritePlugin(value.Plugin);
-            HudManager.Instance.Notifier.AddSettingsChangeMessage(StringNames.ModeLabel, value.ToString(), false, RoleTypes.Crewmate);
+            messageWriter.Write(JsonSerializer.Serialize(value));
+            messageWriter.WritePlugin(value.Plugin);
+            HudManager.Instance?.Notifier?.AddSettingsChangeMessage(StringNames.ModeLabel, $"{value.Plugin.ModName}:{value.PresetName}", false, RoleTypes.Crewmate);
         }
-        public override void Handle(MessageReader reader)
+        public override void Handle(MessageReader messageReader)
         {
-            PresetV2 preset = JsonSerializer.Deserialize<PresetV2>(reader.ReadString());
-            preset.Plugin = reader.ReadPlugin();
+            PresetV2 preset = JsonSerializer.Deserialize<PresetV2>(messageReader.ReadString());
+            preset.Plugin = messageReader.ReadPlugin();
             preset.LoadConfigs(false);
-            HudManager.Instance.Notifier.AddSettingsChangeMessage(StringNames.ModeLabel, preset.PresetName, false, RoleTypes.Crewmate);
+            HudManager.Instance?.Notifier?.AddSettingsChangeMessage(StringNames.ModeLabel, $"{preset.Plugin.ModName}:{preset.PresetName}", true, RoleTypes.Crewmate);
         }
     }
 }

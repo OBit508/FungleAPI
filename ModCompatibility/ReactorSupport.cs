@@ -87,7 +87,7 @@ namespace FungleAPI.ModCompatibility
         }
         public static void ReactorClientData_Set_Postfix(int clientId)
         {
-            Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
+            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
         }
         public static bool CustomStringName_Create_Prefix(ref StringNames __result)
         {

@@ -48,7 +48,7 @@ namespace FungleAPI.Patches
             {
                 return;
             }
-            Rpc<RpcSyncAllConfigs>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
+            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
         }
     }
 }
