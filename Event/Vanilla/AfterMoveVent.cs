@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Types
+namespace FungleAPI.Event.Vanilla
 {
     public class AfterMoveVent : FungleEvent
     {

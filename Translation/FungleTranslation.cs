@@ -12,631 +12,359 @@ namespace FungleAPI.Translation
     /// </summary>
     public static class FungleTranslation
     {
-        private static Translator edit;
-        private static Translator presetName;
-        private static Translator loadPreset;
-        private static Translator empty;
-        private static Translator count;
-        private static Translator priority;
-        private static Translator impostors;
-        private static Translator neutral;
-        private static Translator neutrals;
-        private static Translator remainText;
-        private static Translator neutralText;
-        private static Translator impostorText;
-        private static Translator crewmateText;
-        private static Translator teams;
-        private static Translator teamConfigButton;
-        private static Translator teamConfigDesc;
-        private static Translator nonModdedText;
-        private static Translator typeText;
-        private static Translator yourRoleIs;
-        private static Translator loadingPregabs;
-        private static Translator publicRooms;
-        private static Translator forcedDisconnection;
-        private static Translator failedToSync;
-        public static StringNames FailedToSyncSettings
-        {
-            get
-            {
-                if (failedToSync == null)
-                {
-                    failedToSync = new Translator("There was a failure while trying to sync the settings.");
-                    failedToSync.AddTranslation(SupportedLangs.Latam, "Hubo un fallo al intentar sincronizar la configuración.");
-                    failedToSync.AddTranslation(SupportedLangs.Brazilian, "Houve uma falha tentando sincronizar as configurações.");
-                    failedToSync.AddTranslation(SupportedLangs.Portuguese, "Houve uma falha ao tentar sincronizar as configurações.");
-                    failedToSync.AddTranslation(SupportedLangs.Korean, "설정을 동기화하는 동안 오류가 발생했습니다.");
-                    failedToSync.AddTranslation(SupportedLangs.Russian, "Произошла ошибка при попытке синхронизировать настройки.");
-                    failedToSync.AddTranslation(SupportedLangs.Dutch, "Er is een fout opgetreden bij het synchroniseren van de instellingen.");
-                    failedToSync.AddTranslation(SupportedLangs.Filipino, "Nagkaroon ng error habang sinusubukang i-sync ang mga setting.");
-                    failedToSync.AddTranslation(SupportedLangs.French, "Une erreur s’est produite lors de la synchronisation des paramètres.");
-                    failedToSync.AddTranslation(SupportedLangs.German, "Beim Synchronisieren der Einstellungen ist ein Fehler aufgetreten.");
-                    failedToSync.AddTranslation(SupportedLangs.Italian, "Si è verificato un errore durante il tentativo di sincronizzare le impostazioni.");
-                    failedToSync.AddTranslation(SupportedLangs.Japanese, "設定を同期しようとしてエラーが発生しました。");
-                    failedToSync.AddTranslation(SupportedLangs.Spanish, "Ocurrió un error al intentar sincronizar la configuración.");
-                    failedToSync.AddTranslation(SupportedLangs.SChinese, "尝试同步设置时发生错误。");
-                    failedToSync.AddTranslation(SupportedLangs.TChinese, "嘗試同步設定時發生錯誤。");
-                    failedToSync.AddTranslation(SupportedLangs.Irish, "Tharla earráid agus iarracht á déanamh na socruithe a shioncronú.");
-                }
-                return failedToSync.StringName;
-            }
-        }
-        public static StringNames ForcedDisconnectionText 
-        {
-            get
-            {
-                if (forcedDisconnection == null)
-                {
-                    forcedDisconnection = new Translator(" was forced to disconnect for not having FungleAPI installed.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Latam, " fue forzado a desconectarse por no tener FungleAPI instalada.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Brazilian, " foi forçado a se desconectar por não ter a FungleAPI instalada.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Portuguese, " foi forçado a se desconectar por não ter a FungleAPI instalada.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Korean, " FungleAPI가 설치되어 있지 않아 강제로 연결이 끊어졌습니다.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Russian, " был принудительно отключён из-за отсутствия установленной FungleAPI.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Dutch, " werd gedwongen te verbreken omdat FungleAPI niet is geïnstalleerd.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Filipino, " ay pinilit na ma-disconnect dahil walang naka-install na FungleAPI.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.French, " a été forcé de se déconnecter car FungleAPI n’est pas installée.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.German, " wurde zwangsweise getrennt, da FungleAPI nicht installiert ist.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Italian, " è stato forzato a disconnettersi perché FungleAPI non è installata.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Japanese, " FungleAPIがインストールされていないため、強制的に切断されました。");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Spanish, " fue forzado a desconectarse por no tener FungleAPI instalada.");
-                    forcedDisconnection.AddTranslation(SupportedLangs.SChinese, " 由于未安装 FungleAPI，被强制断开连接。");
-                    forcedDisconnection.AddTranslation(SupportedLangs.TChinese, " 由於未安裝 FungleAPI，被強制中斷連線。");
-                    forcedDisconnection.AddTranslation(SupportedLangs.Irish, " cuireadh iallach air dícheangal toisc nach bhfuil FungleAPI suiteáilte.");
-
-                }
-                return forcedDisconnection.StringName;
-            }
-        }
-        public static StringNames ChangeToPublicText
-        {
-            get
-            {
-                if (publicRooms == null)
-                {
-                    publicRooms = new Translator("Public rooms are disabled for security reasons.");
-                    publicRooms.AddTranslation(SupportedLangs.Latam, "Las salas públicas están deshabilitadas por razones de seguridad.");
-                    publicRooms.AddTranslation(SupportedLangs.Brazilian, "Salas públicas estão desativadas por segurança.");
-                    publicRooms.AddTranslation(SupportedLangs.Portuguese, "Salas públicas estão desativadas por segurança.");
-                    publicRooms.AddTranslation(SupportedLangs.Korean, "보안상의 이유로 공개 방이 비활성화되었습니다.");
-                    publicRooms.AddTranslation(SupportedLangs.Russian, "Публичные комнаты отключены по соображениям безопасности.");
-                    publicRooms.AddTranslation(SupportedLangs.Dutch, "Openbare kamers zijn om veiligheidsredenen uitgeschakeld.");
-                    publicRooms.AddTranslation(SupportedLangs.Filipino, "Ang mga pampublikong silid ay hindi pinagana para sa seguridad.");
-                    publicRooms.AddTranslation(SupportedLangs.French, "Les salons publics sont désactivés pour des raisons de sécurité.");
-                    publicRooms.AddTranslation(SupportedLangs.German, "Öffentliche Räume sind aus Sicherheitsgründen deaktiviert.");
-                    publicRooms.AddTranslation(SupportedLangs.Italian, "Le stanze pubbliche sono disabilitate per motivi di sicurezza.");
-                    publicRooms.AddTranslation(SupportedLangs.Japanese, "セキュリティ上の理由により公開ルームは無効化されています。");
-                    publicRooms.AddTranslation(SupportedLangs.Spanish, "Las salas públicas están deshabilitadas por razones de seguridad.");
-                    publicRooms.AddTranslation(SupportedLangs.SChinese, "出于安全原因，公共房间已被禁用。");
-                    publicRooms.AddTranslation(SupportedLangs.TChinese, "基於安全原因，公共房間已被停用。");
-                    publicRooms.AddTranslation(SupportedLangs.Irish, "Tá seomraí poiblí díchumasaithe ar chúiseanna slándála.");
-
-                }
-                return publicRooms.StringName;
-            }
-        }
-        public static StringNames LoadingPrefabsText
-        {
-            get
-            {
-                if (loadingPregabs == null)
-                {
-                    loadingPregabs = new Translator("Loading Prefabs");
-                    loadingPregabs.AddTranslation(SupportedLangs.Latam, "Cargando prefabs");
-                    loadingPregabs.AddTranslation(SupportedLangs.Brazilian, "Carregando Predefinições");
-                    loadingPregabs.AddTranslation(SupportedLangs.Portuguese, "Carregando Predefinições");
-                    loadingPregabs.AddTranslation(SupportedLangs.Korean, "프리팹 불러오는 중");
-                    loadingPregabs.AddTranslation(SupportedLangs.Russian, "Загрузка префабов");
-                    loadingPregabs.AddTranslation(SupportedLangs.Dutch, "Prefabs laden");
-                    loadingPregabs.AddTranslation(SupportedLangs.Filipino, "Naglo-load ng prefabs");
-                    loadingPregabs.AddTranslation(SupportedLangs.French, "Chargement des prefabs");
-                    loadingPregabs.AddTranslation(SupportedLangs.German, "Prefabs werden geladen");
-                    loadingPregabs.AddTranslation(SupportedLangs.Italian, "Caricamento dei prefab");
-                    loadingPregabs.AddTranslation(SupportedLangs.Japanese, "プレハブを読み込み中");
-                    loadingPregabs.AddTranslation(SupportedLangs.Spanish, "Cargando prefabs");
-                    loadingPregabs.AddTranslation(SupportedLangs.SChinese, "正在加载预制体");
-                    loadingPregabs.AddTranslation(SupportedLangs.TChinese, "正在載入預製物");
-                    loadingPregabs.AddTranslation(SupportedLangs.Irish, "Ag luchtú prefabs");
-
-                }
-                return loadingPregabs.StringName;
-            }
-        }
-        public static StringNames YourRoleIsText
-        {
-            get
-            {
-                if (yourRoleIs == null)
-                {
-                    yourRoleIs = new Translator("Your role is ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Latam, "Tu rol es ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Brazilian, "Sua função é ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Portuguese, "Sua função é ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Korean, "당신의 역할은 ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Russian, "Ваша роль — ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Dutch, "Jouw rol is ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Filipino, "Ang iyong papel ay ");
-                    yourRoleIs.AddTranslation(SupportedLangs.French, "Votre rôle est ");
-                    yourRoleIs.AddTranslation(SupportedLangs.German, "Deine Rolle ist ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Italian, "Il tuo ruolo è ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Japanese, "あなたの役割は ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Spanish, "Tu rol es ");
-                    yourRoleIs.AddTranslation(SupportedLangs.SChinese, "你的身份是 ");
-                    yourRoleIs.AddTranslation(SupportedLangs.TChinese, "你的身份是 ");
-                    yourRoleIs.AddTranslation(SupportedLangs.Irish, "Is é do ról ");
-                }
-                return yourRoleIs.StringName;
-            }
-        }
-        public static StringNames EditText
-        {
-            get
-            {
-                if (edit == null)
-                {
-                    edit = new Translator("Edit preset");
-                    edit.AddTranslation(SupportedLangs.English, "Edit preset");
-                    edit.AddTranslation(SupportedLangs.Latam, "Editar preajuste");
-                    edit.AddTranslation(SupportedLangs.Brazilian, "Editar predefinição");
-                    edit.AddTranslation(SupportedLangs.Portuguese, "Editar predefinição");
-                    edit.AddTranslation(SupportedLangs.Korean, "프리셋 편집");
-                    edit.AddTranslation(SupportedLangs.Russian, "Редактировать пресет");
-                    edit.AddTranslation(SupportedLangs.Dutch, "Preset bewerken");
-                    edit.AddTranslation(SupportedLangs.Filipino, "I-edit ang preset");
-                    edit.AddTranslation(SupportedLangs.French, "Modifier le préréglage");
-                    edit.AddTranslation(SupportedLangs.German, "Voreinstellung bearbeiten");
-                    edit.AddTranslation(SupportedLangs.Italian, "Modifica preimpostazione");
-                    edit.AddTranslation(SupportedLangs.Japanese, "プリセットを編集");
-                    edit.AddTranslation(SupportedLangs.Spanish, "Editar preajuste");
-                    edit.AddTranslation(SupportedLangs.SChinese, "编辑预设");
-                    edit.AddTranslation(SupportedLangs.TChinese, "編輯預設");
-                    edit.AddTranslation(SupportedLangs.Irish, "Cuir réamhshocrú in eagar");
-                }
-                return edit.StringName;
-            }
-        }
-        public static StringNames PresetNameText
-        {
-            get
-            {
-                if (presetName == null)
-                {
-                    presetName = new Translator("What will be the name of your preset?");
-                    presetName.AddTranslation(SupportedLangs.Latam, "¿Cuál será el nombre de tu preajuste?");
-                    presetName.AddTranslation(SupportedLangs.Brazilian, "Qual será o nome da sua predefinição?");
-                    presetName.AddTranslation(SupportedLangs.Portuguese, "Qual será o nome da sua predefinição?");
-                    presetName.AddTranslation(SupportedLangs.Korean, "프리셋의 이름은 무엇으로 하시겠습니까?");
-                    presetName.AddTranslation(SupportedLangs.Russian, "Какое имя будет у вашего пресета?");
-                    presetName.AddTranslation(SupportedLangs.Dutch, "Wat wordt de naam van je preset?");
-                    presetName.AddTranslation(SupportedLangs.Filipino, "Ano ang magiging pangalan ng iyong preset?");
-                    presetName.AddTranslation(SupportedLangs.French, "Quel sera le nom de votre préréglage ?");
-                    presetName.AddTranslation(SupportedLangs.German, "Wie soll dein Preset heißen?");
-                    presetName.AddTranslation(SupportedLangs.Italian, "Quale sarà il nome del tuo preset?");
-                    presetName.AddTranslation(SupportedLangs.Japanese, "プリセットの名前は何にしますか？");
-                    presetName.AddTranslation(SupportedLangs.Spanish, "¿Cuál será el nombre de tu preajuste?");
-                    presetName.AddTranslation(SupportedLangs.SChinese, "您的预设名称是什么？");
-                    presetName.AddTranslation(SupportedLangs.TChinese, "您的預設名稱是什麼？");
-                    presetName.AddTranslation(SupportedLangs.Irish, "Cad a bheidh mar ainm ar do réamhshocrú?");
-                }
-                return presetName.StringName;
-            }
-        }
-        public static StringNames LoadPresetText
-        {
-            get
-            {
-                if (loadPreset == null)
-                {
-                    loadPreset = new Translator("Load preset");
-                    loadPreset.AddTranslation(SupportedLangs.English, "Load preset");
-                    loadPreset.AddTranslation(SupportedLangs.Latam, "Cargar preajuste");
-                    loadPreset.AddTranslation(SupportedLangs.Brazilian, "Carregar predefinição");
-                    loadPreset.AddTranslation(SupportedLangs.Portuguese, "Carregar predefinição");
-                    loadPreset.AddTranslation(SupportedLangs.Korean, "프리셋 불러오기");
-                    loadPreset.AddTranslation(SupportedLangs.Russian, "Загрузить пресет");
-                    loadPreset.AddTranslation(SupportedLangs.Dutch, "Preset laden");
-                    loadPreset.AddTranslation(SupportedLangs.Filipino, "I-load ang preset");
-                    loadPreset.AddTranslation(SupportedLangs.French, "Charger le préréglage");
-                    loadPreset.AddTranslation(SupportedLangs.German, "Voreinstellung laden");
-                    loadPreset.AddTranslation(SupportedLangs.Italian, "Carica preimpostazione");
-                    loadPreset.AddTranslation(SupportedLangs.Japanese, "プリセットを読み込む");
-                    loadPreset.AddTranslation(SupportedLangs.Spanish, "Cargar preajuste");
-                    loadPreset.AddTranslation(SupportedLangs.SChinese, "加载预设");
-                    loadPreset.AddTranslation(SupportedLangs.TChinese, "載入預設");
-                    loadPreset.AddTranslation(SupportedLangs.Irish, "Luchtaigh réamhshocrú");
-                }
-                return loadPreset.StringName;
-            }
-        }
-        public static StringNames EmptyText
-        {
-            get
-            {
-                if (empty == null)
-                {
-                    empty = new Translator("Empty");
-                    empty.AddTranslation(SupportedLangs.Latam, "Vacío");
-                    empty.AddTranslation(SupportedLangs.Brazilian, "Vazio");
-                    empty.AddTranslation(SupportedLangs.Portuguese, "Vazio");
-                    empty.AddTranslation(SupportedLangs.Korean, "비어 있음");
-                    empty.AddTranslation(SupportedLangs.Russian, "Пусто");
-                    empty.AddTranslation(SupportedLangs.Dutch, "Leeg");
-                    empty.AddTranslation(SupportedLangs.Filipino, "Walang laman");
-                    empty.AddTranslation(SupportedLangs.French, "Vide");
-                    empty.AddTranslation(SupportedLangs.German, "Leer");
-                    empty.AddTranslation(SupportedLangs.Italian, "Vuoto");
-                    empty.AddTranslation(SupportedLangs.Japanese, "空");
-                    empty.AddTranslation(SupportedLangs.Spanish, "Vacío");
-                    empty.AddTranslation(SupportedLangs.SChinese, "空");
-                    empty.AddTranslation(SupportedLangs.TChinese, "空的");
-                    empty.AddTranslation(SupportedLangs.Irish, "Folamh");
-                }
-                return empty.StringName;
-            }
-        }
-        public static StringNames CountText
-        {
-            get
-            {
-                if (count == null)
-                {
-                    count = new Translator("Player Count");
-                    count.AddTranslation(SupportedLangs.Latam, "Cantidad de jugadores");
-                    count.AddTranslation(SupportedLangs.Brazilian, "Quantidade de Jogadores");
-                    count.AddTranslation(SupportedLangs.Portuguese, "Quantidade de Jogadores");
-                    count.AddTranslation(SupportedLangs.Korean, "플레이어 수");
-                    count.AddTranslation(SupportedLangs.Russian, "Количество игроков");
-                    count.AddTranslation(SupportedLangs.Dutch, "Aantal spelers");
-                    count.AddTranslation(SupportedLangs.Filipino, "Bilang ng mga manlalaro");
-                    count.AddTranslation(SupportedLangs.French, "Nombre de joueurs");
-                    count.AddTranslation(SupportedLangs.German, "Spieleranzahl");
-                    count.AddTranslation(SupportedLangs.Italian, "Numero di giocatori");
-                    count.AddTranslation(SupportedLangs.Japanese, "プレイヤー数");
-                    count.AddTranslation(SupportedLangs.Spanish, "Cantidad de jugadores");
-                    count.AddTranslation(SupportedLangs.SChinese, "玩家数量");
-                    count.AddTranslation(SupportedLangs.TChinese, "玩家數量");
-                    count.AddTranslation(SupportedLangs.Irish, "Líon na n-imreoirí");
-                }
-                return count.StringName;
-            }
-        }
-        public static StringNames PriorityText
-        {
-            get
-            {
-                if (priority == null)
-                {
-                    priority = new Translator("Team Priority");
-                    priority.AddTranslation(SupportedLangs.Latam, "Prioridad del equipo");
-                    priority.AddTranslation(SupportedLangs.Brazilian, "Prioridade do Time");
-                    priority.AddTranslation(SupportedLangs.Portuguese, "Prioridade da Equipe");
-                    priority.AddTranslation(SupportedLangs.Korean, "팀 우선순위");
-                    priority.AddTranslation(SupportedLangs.Russian, "Приоритет команды");
-                    priority.AddTranslation(SupportedLangs.Dutch, "Teamprioriteit");
-                    priority.AddTranslation(SupportedLangs.Filipino, "Prayoridad ng Koponan");
-                    priority.AddTranslation(SupportedLangs.French, "Priorité de l'équipe");
-                    priority.AddTranslation(SupportedLangs.German, "Team-Priorität");
-                    priority.AddTranslation(SupportedLangs.Italian, "Priorità della squadra");
-                    priority.AddTranslation(SupportedLangs.Japanese, "チームの優先順位");
-                    priority.AddTranslation(SupportedLangs.Spanish, "Prioridad del equipo");
-                    priority.AddTranslation(SupportedLangs.SChinese, "队伍优先级");
-                    priority.AddTranslation(SupportedLangs.TChinese, "隊伍優先級");
-                    priority.AddTranslation(SupportedLangs.Irish, "Tosaíocht Foirne");
-                }
-                return priority.StringName;
-            }
-        }
-        public static StringNames ImpostorsText
-        {
-            get
-            {
-                if (impostors == null)
-                {
-                    impostors = new Translator("Impostors");
-                    impostors.AddTranslation(SupportedLangs.Latam, "Impostores");
-                    impostors.AddTranslation(SupportedLangs.Brazilian, "Impostores");
-                    impostors.AddTranslation(SupportedLangs.Portuguese, "Impostores");
-                    impostors.AddTranslation(SupportedLangs.Korean, "임포스터들");
-                    impostors.AddTranslation(SupportedLangs.Russian, "Самозванцы");
-                    impostors.AddTranslation(SupportedLangs.Dutch, "Bedriegers");
-                    impostors.AddTranslation(SupportedLangs.Filipino, "Mga Manlilinlang");
-                    impostors.AddTranslation(SupportedLangs.French, "Imposteurs");
-                    impostors.AddTranslation(SupportedLangs.German, "Betrüger");
-                    impostors.AddTranslation(SupportedLangs.Italian, "Imbroglioni");
-                    impostors.AddTranslation(SupportedLangs.Japanese, "インポスター");
-                    impostors.AddTranslation(SupportedLangs.Spanish, "Impostores");
-                    impostors.AddTranslation(SupportedLangs.SChinese, "内鬼");
-                    impostors.AddTranslation(SupportedLangs.TChinese, "内鬼");
-                    impostors.AddTranslation(SupportedLangs.Irish, "Bréagadóirí");
-                }
-                return impostors.StringName;
-            }
-        }
-        public static StringNames NeutralText
-        {
-            get
-            {
-                if (neutral == null)
-                {
-                    neutral = new Translator("Neutral");
-                    neutral.AddTranslation(SupportedLangs.Latam, "Neutral");
-                    neutral.AddTranslation(SupportedLangs.Brazilian, "Neutro");
-                    neutral.AddTranslation(SupportedLangs.Portuguese, "Neutro");
-                    neutral.AddTranslation(SupportedLangs.Korean, "중립자");
-                    neutral.AddTranslation(SupportedLangs.Russian, "Нейтрал");
-                    neutral.AddTranslation(SupportedLangs.Dutch, "Neutraal");
-                    neutral.AddTranslation(SupportedLangs.Filipino, "Neutro");
-                    neutral.AddTranslation(SupportedLangs.French, "Neutre");
-                    neutral.AddTranslation(SupportedLangs.German, "Neutral");
-                    neutral.AddTranslation(SupportedLangs.Italian, "Neutrale");
-                    neutral.AddTranslation(SupportedLangs.Japanese, "ニュートラル");
-                    neutral.AddTranslation(SupportedLangs.Spanish, "Neutral");
-                    neutral.AddTranslation(SupportedLangs.SChinese, "中立");
-                    neutral.AddTranslation(SupportedLangs.TChinese, "中立");
-                    neutral.AddTranslation(SupportedLangs.Irish, "Neodrach");
-                }
-                return neutral.StringName;
-            }
-        }
-        public static StringNames NeutralsText
-        {
-            get
-            {
-                if (neutrals == null)
-                {
-                    neutrals = new Translator("Neutrals");
-                    neutrals.AddTranslation(SupportedLangs.Latam, "Neutrales");
-                    neutrals.AddTranslation(SupportedLangs.Brazilian, "Neutros");
-                    neutrals.AddTranslation(SupportedLangs.Portuguese, "Neutros");
-                    neutrals.AddTranslation(SupportedLangs.Korean, "중립자들");
-                    neutrals.AddTranslation(SupportedLangs.Russian, "Нейтралы");
-                    neutrals.AddTranslation(SupportedLangs.Dutch, "Neutralen");
-                    neutrals.AddTranslation(SupportedLangs.Filipino, "Mga Neutro");
-                    neutrals.AddTranslation(SupportedLangs.French, "Neutres");
-                    neutrals.AddTranslation(SupportedLangs.German, "Neutrale");
-                    neutrals.AddTranslation(SupportedLangs.Italian, "Neutrali");
-                    neutrals.AddTranslation(SupportedLangs.Japanese, "ニュートラル");
-                    neutrals.AddTranslation(SupportedLangs.Spanish, "Neutrales");
-                    neutrals.AddTranslation(SupportedLangs.SChinese, "中立者");
-                    neutrals.AddTranslation(SupportedLangs.TChinese, "中立者");
-                    neutrals.AddTranslation(SupportedLangs.Irish, "Neodracha");
-                }
-                return neutrals.StringName;
-            }
-        }
-        public static StringNames TeamsRemainText
-        {
-            get
-            {
-                if (remainText == null)
-                {
-                    remainText = new Translator("Remaining Teams: ");
-                    remainText.AddTranslation(SupportedLangs.Latam, "Equipos restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Brazilian, "Times Restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Portuguese, "Times Restantes: ");
-                    remainText.AddTranslation(SupportedLangs.Korean, "남은 팀: ");
-                    remainText.AddTranslation(SupportedLangs.Russian, "Оставшиеся команды: ");
-                    remainText.AddTranslation(SupportedLangs.Dutch, "Resterende teams: ");
-                    remainText.AddTranslation(SupportedLangs.Filipino, "Natitirang mga koponan: ");
-                    remainText.AddTranslation(SupportedLangs.French, "Équipes restantes : ");
-                    remainText.AddTranslation(SupportedLangs.German, "Verbleibende Teams: ");
-                    remainText.AddTranslation(SupportedLangs.Italian, "Squadre rimanenti: ");
-                    remainText.AddTranslation(SupportedLangs.Japanese, "残りのチーム: ");
-                    remainText.AddTranslation(SupportedLangs.Spanish, "Equipos restantes: ");
-                    remainText.AddTranslation(SupportedLangs.SChinese, "剩余队伍: ");
-                    remainText.AddTranslation(SupportedLangs.TChinese, "剩餘隊伍: ");
-                    remainText.AddTranslation(SupportedLangs.Irish, "Foirne atá fágtha: ");
-                }
-                return remainText.StringName;
-            }
-        }
-        public static StringNames NeutralGameOver
-        {
-            get
-            {
-                if (neutralText == null)
-                {
-                    neutralText = new Translator("Victory of the Neutrals");
-                    neutralText.AddTranslation(SupportedLangs.Latam, "Victoria de los neutrales");
-                    neutralText.AddTranslation(SupportedLangs.Brazilian, "Vitória dos Neutros");
-                    neutralText.AddTranslation(SupportedLangs.Portuguese, "Vitória dos Neutros");
-                    neutralText.AddTranslation(SupportedLangs.Korean, "중립의 승리");
-                    neutralText.AddTranslation(SupportedLangs.Russian, "Победа нейтралов");
-                    neutralText.AddTranslation(SupportedLangs.Dutch, "Overwinning van de neutralen");
-                    neutralText.AddTranslation(SupportedLangs.Filipino, "Tagumpay ng mga neutral");
-                    neutralText.AddTranslation(SupportedLangs.French, "Victoire des neutres");
-                    neutralText.AddTranslation(SupportedLangs.German, "Sieg der Neutralen");
-                    neutralText.AddTranslation(SupportedLangs.Italian, "Vittoria dei neutrali");
-                    neutralText.AddTranslation(SupportedLangs.Japanese, "ニュートラルの勝利");
-                    neutralText.AddTranslation(SupportedLangs.Spanish, "Victoria de los neutrales");
-                    neutralText.AddTranslation(SupportedLangs.SChinese, "中立者的胜利");
-                    neutralText.AddTranslation(SupportedLangs.TChinese, "中立者的勝利");
-                    neutralText.AddTranslation(SupportedLangs.Irish, "Bua na Neodrach");
-                }
-                return neutralText.StringName;
-            }
-        }
-        public static StringNames ImpostorGameOver
-        {
-            get
-            {
-                if (impostorText == null)
-                {
-                    impostorText = new Translator("Victory of the Impostors");
-                    impostorText.AddTranslation(SupportedLangs.Latam, "Victoria de los impostores");
-                    impostorText.AddTranslation(SupportedLangs.Brazilian, "Vitória dos Impostores");
-                    impostorText.AddTranslation(SupportedLangs.Portuguese, "Vitória dos Impostores");
-                    impostorText.AddTranslation(SupportedLangs.Korean, "임포스터의 승리");
-                    impostorText.AddTranslation(SupportedLangs.Russian, "Победа предателей");
-                    impostorText.AddTranslation(SupportedLangs.Dutch, "Overwinning van de bedriegers");
-                    impostorText.AddTranslation(SupportedLangs.Filipino, "Tagumpay ng mga Impostor");
-                    impostorText.AddTranslation(SupportedLangs.French, "Victoire des imposteurs");
-                    impostorText.AddTranslation(SupportedLangs.German, "Sieg der Betrüger");
-                    impostorText.AddTranslation(SupportedLangs.Italian, "Vittoria degli impostori");
-                    impostorText.AddTranslation(SupportedLangs.Japanese, "インポスターの勝利");
-                    impostorText.AddTranslation(SupportedLangs.Spanish, "Victoria de los impostores");
-                    impostorText.AddTranslation(SupportedLangs.SChinese, "内鬼的胜利");
-                    impostorText.AddTranslation(SupportedLangs.TChinese, "內鬼的勝利");
-                    impostorText.AddTranslation(SupportedLangs.Irish, "Bua na bhFéintréitheoirí");
-                }
-                return impostorText.StringName;
-            }
-        }
-        public static StringNames CrewmateGameOver
-        {
-            get
-            {
-                if (crewmateText == null)
-                {
-                    crewmateText = new Translator("Crew Victory");
-                    crewmateText.AddTranslation(SupportedLangs.Latam, "Victoria de la tripulación");
-                    crewmateText.AddTranslation(SupportedLangs.Brazilian, "Vitória dos Tripulantes");
-                    crewmateText.AddTranslation(SupportedLangs.Portuguese, "Vitória dos Tripulantes");
-                    crewmateText.AddTranslation(SupportedLangs.Korean, "승무원의 승리");
-                    crewmateText.AddTranslation(SupportedLangs.Russian, "Победа команды");
-                    crewmateText.AddTranslation(SupportedLangs.Dutch, "Overwinning van de bemanning");
-                    crewmateText.AddTranslation(SupportedLangs.Filipino, "Tagumpay ng tripulante");
-                    crewmateText.AddTranslation(SupportedLangs.French, "Victoire de l’équipage");
-                    crewmateText.AddTranslation(SupportedLangs.German, "Sieg der Crew");
-                    crewmateText.AddTranslation(SupportedLangs.Italian, "Vittoria dell’equipaggio");
-                    crewmateText.AddTranslation(SupportedLangs.Japanese, "クルーの勝利");
-                    crewmateText.AddTranslation(SupportedLangs.Spanish, "Victoria de la tripulación");
-                    crewmateText.AddTranslation(SupportedLangs.SChinese, "船员的胜利");
-                    crewmateText.AddTranslation(SupportedLangs.TChinese, "船員的勝利");
-                    crewmateText.AddTranslation(SupportedLangs.Irish, "Bua na gCrúach");
-                }
-                return crewmateText.StringName;
-            }
-        }
-        public static StringNames TeamsText
-        {
-            get
-            {
-                if (teams == null)
-                {
-                    teams = new Translator("Teams");
-                    teams.AddTranslation(SupportedLangs.Latam, "Equipos");
-                    teams.AddTranslation(SupportedLangs.Brazilian, "Times");
-                    teams.AddTranslation(SupportedLangs.Portuguese, "Equipes");
-                    teams.AddTranslation(SupportedLangs.Korean, "팀");
-                    teams.AddTranslation(SupportedLangs.Russian, "Команды");
-                    teams.AddTranslation(SupportedLangs.Dutch, "Teams");
-                    teams.AddTranslation(SupportedLangs.Filipino, "Mga Koponan");
-                    teams.AddTranslation(SupportedLangs.French, "Équipes");
-                    teams.AddTranslation(SupportedLangs.German, "Teams");
-                    teams.AddTranslation(SupportedLangs.Italian, "Squadre");
-                    teams.AddTranslation(SupportedLangs.Japanese, "チーム");
-                    teams.AddTranslation(SupportedLangs.Spanish, "Equipos");
-                    teams.AddTranslation(SupportedLangs.SChinese, "队伍");
-                    teams.AddTranslation(SupportedLangs.TChinese, "隊伍");
-                    teams.AddTranslation(SupportedLangs.Irish, "Foirne");
-                }
-                return teams.StringName;
-            }
-        }
-        public static StringNames TeamConfigButtonText
-        {
-            get
-            {
-                if (teamConfigButton == null)
-                {
-                    teamConfigButton = new Translator("Teams Settings");
-                    teamConfigButton.AddTranslation(SupportedLangs.Latam, "Configuraciones de equipos");
-                    teamConfigButton.AddTranslation(SupportedLangs.Brazilian, "Configurações dos Times");
-                    teamConfigButton.AddTranslation(SupportedLangs.Portuguese, "Configurações das Equipes");
-                    teamConfigButton.AddTranslation(SupportedLangs.Korean, "팀 설정");
-                    teamConfigButton.AddTranslation(SupportedLangs.Russian, "Настройки команд");
-                    teamConfigButton.AddTranslation(SupportedLangs.Dutch, "Teamconfiguraties");
-                    teamConfigButton.AddTranslation(SupportedLangs.Filipino, "Mga configuration ng koponan");
-                    teamConfigButton.AddTranslation(SupportedLangs.French, "Configurations des équipes");
-                    teamConfigButton.AddTranslation(SupportedLangs.German, "Teamkonfigurationen");
-                    teamConfigButton.AddTranslation(SupportedLangs.Italian, "Configurazioni delle squadre");
-                    teamConfigButton.AddTranslation(SupportedLangs.Japanese, "チーム設定");
-                    teamConfigButton.AddTranslation(SupportedLangs.Spanish, "Configuraciones de equipos");
-                    teamConfigButton.AddTranslation(SupportedLangs.SChinese, "队伍配置");
-                    teamConfigButton.AddTranslation(SupportedLangs.TChinese, "隊伍配置");
-                    teamConfigButton.AddTranslation(SupportedLangs.Irish, "Cumraíochtaí Foirne");
-                }
-                return teamConfigButton.StringName;
-            }
-        }
-        public static StringNames TeamConfigDescText
-        {
-            get
-            {
-                if (teamConfigDesc == null)
-                {
-                    teamConfigDesc = new Translator("Edit the Teams settings for your lobby.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Latam, "Edita la configuración de equipos para tu sala.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Brazilian, "Edite as configurações de Times para sua sala.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Portuguese, "Edite as configurações das Equipes para sua sala.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Korean, "로비의 팀 설정을 편집하세요.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Russian, "Измените настройки команд для вашей комнаты.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Dutch, "Bewerk de teaminstellingen voor je lobby.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Filipino, "I-edit ang mga setting ng koponan para sa iyong lobby.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.French, "Modifiez les paramètres des équipes pour votre salon.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.German, "Bearbeiten Sie die Team-Einstellungen für Ihre Lobby.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Italian, "Modifica le impostazioni delle squadre per la tua lobby.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Japanese, "ロビーのチーム設定を編集してください。");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Spanish, "Edita la configuración de equipos para tu sala.");
-                    teamConfigDesc.AddTranslation(SupportedLangs.SChinese, "编辑您房间的队伍设置。");
-                    teamConfigDesc.AddTranslation(SupportedLangs.TChinese, "編輯您房間的隊伍設定。");
-                    teamConfigDesc.AddTranslation(SupportedLangs.Irish, "Cuir eagarthóireacht ar na socruithe foirne do do lóiste.");
-                }
-                return teamConfigDesc.StringName;
-            }
-        }
-        public static StringNames NonModdedText
-        {
-            get
-            {
-                if (nonModdedText == null)
-                {
-                    nonModdedText = new Translator("Non Modded Clients:");
-                    nonModdedText.AddTranslation(SupportedLangs.Latam, "Clientes sin mods:");
-                    nonModdedText.AddTranslation(SupportedLangs.Brazilian, "Clientes não modificados:");
-                    nonModdedText.AddTranslation(SupportedLangs.Portuguese, "Clientes não modificados:");
-                    nonModdedText.AddTranslation(SupportedLangs.Korean, "모드가 없는 클라이언트:");
-                    nonModdedText.AddTranslation(SupportedLangs.Russian, "Клиенты без модов:");
-                    nonModdedText.AddTranslation(SupportedLangs.Dutch, "Niet-gemodde clients:");
-                    nonModdedText.AddTranslation(SupportedLangs.Filipino, "Mga kliyenteng walang mods:");
-                    nonModdedText.AddTranslation(SupportedLangs.French, "Clients sans mods :");
-                    nonModdedText.AddTranslation(SupportedLangs.German, "Nicht-modifizierte Clients:");
-                    nonModdedText.AddTranslation(SupportedLangs.Italian, "Client non moddati:");
-                    nonModdedText.AddTranslation(SupportedLangs.Japanese, "非Modクライアント:");
-                    nonModdedText.AddTranslation(SupportedLangs.Spanish, "Clientes sin mods:");
-                    nonModdedText.AddTranslation(SupportedLangs.SChinese, "未安装模组的客户端:");
-                    nonModdedText.AddTranslation(SupportedLangs.TChinese, "未安裝模組的客戶端:");
-                    nonModdedText.AddTranslation(SupportedLangs.Irish, "Cliaint gan mods:");
-                }
-                return nonModdedText.StringName;
-            }
-        }
-        public static StringNames TypeHereText
-        {
-            get
-            {
-                if (typeText == null)
-                {
-                    typeText = new Translator("Type here who was the killer");
-                    typeText.AddTranslation(SupportedLangs.Latam, "Escribe aquí quién fue el asesino");
-                    typeText.AddTranslation(SupportedLangs.Brazilian, "Digite aqui quem foi o assassino");
-                    typeText.AddTranslation(SupportedLangs.Portuguese, "Digite aqui quem foi o assassino");
-                    typeText.AddTranslation(SupportedLangs.Korean, "여기에 살인자가 누구였는지 입력하세요");
-                    typeText.AddTranslation(SupportedLangs.Russian, "Введите здесь, кто был убийцей");
-                    typeText.AddTranslation(SupportedLangs.Dutch, "Typ hier wie de moordenaar was");
-                    typeText.AddTranslation(SupportedLangs.Filipino, "I-type dito kung sino ang pumatay");
-                    typeText.AddTranslation(SupportedLangs.French, "Tapez ici qui était le meurtrier");
-                    typeText.AddTranslation(SupportedLangs.German, "Geben Sie hier ein, wer der Mörder war");
-                    typeText.AddTranslation(SupportedLangs.Italian, "Digita qui chi è stato l'assassino");
-                    typeText.AddTranslation(SupportedLangs.Japanese, "ここに誰が殺人者だったか入力してください");
-                    typeText.AddTranslation(SupportedLangs.Spanish, "Escribe aquí quién fue el asesino");
-                    typeText.AddTranslation(SupportedLangs.SChinese, "在此输入谁是凶手");
-                    typeText.AddTranslation(SupportedLangs.TChinese, "在此輸入誰是兇手");
-                    typeText.AddTranslation(SupportedLangs.Irish, "Clóscríobh anseo cé a bhí ina mharaitheoir");
-                }
-                return typeText.StringName;
-            }
-        }
+        public static StringNames FailedToSyncSettings { get; } = new Translator("There was a failure while trying to sync the settings.")
+                    .AddTranslation(SupportedLangs.Latam, "Hubo un fallo al intentar sincronizar la configuración.")
+                    .AddTranslation(SupportedLangs.Brazilian, "Houve uma falha tentando sincronizar as configurações.")
+                    .AddTranslation(SupportedLangs.Portuguese, "Houve uma falha ao tentar sincronizar as configurações.")
+                    .AddTranslation(SupportedLangs.Korean, "설정을 동기화하는 동안 오류가 발생했습니다.")
+                    .AddTranslation(SupportedLangs.Russian, "Произошла ошибка при попытке синхронизировать настройки.")
+                    .AddTranslation(SupportedLangs.Dutch, "Er is een fout opgetreden bij het synchroniseren van de instellingen.")
+                    .AddTranslation(SupportedLangs.Filipino, "Nagkaroon ng error habang sinusubukang i-sync ang mga setting.")
+                    .AddTranslation(SupportedLangs.French, "Une erreur s’est produite lors de la synchronisation des paramètres.")
+                    .AddTranslation(SupportedLangs.German, "Beim Synchronisieren der Einstellungen ist ein Fehler aufgetreten.")
+                    .AddTranslation(SupportedLangs.Italian, "Si è verificato un errore durante il tentativo di sincronizzare le impostazioni.")
+                    .AddTranslation(SupportedLangs.Japanese, "設定を同期しようとしてエラーが発生しました。")
+                    .AddTranslation(SupportedLangs.Spanish, "Ocurrió un error al intentar sincronizar la configuración.")
+                    .AddTranslation(SupportedLangs.SChinese, "尝试同步设置时发生错误。")
+                    .AddTranslation(SupportedLangs.TChinese, "嘗試同步設定時發生錯誤。")
+                    .AddTranslation(SupportedLangs.Irish, "Tharla earráid agus iarracht á déanamh na socruithe a shioncronú.").StringName;
+        public static StringNames ForcedDisconnectionText { get; } = new Translator(" was forced to disconnect for not having FungleAPI installed.")
+                    .AddTranslation(SupportedLangs.Latam, " fue forzado a desconectarse por no tener FungleAPI instalada.")
+                    .AddTranslation(SupportedLangs.Brazilian, " foi forçado a se desconectar por não ter a FungleAPI instalada.")
+                    .AddTranslation(SupportedLangs.Portuguese, " foi forçado a se desconectar por não ter a FungleAPI instalada.")
+                    .AddTranslation(SupportedLangs.Korean, " FungleAPI가 설치되어 있지 않아 강제로 연결이 끊어졌습니다.")
+                    .AddTranslation(SupportedLangs.Russian, " был принудительно отключён из-за отсутствия установленной FungleAPI.")
+                    .AddTranslation(SupportedLangs.Dutch, " werd gedwongen te verbreken omdat FungleAPI niet is geïnstalleerd.")
+                    .AddTranslation(SupportedLangs.Filipino, " ay pinilit na ma-disconnect dahil walang naka-install na FungleAPI.")
+                    .AddTranslation(SupportedLangs.French, " a été forcé de se déconnecter car FungleAPI n’est pas installée.")
+                    .AddTranslation(SupportedLangs.German, " wurde zwangsweise getrennt, da FungleAPI nicht installiert ist.")
+                    .AddTranslation(SupportedLangs.Italian, " è stato forzato a disconnettersi perché FungleAPI non è installata.")
+                    .AddTranslation(SupportedLangs.Japanese, " FungleAPIがインストールされていないため、強制的に切断されました。")
+                    .AddTranslation(SupportedLangs.Spanish, " fue forzado a desconectarse por no tener FungleAPI instalada.")
+                    .AddTranslation(SupportedLangs.SChinese, " 由于未安装 FungleAPI，被强制断开连接。")
+                    .AddTranslation(SupportedLangs.TChinese, " 由於未安裝 FungleAPI，被強制中斷連線。")
+                    .AddTranslation(SupportedLangs.Irish, " cuireadh iallach air dícheangal toisc nach bhfuil FungleAPI suiteáilte.").StringName;
+        public static StringNames ChangeToPublicText { get; } = new Translator("Public rooms are disabled for security reasons.")
+                    .AddTranslation(SupportedLangs.Latam, "Las salas públicas están deshabilitadas por razones de seguridad.")
+                    .AddTranslation(SupportedLangs.Brazilian, "Salas públicas estão desativadas por segurança.")
+                    .AddTranslation(SupportedLangs.Portuguese, "Salas públicas estão desativadas por segurança.")
+                    .AddTranslation(SupportedLangs.Korean, "보안상의 이유로 공개 방이 비활성화되었습니다.")
+                    .AddTranslation(SupportedLangs.Russian, "Публичные комнаты отключены по соображениям безопасности.")
+                    .AddTranslation(SupportedLangs.Dutch, "Openbare kamers zijn om veiligheidsredenen uitgeschakeld.")
+                    .AddTranslation(SupportedLangs.Filipino, "Ang mga pampublikong silid ay hindi pinagana para sa seguridad.")
+                    .AddTranslation(SupportedLangs.French, "Les salons publics sont désactivés pour des raisons de sécurité.")
+                    .AddTranslation(SupportedLangs.German, "Öffentliche Räume sind aus Sicherheitsgründen deaktiviert.")
+                    .AddTranslation(SupportedLangs.Italian, "Le stanze pubbliche sono disabilitate per motivi di sicurezza.")
+                    .AddTranslation(SupportedLangs.Japanese, "セキュリティ上の理由により公開ルームは無効化されています。")
+                    .AddTranslation(SupportedLangs.Spanish, "Las salas públicas están deshabilitadas por razones de seguridad.")
+                    .AddTranslation(SupportedLangs.SChinese, "出于安全原因，公共房间已被禁用。")
+                    .AddTranslation(SupportedLangs.TChinese, "基於安全原因，公共房間已被停用。")
+                    .AddTranslation(SupportedLangs.Irish, "Tá seomraí poiblí díchumasaithe ar chúiseanna slándála.").StringName;
+        public static StringNames LoadingPrefabsText { get; } = new Translator("Loading Prefabs")
+                    .AddTranslation(SupportedLangs.Latam, "Cargando prefabs")
+                    .AddTranslation(SupportedLangs.Brazilian, "Carregando Predefinições")
+                    .AddTranslation(SupportedLangs.Portuguese, "Carregando Predefinições")
+                    .AddTranslation(SupportedLangs.Korean, "프리팹 불러오는 중")
+                    .AddTranslation(SupportedLangs.Russian, "Загрузка префабов")
+                    .AddTranslation(SupportedLangs.Dutch, "Prefabs laden")
+                    .AddTranslation(SupportedLangs.Filipino, "Naglo-load ng prefabs")
+                    .AddTranslation(SupportedLangs.French, "Chargement des prefabs")
+                    .AddTranslation(SupportedLangs.German, "Prefabs werden geladen")
+                    .AddTranslation(SupportedLangs.Italian, "Caricamento dei prefab")
+                    .AddTranslation(SupportedLangs.Japanese, "プレハブを読み込み中")
+                    .AddTranslation(SupportedLangs.Spanish, "Cargando prefabs")
+                    .AddTranslation(SupportedLangs.SChinese, "正在加载预制体")
+                    .AddTranslation(SupportedLangs.TChinese, "正在載入預製物")
+                    .AddTranslation(SupportedLangs.Irish, "Ag luchtú prefabs").StringName;
+        public static StringNames YourRoleIsText { get; } = new Translator("Your role is ")
+                    .AddTranslation(SupportedLangs.Latam, "Tu rol es ")
+                    .AddTranslation(SupportedLangs.Brazilian, "Sua função é ")
+                    .AddTranslation(SupportedLangs.Portuguese, "Sua função é ")
+                    .AddTranslation(SupportedLangs.Korean, "당신의 역할은 ")
+                    .AddTranslation(SupportedLangs.Russian, "Ваша роль — ")
+                    .AddTranslation(SupportedLangs.Dutch, "Jouw rol is ")
+                    .AddTranslation(SupportedLangs.Filipino, "Ang iyong papel ay ")
+                    .AddTranslation(SupportedLangs.French, "Votre rôle est ")
+                    .AddTranslation(SupportedLangs.German, "Deine Rolle ist ")
+                    .AddTranslation(SupportedLangs.Italian, "Il tuo ruolo è ")
+                    .AddTranslation(SupportedLangs.Japanese, "あなたの役割は ")
+                    .AddTranslation(SupportedLangs.Spanish, "Tu rol es ")
+                    .AddTranslation(SupportedLangs.SChinese, "你的身份是 ")
+                    .AddTranslation(SupportedLangs.TChinese, "你的身份是 ")
+                    .AddTranslation(SupportedLangs.Irish, "Is é do ról ").StringName;
+        public static StringNames EditText { get; } = new Translator("Edit preset")
+                   .AddTranslation(SupportedLangs.English, "Edit preset")
+                   .AddTranslation(SupportedLangs.Latam, "Editar preajuste")
+                   .AddTranslation(SupportedLangs.Brazilian, "Editar predefinição")
+                   .AddTranslation(SupportedLangs.Portuguese, "Editar predefinição")
+                   .AddTranslation(SupportedLangs.Korean, "프리셋 편집")
+                   .AddTranslation(SupportedLangs.Russian, "Редактировать пресет")
+                   .AddTranslation(SupportedLangs.Dutch, "Preset bewerken")
+                   .AddTranslation(SupportedLangs.Filipino, "I-edit ang preset")
+                   .AddTranslation(SupportedLangs.French, "Modifier le préréglage")
+                   .AddTranslation(SupportedLangs.German, "Voreinstellung bearbeiten")
+                   .AddTranslation(SupportedLangs.Italian, "Modifica preimpostazione")
+                   .AddTranslation(SupportedLangs.Japanese, "プリセットを編集")
+                   .AddTranslation(SupportedLangs.Spanish, "Editar preajuste")
+                   .AddTranslation(SupportedLangs.SChinese, "编辑预设")
+                   .AddTranslation(SupportedLangs.TChinese, "編輯預設")
+                   .AddTranslation(SupportedLangs.Irish, "Cuir réamhshocrú in eagar").StringName;
+        public static StringNames PresetNameText { get; } = new Translator("What will be the name of your preset?")
+                    .AddTranslation(SupportedLangs.Latam, "¿Cuál será el nombre de tu preajuste?")
+                    .AddTranslation(SupportedLangs.Brazilian, "Qual será o nome da sua predefinição?")
+                    .AddTranslation(SupportedLangs.Portuguese, "Qual será o nome da sua predefinição?")
+                    .AddTranslation(SupportedLangs.Korean, "프리셋의 이름은 무엇으로 하시겠습니까?")
+                    .AddTranslation(SupportedLangs.Russian, "Какое имя будет у вашего пресета?")
+                    .AddTranslation(SupportedLangs.Dutch, "Wat wordt de naam van je preset?")
+                    .AddTranslation(SupportedLangs.Filipino, "Ano ang magiging pangalan ng iyong preset?")
+                    .AddTranslation(SupportedLangs.French, "Quel sera le nom de votre préréglage ?")
+                    .AddTranslation(SupportedLangs.German, "Wie soll dein Preset heißen?")
+                    .AddTranslation(SupportedLangs.Italian, "Quale sarà il nome del tuo preset?")
+                    .AddTranslation(SupportedLangs.Japanese, "プリセットの名前は何にしますか？")
+                    .AddTranslation(SupportedLangs.Spanish, "¿Cuál será el nombre de tu preajuste?")
+                    .AddTranslation(SupportedLangs.SChinese, "您的预设名称是什么？")
+                    .AddTranslation(SupportedLangs.TChinese, "您的預設名稱是什麼？")
+                    .AddTranslation(SupportedLangs.Irish, "Cad a bheidh mar ainm ar do réamhshocrú?").StringName;
+        public static StringNames LoadPresetText { get; } = new Translator("Load preset")
+                    .AddTranslation(SupportedLangs.English, "Load preset")
+                    .AddTranslation(SupportedLangs.Latam, "Cargar preajuste")
+                    .AddTranslation(SupportedLangs.Brazilian, "Carregar predefinição")
+                    .AddTranslation(SupportedLangs.Portuguese, "Carregar predefinição")
+                    .AddTranslation(SupportedLangs.Korean, "프리셋 불러오기")
+                    .AddTranslation(SupportedLangs.Russian, "Загрузить пресет")
+                    .AddTranslation(SupportedLangs.Dutch, "Preset laden")
+                    .AddTranslation(SupportedLangs.Filipino, "I-load ang preset")
+                    .AddTranslation(SupportedLangs.French, "Charger le préréglage")
+                    .AddTranslation(SupportedLangs.German, "Voreinstellung laden")
+                    .AddTranslation(SupportedLangs.Italian, "Carica preimpostazione")
+                    .AddTranslation(SupportedLangs.Japanese, "プリセットを読み込む")
+                    .AddTranslation(SupportedLangs.Spanish, "Cargar preajuste")
+                    .AddTranslation(SupportedLangs.SChinese, "加载预设")
+                    .AddTranslation(SupportedLangs.TChinese, "載入預設")
+                    .AddTranslation(SupportedLangs.Irish, "Luchtaigh réamhshocrú").StringName;
+        public static StringNames EmptyText { get; } = new Translator("Empty")
+                    .AddTranslation(SupportedLangs.Latam, "Vacío")
+                    .AddTranslation(SupportedLangs.Brazilian, "Vazio")
+                    .AddTranslation(SupportedLangs.Portuguese, "Vazio")
+                    .AddTranslation(SupportedLangs.Korean, "비어 있음")
+                    .AddTranslation(SupportedLangs.Russian, "Пусто")
+                    .AddTranslation(SupportedLangs.Dutch, "Leeg")
+                    .AddTranslation(SupportedLangs.Filipino, "Walang laman")
+                    .AddTranslation(SupportedLangs.French, "Vide")
+                    .AddTranslation(SupportedLangs.German, "Leer")
+                    .AddTranslation(SupportedLangs.Italian, "Vuoto")
+                    .AddTranslation(SupportedLangs.Japanese, "空")
+                    .AddTranslation(SupportedLangs.Spanish, "Vacío")
+                    .AddTranslation(SupportedLangs.SChinese, "空")
+                    .AddTranslation(SupportedLangs.TChinese, "空的")
+                    .AddTranslation(SupportedLangs.Irish, "Folamh").StringName;
+        public static StringNames CountText { get; } = new Translator("Player Count")
+                    .AddTranslation(SupportedLangs.Latam, "Cantidad de jugadores")
+                    .AddTranslation(SupportedLangs.Brazilian, "Quantidade de Jogadores")
+                    .AddTranslation(SupportedLangs.Portuguese, "Quantidade de Jogadores")
+                    .AddTranslation(SupportedLangs.Korean, "플레이어 수")
+                    .AddTranslation(SupportedLangs.Russian, "Количество игроков")
+                    .AddTranslation(SupportedLangs.Dutch, "Aantal spelers")
+                    .AddTranslation(SupportedLangs.Filipino, "Bilang ng mga manlalaro")
+                    .AddTranslation(SupportedLangs.French, "Nombre de joueurs")
+                    .AddTranslation(SupportedLangs.German, "Spieleranzahl")
+                    .AddTranslation(SupportedLangs.Italian, "Numero di giocatori")
+                    .AddTranslation(SupportedLangs.Japanese, "プレイヤー数")
+                    .AddTranslation(SupportedLangs.Spanish, "Cantidad de jugadores")
+                    .AddTranslation(SupportedLangs.SChinese, "玩家数量")
+                    .AddTranslation(SupportedLangs.TChinese, "玩家數量")
+                    .AddTranslation(SupportedLangs.Irish, "Líon na n-imreoirí").StringName;
+        public static StringNames PriorityText { get; } = new Translator("Team Priority")
+                    .AddTranslation(SupportedLangs.Latam, "Prioridad del equipo")
+                    .AddTranslation(SupportedLangs.Brazilian, "Prioridade do Time")
+                    .AddTranslation(SupportedLangs.Portuguese, "Prioridade da Equipe")
+                    .AddTranslation(SupportedLangs.Korean, "팀 우선순위")
+                    .AddTranslation(SupportedLangs.Russian, "Приоритет команды")
+                    .AddTranslation(SupportedLangs.Dutch, "Teamprioriteit")
+                    .AddTranslation(SupportedLangs.Filipino, "Prayoridad ng Koponan")
+                    .AddTranslation(SupportedLangs.French, "Priorité de l'équipe")
+                    .AddTranslation(SupportedLangs.German, "Team-Priorität")
+                    .AddTranslation(SupportedLangs.Italian, "Priorità della squadra")
+                    .AddTranslation(SupportedLangs.Japanese, "チームの優先順位")
+                    .AddTranslation(SupportedLangs.Spanish, "Prioridad del equipo")
+                    .AddTranslation(SupportedLangs.SChinese, "队伍优先级")
+                    .AddTranslation(SupportedLangs.TChinese, "隊伍優先級")
+                    .AddTranslation(SupportedLangs.Irish, "Tosaíocht Foirne").StringName;
+        public static StringNames ImpostorsText { get; } = new Translator("Impostors")
+                    .AddTranslation(SupportedLangs.Latam, "Impostores")
+                    .AddTranslation(SupportedLangs.Brazilian, "Impostores")
+                    .AddTranslation(SupportedLangs.Portuguese, "Impostores")
+                    .AddTranslation(SupportedLangs.Korean, "임포스터들")
+                    .AddTranslation(SupportedLangs.Russian, "Самозванцы")
+                    .AddTranslation(SupportedLangs.Dutch, "Bedriegers")
+                    .AddTranslation(SupportedLangs.Filipino, "Mga Manlilinlang")
+                    .AddTranslation(SupportedLangs.French, "Imposteurs")
+                    .AddTranslation(SupportedLangs.German, "Betrüger")
+                    .AddTranslation(SupportedLangs.Italian, "Imbroglioni")
+                    .AddTranslation(SupportedLangs.Japanese, "インポスター")
+                    .AddTranslation(SupportedLangs.Spanish, "Impostores")
+                    .AddTranslation(SupportedLangs.SChinese, "内鬼")
+                    .AddTranslation(SupportedLangs.TChinese, "内鬼")
+                    .AddTranslation(SupportedLangs.Irish, "Bréagadóirí").StringName;
+        public static StringNames NeutralText { get; } = new Translator("Neutral")
+                    .AddTranslation(SupportedLangs.Latam, "Neutral")
+                    .AddTranslation(SupportedLangs.Brazilian, "Neutro")
+                    .AddTranslation(SupportedLangs.Portuguese, "Neutro")
+                    .AddTranslation(SupportedLangs.Korean, "중립자")
+                    .AddTranslation(SupportedLangs.Russian, "Нейтрал")
+                    .AddTranslation(SupportedLangs.Dutch, "Neutraal")
+                    .AddTranslation(SupportedLangs.Filipino, "Neutro")
+                    .AddTranslation(SupportedLangs.French, "Neutre")
+                    .AddTranslation(SupportedLangs.German, "Neutral")
+                    .AddTranslation(SupportedLangs.Italian, "Neutrale")
+                    .AddTranslation(SupportedLangs.Japanese, "ニュートラル")
+                    .AddTranslation(SupportedLangs.Spanish, "Neutral")
+                    .AddTranslation(SupportedLangs.SChinese, "中立")
+                    .AddTranslation(SupportedLangs.TChinese, "中立")
+                    .AddTranslation(SupportedLangs.Irish, "Neodrach").StringName;
+        public static StringNames NeutralsText { get; } = new Translator("Neutrals")
+                    .AddTranslation(SupportedLangs.Latam, "Neutrales")
+                    .AddTranslation(SupportedLangs.Brazilian, "Neutros")
+                    .AddTranslation(SupportedLangs.Portuguese, "Neutros")
+                    .AddTranslation(SupportedLangs.Korean, "중립자들")
+                    .AddTranslation(SupportedLangs.Russian, "Нейтралы")
+                    .AddTranslation(SupportedLangs.Dutch, "Neutralen")
+                    .AddTranslation(SupportedLangs.Filipino, "Mga Neutro")
+                    .AddTranslation(SupportedLangs.French, "Neutres")
+                    .AddTranslation(SupportedLangs.German, "Neutrale")
+                    .AddTranslation(SupportedLangs.Italian, "Neutrali")
+                    .AddTranslation(SupportedLangs.Japanese, "ニュートラル")
+                    .AddTranslation(SupportedLangs.Spanish, "Neutrales")
+                    .AddTranslation(SupportedLangs.SChinese, "中立者")
+                    .AddTranslation(SupportedLangs.TChinese, "中立者")
+                    .AddTranslation(SupportedLangs.Irish, "Neodracha").StringName;
+        public static StringNames TeamsRemainText { get; } = new Translator("Remaining Teams: ")
+                    .AddTranslation(SupportedLangs.Latam, "Equipos restantes: ")
+                    .AddTranslation(SupportedLangs.Brazilian, "Times Restantes: ")
+                    .AddTranslation(SupportedLangs.Portuguese, "Times Restantes: ")
+                    .AddTranslation(SupportedLangs.Korean, "남은 팀: ")
+                    .AddTranslation(SupportedLangs.Russian, "Оставшиеся команды: ")
+                    .AddTranslation(SupportedLangs.Dutch, "Resterende teams: ")
+                    .AddTranslation(SupportedLangs.Filipino, "Natitirang mga koponan: ")
+                    .AddTranslation(SupportedLangs.French, "Équipes restantes : ")
+                    .AddTranslation(SupportedLangs.German, "Verbleibende Teams: ")
+                    .AddTranslation(SupportedLangs.Italian, "Squadre rimanenti: ")
+                    .AddTranslation(SupportedLangs.Japanese, "残りのチーム: ")
+                    .AddTranslation(SupportedLangs.Spanish, "Equipos restantes: ")
+                    .AddTranslation(SupportedLangs.SChinese, "剩余队伍: ")
+                    .AddTranslation(SupportedLangs.TChinese, "剩餘隊伍: ")
+                    .AddTranslation(SupportedLangs.Irish, "Foirne atá fágtha: ").StringName;
+        public static StringNames NeutralGameOver { get; } = new Translator("Victory of the Neutrals")
+                    .AddTranslation(SupportedLangs.Latam, "Victoria de los neutrales")
+                    .AddTranslation(SupportedLangs.Brazilian, "Vitória dos Neutros")
+                    .AddTranslation(SupportedLangs.Portuguese, "Vitória dos Neutros")
+                    .AddTranslation(SupportedLangs.Korean, "중립의 승리")
+                    .AddTranslation(SupportedLangs.Russian, "Победа нейтралов")
+                    .AddTranslation(SupportedLangs.Dutch, "Overwinning van de neutralen")
+                    .AddTranslation(SupportedLangs.Filipino, "Tagumpay ng mga neutral")
+                    .AddTranslation(SupportedLangs.French, "Victoire des neutres")
+                    .AddTranslation(SupportedLangs.German, "Sieg der Neutralen")
+                    .AddTranslation(SupportedLangs.Italian, "Vittoria dei neutrali")
+                    .AddTranslation(SupportedLangs.Japanese, "ニュートラルの勝利")
+                    .AddTranslation(SupportedLangs.Spanish, "Victoria de los neutrales")
+                    .AddTranslation(SupportedLangs.SChinese, "中立者的胜利")
+                    .AddTranslation(SupportedLangs.TChinese, "中立者的勝利")
+                    .AddTranslation(SupportedLangs.Irish, "Bua na Neodrach").StringName;
+        public static StringNames ImpostorGameOver { get; } = new Translator("Victory of the Impostors")
+                    .AddTranslation(SupportedLangs.Latam, "Victoria de los impostores")
+                    .AddTranslation(SupportedLangs.Brazilian, "Vitória dos Impostores")
+                    .AddTranslation(SupportedLangs.Portuguese, "Vitória dos Impostores")
+                    .AddTranslation(SupportedLangs.Korean, "임포스터의 승리")
+                    .AddTranslation(SupportedLangs.Russian, "Победа предателей")
+                    .AddTranslation(SupportedLangs.Dutch, "Overwinning van de bedriegers")
+                    .AddTranslation(SupportedLangs.Filipino, "Tagumpay ng mga Impostor")
+                    .AddTranslation(SupportedLangs.French, "Victoire des imposteurs")
+                    .AddTranslation(SupportedLangs.German, "Sieg der Betrüger")
+                    .AddTranslation(SupportedLangs.Italian, "Vittoria degli impostori")
+                    .AddTranslation(SupportedLangs.Japanese, "インポスターの勝利")
+                    .AddTranslation(SupportedLangs.Spanish, "Victoria de los impostores")
+                    .AddTranslation(SupportedLangs.SChinese, "内鬼的胜利")
+                    .AddTranslation(SupportedLangs.TChinese, "內鬼的勝利")
+                    .AddTranslation(SupportedLangs.Irish, "Bua na bhFéintréitheoirí").StringName;
+        public static StringNames CrewmateGameOver { get; } = new Translator("Crew Victory")
+                    .AddTranslation(SupportedLangs.Latam, "Victoria de la tripulación")
+                    .AddTranslation(SupportedLangs.Brazilian, "Vitória dos Tripulantes")
+                    .AddTranslation(SupportedLangs.Portuguese, "Vitória dos Tripulantes")
+                    .AddTranslation(SupportedLangs.Korean, "승무원의 승리")
+                    .AddTranslation(SupportedLangs.Russian, "Победа команды")
+                    .AddTranslation(SupportedLangs.Dutch, "Overwinning van de bemanning")
+                    .AddTranslation(SupportedLangs.Filipino, "Tagumpay ng tripulante")
+                    .AddTranslation(SupportedLangs.French, "Victoire de l’équipage")
+                    .AddTranslation(SupportedLangs.German, "Sieg der Crew")
+                    .AddTranslation(SupportedLangs.Italian, "Vittoria dell’equipaggio")
+                    .AddTranslation(SupportedLangs.Japanese, "クルーの勝利")
+                    .AddTranslation(SupportedLangs.Spanish, "Victoria de la tripulación")
+                    .AddTranslation(SupportedLangs.SChinese, "船员的胜利")
+                    .AddTranslation(SupportedLangs.TChinese, "船員的勝利")
+                    .AddTranslation(SupportedLangs.Irish, "Bua na gCrúach").StringName;
+        public static StringNames TeamsText { get; } = new Translator("Teams")
+                    .AddTranslation(SupportedLangs.Latam, "Equipos")
+                    .AddTranslation(SupportedLangs.Brazilian, "Times")
+                    .AddTranslation(SupportedLangs.Portuguese, "Equipes")
+                    .AddTranslation(SupportedLangs.Korean, "팀")
+                    .AddTranslation(SupportedLangs.Russian, "Команды")
+                    .AddTranslation(SupportedLangs.Dutch, "Teams")
+                    .AddTranslation(SupportedLangs.Filipino, "Mga Koponan")
+                    .AddTranslation(SupportedLangs.French, "Équipes")
+                    .AddTranslation(SupportedLangs.German, "Teams")
+                    .AddTranslation(SupportedLangs.Italian, "Squadre")
+                    .AddTranslation(SupportedLangs.Japanese, "チーム")
+                    .AddTranslation(SupportedLangs.Spanish, "Equipos")
+                    .AddTranslation(SupportedLangs.SChinese, "队伍")
+                    .AddTranslation(SupportedLangs.TChinese, "隊伍")
+                    .AddTranslation(SupportedLangs.Irish, "Foirne").StringName;
+        public static StringNames TeamConfigButtonText { get; } = new Translator("Teams Settings")
+                    .AddTranslation(SupportedLangs.Latam, "Configuraciones de equipos")
+                    .AddTranslation(SupportedLangs.Brazilian, "Configurações dos Times")
+                    .AddTranslation(SupportedLangs.Portuguese, "Configurações das Equipes")
+                    .AddTranslation(SupportedLangs.Korean, "팀 설정")
+                    .AddTranslation(SupportedLangs.Russian, "Настройки команд")
+                    .AddTranslation(SupportedLangs.Dutch, "Teamconfiguraties")
+                    .AddTranslation(SupportedLangs.Filipino, "Mga configuration ng koponan")
+                    .AddTranslation(SupportedLangs.French, "Configurations des équipes")
+                    .AddTranslation(SupportedLangs.German, "Teamkonfigurationen")
+                    .AddTranslation(SupportedLangs.Italian, "Configurazioni delle squadre")
+                    .AddTranslation(SupportedLangs.Japanese, "チーム設定")
+                    .AddTranslation(SupportedLangs.Spanish, "Configuraciones de equipos")
+                    .AddTranslation(SupportedLangs.SChinese, "队伍配置")
+                    .AddTranslation(SupportedLangs.TChinese, "隊伍配置")
+                    .AddTranslation(SupportedLangs.Irish, "Cumraíochtaí Foirne").StringName;
+        public static StringNames TeamConfigDescText { get; } = new Translator("Edit the Teams settings for your lobby.")
+                    .AddTranslation(SupportedLangs.Latam, "Edita la configuración de equipos para tu sala.")
+                    .AddTranslation(SupportedLangs.Brazilian, "Edite as configurações de Times para sua sala.")
+                    .AddTranslation(SupportedLangs.Portuguese, "Edite as configurações das Equipes para sua sala.")
+                    .AddTranslation(SupportedLangs.Korean, "로비의 팀 설정을 편집하세요.")
+                    .AddTranslation(SupportedLangs.Russian, "Измените настройки команд для вашей комнаты.")
+                    .AddTranslation(SupportedLangs.Dutch, "Bewerk de teaminstellingen voor je lobby.")
+                    .AddTranslation(SupportedLangs.Filipino, "I-edit ang mga setting ng koponan para sa iyong lobby.")
+                    .AddTranslation(SupportedLangs.French, "Modifiez les paramètres des équipes pour votre salon.")
+                    .AddTranslation(SupportedLangs.German, "Bearbeiten Sie die Team-Einstellungen für Ihre Lobby.")
+                    .AddTranslation(SupportedLangs.Italian, "Modifica le impostazioni delle squadre per la tua lobby.")
+                    .AddTranslation(SupportedLangs.Japanese, "ロビーのチーム設定を編集してください。")
+                    .AddTranslation(SupportedLangs.Spanish, "Edita la configuración de equipos para tu sala.")
+                    .AddTranslation(SupportedLangs.SChinese, "编辑您房间的队伍设置。")
+                    .AddTranslation(SupportedLangs.TChinese, "編輯您房間的隊伍設定。")
+                    .AddTranslation(SupportedLangs.Irish, "Cuir eagarthóireacht ar na socruithe foirne do do lóiste.").StringName;
+        public static StringNames TypeHereText { get; } = new Translator("Type here who was the killer")
+                    .AddTranslation(SupportedLangs.Latam, "Escribe aquí quién fue el asesino")
+                    .AddTranslation(SupportedLangs.Brazilian, "Digite aqui quem foi o assassino")
+                    .AddTranslation(SupportedLangs.Portuguese, "Digite aqui quem foi o assassino")
+                    .AddTranslation(SupportedLangs.Korean, "여기에 살인자가 누구였는지 입력하세요")
+                    .AddTranslation(SupportedLangs.Russian, "Введите здесь, кто был убийцей")
+                    .AddTranslation(SupportedLangs.Dutch, "Typ hier wie de moordenaar was")
+                    .AddTranslation(SupportedLangs.Filipino, "I-type dito kung sino ang pumatay")
+                    .AddTranslation(SupportedLangs.French, "Tapez ici qui était le meurtrier")
+                    .AddTranslation(SupportedLangs.German, "Geben Sie hier ein, wer der Mörder war")
+                    .AddTranslation(SupportedLangs.Italian, "Digita qui chi è stato l'assassino")
+                    .AddTranslation(SupportedLangs.Japanese, "ここに誰が殺人者だったか入力してください")
+                    .AddTranslation(SupportedLangs.Spanish, "Escribe aquí quién fue el asesino")
+                    .AddTranslation(SupportedLangs.SChinese, "在此输入谁是凶手")
+                    .AddTranslation(SupportedLangs.TChinese, "在此輸入誰是兇手")
+                    .AddTranslation(SupportedLangs.Irish, "Clóscríobh anseo cé a bhí ina mharaitheoir").StringName;
     }
 }

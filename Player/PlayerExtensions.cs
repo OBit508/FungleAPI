@@ -4,7 +4,7 @@ using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;
 using FungleAPI.Player.Networking;

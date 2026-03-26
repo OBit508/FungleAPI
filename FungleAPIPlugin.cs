@@ -13,6 +13,8 @@ using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Patches;
 using FungleAPI.Cosmetics;
 using FungleAPI.Cosmetics.Patches;
+using FungleAPI.Event;
+using FungleAPI.Event.API;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
@@ -166,6 +168,7 @@ namespace FungleAPI
                     {
                         RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPluginManager.GetModPlugin(pair.Key.Assembly), pair.Value));
                     }
+                    EventManager.CallEvent(new RegisterRoles());
                     rolesRegistered = true;
                 }
             }));

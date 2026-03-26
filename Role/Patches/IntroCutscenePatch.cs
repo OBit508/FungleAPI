@@ -26,11 +26,6 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(IntroCutscene))]
     internal static class IntroCutscenePatch
     {
-        [HarmonyPostfix]
-        [HarmonyPatch("CoBegin")]
-        public static void CoBeginnPatch(IntroCutscene __instance)
-        {
-        }
         [HarmonyPatch("BeginCrewmate")]
         [HarmonyPrefix]
         public static bool BeginCrewmatePatch(IntroCutscene __instance)

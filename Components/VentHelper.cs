@@ -1,7 +1,7 @@
 ﻿using Epic.OnlineServices;
 using FungleAPI.Attributes;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Networking;
 using FungleAPI.Player;
 using FungleAPI.Role;

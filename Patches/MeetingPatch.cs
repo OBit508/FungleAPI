@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Hud;
 using HarmonyLib;
 using System;
@@ -23,11 +24,13 @@ namespace FungleAPI.Patches
                     button.MeetingStart(__instance);
                 }
             }
+            EventManager.CallEvent(new StartMeetingEvent(__instance));
         }
         [HarmonyPostfix]
         [HarmonyPatch("OnDestroy")]
         public static void OnDestroyPatch(MeetingHud __instance)
         {
+            EventManager.CallEvent(new EndMeetingEvent(__instance));
         }
     }
 }

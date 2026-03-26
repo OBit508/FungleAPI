@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Role;
 using HarmonyLib;
 using System;
@@ -30,11 +31,13 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPostfix]
         public static void CloseDoorsOfTypePostfix(SystemTypes room)
         {
+            EventManager.CallEvent(new CloseDoorEvent(room));
         }
         [HarmonyPatch("UpdateSystem", new Type[] { typeof(SystemTypes), typeof(PlayerControl), typeof(byte) })]
         [HarmonyPostfix]
         public static void UpdateSystemPostfix(SystemTypes systemType, PlayerControl player, byte amount)
         {
+            EventManager.CallEvent(new UpdateSystemEvent(systemType, player, amount));
         }
         [HarmonyPatch("CalculateLightRadius")]
         [HarmonyPrefix]

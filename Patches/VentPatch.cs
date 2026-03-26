@@ -1,6 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Event.Types;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Ship;

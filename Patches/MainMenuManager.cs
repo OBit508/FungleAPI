@@ -108,8 +108,6 @@ namespace FungleAPI.Patches
         public static System.Collections.IEnumerator RunStartUp(MainMenuManager mainMenuManager)
         {
             mainMenuManager.finishStartup = false;
-            Logger.GlobalInstance.Info("MainMenuManager.RunStartUp beginning", null);
-            Constants.SetMainThread();
             AccountManager.Instance.waitingText.gameObject.SetActive(true);
             AccountManager.Instance.waitingText.transform.position = new Vector3(0, 0, -25);
             TextMeshPro textMeshPro = new GameObject("MainScreen Load Text").AddComponent<TextMeshPro>();
@@ -135,57 +133,7 @@ namespace FungleAPI.Patches
                 }
             }
             GameObject.Destroy(textMeshPro.gameObject);
-            DestroyableSingleton<EOSManager>.Instance.FinishedAssets = true;
-            GameObject.Instantiate<HatManager>(mainMenuManager.HatManagerRef).Initialize();
-            mainMenuManager.cosmicubeManager = GameObject.Instantiate<CosmicubeManager>(mainMenuManager.CosmicubeManagerRef);
-            mainMenuManager.cosmicubeManager.Initialize();
-            yield return DestroyableSingleton<EOSManager>.Instance.RunLogin();
-            mainMenuManager.rightPanelMask.gameObject.SetActive(true);
-            if (!DestroyableSingleton<StoreManager>.InstanceExists || !DestroyableSingleton<StoreManager>.Instance.FinishedInitializationFlow)
-            {
-                DestroyableSingleton<StoreManager>.Instance.Initialize();
-            }
-            if (!DestroyableSingleton<StoreMenu>.InstanceExists || !DestroyableSingleton<StoreMenu>.Instance.Initialized)
-            {
-                DestroyableSingleton<StoreMenu>.Instance.Initialize();
-            }
-            while (!DestroyableSingleton<EOSManager>.Instance.HasFinishedLoginFlow() || DestroyableSingleton<AccountManager>.Instance.signInScreen.IsOpen())
-            {
-                yield return new WaitForSeconds(0.3f);
-            }
-            if (DataManager.Player.Account.LoginStatus != EOSManager.AccountLoginStatus.Offline)
-            {
-                DestroyableSingleton<EOSManager>.Instance.announcementsVisible = true;
-                mainMenuManager.StartCoroutine(mainMenuManager.announcementPopUp.ShowIfNew(new Action(delegate
-                {
-                    DestroyableSingleton<EOSManager>.Instance.announcementsVisible = false;
-                })));
-            }
-            mainMenuManager.CheckAddOns();
-            DestroyableSingleton<StoreMenu>.Instance.OnSaveDataChanged();
-            if (!DataManager.Settings.DoesFileExist())
-            {
-                DataManager.Settings.ForceSave();
-            }
-            Logger.GlobalInstance.Info("MainMenuManager.RunStartUp finished", null);
-            ControllerManager.Instance.NewScene(mainMenuManager.name, null, mainMenuManager.DefaultButtonSelected, mainMenuManager.ControllerSelectable, false);
-            switch (AmongUsClient.Instance.MenuTarget)
-            {
-                case AmongUsClient.MainMenuTarget.OnlineMenu:
-                    mainMenuManager.OpenOnlineMenu();
-                    break;
-                case AmongUsClient.MainMenuTarget.EnterCodeMenu:
-                    mainMenuManager.OpenEnterCodeMenu(false);
-                    break;
-            }
-            AmongUsClient.Instance.MenuTarget = AmongUsClient.MainMenuTarget.None;
-            mainMenuManager.finishStartup = true;
-            if (DestroyableSingleton<DisconnectPopup>.Instance.gameObject.activeSelf)
-            {
-                DestroyableSingleton<DisconnectPopup>.Instance.RegainUIControl();
-            }
-            yield return null;
-            yield break;
+            yield return mainMenuManager.RunStartUp();
         }
         public static bool ShipsLoaded;
     }
