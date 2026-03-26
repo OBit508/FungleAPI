@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
+using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -26,10 +27,12 @@ namespace FungleAPI.Freeplay
     internal static class TaskAdderGamePatch
     {
         public static Scroller scroller;
+        public static Dictionary<TaskFolder, List<FolderItem>> Items = new Dictionary<TaskFolder, List<FolderItem>>();
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
         public static bool BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
         {
+            Items.Clear();
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_Stencil", 1f);
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_StencilComp", 4f);
             __instance.RootFolderPrefab.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
@@ -60,47 +63,33 @@ namespace FungleAPI.Freeplay
             __instance.Root.SubFolders = __instance.Root.SubFolders.ToSystemList().OrderBy((f) => f.FolderName).ToList().ToIl2CppList();
             foreach (ModPlugin plugin in ModPlugin.AllPlugins)
             {
+                ModFolderConfig folderConfig = plugin.FolderConfig;
+                folderConfig.Initialize(plugin);
+
                 TaskFolder folder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
                 folder.gameObject.SetActive(false);
-                folder.FolderName = plugin.ModName;
-                folder.SetFolderColor(TaskFolder.FolderColor.Tan);
-                folder.name = "ModFolder: " + plugin.FolderConfig.GetType().FullName;
-                foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in plugin.GetTeamsAndRoles())
+                folder.FolderName = folderConfig.FolderName;
+                folder.SetFolderColor(folderConfig.FolderColor);
+                Items[folder] = folderConfig.Items;
+                
+                void PopulateFolder(Folder folder, TaskFolder parent)
                 {
-                    TaskFolder folder2 = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
-                    folder2.gameObject.SetActive(false);
-                    folder2.FolderName = pair.Key.TeamName.GetString();
-                    folder2.SetFolderColor(pair.Key.TeamColor);
-                    folder2.name = "RoleFolder: ";
-                    foreach (RoleBehaviour role in pair.Value)
+                    TaskFolder taskFolder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
+                    taskFolder.gameObject.SetActive(false);
+                    taskFolder.FolderName = folder.FolderName;
+                    taskFolder.SetFolderColor(folder.FolderColor);
+                    Items[taskFolder] = folder.Items;
+                    parent.SubFolders.Add(taskFolder);
+                    foreach (Folder sub in folder.SubFolders)
                     {
-                        if (role.CustomRole() != null && !role.CustomRole().HideInFreeplayComputer || role.CustomRole() == null)
-                        {
-                            folder2.name += ((int)role.Role).ToString() + (role == pair.Value[pair.Value.Count - 1] ? "" : "|");
-                        }
-                    }
-                    if (folder2.name == "RoleFolder: ")
-                    {
-                        UnityEngine.Object.Destroy(folder2.gameObject);
-                    }
-                    else
-                    {
-                        folder.SubFolders.Add(folder2);
+                        PopulateFolder(sub, taskFolder);
                     }
                 }
-                if (plugin.FolderConfig.GetType() != typeof(ModFolderConfig))
+                foreach (Folder sub in folderConfig.SubFolders)
                 {
-                    plugin.FolderConfig.Initialize();
-                    foreach (KeyValuePair<string, List<ModFolderConfig.Item>> pair in plugin.FolderConfig.Folders)
-                    {
-                        TaskFolder folder2 = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
-                        folder2.gameObject.SetActive(false);
-                        folder2.FolderName = pair.Key;
-                        folder2.SetFolderColor(TaskFolder.FolderColor.Tan);
-                        folder2.name = "FolderConfig: " + plugin.FolderConfig.GetType().FullName;
-                        folder.SubFolders.Add(folder2);
-                    }
+                    PopulateFolder(sub, folder);
                 }
+
                 __instance.Root.SubFolders.Add(folder);
             }
             scroller = __instance.gameObject.AddComponent<Scroller>();
@@ -208,81 +197,25 @@ namespace FungleAPI.Freeplay
                     }
                 }
             }
-            if (__instance.Hierarchy.Count > 1)
+            if (__instance.Hierarchy.Count > 1 && Items.TryGetValue(taskFolder, out List<FolderItem> items) && items.Count > 0)
             {
-                if (taskFolder.name.StartsWith("RoleFolder: "))
+                for (int m = 0; m < items.Count; m++)
                 {
-                    string[] roles = taskFolder.name.Replace("RoleFolder: ", "").Split("|");
-                    for (int m = 0; m < roles.Count(); m++)
+                    FolderItem folderItem = items[m];
+                    TaskAddButton taskAddButton2 = GameObject.Instantiate<TaskAddButton>(__instance.RoleButton);
+                    taskAddButton2.Overlay.gameObject.SetActive(false);
+                    taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;
+                    taskAddButton2.Text.text = folderItem.Name;
+                    taskAddButton2.GetComponent<SpriteRenderer>().color = folderItem.Color;
+                    taskAddButton2.RolloverHandler.OutColor = folderItem.Color;
+                    taskAddButton2.Button?.SetNewAction(folderItem.OnClick.Invoke);
+                    __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
+                    if (taskAddButton2 != null && taskAddButton2.Button != null)
                     {
-                        RoleTypes roleBehaviour = (RoleTypes)int.Parse(roles[m]);
-                        if (roleBehaviour != RoleTypes.ImpostorGhost && roleBehaviour != RoleTypes.CrewmateGhost)
+                        ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);
+                        if (m == 0)
                         {
-                            TaskAddButton taskAddButton2 = UnityEngine.Object.Instantiate(__instance.RoleButton);
-                            taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;
-                            taskAddButton2.Text.text = "Be_" + RoleManager.Instance.GetRole(roleBehaviour).NiceName + ".exe";
-                            __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
-                            taskAddButton2.Role = RoleManager.Instance.GetRole(roleBehaviour);
-                            taskAddButton2.GetComponent<SpriteRenderer>().color = taskAddButton2.Role.TeamColor;
-                            taskAddButton2.RolloverHandler.OutColor = taskAddButton2.Role.TeamColor;
-                            if (taskAddButton2 != null && taskAddButton2.Button != null)
-                            {
-                                ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);
-                                if (m == 0)
-                                {
-                                    ControllerManager.Instance.SetDefaultSelection(taskAddButton2.Button, null);
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (taskFolder.name.StartsWith("FolderConfig: "))
-                {
-                    string folderTypeName = taskFolder.name.Replace("FolderConfig: ", "");
-                    foreach (ModPlugin plugin in ModPlugin.AllPlugins)
-                    {
-                        Type type = plugin.FolderConfig.GetType();
-                        if (type != typeof(ModFolderConfig) && type.FullName == folderTypeName)
-                        {
-                            foreach (KeyValuePair<string, List<ModFolderConfig.Item>> pair in plugin.FolderConfig.Folders)
-                            {
-                                if (pair.Key == taskFolder.FolderName)
-                                {
-                                    foreach (ModFolderConfig.Item item in pair.Value)
-                                    {
-                                        TaskAddButton taskAddButton2 = plugin.FolderConfig.CreateButton(__instance, item);
-                                        __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
-                                        if (taskAddButton2 != null && taskAddButton2.Button != null)
-                                        {
-                                            ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);
-                                            if (item == pair.Value[0])
-                                            {
-                                                ControllerManager.Instance.SetDefaultSelection(taskAddButton2.Button, null);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else if (taskFolder.name.StartsWith("ModFolder: "))
-                {
-                    string folderTypeName = taskFolder.name.Replace("ModFolder: ", "");
-                    foreach (ModPlugin plugin in ModPlugin.AllPlugins)
-                    {
-                        Type type = plugin.FolderConfig.GetType();
-                        if (type != typeof(ModFolderConfig) && type.FullName == folderTypeName)
-                        {
-                            foreach (ModFolderConfig.Item item in plugin.FolderConfig.Items)
-                            {
-                                TaskAddButton taskAddButton2 = plugin.FolderConfig.CreateButton(__instance, item);
-                                __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
-                                if (taskAddButton2 != null && taskAddButton2.Button != null)
-                                {
-                                    ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);
-                                }
-                            }
+                            ControllerManager.Instance.SetDefaultSelection(taskAddButton2.Button, null);
                         }
                     }
                 }

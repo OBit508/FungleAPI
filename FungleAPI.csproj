@@ -64,6 +64,8 @@
     <Compile Include="Event\Vanilla\ReportBodyEvent.cs" />
     <Compile Include="Event\Vanilla\StartMeetingEvent.cs" />
     <Compile Include="Event\Vanilla\UpdateSystemEvent.cs" />
+    <Compile Include="Freeplay\Helpers\Folder.cs" />
+    <Compile Include="Freeplay\Helpers\FolderItem.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />

@@ -1,6 +1,10 @@
-﻿using FungleAPI.Attributes;
+﻿using AmongUs.Matchmaking;
+using FungleAPI.Attributes;
 using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
+using FungleAPI.Freeplay.Helpers;
+using FungleAPI.PluginLoading;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -19,75 +23,33 @@ namespace FungleAPI.Freeplay
     [FungleIgnore]
     public class ModFolderConfig
     {
-        public bool initialized;
-        public Dictionary<string, List<Item>> Folders = new Dictionary<string, List<Item>>();
-        public List<Item> Items = new List<Item>();
-        public virtual void Initialize()
+        private bool Initialized;
+        public virtual string FolderName { get; set; }
+        public virtual Color FolderColor { get; set; } = new Color(0.937f, 0.811f, 0.592f);
+        public List<Folder> SubFolders = new List<Folder>();
+        public List<FolderItem> Items = new List<FolderItem>();
+        public virtual void Initialize(ModPlugin modPlugin)
         {
-            if (!initialized)
+            if (Initialized)
             {
-                Type type = GetType();
-                foreach (PropertyInfo property in type.GetProperties())
+                return;
+            }
+            FolderName = modPlugin.ModName;
+            foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> teams in modPlugin.GetTeamsAndRoles())
+            {
+                Folder teamFolder = new Folder() { FolderName = teams.Key.TeamName.GetString(), FolderColor = teams.Key.TeamColor };
+                foreach (RoleBehaviour roleBehaviour in teams.Value)
                 {
-                    Item att = (Item)property.GetCustomAttribute(typeof(Item));
-                    if (att != null)
+                    teamFolder.Items.Add(new FolderItem()
                     {
-                        if (property.PropertyType == typeof(Action))
-                        {
-                            att.OnUse = (Action)property.GetValue(this);
-                            if (att.FolderName != null)
-                            {
-                                if (Folders.ContainsKey(att.FolderName))
-                                {
-                                    Folders[att.FolderName].Add(att);
-                                }
-                                else
-                                {
-                                    Folders.Add(att.FolderName, new List<Item>() { att });
-                                }
-                            }
-                            else
-                            {
-                                Items.Add(att);
-                            }
-                        }
-                    }
+                        Name = $"Be_{roleBehaviour.NiceName}.exe",
+                        Color = roleBehaviour.TeamColor,
+                        OnClick = delegate { PlayerControl.LocalPlayer?.RpcSetRole(roleBehaviour.Role); }
+                    });
                 }
-                initialized = true;
+                SubFolders.Add(teamFolder);
             }
-        }
-        public virtual TaskAddButton CreateButton(TaskAdderGame taskAdderGame, Item item)
-        {
-            TaskAddButton taskAddButton = UnityEngine.Object.Instantiate(taskAdderGame.RoleButton);
-            taskAddButton.Overlay.gameObject.SetActive(false);
-            taskAddButton.SafePositionWorld = taskAdderGame.SafePositionWorld;
-            taskAddButton.Text.text = item.ItemName;
-            taskAddButton.GetComponent<SpriteRenderer>().color = item.ItemColor;
-            taskAddButton.RolloverHandler.OutColor = item.ItemColor;
-            if (item.OnUse != null)
-            {
-                taskAddButton.Button.SetNewAction(item.OnUse);
-            }
-            return taskAddButton;
-        }
-        /// <summary>
-        /// Attribute used to create a file with an Action
-        /// </summary>
-        [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-        public class Item : Attribute
-        {
-            public Item(string itemName, string hexColor, string folderName)
-            {
-                ItemName = itemName;
-                FolderName = folderName;
-                Color color = Color.white;
-                ColorUtility.TryParseHtmlString(hexColor, out color);
-                ItemColor = color;
-            }
-            public string ItemName;
-            public Color ItemColor;
-            public string FolderName;
-            public Action OnUse;
+            Initialized = true;
         }
     }
 }
