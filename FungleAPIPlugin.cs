@@ -65,7 +65,6 @@ namespace FungleAPI
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
         internal static ModPlugin plugin;
-        private static bool rolesRegistered;
         /// <summary>
         /// The API Plugin
         /// </summary>
@@ -115,7 +114,7 @@ namespace FungleAPI
                 // Se o mod tiver a interface de registro da API ele auto registra e não precisa chamar direto no ModPluginManager
                 if (basePlugin is IFungleBasePlugin fungle)
                 {
-                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.LoadAssets, fungle.ModName, fungle.ModCredits);
+                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName, fungle.ModCredits);
                     fungle.OnRegisterInFungleAPI();
                 }
             };
@@ -156,20 +155,7 @@ namespace FungleAPI
                     {
                         CustomRpcManager.SafeModEnabled = true;
                     }
-                    ResourceHelper.CallLoadAssets();
-                }
-
-                // Registra as funções
-                if (scene.name == "MainMenu" && !rolesRegistered)
-                {
-                    Plugin.Roles = RoleManager.Instance.DontDestroy().AllRoles.ToArray().Concat(Plugin.Roles).ToList();
-                    CustomRoleManager.AllRoles.AddRange(RoleManager.Instance.AllRoles.ToSystemList());
-                    foreach (KeyValuePair<Type, RoleTypes> pair in CustomRoleManager.RolesToRegister)
-                    {
-                        RoleManager.Instance.AllRoles.Add(CustomRoleManager.Register(pair.Key, ModPluginManager.GetModPlugin(pair.Key.Assembly), pair.Value));
-                    }
-                    EventManager.CallEvent(new RegisterRoles());
-                    rolesRegistered = true;
+                    EventManager.CallEvent(new GameOpen());
                 }
             }));
             Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");

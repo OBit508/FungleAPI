@@ -31,7 +31,7 @@ namespace FungleAPI.Configuration.Networking
         public override void Write(MessageWriter messageWriter)
         {
             Rpc<RpcSyncGameOpt>.Instance.Write(messageWriter, ModPlugin.AllPlugins);
-            Rpc<RpcSyncTeam>.Instance.Write(messageWriter, ModdedTeam.Teams);
+            Rpc<RpcSyncTeam>.Instance.Write(messageWriter, ModdedTeamManager.Teams.Values);
             Rpc<RpcSyncRole>.Instance.Write(messageWriter, CustomRoleManager.AllCustomRoles);
         }
         public override void Handle(MessageReader messageReader)

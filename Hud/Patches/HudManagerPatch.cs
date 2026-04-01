@@ -155,7 +155,7 @@ namespace FungleAPI.Hud.Patches
                     }
                     if (data.Role != null && data.Role.GetHintType() == RoleHintType.TaskHint)
                     {
-                        CustomRoleManager.AppendHint(data.Role, __instance.tasksString);
+                        RoleExtensions.AppendHint(data.Role, __instance.tasksString);
                     }
                     if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek && ShipStatus.Instance.HideCountdown > 0f)
                     {
@@ -288,7 +288,7 @@ namespace FungleAPI.Hud.Patches
             RoleTab.closedPosition = new Vector3(component.closedPosition.x, component.open ? (num + 0.2f) : 2f, component.closedPosition.z);
             RoleTab.openPosition = new Vector3(component.openPosition.x, component.open ? num : 2f, component.openPosition.z);
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
-            CustomRoleManager.AppendHint(role, stringBuilder);
+            RoleExtensions.AppendHint(role, stringBuilder);
             RoleTab.SetTaskText(stringBuilder.ToString());
         }
 

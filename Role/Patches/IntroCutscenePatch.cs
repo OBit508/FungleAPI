@@ -31,7 +31,7 @@ namespace FungleAPI.Role.Patches
         public static bool BeginCrewmatePatch(IntroCutscene __instance)
         {
             ModdedTeam team = PlayerControl.LocalPlayer.Data.Role.GetTeam();
-            if (team != ModdedTeam.Crewmates)
+            if (team != ModdedTeamManager.Crewmates)
             {
                 Il2CppSystem.Collections.Generic.List<PlayerControl> list = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                 list.Add(PlayerControl.LocalPlayer);
@@ -56,7 +56,7 @@ namespace FungleAPI.Role.Patches
         public static void BeginCustom(IntroCutscene __instance)
         {
             ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
-            if (customRole != null && customRole.Team != ModdedTeam.Crewmates)
+            if (customRole != null && customRole.Team != ModdedTeamManager.Crewmates)
             {
                 Transform transform = __instance.BackgroundBar.transform;
                 Vector3 position = transform.position;

@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Attributes;
+using FungleAPI.Cosmetics.Helpers;
 
-namespace FungleAPI.Cosmetics.Helpers
+namespace FungleAPI.Cosmetics
 {
     /// <summary>
     /// Class used to add custom cosmetics

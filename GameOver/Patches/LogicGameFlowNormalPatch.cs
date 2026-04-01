@@ -60,9 +60,9 @@ namespace FungleAPI.GameOver.Patches
                 if (!player.Data.IsDead)
                 {
                     ModdedTeam team = player.Data.Role.GetTeam();
-                    if (team != ModdedTeam.Crewmates)
+                    if (team != ModdedTeamManager.Crewmates)
                     {
-                        if (team != ModdedTeam.Neutrals)
+                        if (team != ModdedTeamManager.Neutrals)
                         {
                             if (independentTeams.ContainsKey(team))
                             {
@@ -136,7 +136,7 @@ namespace FungleAPI.GameOver.Patches
                     KeyValuePair<ModdedTeam, ChangeableValue<int>> pair = independentTeams.First();
                     if (neutralKillerCount.Count <= 0 && pair.Value.Value >= crewmateCount)
                     {
-                        if (pair.Key == ModdedTeam.Impostors)
+                        if (pair.Key == ModdedTeamManager.Impostors)
                         {
                             if (TutorialManager.InstanceExists)
                             {

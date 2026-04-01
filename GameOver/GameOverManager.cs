@@ -1,4 +1,6 @@
 ﻿using AmongUs.Data;
+using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Networking;
 using FungleAPI.Player.Networking;
@@ -25,28 +27,44 @@ namespace FungleAPI.GameOver
     public static class GameOverManager
     {
         public static bool AllowNonHostGameOverRequest = true;
-        public static List<CustomGameOver> AllCustomGameOver = new List<CustomGameOver>();
+        public static Dictionary<Type ,CustomGameOver> CustomGameOvers = new Dictionary<Type, CustomGameOver>();
         internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
         public static GameOverReason GetValidGameOver()
         {
             gameOverId++;
             return (GameOverReason)gameOverId;
         }
+        /// <summary>
+        /// Returns the instance of the given type
+        /// </summary>
         public static T GetGameOverInstance<T>() where T : CustomGameOver
         {
-            return GetGameOverInstance(typeof(T)).SimpleCast<T>();
+            return GetGameOverInstance(typeof(T)).SimpleCast<T>() ?? null;
         }
+        /// <summary>
+        /// Returns the instance of the given type
+        /// </summary>
         public static CustomGameOver GetGameOverInstance(Type type)
         {
-            return AllCustomGameOver.FirstOrDefault(g => g.GetType() == type);
+            if (CustomGameOvers.TryGetValue(type, out CustomGameOver customGameOver))
+            {
+                return customGameOver;
+            }
+            return null;
         }
+        /// <summary>
+        /// Returns the instance of the given GameOverReason
+        /// </summary>
         public static CustomGameOver GetGameOver(this GameOverReason gameOverReason)
         {
-            return AllCustomGameOver.FirstOrDefault(g => g.Reason == gameOverReason);
+            return CustomGameOvers.Values.FirstOrDefault(g => g.Reason == gameOverReason);
         }
+        /// <summary>
+        /// Returns the instance of the given id
+        /// </summary>
         public static CustomGameOver GetGameOverById(int Id)
         {
-            return AllCustomGameOver.FirstOrDefault(g => g.GameOverId == Id);
+            return CustomGameOvers.Values.FirstOrDefault(g => g.GameOverId == Id);
         }
         public static void RpcEndGame<T>(this GameManager gameManager) where T : CustomGameOver
         {
@@ -58,6 +76,10 @@ namespace FungleAPI.GameOver
             if (!amongUsClient.AmHost && AllowNonHostGameOverRequest)
             {
                 Rpc<RpcRequestGameOver>.Instance.Send(gameOver, PlayerControl.LocalPlayer, SendOption.Reliable, amongUsClient.HostId);
+                return;
+            }
+            if (EventManager.CallEvent(new BeforeGameOver(gameOver)).Cancelled)
+            {
                 return;
             }
             gameManager.ShouldCheckForGameEnd = false;
@@ -74,7 +96,7 @@ namespace FungleAPI.GameOver
             CustomGameOver.CachedGameOver = reader.ReadGameOver();
             CustomGameOver.CachedGameOver.Deserialize(reader);
             CustomGameOver.CachedGameOver.SetData();
-            bool showAd = reader.ReadBoolean();
+            EventManager.CallEvent(new AfterGameOver(CustomGameOver.CachedGameOver));
             if (reader.Position < reader.Length)
             {
                 MessageReader messageReader = reader.ReadMessage();
@@ -105,7 +127,7 @@ namespace FungleAPI.GameOver
                     ProgressionManager.XpGrantResult xpGrantResult = new ProgressionManager.XpGrantResult(grantedXp, oldXpAmount, num, xpRequiredToLevelUpNextLevel, flag, oldLevel, newLevel, maxLevel);
                     ProgressionManager.CurrencyGrantResult podsGrantResult = new ProgressionManager.CurrencyGrantResult(text, (uint)DestroyableSingleton<InventoryManager>.Instance.GetPodCount(text), grantedPodsWithMultiplierApplied, multiplier);
                     ProgressionManager.CurrencyGrantResult beansGrantResult = new ProgressionManager.CurrencyGrantResult(Constants.Beans, (uint)DestroyableSingleton<InventoryManager>.Instance.UnusedBeans, grantedPodsWithMultiplierApplied2, multiplier2);
-                    __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, showAd, xpGrantResult, podsGrantResult, beansGrantResult);
+                    __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, false, xpGrantResult, podsGrantResult, beansGrantResult);
                     return false;
                 }
             }

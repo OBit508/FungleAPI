@@ -61,7 +61,7 @@ namespace FungleAPI.Configuration.Attributes
         }
         public static NumberOption CreateNumberOption(Transform transform, FloatGameSetting data, Action<NumberOption> onChange)
         {
-            NumberOption option = GameObject.Instantiate(PrefabUtils.Prefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
+            NumberOption option = GameObject.Instantiate(PrefabUtils.FindPrefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);
             option.SetUpFromData(data, 20);
             option.OnValueChanged = new Action<OptionBehaviour>(delegate
             {

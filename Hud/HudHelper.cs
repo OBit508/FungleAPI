@@ -33,9 +33,16 @@ namespace FungleAPI.Hud
         /// </summary>
         public static T GetButtonInstance<T>() where T : CustomAbilityButton
         {
-            if (Buttons.TryGetValue(typeof(T), out CustomAbilityButton button))
+            return GetButtonInstance(typeof(T))?.SimpleCast<T>() ?? null;
+        }
+        /// <summary>
+        /// Returns the instance of the given type
+        /// </summary>
+        public static CustomAbilityButton GetButtonInstance(Type type)
+        {
+            if (Buttons.TryGetValue(type, out CustomAbilityButton button))
             {
-                return button.SimpleCast<T>();
+                return button;
             }
             return null;
         }

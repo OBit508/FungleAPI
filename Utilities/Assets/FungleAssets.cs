@@ -1,5 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Configuration.Patches;
+using FungleAPI.Event;
+using FungleAPI.Event.API;
 using FungleAPI.Utilities.Assets.Late;
 using FungleAPI.Utilities.Prefabs;
 using System;
@@ -35,7 +37,8 @@ namespace FungleAPI.Utilities.Assets
         public static Prefab<GameObject> CogPrefab;
         public static Prefab<GameObject> DestroyButtonPrefab;
         public static Prefab<GameObject> SaveButtonPrefab;
-        public static void LoadAll()
+        [EventRegister]
+        public static void LoadAll(GameOpen gameOpen)
         {
             CreatePluginChanger();
             CreateModsPage();

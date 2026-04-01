@@ -142,13 +142,25 @@ namespace FungleAPI.Utilities.Prefabs
         /// <summary>
         /// Finds a prefab of the specified type using an optional predicate
         /// </summary>
-        public static T Prefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object
+        public static T FindPrefab<T>(Predicate<T> predicate = null) where T : UnityEngine.Object
         {
             if (predicate == null)
             {
                 predicate = new Predicate<T>(x => x);
             }
             return Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T))).FirstOrDefault(x => predicate(x.SafeCast<T>())).SafeCast<T>();
+        }
+        /// <summary>
+        /// Finds a prefabs of the specified type
+        /// </summary>
+        public static IEnumerable<T> FindPrefabs<T>() where T : UnityEngine.Object
+        {
+            List<T> list = new List<T>();
+            foreach (UnityEngine.Object @object in Resources.FindObjectsOfTypeAll(Il2CppType.From(typeof(T))))
+            {
+                list.Add(@object.SafeCast<T>());
+            }
+            return list;
         }
         /// <summary>
         /// Cached Skeld ship prefab

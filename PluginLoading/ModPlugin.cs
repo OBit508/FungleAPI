@@ -9,7 +9,7 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Configuration.Presets;
-using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Cosmetics;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;
@@ -66,17 +66,17 @@ namespace FungleAPI.PluginLoading
         public Dictionary<ModdedTeam, List<RoleBehaviour>> GetTeamsAndRoles()
         {
             Dictionary<ModdedTeam, List<RoleBehaviour>> teams = new Dictionary<ModdedTeam, List<RoleBehaviour>>();
-            if (Roles.Any(r => r.GetTeam() == ModdedTeam.Crewmates))
+            if (Roles.Any(r => r.GetTeam() == ModdedTeamManager.Crewmates))
             {
-                teams.Add(ModdedTeam.Crewmates, new List<RoleBehaviour>());
+                teams.Add(ModdedTeamManager.Crewmates, new List<RoleBehaviour>());
             }
-            if (Roles.Any(r => r.GetTeam() == ModdedTeam.Impostors))
+            if (Roles.Any(r => r.GetTeam() == ModdedTeamManager.Impostors))
             {
-                teams.Add(ModdedTeam.Impostors, new List<RoleBehaviour>());
+                teams.Add(ModdedTeamManager.Impostors, new List<RoleBehaviour>());
             }
-            if (Roles.Any(r => r.GetTeam() == ModdedTeam.Neutrals))
+            if (Roles.Any(r => r.GetTeam() == ModdedTeamManager.Neutrals))
             {
-                teams.Add(ModdedTeam.Neutrals, new List<RoleBehaviour>());
+                teams.Add(ModdedTeamManager.Neutrals, new List<RoleBehaviour>());
             }
             foreach (RoleBehaviour role in Roles)
             {

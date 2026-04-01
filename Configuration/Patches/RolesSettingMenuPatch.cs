@@ -92,8 +92,8 @@ namespace FungleAPI.Configuration.Patches
                 float num2 = -1.928f;
                 __instance.roleTabs = new Il2CppSystem.Collections.Generic.List<PassiveButton>();
                 __instance.roleTabs.Add(__instance.AllButton);
-                List<RoleBehaviour> list = FungleAPIPlugin.Plugin.Roles.FindAll(r => r.GetTeam() == ModdedTeam.Crewmates && r.Role != RoleTypes.Crewmate && r.Role != RoleTypes.CrewmateGhost);
-                List<RoleBehaviour> list2 = FungleAPIPlugin.Plugin.Roles.FindAll(r => r.GetTeam() == ModdedTeam.Impostors && r.Role != RoleTypes.Impostor && r.Role != RoleTypes.ImpostorGhost);
+                List<RoleBehaviour> list = FungleAPIPlugin.Plugin.Roles.FindAll(r => r.GetTeam() == ModdedTeamManager.Crewmates && r.Role != RoleTypes.Crewmate && r.Role != RoleTypes.CrewmateGhost);
+                List<RoleBehaviour> list2 = FungleAPIPlugin.Plugin.Roles.FindAll(r => r.GetTeam() == ModdedTeamManager.Impostors && r.Role != RoleTypes.Impostor && r.Role != RoleTypes.ImpostorGhost);
                 for (int i = 0; i < list.Count; i++)
                 {
                     __instance.AddRoleTab(list[i], ref num2);

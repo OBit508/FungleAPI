@@ -209,7 +209,7 @@ namespace FungleAPI.Configuration.Patches
             float num = 2;
             foreach (ModdedTeam team in GameSettingMenuPatch.pluginChanger.CurrentPlugin.Teams)
             {
-                if (team != ModdedTeam.Crewmates)
+                if (team != ModdedTeamManager.Crewmates)
                 {
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                     categoryHeaderMasked.SetHeader(team.TeamName, 20);

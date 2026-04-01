@@ -55,7 +55,7 @@ namespace FungleAPI.Configuration.Attributes
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            ToggleOption toggleOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
+            ToggleOption toggleOption = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
             toggleOption.SetUpFromData(Data, 20);
             toggleOption.Title = Data.Title;
             toggleOption.TitleText.text = Data.Title.GetString();

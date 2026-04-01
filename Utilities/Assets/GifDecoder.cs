@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace FungleAPI.Utilities.Assets
 {
-    [Comment("Thanks to null guy")]
-    internal class GifDecoder
+    internal class GifDecoder // Thanks to null guy
     {
         public List<Texture2D> Frames = new List<Texture2D>();
         public List<float> FrameDelays = new List<float>();

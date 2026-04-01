@@ -38,7 +38,7 @@ namespace FungleAPI.Role
                 {
                     return OldRole.GetTeam();
                 }
-                return ModdedTeam.Neutrals;
+                return ModdedTeamManager.Neutrals;
             }
         }
         public StringNames RoleName 

@@ -45,7 +45,7 @@ namespace FungleAPI.Configuration.Attributes
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {
-            StringOption stringOption = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<StringOption>(), transform);
+            StringOption stringOption = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<StringOption>(), transform);
             StringGameSetting stringGameSetting = Data as StringGameSetting;
             stringOption.SetUpFromData(Data, 20);
             stringOption.OnValueChanged = new Action<OptionBehaviour>(delegate

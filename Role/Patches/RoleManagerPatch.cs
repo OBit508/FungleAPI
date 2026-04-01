@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.GameOver;
@@ -19,6 +20,26 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(RoleManager))]
     internal static class RoleManagerPatch
     {
+        [HarmonyPatch("Awake")]
+        [HarmonyPrefix]
+        public static bool AwakePrefix(RoleManager __instance)
+        {
+            if (!RoleManager._instance)
+            {
+                RoleManager._instance = __instance;
+                if (__instance.DontDestroy)
+                {
+                    UnityEngine.Object.DontDestroyOnLoad(__instance.gameObject);
+                }
+            }
+            else if (RoleManager._instance != __instance)
+            {
+                UnityEngine.Object.Destroy(__instance.gameObject);
+            }
+            CustomRoleManager.OrganizeRoles(__instance);
+            __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
+            return false;
+        }
         [HarmonyPatch("SetRole")]
         [HarmonyPrefix]
         public static bool SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
@@ -138,7 +159,7 @@ namespace FungleAPI.Role.Patches
                         list2.Add(networkedPlayerInfo);
                     }
                 }
-                List<ModdedTeam> teams = ModdedTeam.Teams.ToArray().ToList();
+                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList();
                 teams.Sort((a, b) => b.TeamOptions.GetCount().CompareTo(a.TeamOptions.GetCount()));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
                 foreach (ModdedTeam team in teams)

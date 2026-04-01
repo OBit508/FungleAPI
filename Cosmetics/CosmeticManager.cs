@@ -54,7 +54,7 @@ namespace FungleAPI.Cosmetics
             {
                 return specialColor.BaseColor;
             }
-            return color == null ? Color.black : color.Color;
+            return color == null ? Color.black : color.PlayerColor;
         }
         /// <summary>
         /// 
@@ -72,7 +72,7 @@ namespace FungleAPI.Cosmetics
             for (int i = 0; i < AllColors.Count; i++)
             {
                 CustomColor color = AllColors[i];
-                PlayerColors.Add(color.Color);
+                PlayerColors.Add(color.PlayerColor);
                 ShadowColors.Add(color.BackColor);
                 ColorsNames.Add(color.ColorName);
                 color.ColorId = i;

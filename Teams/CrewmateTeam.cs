@@ -25,14 +25,14 @@ namespace FungleAPI.Teams
         public override uint DefaultCount => uint.MaxValue;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
-            CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
+            CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
             categoryHeaderEditRole.SetHeader(StringNames.CrewmateRolesHeader, 20);
             categoryHeaderEditRole.Title.enabled = true;
             return categoryHeaderEditRole;
         }
         public override CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
         {
-            CategoryHeaderRoleVariant categoryHeaderRoleVariant = UnityEngine.Object.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
+            CategoryHeaderRoleVariant categoryHeaderRoleVariant = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
             categoryHeaderRoleVariant.Title.enabled = true;
             for (int i = 2; i < categoryHeaderRoleVariant.transform.GetChildCount(); i++)

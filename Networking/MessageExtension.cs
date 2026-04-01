@@ -186,7 +186,7 @@ namespace FungleAPI.Networking
         public static ModdedTeam ReadTeam(this MessageReader messageReader)
         {
             int id = messageReader.ReadInt32();
-            return ModdedTeam.Teams.FirstOrDefault(t => t.TeamId == id);
+            return ModdedTeamManager.Teams.Values.FirstOrDefault(t => t.TeamId == id);
         }
         /// <summary>
         /// Read a rpc

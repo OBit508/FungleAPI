@@ -29,19 +29,6 @@ namespace FungleAPI.Teams
     [FungleIgnore]
     public abstract class ModdedTeam
     {
-        /// <summary>
-        /// Gets the Crewmates team instance
-        /// </summary>
-        public static ModdedTeam Crewmates => Instance<CrewmateTeam>();
-        /// <summary>
-        /// Gets the Impostors team instance
-        /// </summary>
-        public static ModdedTeam Impostors => Instance<ImpostorTeam>();
-        /// <summary>
-        /// Gets the Neutrals team instance
-        /// </summary>
-        public static ModdedTeam Neutrals => Instance<NeutralTeam>();
-        public static List<ModdedTeam> Teams = new List<ModdedTeam>();
         public TeamOptions TeamOptions = new TeamOptions();
         public FloatGameSetting CountData;
         public FloatGameSetting PriorityData;
@@ -98,20 +85,6 @@ namespace FungleAPI.Teams
         /// Determines whether only enabled roles can be assigned
         /// </summary>
         public virtual bool AssignOnlyEnabledRoles => true;
-        /// <summary>
-        /// Returns the instance of the given type
-        /// </summary>
-        public static T Instance<T>() where T : ModdedTeam
-        {
-            foreach (ModdedTeam team in Teams)
-            {
-                if (team.GetType() == typeof(T))
-                {
-                    return team.SimpleCast<T>();
-                }
-            }
-            return null;
-        }
         public virtual void Initialize(ModPlugin plugin)
         {
             if (!Initialized)
@@ -125,7 +98,7 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
-            CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
+            CategoryHeaderEditRole categoryHeaderEditRole = GameObject.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);
             categoryHeaderEditRole.SetHeader(StringNames.None, 20);
             categoryHeaderEditRole.Background.color = TeamColor.Lighten(0.7f);
             categoryHeaderEditRole.countLabel.color = TeamColor;
@@ -141,7 +114,7 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual CategoryHeaderRoleVariant CreateCategoryHeaderRoleVariant(Transform parent)
         {
-            CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.Prefab<CategoryHeaderRoleVariant>(), parent);
+            CategoryHeaderRoleVariant categoryHeaderRoleVariant = GameObject.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderRoleVariant>(), parent);
             categoryHeaderRoleVariant.SetHeader(StringNames.CrewmateRolesHeader, 61);
             string[] names = StringNames.CrewmateRolesHeader.GetString().Split(" ");
             categoryHeaderRoleVariant.Title.text = names[0] + " " + names[1] + " " + TeamName.GetString();
@@ -161,7 +134,7 @@ namespace FungleAPI.Teams
         {
             NumberOption option = ModdedNumberOption.CreateNumberOption(transform, CountData, delegate (NumberOption option)
             {
-                if (this == Impostors)
+                if (this == ModdedTeamManager.Impostors)
                 {
                     GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }

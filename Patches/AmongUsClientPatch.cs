@@ -30,7 +30,7 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void AwakePostfix(AmongUsClient __instance)
         {
-            foreach (ModdedTeam team in ModdedTeam.Teams)
+            foreach (ModdedTeam team in ModdedTeamManager.Teams.Values)
             {
                 team.Initialize(ModPluginManager.GetModPlugin(team.GetType().Assembly));
             }

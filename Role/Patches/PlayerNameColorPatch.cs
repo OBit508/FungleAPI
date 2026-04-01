@@ -16,7 +16,7 @@ namespace FungleAPI.Role.Patches
         public static bool Prefix([HarmonyArgument(0)] RoleBehaviour otherPlayerRole, ref Color __result)
         {
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
-            if (role.GetTeam() != ModdedTeam.Crewmates && role.GetTeam() != ModdedTeam.Impostors && role.GetTeam() == otherPlayerRole.GetTeam() && role.GetTeam().KnowMembers)
+            if (role.GetTeam() != ModdedTeamManager.Crewmates && role.GetTeam() != ModdedTeamManager.Impostors && role.GetTeam() == otherPlayerRole.GetTeam() && role.GetTeam().KnowMembers)
             {
                 if (otherPlayerRole.CustomRole() != null)
                 {

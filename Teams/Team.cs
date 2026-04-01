@@ -14,6 +14,6 @@ namespace FungleAPI.Teams
         /// <summary>
         /// The instance
         /// </summary>
-        public static TeamT Instance => ModdedTeam.Instance<TeamT>();
+        public static TeamT Instance => ModdedTeamManager.GetTeamInstance<TeamT>();
     }
 }

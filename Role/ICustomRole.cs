@@ -80,23 +80,23 @@ namespace FungleAPI.Role
         /// <summary>
         /// Returns whether the role can vent
         /// </summary>
-        bool CanUseVent => Team == ModdedTeam.Impostors;
+        bool CanUseVent => Team == ModdedTeamManager.Impostors;
         /// <summary>
         /// Returns whether the role is affected by the airship light
         /// </summary>
-        bool IsAffectedByLightOnAirship => Team == ModdedTeam.Impostors;
+        bool IsAffectedByLightOnAirship => Team == ModdedTeamManager.Impostors;
         /// <summary>
         /// Returns whether the role can use the vanilla kill button
         /// </summary>
-        bool UseVanillaKillButton => Team == ModdedTeam.Impostors;
+        bool UseVanillaKillButton => Team == ModdedTeamManager.Impostors;
         /// <summary>
         /// Returns whether the role can sabotage
         /// </summary>
-        bool CanSabotage => Team == ModdedTeam.Impostors;
+        bool CanSabotage => Team == ModdedTeamManager.Impostors;
         /// <summary>
         /// Returns whether the role tasks count for the crew win
         /// </summary>
-        bool CompletedTasksCountForProgress => Team == ModdedTeam.Crewmates;
+        bool CompletedTasksCountForProgress => Team == ModdedTeamManager.Crewmates;
         /// <summary>
         /// Returns whether the role is a ghost role
         /// </summary>
@@ -104,7 +104,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Returns a ghost role that a role will become upon death
         /// </summary>
-        RoleTypes GhostRole => Team == ModdedTeam.Crewmates ? RoleTypes.CrewmateGhost : (Team == ModdedTeam.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost.Role);
+        RoleTypes GhostRole => Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost.Role);
         /// <summary>
         /// Returns the list of roles that the role can become upon death
         /// </summary>

@@ -8,7 +8,6 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Cosmetics;
-using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Event;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOver;
@@ -162,7 +161,7 @@ namespace FungleAPI.PluginLoading
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
             team.TeamId = LastTeamId;
             plugin.Teams.Add(team);
-            ModdedTeam.Teams.Add(team);
+            ModdedTeamManager.Teams.Add(type, team);
             ConfigurationManager.InitializeTeamCountAndPriority(team, plugin);
             team.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             team.CountData.Type = OptionTypes.Float;
@@ -198,14 +197,14 @@ namespace FungleAPI.PluginLoading
             }
             plugin.GameOvers.Add(gameOver);
             plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
-            GameOverManager.AllCustomGameOver.Add(gameOver);
+            GameOverManager.CustomGameOvers.Add(type, gameOver);
             return gameOver;
         }
         public static RoleTypes RegisterRole(Type type, ModPlugin plugin)
         {
             LastRoleId++;
             RoleTypes role = (RoleTypes)LastRoleId;
-            CustomRoleManager.RolesToRegister.Add(type, role);
+            CustomRoleManager.WaitingToRegister.Add(new CachedWaitingRole(role, type, plugin));
             ClassInjector.RegisterTypeInIl2Cpp(type);
             ICustomRole.Save.Add(type, new ChangeableValue<RoleOptions>(new RoleOptions()));
             return role;
@@ -228,7 +227,7 @@ namespace FungleAPI.PluginLoading
             }
             return null;
         }
-        public static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, Action loadAssets = null, string ModName = null, string ModCredits = null)
+        public static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string ModName = null, string ModCredits = null)
         {
             ModPlugin plugin = new ModPlugin();
             if (FungleAPIPlugin.Plugin != null)
@@ -259,10 +258,6 @@ namespace FungleAPI.PluginLoading
                 ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
             }
             plugin.ModCredits = ModCredits;
-            if (loadAssets != null)
-            {
-                ResourceHelper.LoadAssets += loadAssets;
-            }
             plugin.LocalMod = new ModPlugin.Mod(plugin);
             plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = basePlugin.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
             if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)

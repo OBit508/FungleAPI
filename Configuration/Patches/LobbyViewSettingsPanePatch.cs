@@ -345,7 +345,7 @@ namespace FungleAPI.Configuration.Patches
             float num = 1.44f;
             foreach (ModdedTeam group in pluginChanger.CurrentPlugin.Teams)
             {
-                if (group != ModdedTeam.Crewmates)
+                if (group != ModdedTeamManager.Crewmates)
                 {
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(menu.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(group.TeamName, 61);
