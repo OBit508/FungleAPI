@@ -22,16 +22,16 @@ namespace FungleAPI.Utilities.Assets
     /// </summary>
     public static class FungleAssets
     {
-        public static LateSprite Cog = new LateSprite("FungleAPI.Resources.cog", 90);
-        public static LateSprite Empty = new LateSprite("FungleAPI.Resources.empty", 100);
-        public static LateSprite NextButton = new LateSprite("FungleAPI.Resources.nextButton", 100);
-        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Resources.pluginChangerBackground", 100);
-        public static LateSprite Highlight = new LateSprite("FungleAPI.Resources.highlight", 100);
-        public static LateSprite Folder = new LateSprite("FungleAPI.Resources.folder", 100);
-        public static LateSprite Inactive = new LateSprite("FungleAPI.Resources.inactive", 100);
-        public static LateSprite XMark = new LateSprite("FungleAPI.Resources.xMark", 100);
-        public static LateAudio HoverSound = new LateAudio("FungleAPI.Resources.UI_Hover");
-        public static LateAudio SelectSound = new LateAudio("FungleAPI.Resources.UI_Select");
+        public static LateSprite Cog = new LateSprite("FungleAPI.Assets.cog", 90);
+        public static LateSprite Empty = new LateSprite("FungleAPI.Assets.empty", 100);
+        public static LateSprite NextButton = new LateSprite("FungleAPI.Assets.nextButton", 100);
+        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Assets.pluginChangerBackground", 100);
+        public static LateSprite Highlight = new LateSprite("FungleAPI.Assets.highlight", 100);
+        public static LateSprite Folder = new LateSprite("FungleAPI.Assets.folder", 100);
+        public static LateSprite Inactive = new LateSprite("FungleAPI.Assets.inactive", 100);
+        public static LateSprite XMark = new LateSprite("FungleAPI.Assets.xMark", 100);
+        public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.UI_Hover");
+        public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.UI_Select");
         public static Prefab<GameObject> PluginChangerPrefab;
         public static Prefab<GameObject> ModsPagePrefab;
         public static Prefab<GameObject> CogPrefab;

@@ -20,7 +20,7 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 namespace FungleAPI.Networking
 {
     /// <summary>
-    /// A class that helps the rpc system to work
+    /// Magane the RPCs
     /// </summary>
     [HarmonyPatch]
     public static class CustomRpcManager

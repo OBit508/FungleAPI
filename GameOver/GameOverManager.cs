@@ -21,7 +21,7 @@ using UnityEngine;
 namespace FungleAPI.GameOver
 {
     /// <summary>
-    /// 
+    /// Manage the game overs
     /// </summary>
     [HarmonyPatch(typeof(EndGameResult))]
     public static class GameOverManager

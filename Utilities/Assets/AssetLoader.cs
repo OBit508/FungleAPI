@@ -31,7 +31,7 @@ namespace FungleAPI.Utilities.Assets
     /// <summary>
     /// A asset loader class
     /// </summary>
-    public static class ResourceHelper
+    public static class AssetLoader
     {
         /// <summary>
         /// Reads an embedded text resource from the plugin assembly

@@ -26,7 +26,7 @@ using UnityEngine;
 namespace FungleAPI.Networking
 {
     /// <summary>
-    /// A class to help send and read values ​​in Hazel
+    /// Extensions for the Hazel
     /// </summary>
     public static class MessageExtension
     {

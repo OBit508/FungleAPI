@@ -201,7 +201,7 @@
     <Compile Include="Hud\CustomAbilityButton.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
     <Compile Include="Player\Patches\PlayerControlPatch.cs" />
-    <Compile Include="Utilities\Assets\ResourceHelper.cs" />
+    <Compile Include="Utilities\Assets\AssetLoader.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
     <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
@@ -229,28 +229,28 @@
     <Compile Include="Utilities\UnityEngineObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\cog.png" />
+    <EmbeddedResource Include="Assets\cog.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\folder.png" />
+    <EmbeddedResource Include="Assets\folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\xMark.png" />
+    <EmbeddedResource Include="Assets\xMark.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\inactive.png" />
-    <EmbeddedResource Include="Resources\highlight.png" />
+    <EmbeddedResource Include="Assets\inactive.png" />
+    <EmbeddedResource Include="Assets\highlight.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\UI_Hover.wav" />
-    <EmbeddedResource Include="Resources\UI_Select.wav" />
+    <EmbeddedResource Include="Assets\UI_Hover.wav" />
+    <EmbeddedResource Include="Assets\UI_Select.wav" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\pluginChangerBackground.png" />
-    <EmbeddedResource Include="Resources\nextButton.png" />
+    <EmbeddedResource Include="Assets\pluginChangerBackground.png" />
+    <EmbeddedResource Include="Assets\nextButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\empty.png" />
+    <EmbeddedResource Include="Assets\empty.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

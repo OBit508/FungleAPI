@@ -32,7 +32,7 @@ namespace FungleAPI.Utilities.Assets.Late
             try
             {
                 FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
-                gifFile = ResourceHelper.LoadGIF(__assembly, __resource, __pixelPerUnit);
+                gifFile = AssetLoader.LoadGIF(__assembly, __resource, __pixelPerUnit);
             }
             catch (Exception ex)
             {

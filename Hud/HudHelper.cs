@@ -10,7 +10,7 @@ using UnityEngine;
 namespace FungleAPI.Hud
 {
     /// <summary>
-    /// A class that helps the hud system to work
+    /// Helps the hud system
     /// </summary>
     public static class HudHelper
     {

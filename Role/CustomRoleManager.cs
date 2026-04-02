@@ -25,7 +25,7 @@ using xCloud;
 namespace FungleAPI.Role
 {
     /// <summary>
-    /// A class that helps the role system to work
+    /// Manage custom roles
     /// </summary>
     public static class CustomRoleManager
     {

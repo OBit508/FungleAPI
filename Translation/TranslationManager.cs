@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Translation
 {
     /// <summary>
-    /// A class that helps the translation system to work
+    /// Manage the translation system
     /// </summary>
     public static class TranslationManager
     {
