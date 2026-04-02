@@ -14,7 +14,7 @@ namespace FungleAPI.Ship
     public static class VentExtensions
     {
         private static int __lastVentId = int.MinValue;
-        private static Dictionary<VentType, Vent> VentPrefabs = new Dictionary<VentType, Vent>();
+        internal static Dictionary<VentType, Vent> VentPrefabs = new Dictionary<VentType, Vent>();
         /// <summary>
         /// Connect this vent with another vent
         /// </summary>

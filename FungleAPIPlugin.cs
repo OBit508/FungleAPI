@@ -65,6 +65,7 @@ namespace FungleAPI
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
         internal static ModPlugin plugin;
+        private static GameObject CreditScreen;
         /// <summary>
         /// The API Plugin
         /// </summary>
@@ -79,7 +80,7 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
-                    plugin.PageLink = "https://github.com/OBit508/FungleAPI";
+                    plugin.ClickModName = new Action(OpenCreditsScreen);
                     plugin.LocalMod = new ModPlugin.Mod(plugin);
                     plugin.PluginPreset = new Configuration.Presets.PluginPreset()
                     {
@@ -165,6 +166,39 @@ namespace FungleAPI
 
             // Adiciona um MonoBehaviour no BasePlugin para alguns metodos do Helpers
             Helper = AddComponent<FungleHelper>();
+        }
+        public static void OpenCreditsScreen()
+        {
+            if (CreditScreen == null && AccountManager.InstanceExists)
+            {
+                CreditScreen = GameObject.Instantiate(AccountManager.Instance.signInScreen.gameObject, AccountManager.Instance.signInScreen.transform.parent);
+                CreditScreen.GetComponent<SignInScreen>().Destroy();
+                CreditScreen.GetComponent<PauseTimeoutTimer>().Destroy();
+                void SetText(TextMeshPro text, string str)
+                {
+                    text.GetComponent<TextTranslatorTMP>()?.Destroy();
+                    text.GetComponent<PlatformTextTranslationTMP>()?.Destroy();
+                    text.text = str;
+                }
+                SetText(CreditScreen.transform.GetChild(2).GetComponent<TextMeshPro>(), "FungleAPI Credits");
+                SetText(CreditScreen.transform.GetChild(3).GetComponent<TextMeshPro>(), "FungleAPI is a lightweight modding API developed primarily by a single contributor," +
+                    " with support from a small group of collaborators for testing and development." +
+                    "\n\nIts design is influenced by existing community projects such as MiraAPI and Reactor," +
+                    " incorporating selected ideas and approaches that helped shape its architecture.");
+                PassiveButton closeButton = CreditScreen.transform.GetChild(5).GetComponent<PassiveButton>();
+                TransitionOpen transitionOpen = CreditScreen.GetComponent<TransitionOpen>();
+                transitionOpen.OnClose.RemoveAllListeners();
+                transitionOpen.OnClose.AddListener(new Action(() => CreditScreen.gameObject.SetActive(false)));
+                closeButton.SetNewAction(transitionOpen.Close);
+                TextTranslatorTMP textTranslator = closeButton.transform.GetChild(1).GetComponent<TextTranslatorTMP>();
+                textTranslator.TargetText = StringNames.Close;
+                textTranslator.ResetText();
+                PassiveButton github = CreditScreen.transform.GetChild(6).GetComponent<PassiveButton>();
+                github.SetNewAction(() => Application.OpenURL("https://github.com/OBit508/FungleAPI"));
+                SetText(github.transform.GetChild(1).GetComponent<TextMeshPro>(), "GitHub");
+                CreditScreen.transform.GetChild(4).gameObject.Destroy();
+            }
+            CreditScreen?.SetActive(true);
         }
         internal class FungleHelper : MonoBehaviour { }
     }

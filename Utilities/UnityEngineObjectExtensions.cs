@@ -42,5 +42,12 @@ namespace FungleAPI.Utilities
             }
             return result;
         }
+        /// <summary>
+        /// Destroys the object
+        /// </summary>
+        public static void Destroy(this UnityEngine.Object obj, float t = 0)
+        {
+            GameObject.Destroy(obj, t);
+        }
     }
 }

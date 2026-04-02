@@ -65,7 +65,7 @@ namespace FungleAPI.Ship
                 case VentType.Fungle:
                     prefab = PrefabUtils.FunglePrefab.AllVents[0]; break;
             }
-            if (prefab == null && !VentPrefabs.TryGetValue(type, out prefab))
+            if (prefab == null && !VentExtensions.VentPrefabs.TryGetValue(type, out prefab))
             {
                 FungleAPIPlugin.Instance.Log.LogError($"Failed to create a vent with type {type}, the prefab cant be found.");
                 return null;

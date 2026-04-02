@@ -44,7 +44,7 @@ namespace FungleAPI.PluginLoading
         public string ModName;
         public string ModVersion;
         public string ModCredits;
-        public string PageLink;
+        public Action ClickModName;
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
         public PluginPreset PluginPreset;
