@@ -49,9 +49,6 @@
     <Compile Include="Cosmetics\Helpers\SpecialColor.cs" />
     <Compile Include="Cosmetics\Patches\PlayerTabPatch.cs" />
     <Compile Include="Cosmetics\VanillaCosmetics.cs" />
-    <Compile Include="Event\API\GameOpen.cs" />
-    <Compile Include="Event\API\LoadAssets.cs" />
-    <Compile Include="Event\API\RegisterRoles.cs" />
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\Vanilla\AfterEjectionEvent.cs" />
     <Compile Include="Event\Vanilla\AfterEnterVent.cs" />

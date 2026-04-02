@@ -101,11 +101,14 @@ namespace FungleAPI.Role
         public bool HideRole => true;
         public void Start()
         {
-            CrewmateGhostRole crewmateGhost = RoleManager.Instance.AllRoles.FirstOrDefault(r => r.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>();
-            if (crewmateGhost != null)
+            if (RoleManager.InstanceExists)
             {
-                HauntMenu = crewmateGhost.HauntMenu;
-                Ability = crewmateGhost.Ability;
+                CrewmateGhostRole crewmateGhost = RoleManager.Instance.AllRoles.FirstOrDefault(r => r.Role == RoleTypes.CrewmateGhost).SafeCast<CrewmateGhostRole>();
+                if (crewmateGhost != null)
+                {
+                    HauntMenu = crewmateGhost.HauntMenu;
+                    Ability = crewmateGhost.Ability;
+                }
             }
         }
         public override bool DidWin(GameOverReason gameOverReason)

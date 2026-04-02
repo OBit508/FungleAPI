@@ -1,7 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Configuration.Patches;
 using FungleAPI.Event;
-using FungleAPI.Event.API;
 using FungleAPI.Utilities.Assets.Late;
 using FungleAPI.Utilities.Prefabs;
 using System;
@@ -37,8 +36,7 @@ namespace FungleAPI.Utilities.Assets
         public static Prefab<GameObject> CogPrefab;
         public static Prefab<GameObject> DestroyButtonPrefab;
         public static Prefab<GameObject> SaveButtonPrefab;
-        [EventRegister]
-        public static void LoadAll(GameOpen gameOpen)
+        public static void LoadAll()
         {
             CreatePluginChanger();
             CreateModsPage();
@@ -183,6 +181,7 @@ namespace FungleAPI.Utilities.Assets
             text.transform.SetParent(pluginChanger.transform);
             text.transform.localScale = new Vector3(0.28f, 0.28f, 0.28f);
             text.gameObject.layer = 5;
+            text.enableAutoSizing = true;
             PassiveButton rightButton = CreateNextButton("RightButton");
             rightButton.transform.SetParent(pluginChanger.transform);
             rightButton.transform.localPosition = new Vector3(4, 0, 0);

@@ -20,6 +20,7 @@ namespace FungleAPI.Role.Patches
     [HarmonyPatch(typeof(RoleManager))]
     internal static class RoleManagerPatch
     {
+        public static bool waitingRegister = true;
         [HarmonyPatch("Awake")]
         [HarmonyPrefix]
         public static bool AwakePrefix(RoleManager __instance)
@@ -36,8 +37,14 @@ namespace FungleAPI.Role.Patches
             {
                 UnityEngine.Object.Destroy(__instance.gameObject);
             }
-            CustomRoleManager.OrganizeRoles(__instance);
-            __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
+            if (waitingRegister)
+            {
+                FungleAPIPlugin.Plugin.Roles.AddRange(__instance.AllRoles.ToArray());
+                CustomRoleManager.AllRoles.AddRange(FungleAPIPlugin.Plugin.Roles);
+                CustomRoleManager.CreateRoles();
+                __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
+                waitingRegister = false;
+            }
             return false;
         }
         [HarmonyPatch("SetRole")]

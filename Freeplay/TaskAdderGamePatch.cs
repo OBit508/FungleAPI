@@ -67,6 +67,7 @@ namespace FungleAPI.Freeplay
                 folderConfig.Initialize(plugin);
 
                 TaskFolder folder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
+                folder.Text.enableAutoSizing = true;
                 folder.gameObject.SetActive(false);
                 folder.FolderName = folderConfig.FolderName;
                 folder.SetFolderColor(folderConfig.FolderColor);
@@ -75,6 +76,7 @@ namespace FungleAPI.Freeplay
                 void PopulateFolder(Folder folder, TaskFolder parent)
                 {
                     TaskFolder taskFolder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
+                    taskFolder.Text.enableAutoSizing = true;
                     taskFolder.gameObject.SetActive(false);
                     taskFolder.FolderName = folder.FolderName;
                     taskFolder.SetFolderColor(folder.FolderColor);
@@ -205,6 +207,7 @@ namespace FungleAPI.Freeplay
                     TaskAddButton taskAddButton2 = GameObject.Instantiate<TaskAddButton>(__instance.RoleButton);
                     taskAddButton2.Overlay.gameObject.SetActive(false);
                     taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;
+                    taskAddButton2.Text.enableAutoSizing = true;
                     taskAddButton2.Text.text = folderItem.Name;
                     taskAddButton2.GetComponent<SpriteRenderer>().color = folderItem.Color;
                     taskAddButton2.RolloverHandler.OutColor = folderItem.Color;

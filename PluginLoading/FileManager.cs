@@ -1,4 +1,5 @@
 ﻿using BepInEx.Configuration;
+using Hazel;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ namespace FungleAPI.PluginLoading
 {
     public static class FileManager
     {
-        private static string FungleAPI_Folder = Path.Combine(Directory.GetParent(Application.dataPath).FullName, "FungleAPI");
+        private static string FungleAPI_Folder = Path.Combine(Application.dataPath, "FungleAPI");
         private static Dictionary<string, ConfigFile> ConfigFiles = new Dictionary<string, ConfigFile>();
         public static string GetAPI_Folder()
         {
@@ -23,7 +24,7 @@ namespace FungleAPI.PluginLoading
         }
         public static string GetPlugin_Folder(ModPlugin modPlugin)
         {
-            string path = Path.Combine(GetAPI_Folder(), $"{modPlugin.RealName} - {modPlugin.LocalMod.GUID}");
+            string path = Path.Combine(GetAPI_Folder(), $"{TurnSafe(modPlugin.RealName)} - {modPlugin.LocalMod.GUID}");
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -72,5 +73,14 @@ namespace FungleAPI.PluginLoading
                 return cf;
             }
         }
+        private static string TurnSafe(string str)
+        {
+            foreach (char c in InvalidChars)
+            {
+                str = str.Replace(c.ToString(), string.Empty);
+            }
+            return str;
+        }
+        private static char[] InvalidChars = new char[] { '\\', '/', ':', '*', '?', '\"', '<', '>', '|' };
     }
 }

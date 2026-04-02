@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Role
 {
-    internal class CachedWaitingRole
+    internal struct CachedWaitingRole
     {
-        public RoleBehaviour Role;
         public RoleTypes Id;
         public Type Type;
         public ModPlugin Plugin;

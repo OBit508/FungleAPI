@@ -4,7 +4,6 @@ using FungleAPI.Configuration;
 using FungleAPI.Configuration.Attributes;
 using FungleAPI.Configuration.Helpers;
 using FungleAPI.Event;
-using FungleAPI.Event.API;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
@@ -73,22 +72,16 @@ namespace FungleAPI.Role
             }
         }
 
-        [EventRegister]
-        internal static void CreateRoles(GameOpen gameOpen)
+        internal static void CreateRoles()
         {
             foreach (CachedWaitingRole cachedWaitingRole in WaitingToRegister)
             {
-                cachedWaitingRole.Role = RegisterRole(cachedWaitingRole.Type, cachedWaitingRole.Plugin, cachedWaitingRole.Id);
+                RoleBehaviour roleBehaviour = RegisterRole(cachedWaitingRole.Type, cachedWaitingRole.Plugin, cachedWaitingRole.Id);
+                cachedWaitingRole.Plugin.Roles.Add(roleBehaviour);
+                AllCustomRoles.Add(roleBehaviour.CustomRole());
+                AllRoles.Add(roleBehaviour);
             }
             WaitingToRegister = null;
-        }
-        internal static void OrganizeRoles(RoleManager roleManager)
-        {
-            RoleBehaviour[] roles = AllRoles.ToArray();
-            AllRoles.Clear();
-            FungleAPIPlugin.Plugin.Roles.AddRange(roleManager.AllRoles.ToArray());
-            AllRoles.AddRange(FungleAPIPlugin.Plugin.Roles);
-            AllRoles.AddRange(roles);
         }
         internal static RoleBehaviour RegisterRole(Type type, ModPlugin plugin, RoleTypes roleType)
         {

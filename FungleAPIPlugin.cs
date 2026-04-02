@@ -14,7 +14,6 @@ using FungleAPI.Configuration.Patches;
 using FungleAPI.Cosmetics;
 using FungleAPI.Cosmetics.Patches;
 using FungleAPI.Event;
-using FungleAPI.Event.API;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
@@ -143,7 +142,7 @@ namespace FungleAPI
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
                 // Carrega os arquivos assim que o jogo realmente abre
-                if (!Helpers.GameIsRunning)
+                if (scene.name == "SplashIntro" && !Helpers.GameIsRunning)
                 {
                     Helpers.GameIsRunning = true;
                     Type type = typeof(Constants);
@@ -156,7 +155,7 @@ namespace FungleAPI
                     {
                         CustomRpcManager.SafeModEnabled = true;
                     }
-                    EventManager.CallEvent(new GameOpen());
+                    FungleAssets.LoadAll();
                 }
             }));
             Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");

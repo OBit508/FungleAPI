@@ -137,7 +137,6 @@ namespace FungleAPI.PluginLoading
                     plugin.BasePlugin.Log.LogError(ex);
                 }
             }
-            EventManager.RegisterEvents(plugin);
         }
         public static ModCosmetics RegisterCosmetics(Type type, ModPlugin plugin)
         {
