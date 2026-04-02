@@ -1,11 +1,9 @@
-This is an AmongUs API based on MiraAPI and Reactor, aiming to be an easier for beginner modders.
-(If you want something with more freedom, I recommend using the MiraAPI)
-MiraAPI: https://github.com/All-Of-Us-Mods/MiraAPI
-Reactor: https://github.com/NuclearPowered/Reactor
-
-
-Example mod: https://github.com/OBit508/FungleAPI-Example
-Guide: https://github.com/OBit508/FungleAPI-Guide/blob/main/GUIDE
-
+FungleAPI is a lightweight modding API developed primarily by a single contributor, with support from a small group of collaborators for testing and development.
+Its design is influenced by existing community projects such as MiraAPI and Reactor, incorporating selected ideas and approaches that helped shape its architecture.
 
 This mod is not affiliated with or endorsed by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
+
+| API                                                          | Credit              |
+| ------------------------------------------------------------ | ------------------- |
+| [Reactor](https://github.com/NuclearPowered/Reactor)         | Part of the Rpc system |
+| [MiraAPI](https://github.com/All-Of-Us-Mods/MiraAPI)         | Some ideias and Role tab |
