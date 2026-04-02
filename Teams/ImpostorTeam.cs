@@ -16,8 +16,6 @@ namespace FungleAPI.Teams
 {
     public class ImpostorTeam : ModdedTeam
     {
-        [ModdedNumberOption("Sla mano testand", 0, 50)]
-        public static float SlaTeste => 10;
         public override bool FriendlyFire => false;
         public override bool KnowMembers => true;
         public override Color TeamColor => Palette.ImpostorRed;

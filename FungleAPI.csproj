@@ -37,6 +37,8 @@
     <Compile Include="Configuration\Networking\RpcSyncOption.cs" />
     <Compile Include="Configuration\Networking\RpcSyncRole.cs" />
     <Compile Include="Configuration\Networking\RpcSyncTeam.cs" />
+    <Compile Include="Configuration\Patches\TabBuilder.cs" />
+    <Compile Include="Configuration\Patches\TabType.cs" />
     <Compile Include="Configuration\Presets\PresetV2.cs" />
     <Compile Include="Configuration\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />

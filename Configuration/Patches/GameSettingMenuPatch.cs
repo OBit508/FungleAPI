@@ -16,7 +16,6 @@ namespace FungleAPI.Configuration.Patches
     [HarmonyPatch(typeof(GameSettingMenu))]
     internal static class GameSettingMenuPatch
     {
-        public static bool TeamConfigTab;
         public static PluginChanger pluginChanger;
         public static PassiveButton TeamConfigButton;
         [HarmonyPatch("Start")]
@@ -26,13 +25,21 @@ namespace FungleAPI.Configuration.Patches
             RolesSettingMenuPatch.chanceTabPlugin = null;
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.HideNSeek && GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.SeekFools)
             {
-                TeamConfigTab = false;
+                GameOptionsMenuPatch.Type = TabType.VanillaSettingsTab;
                 pluginChanger = FungleAssets.PluginChangerPrefab.Instantiate(__instance.ControllerSelectable[0].transform.parent).GetComponent<PluginChanger>();
                 pluginChanger.transform.localPosition = new Vector3(-3.36f, 1.67f, -2);
                 pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
                 {
                     RolesSettingMenuPatch.chanceTabPlugin = null;
-                    __instance.GameSettingsTab.Initialize();
+                    if (GameOptionsMenuPatch.Type == TabType.VanillaSettingsTab)
+                    {
+                        GameOptionsMenuPatch.Type = TabType.SetttingsTab;
+                    }
+                    else if (GameOptionsMenuPatch.Type == TabType.SetttingsTab && plugin == FungleAPIPlugin.Plugin)
+                    {
+                        GameOptionsMenuPatch.Type = TabType.VanillaSettingsTab;
+                    }
+                    __instance.GameSettingsTab.RefreshChildren();
                     GamePresetsTabPatch.Update(__instance.PresetsTab);
                     if (RolesSettingMenuPatch.chanceTabPlugin != null)
                     {
@@ -78,8 +85,9 @@ namespace FungleAPI.Configuration.Patches
                                 __instance.MenuDescriptionText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GamePresetsDescription);
                                 break;
                             case 1:
-                                TeamConfigTab = false;
+                                GameOptionsMenuPatch.Type = pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? TabType.VanillaSettingsTab : TabType.SetttingsTab;
                                 __instance.GameSettingsTab.Initialize();
+                                __instance.GameSettingsTab.RefreshChildren();
                                 __instance.GameSettingsTab.gameObject.SetActive(true);
                                 __instance.MenuDescriptionText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameSettingsDescription);
                                 break;
@@ -89,8 +97,9 @@ namespace FungleAPI.Configuration.Patches
                                 __instance.MenuDescriptionText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoleSettingsDescription);
                                 break;
                             case 3:
-                                TeamConfigTab = true;
+                                GameOptionsMenuPatch.Type = TabType.TeamTab;
                                 __instance.GameSettingsTab.Initialize();
+                                __instance.GameSettingsTab.RefreshChildren();
                                 __instance.GameSettingsTab.gameObject.SetActive(true);
                                 __instance.MenuDescriptionText.text = FungleTranslation.TeamConfigDescText.GetString();
                                 break;
@@ -113,8 +122,9 @@ namespace FungleAPI.Configuration.Patches
                             TeamConfigButton.SelectButton(false);
                             return false;
                         case 1:
-                            TeamConfigTab = false;
+                            GameOptionsMenuPatch.Type = pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin ? TabType.VanillaSettingsTab : TabType.SetttingsTab;
                             __instance.GameSettingsTab.Initialize();
+                            __instance.GameSettingsTab.RefreshChildren();
                             __instance.GameSettingsTab.OpenMenu();
                             __instance.GameSettingsButton.SelectButton(true);
                             TeamConfigButton.SelectButton(false);
@@ -125,8 +135,9 @@ namespace FungleAPI.Configuration.Patches
                             TeamConfigButton.SelectButton(false);
                             return false;
                         case 3:
-                            TeamConfigTab = true;
+                            GameOptionsMenuPatch.Type = TabType.TeamTab;
                             __instance.GameSettingsTab.Initialize();
+                            __instance.GameSettingsTab.RefreshChildren();
                             TeamConfigButton.SelectButton(true);
                             return false;
                         default:
