@@ -1,10 +1,10 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
+using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using System;
@@ -38,17 +38,21 @@ namespace FungleAPI.Role
         /// </summary>
         StringNames RoleBlurMed { get; }
         /// <summary>
+        /// Role blur long
+        /// </summary>
+        StringNames RoleBlurLong { get; }
+        /// <summary>
         /// Role color
         /// </summary>
         Color RoleColor { get; }
         /// <summary>
-        /// Role blur long
+        /// Role configuration
         /// </summary>
-        StringNames RoleBlurLong => RoleBlurMed;
+        RoleConfiguration Configuration { get; }
         /// <summary>
         /// Role options
         /// </summary>
-        RoleOptions RoleOptions { get { return Save[GetType()].Value; } }
+        RoleOptionCollection RoleOptions { get { return Save[GetType()].Value; } }
         /// <summary>
         /// Create the Sabotage button config for the role
         /// </summary>
@@ -74,89 +78,13 @@ namespace FungleAPI.Role
         /// </summary>
         MiraRoleTabConfig CreateRoleTabConfig() => null;
         /// <summary>
-        /// Role hint type
+        /// Called when the role dies
         /// </summary>
-        RoleHintType HintType => RoleHintType.TaskHint;
-        /// <summary>
-        /// Returns whether the role can vent
-        /// </summary>
-        bool CanUseVent => Team == ModdedTeamManager.Impostors;
-        /// <summary>
-        /// Returns whether the role is affected by the airship light
-        /// </summary>
-        bool IsAffectedByLightOnAirship => Team == ModdedTeamManager.Impostors;
-        /// <summary>
-        /// Returns whether the role can use the vanilla kill button
-        /// </summary>
-        bool UseVanillaKillButton => Team == ModdedTeamManager.Impostors;
-        /// <summary>
-        /// Returns whether the role can sabotage
-        /// </summary>
-        bool CanSabotage => Team == ModdedTeamManager.Impostors;
-        /// <summary>
-        /// Returns whether the role tasks count for the crew win
-        /// </summary>
-        bool CompletedTasksCountForProgress => Team == ModdedTeamManager.Crewmates;
-        /// <summary>
-        /// Returns whether the role is a ghost role
-        /// </summary>
-        bool IsGhostRole => false;
-        /// <summary>
-        /// Returns a ghost role that a role will become upon death
-        /// </summary>
-        RoleTypes GhostRole => Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost.Role);
-        /// <summary>
-        /// Returns the list of roles that the role can become upon death
-        /// </summary>
-        List<RoleTypes> AvaibleGhostRoles => null;
-        /// <summary>
-        /// Returns whether the role color showed as the team color
-        /// </summary>
-        bool ShowTeamColor => false;
-        /// <summary>
-        /// Role screenshot
-        /// </summary>
-        Sprite Screenshot => null;
-        /// <summary>
-        /// Returns whether the role is hidden on the lobby panels
-        /// </summary>
-        bool HideRole => false;
-        /// <summary>
-        /// Returns whether the role is hidden on freeplay computer
-        /// </summary>
-        bool HideInFreeplayComputer => false;
-        /// <summary>
-        /// Max role count
-        /// </summary>
-        int MaxRoleCount => 15;
-        /// <summary>
-        /// Role solid icon
-        /// </summary>
-        Sprite IconSolid => null;
-        /// <summary>
-        /// Role white icon
-        /// </summary>
-        Sprite IconWhite => null;
-        /// <summary>
-        /// The dead body type created when the role kill
-        /// </summary>
-        DeadBodyType CreatedDeadBodyOnKill => DeadBodyType.Normal;
-        /// <summary>
-        /// Role neutral win text
-        /// </summary>
-        string NeutralWinText => "Victory of the " + RoleName.GetString();
+        void AssignRoleOnDeath(PlayerControl plr) => plr.RpcSetRole(Configuration.GhostRole);
         /// <summary>
         /// Role type
         /// </summary>
         public RoleTypes Role => (this as RoleBehaviour).Role;
-        /// <summary>
-        /// Returns whether the role can kill
-        /// </summary>
-        bool CanKill => UseVanillaKillButton;
-        /// <summary>
-        /// Role base outline color
-        /// </summary>
-        public Color OutlineColor => RoleColor;
         /// <summary>
         /// Role exile text
         /// </summary>
@@ -165,10 +93,6 @@ namespace FungleAPI.Role
             string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
             return exileController.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + exileController.initData.networkedPlayer.Role.NiceName;
         }
-        /// <summary>
-        /// Role neutral game over
-        /// </summary>
-        public CustomGameOver NeutralGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
-        internal static Dictionary<Type, ChangeableValue<RoleOptions>> Save = new();
+        internal static Dictionary<Type, ChangeableValue<RoleOptionCollection>> Save = new();
     }
 }

@@ -22,7 +22,7 @@ namespace FungleAPI.Teams
         public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
         public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<CrewmatesByTask>();
         public override bool AssignOnlyEnabledRoles => false;
-        public override uint DefaultCount => uint.MaxValue;
+        public override int DefaultCount => int.MaxValue;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);

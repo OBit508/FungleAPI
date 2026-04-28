@@ -61,7 +61,7 @@ namespace FungleAPI.Freeplay
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.LongTasks);
             __instance.PopulateRoot(TaskAdderGame.FolderType.Tasks, __instance.Root, dictionary, ShipStatus.Instance.ShortTasks);
             __instance.Root.SubFolders = __instance.Root.SubFolders.ToSystemList().OrderBy((f) => f.FolderName).ToList().ToIl2CppList();
-            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
                 ModFolderConfig folderConfig = plugin.FolderConfig;
                 folderConfig.Initialize(plugin);

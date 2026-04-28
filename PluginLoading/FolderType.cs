@@ -9,8 +9,9 @@ namespace FungleAPI.PluginLoading
     public enum FolderType
     {
         Roles,
-        Options,
         Teams,
-        Presets
+        Presets,
+        GameModes,
+        GameSettings
     }
 }

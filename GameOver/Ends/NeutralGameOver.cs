@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
@@ -41,7 +42,7 @@ namespace FungleAPI.GameOver.Ends
                 ICustomRole customRole = winner.Role.CustomRole();
                 if (customRole != null)
                 {
-                    win = customRole.NeutralWinText;
+                    win = customRole.Configuration.NeutralWinText;
                     color = customRole.RoleColor;
                 }
             }

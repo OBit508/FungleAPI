@@ -11,6 +11,7 @@ namespace FungleAPI.Translation
     /// </summary>
     public static class TranslationManager
     {
+        private static Dictionary<string, Translator> Strings = new Dictionary<string, Translator>();
         /// <summary>
         /// Stores translators mapped by StringNames keys
         /// </summary>
@@ -24,5 +25,25 @@ namespace FungleAPI.Translation
         /// </summary>
         public static Translator None = new Translator("STRMISS");
         internal static int validId = int.MinValue;
+        /// <summary>
+        /// Returns a equivalent Translator for the given string
+        /// </summary>
+        public static Translator GetTranslator(string str)
+        {
+            if (Strings.TryGetValue(str, out Translator translator))
+            {
+                return translator;
+            }
+            Translator tr = new Translator(str);
+            Strings[str] = tr;
+            return tr;
+        }
+        /// <summary>
+        /// Returns a equivalent StringNames for the given string
+        /// </summary>
+        public static StringNames GetStringName(string str)
+        {
+            return GetTranslator(str).StringName;
+        }
     }
 }

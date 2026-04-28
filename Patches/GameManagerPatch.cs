@@ -14,6 +14,7 @@ using UnityEngine;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.GameOver;
 using Il2CppSystem.Net.NetworkInformation;
+using FungleAPI.GameMode;
 
 namespace FungleAPI.Patches
 {
@@ -35,6 +36,12 @@ namespace FungleAPI.Patches
         {
             __instance.RpcEndGame(endReason.GetGameOver());
             return false;
+        }
+        [HarmonyPatch("FixedUpdate")]
+        [HarmonyPostfix]
+        public static void FixedUpdatePostfix()
+        {
+            GameModeManager.GetActiveGameMode().FixedUpdate();
         }
     }
 }

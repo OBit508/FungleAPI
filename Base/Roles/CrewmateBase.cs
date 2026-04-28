@@ -1,9 +1,9 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Player;
-using FungleAPI.Role;
 using FungleAPI.Utilities;
 using UnityEngine;
 using System.Collections.Generic;
+using FungleAPI.Role.Utilities;
 
 namespace FungleAPI.Base.Roles
 {
@@ -16,6 +16,10 @@ namespace FungleAPI.Base.Roles
         public override bool IsDead => false;
         public override bool CanUse(IUsable usable)
         {
+            if (this.CanUseVent() && usable.SafeCast<Vent>() != null)
+            {
+                return true;
+            }
             return usable.SafeCast<ZiplineConsole>() != null || usable.SafeCast<Ladder>() != null || usable.SafeCast<PlatformConsole>() != null || usable.SafeCast<Console>() != null || usable.SafeCast<DoorConsole>() != null;
         }
         public override bool DidWin(GameOverReason gameOverReason)

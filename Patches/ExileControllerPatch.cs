@@ -2,6 +2,7 @@
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Hud;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;

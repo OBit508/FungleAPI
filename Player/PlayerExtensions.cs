@@ -11,6 +11,7 @@ using FungleAPI.Player.Networking;
 using FungleAPI.Player.Networking.Data;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -80,7 +81,7 @@ namespace FungleAPI.Player
         /// <summary>
         /// Perform a custom murder
         /// </summary>
-        public static void CmdCheckCustomMurder(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        public static void CmdCheckCustomMurder(this PlayerControl source, PlayerControl target, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
             source.isKilling = true;
             if (AmongUsClient.Instance.AmLocalHost || AmongUsClient.Instance.AmModdedHost)
@@ -88,7 +89,7 @@ namespace FungleAPI.Player
                 source.CheckCustomMurder(target, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
                 return;
             }
-            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, MurderResultFlags.NULL, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
 
 

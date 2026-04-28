@@ -11,8 +11,20 @@ namespace FungleAPI.PluginLoading
 {
     public static class FunglePlugin<T> where T : BasePlugin
     {
-        public static T Instance => Plugin.BasePlugin.SimpleCast<T>();
+        private static ModPlugin __plugin;
+        public static T Instance => (T)Plugin.BasePlugin;
         public static ManualLogSource Logger => Instance.Log;
-        public static ModPlugin Plugin => ModPlugin.AllPlugins.FirstOrDefault(m => m.BasePlugin.GetType() == typeof(T));
+        public static ModPlugin Plugin
+        {
+            get
+            {
+                if (__plugin == null)
+                {
+                    __plugin = ModPluginManager.AllPlugins.FirstOrDefault(m => m.BasePlugin.GetType() == typeof(T));
+                }
+                return __plugin;
+            }
+        }
+
     }
 }

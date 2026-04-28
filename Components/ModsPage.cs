@@ -37,10 +37,23 @@ namespace FungleAPI.Components
             LeftButton = buttons[1];
             Texts[0].text = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">Mods:</font>";
             PageText = Texts[1];
-            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
                 List<(string, Action)> strings = Pages[Pages.Count - 1];
-                strings.Add((plugin.ModCredits, plugin.ClickModName));
+
+                Action click = null;
+
+                IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
+                if (fungleBasePlugin != null)
+                {
+                    click = fungleBasePlugin.ClickOnModName;
+                }
+                else if (plugin == FungleAPIPlugin.Plugin)
+                {
+                    click = FungleAPIPlugin.OpenCreditsScreen;
+                }
+
+                strings.Add((plugin.ModCredits, click));
                 if (strings.Count >= 10)
                 {
                     Pages.Add(new List<(string, Action)>());

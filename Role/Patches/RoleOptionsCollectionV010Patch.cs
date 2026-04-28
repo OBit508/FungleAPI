@@ -1,10 +1,9 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
-using FungleAPI.Configuration;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
@@ -42,7 +41,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)
             {
-                __result = role.RoleOptions.GetChance();
+                __result = role.RoleOptions.RoleChance;
                 return false;
             }
             return true;
@@ -54,7 +53,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)
             {
-                __result = role.RoleOptions.GetCount();
+                __result = role.RoleOptions.RoleCount;
                 return false;
             }
             return true;

@@ -1,10 +1,8 @@
 ﻿using AmongUs.Matchmaking;
 using FungleAPI.Attributes;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
 using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -38,7 +36,7 @@ namespace FungleAPI.Freeplay
             FolderName = modPlugin.ModName;
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> teams in modPlugin.GetTeamsAndRoles())
             {
-                teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().HideInFreeplayComputer);
+                teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().Configuration.HideInFreeplay);
                 if (teams.Value.Count > 0)
                 {
                     Folder teamFolder = new Folder() { FolderName = teams.Key.TeamName.GetString(), FolderColor = teams.Key.TeamColor };

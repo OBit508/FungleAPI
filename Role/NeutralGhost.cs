@@ -10,10 +10,10 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.Configuration;
 using FungleAPI.Hud;
 using FungleAPI.Base.Roles;
 using FungleAPI.Teams;
+using FungleAPI.Role.Utilities;
 
 namespace FungleAPI.Role
 {
@@ -96,9 +96,19 @@ namespace FungleAPI.Role
                 return Color.gray;
             }
         }
-        public bool IsGhostRole => true;
-        public bool HideInFreeplayComputer => true;
-        public bool HideRole => true;
+        public RoleConfiguration Configuration => new RoleConfiguration()
+        {
+            CanUseVent = false,
+            IsAffectedByLightOnAirship = false,
+            UseVanillaKillButton = false,
+            CanSabotage = OldRole != null ? OldRole.CanSabotage() : false,
+            CompletedTasksCountForProgress = false,
+            GhostRole = RoleTypes.CrewmateGhost,
+            ShowedTeamColor = OldRole != null ? OldRole.TeamColor : Color.gray,
+            NeutralWinText = OldRole != null ? (OldRole.CustomRole() == null ? "Victory of the " + OldRole.NiceName : OldRole.CustomRole().Configuration.NeutralWinText) : "Uhhhhhh",
+            CanKill = false,
+            OutlineColor = OldRole != null ? OldRole.TeamColor : Color.gray
+        };
         public void Start()
         {
             if (RoleManager.InstanceExists)

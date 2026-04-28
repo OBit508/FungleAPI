@@ -1,7 +1,7 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using FungleAPI.Configuration.Networking;
+using FungleAPI.GameOptions;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
@@ -87,7 +87,7 @@ namespace FungleAPI.ModCompatibility
         }
         public static void ReactorClientData_Set_Postfix(int clientId)
         {
-            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
+            SyncManager.RpcSyncEverything(clientId);
         }
         public static bool CustomStringName_Create_Prefix(ref StringNames __result)
         {

@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.GameMode;
 using FungleAPI.Role;
 using HarmonyLib;
 using System;
@@ -26,6 +27,18 @@ namespace FungleAPI.Ship.Patches
                     VentHelper.ShipVents.Remove(vents[i]);
                 }
             }
+        }
+        [HarmonyPatch("Begin")]
+        [HarmonyPrefix]
+        public static bool BeginPrefix(ShipStatus __instance)
+        {
+            if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
+            {
+                GameModeManager.GetActiveGameMode().AssignTasks(__instance);
+                PlayerControl.LocalPlayer.cosmetics.SetAsLocalPlayer();
+                return false;
+            }
+            return true;
         }
         [HarmonyPatch("CloseDoorsOfType")]
         [HarmonyPostfix]

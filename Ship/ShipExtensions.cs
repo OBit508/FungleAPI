@@ -1,6 +1,6 @@
 ﻿using FungleAPI.Components;
+using FungleAPI.GameMode.Patches;
 using FungleAPI.ModCompatibility;
-using FungleAPI.Patches;
 using FungleAPI.Utilities.Prefabs;
 using Il2CppInterop.Runtime;
 using System;

@@ -1,5 +1,4 @@
-﻿using FungleAPI.Role;
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Teams;
+using FungleAPI.Role.Utilities;
 
 namespace FungleAPI.Role.Patches
 {
@@ -20,14 +20,7 @@ namespace FungleAPI.Role.Patches
             {
                 if (otherPlayerRole.CustomRole() != null)
                 {
-                    if (otherPlayerRole.CustomRole().ShowTeamColor)
-                    {
-                        __result = otherPlayerRole.GetTeam().TeamColor;
-                    }
-                    else
-                    {
-                        __result = otherPlayerRole.CustomRole().RoleColor;
-                    }
+                    __result = otherPlayerRole.CustomRole().Configuration.ShowedTeamColor;
                     return false;
                 }
                 __result = otherPlayerRole.NameColor;

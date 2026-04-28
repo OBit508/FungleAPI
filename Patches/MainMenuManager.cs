@@ -124,7 +124,7 @@ namespace FungleAPI.Patches
                 yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs(textMeshPro, baseText);
                 ShipsLoaded = true;
             }
-            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
                 IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
                 if (fungleBasePlugin != null)

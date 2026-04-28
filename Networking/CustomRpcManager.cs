@@ -25,6 +25,7 @@ namespace FungleAPI.Networking
     [HarmonyPatch]
     public static class CustomRpcManager
     {
+        internal static int LastRpcId = int.MinValue;
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         internal static bool SafeModEnabled;
         /// <summary>
@@ -69,6 +70,14 @@ namespace FungleAPI.Networking
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, 240, sendOption, targetClientId);
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+        public static void RegisterRpc(Type type, ModPlugin plugin)
+        {
+            LastRpcId++;
+            RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
+            rpc.RpcId = LastRpcId;
+            CustomRpcManager.AllRpc.Add(rpc);
+            plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
         }
         internal static void PatchInnerNetObjects()
         {

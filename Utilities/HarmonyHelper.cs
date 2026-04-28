@@ -1,5 +1,4 @@
 ﻿using FungleAPI.Base.Roles;
-using FungleAPI.Configuration.Attributes;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

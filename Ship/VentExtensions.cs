@@ -1,5 +1,5 @@
 ﻿using FungleAPI.Components;
-using FungleAPI.Patches;
+using FungleAPI.GameMode.Patches;
 using System;
 using System.Collections.Generic;
 using System.Linq;

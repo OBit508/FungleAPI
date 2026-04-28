@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.PluginLoading;
 using HarmonyLib;
 using Innersloth.Assets;
 using System;
@@ -63,6 +64,13 @@ namespace FungleAPI.Cosmetics
         {
             hue = (hue + r) % 1f;
             return Color.HSVToRGB(hue, 0.85f, 0.95f);
+        }
+        public static ModCosmetics RegisterCosmetics(Type type, ModPlugin plugin)
+        {
+            ModCosmetics cosmetics = (ModCosmetics)Activator.CreateInstance(type);
+            CosmeticManager.Add(cosmetics);
+            plugin.BasePlugin.Log.LogInfo("Registered Cosmetics " + type.Name);
+            return cosmetics;
         }
         internal static void SetPaletta()
         {

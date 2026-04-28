@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Player;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;

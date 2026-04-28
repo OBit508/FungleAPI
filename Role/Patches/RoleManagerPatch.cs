@@ -2,7 +2,9 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.GameMode;
 using FungleAPI.GameOver;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -131,12 +133,7 @@ namespace FungleAPI.Role.Patches
             {
                 return true;
             }
-            if (role.AvaibleGhostRoles == null || role.AvaibleGhostRoles.Count <= 0)
-            {
-                plr.RpcSetRole(role.GhostRole);
-                return false;
-            }
-            plr.RpcSetRole(role.AvaibleGhostRoles[new System.Random().Next(0, role.AvaibleGhostRoles.Count - 1)], false);
+            role.AssignRoleOnDeath(plr);
             return false;
         }
 
@@ -146,62 +143,10 @@ namespace FungleAPI.Role.Patches
         {
             if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
             {
-                SelectRoles();
+                GameModeManager.GetActiveGameMode().SelectRoles(__instance);
                 return false;
             }
             return true;
-        }
-        public static void SelectRoles()
-        {
-            if (GameManager.Instance != null && GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal logicRoleSelectionNormal)
-            {
-                IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-                Il2CppSystem.Collections.Generic.List<ClientData> list = new Il2CppSystem.Collections.Generic.List<ClientData>();
-                AmongUsClient.Instance.GetAllClients(list);
-                List<NetworkedPlayerInfo> list2 = Enumerable.ToList<NetworkedPlayerInfo>(Enumerable.Select<ClientData, NetworkedPlayerInfo>(Enumerable.OrderBy<ClientData, int>(Enumerable.Where<ClientData>(Enumerable.Where<ClientData>(Enumerable.Where<ClientData>(list.ToSystemList(), (ClientData c) => c.Character != null), (ClientData c) => c.Character.Data != null), (ClientData c) => !c.Character.Data.Disconnected && !c.Character.Data.IsDead), (ClientData c) => c.Id), (ClientData c) => c.Character.Data));
-                foreach (NetworkedPlayerInfo networkedPlayerInfo in GameData.Instance.AllPlayers)
-                {
-                    if (networkedPlayerInfo.Object != null && networkedPlayerInfo.Object.isDummy)
-                    {
-                        list2.Add(networkedPlayerInfo);
-                    }
-                }
-                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList();
-                teams.Sort((a, b) => b.TeamOptions.GetCount().CompareTo(a.TeamOptions.GetCount()));
-                Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
-                foreach (ModdedTeam team in teams)
-                {
-                    IRoleOptionsCollection roleOptions = currentGameOptions.RoleOptions;
-                    int assignedCount = 0;
-                    IEnumerable<RoleBehaviour> availableRoles = DestroyableSingleton<RoleManager>.Instance.AllRoles.ToSystemList().Where(role => role.GetTeam() == team && !RoleManager.IsGhostRole(role.Role) && (team.AssignOnlyEnabledRoles && roleOptions.GetChancePerGame(role.Role) > 0 && roleOptions.GetNumPerGame(role.Role) > 0 || !team.AssignOnlyEnabledRoles));
-                    Il2CppSystem.Collections.Generic.List<RoleTypes> roleList = new Il2CppSystem.Collections.Generic.List<RoleTypes>();
-                    foreach (RoleManager.RoleAssignmentData roleData in availableRoles.Where(role => roleOptions.GetChancePerGame(role.Role) == 100).Select(role => new RoleManager.RoleAssignmentData(role, roleOptions.GetNumPerGame(role.Role), 100)))
-                    {
-                        for (int i = 0; i < roleData.Count; i++)
-                        {
-                            roleList.Add(roleData.Role.Role);
-                        }
-                    }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
-                    roleList.Clear();
-                    foreach (RoleManager.RoleAssignmentData roleData in availableRoles.Select(role => new { role, chance = roleOptions.GetChancePerGame(role.Role) }).Where(x => x.chance > 0 && x.chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.role, roleOptions.GetNumPerGame(x.role.Role), x.chance)))
-                    {
-                        for (int i = 0; i < roleData.Count; i++)
-                        {
-                            if (HashRandom.Next(101) < roleData.Chance)
-                            {
-                                roleList.Add(roleData.Role.Role);
-                            }
-                        }
-                    }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
-                    while (roleList.Count < players.Count && roleList.Count + assignedCount < team.TeamOptions.GetCount())
-                    {
-                        roleList.Add(team.DefaultRole);
-                    }
-                    logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.GetCount(), roleList, ref assignedCount);
-                }
-            }
         }
     }
 }

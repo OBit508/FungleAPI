@@ -32,7 +32,7 @@ namespace FungleAPI.Components
             Text.text = CurrentPlugin.ModName;
             RightButton.SetNewAction(new Action(delegate
             {
-                if ((CurrentIndex + 1) >= ModPlugin.AllPlugins.Count)
+                if ((CurrentIndex + 1) >= ModPluginManager.AllPlugins.Count)
                 {
                     CurrentIndex = 0;
                 }
@@ -40,7 +40,7 @@ namespace FungleAPI.Components
                 {
                     CurrentIndex++;
                 }
-                CurrentPlugin = ModPlugin.AllPlugins[CurrentIndex];
+                CurrentPlugin = ModPluginManager.AllPlugins[CurrentIndex];
                 Text.text = CurrentPlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
@@ -48,13 +48,13 @@ namespace FungleAPI.Components
             {
                 if ((CurrentIndex - 1) <= -1)
                 {
-                    CurrentIndex = ModPlugin.AllPlugins.Count - 1;
+                    CurrentIndex = ModPluginManager.AllPlugins.Count - 1;
                 }
                 else
                 {
                     CurrentIndex--;
                 }
-                CurrentPlugin = ModPlugin.AllPlugins[CurrentIndex];
+                CurrentPlugin = ModPluginManager.AllPlugins[CurrentIndex];
                 Text.text = CurrentPlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));

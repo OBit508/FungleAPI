@@ -5,16 +5,16 @@ using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
-using FungleAPI.Configuration.Presets;
 using FungleAPI.Cosmetics;
 using FungleAPI.Freeplay;
+using FungleAPI.GameMode;
+using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Collections;
+using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Assets;
@@ -39,27 +39,34 @@ namespace FungleAPI.PluginLoading
     /// </summary>
     public class ModPlugin
     {
-        public readonly static List<ModPlugin> AllPlugins = new List<ModPlugin>();
         public string RealName;
         public string ModName;
         public string ModVersion;
         public string ModCredits;
-        public Action ClickModName;
+
+
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
-        public PluginPreset PluginPreset;
+
+        public ConfigEntry<byte> RulePreset;
+        public bool HasRoles;
+
         public List<Type> AllTypes = new List<Type>();
+        public List<LobbyTab> LobbyTabs = new List<LobbyTab>();
+        public List<CustomGameMode> GameModes = new List<CustomGameMode>();
         public List<CustomGameOver> GameOvers = new List<CustomGameOver>();
         public List<RpcHelper> RPCs = new List<RpcHelper>();
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public List<ModdedOption> Options = new List<ModdedOption>();
-        public List<RoleOptions> RoleOptions = new List<RoleOptions>();
-        public List<TeamOptions> TeamOptions = new List<TeamOptions>();
+        public List<OptionCollection> OptionCollections = new List<OptionCollection>();
+
+
         public ModCosmetics Cosmetics = new ModCosmetics();
         public ModSettings Settings = new ModSettings();
         public ModFolderConfig FolderConfig = new ModFolderConfig();
-        public Mod LocalMod;
+
+
+        public BepInMod LocalMod => BepInMod.GetMod(ModAssembly);
         internal ModPlugin()
         {
         }
@@ -81,49 +88,16 @@ namespace FungleAPI.PluginLoading
             foreach (RoleBehaviour role in Roles)
             {
                 ModdedTeam team = role.GetTeam();
-                if (teams.ContainsKey(team))
+                if (teams.TryGetValue(team, out List<RoleBehaviour> roles))
                 {
-                    teams[team].Add(role);
+                    roles.Add(role);
                 }
                 else
                 {
-                    teams.Add(team, new List<RoleBehaviour>() { role });
+                    teams[team] = new List<RoleBehaviour>() { role };
                 }
             }
             return teams;
-        }
-        public class Mod
-        {
-            public static List<Mod> AllMods = new List<Mod>();
-            public string Version;
-            public string Name;
-            public string RealName;
-            public string GUID;
-            public ModPlugin Plugin;
-            public Mod(ModPlugin plugin)
-            {
-                Plugin = plugin;
-                Version = plugin.ModVersion;
-                Name = plugin.ModName;
-                RealName = plugin.RealName;
-                if (plugin.BasePlugin != null)
-                {
-                    BepInPlugin p = plugin.BasePlugin.GetType().GetCustomAttribute<BepInPlugin>();
-                    if (p != null)
-                    {
-                        GUID = p.GUID;
-                    }
-                }
-                if (GUID == null || GUID.Length <= 0)
-                {
-                    GUID = plugin.RealName + "." + plugin.ModName + "." + plugin.ModVersion;
-                }
-                AllMods.Add(this);
-            }
-            public override string ToString()
-            {
-                return GUID;
-            }
         }
     }
 }

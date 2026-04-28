@@ -89,6 +89,21 @@ namespace FungleAPI.GameOver
             gameOver.Serialize(messageWriter);
             amongUsClient.FinishEndGame(messageWriter);
         }
+        public static void RegisterGameOver(Type type, ModPlugin plugin)
+        {
+            CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
+            if (plugin == FungleAPIPlugin.Plugin)
+            {
+                gameOver.GameOverId = (int)gameOver.Reason;
+            }
+            else
+            {
+                gameOver.GameOverId = (int)GetValidGameOver();
+            }
+            plugin.GameOvers.Add(gameOver);
+            plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
+            CustomGameOvers.Add(type, gameOver);
+        }
         [HarmonyPatch("Create")]
         [HarmonyPrefix]
         private static bool CreatePrefix([HarmonyArgument(0)] MessageReader reader, ref EndGameResult __result)

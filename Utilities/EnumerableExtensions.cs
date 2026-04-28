@@ -13,6 +13,13 @@ namespace FungleAPI.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Get a random index from a item
+        /// </summary>
+        public static int RandomIdx<T>(this IEnumerable<T> self)
+        {
+            return UnityEngine.Random.Range(0, self.Count<T>());
+        }
+        /// <summary>
         /// Create a new IEnumerable with all the given IEnumerable values but shuffled
         /// </summary>
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> values)

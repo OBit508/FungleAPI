@@ -1,5 +1,4 @@
 ﻿using FungleAPI.Components;
-using FungleAPI.Configuration.Patches;
 using FungleAPI.Event;
 using FungleAPI.Utilities.Assets.Late;
 using FungleAPI.Utilities.Prefabs;
@@ -32,6 +31,7 @@ namespace FungleAPI.Utilities.Assets
         public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.UI_Hover");
         public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.UI_Select");
         public static Prefab<GameObject> PluginChangerPrefab;
+        public static Prefab<GameObject> GameModeChangerPrefab;
         public static Prefab<GameObject> ModsPagePrefab;
         public static Prefab<GameObject> CogPrefab;
         public static Prefab<GameObject> DestroyButtonPrefab;
@@ -39,6 +39,7 @@ namespace FungleAPI.Utilities.Assets
         public static void LoadAll()
         {
             CreatePluginChanger();
+            CreateGameModeChanger();
             CreateModsPage();
             CreateCog();
             CreateDestroyButton();
@@ -167,6 +168,29 @@ namespace FungleAPI.Utilities.Assets
                 buttonRolloverHandler.OverColor = Color.cyan;
                 modsText.gameObject.AddComponent<PassiveButton>().ClickSound = SelectSound;
             }
+        }
+        private static void CreateGameModeChanger()
+        {
+            GameModeChangerPrefab = new Prefab<GameObject>(new GameObject("GameModeChanger"));
+            GameModeChanger pluginChanger = GameModeChangerPrefab.prefab.AddComponent<GameModeChanger>();
+            pluginChanger.gameObject.layer = 5;
+            pluginChanger.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+            pluginChanger.gameObject.AddComponent<SpriteRenderer>().sprite = PluginChangerBackground;
+            TextMeshPro text = new GameObject("Text").AddComponent<TextMeshPro>();
+            text.alignment = TextAlignmentOptions.Center;
+            text.horizontalAlignment = HorizontalAlignmentOptions.Center;
+            text.transform.SetParent(pluginChanger.transform);
+            text.transform.localScale = new Vector3(0.28f, 0.28f, 0.28f);
+            text.gameObject.layer = 5;
+            text.enableAutoSizing = true;
+            PassiveButton rightButton = CreateNextButton("RightButton");
+            rightButton.transform.SetParent(pluginChanger.transform);
+            rightButton.transform.localPosition = new Vector3(4, 0, 0);
+            rightButton.transform.localScale = Vector3.one;
+            PassiveButton leftButton = CreateNextButton("LeftButton");
+            leftButton.transform.SetParent(pluginChanger.transform);
+            leftButton.transform.localScale = new Vector3(-1, 1, 1);
+            leftButton.transform.localPosition = new Vector3(-4, 0, 0);
         }
         private static void CreatePluginChanger()
         {

@@ -19,9 +19,9 @@ namespace FungleAPI.Patches
             if (modsText == null)
             {
                 modsText = "";
-                foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+                foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
                 {
-                    modsText += (plugin == ModPlugin.AllPlugins[0] ? "" : ", ") + plugin.ModCredits;
+                    modsText += (plugin == ModPluginManager.AllPlugins[0] ? "" : ", ") + plugin.ModCredits;
                 }
             }
             __instance.text.enableWordWrapping = false;

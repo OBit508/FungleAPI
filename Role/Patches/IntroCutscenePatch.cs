@@ -9,7 +9,7 @@ using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Patches;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;

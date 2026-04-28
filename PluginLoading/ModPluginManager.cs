@@ -1,21 +1,22 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
 using FungleAPI.Base.Roles;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
 using FungleAPI.Cosmetics;
 using FungleAPI.Event;
 using FungleAPI.Freeplay;
+using FungleAPI.GameMode;
+using FungleAPI.GameMode.Patches;
+using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
-using FungleAPI.Patches;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -41,6 +42,8 @@ namespace FungleAPI.PluginLoading
     /// </summary>
     public static class ModPluginManager
     {
+        public static readonly Dictionary<Assembly, ModPlugin> AllAssemblies = new Dictionary<Assembly, ModPlugin>();
+        public static readonly List<ModPlugin> AllPlugins = new List<ModPlugin>();
         internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
         {
             plugin.ModAssembly = basePlugin.GetType().Assembly;
@@ -48,230 +51,140 @@ namespace FungleAPI.PluginLoading
             plugin.RealName = plugin.ModName;
             plugin.BasePlugin = basePlugin;
             HashSet<Type> visited = new HashSet<Type>();
-            void AddTypes(Type type)
-            {
-                if (!visited.Add(type))
-                {
-                    return;
-                }
-                plugin.AllTypes.Add(type);
-                foreach (Type t in type.GetNestedTypes(AccessTools.all))
-                {
-                    AddTypes(t);
-                }
-            }
             foreach (Type type in plugin.ModAssembly.GetTypes())
             {
-                AddTypes(type);
+                AddTypeRecursively(type, plugin.AllTypes, visited);
             }
             EventManager.RegisterEvents(plugin);
+        }
+        private static void AddTypeRecursively(Type type, List<Type> allTypes, HashSet<Type> visited)
+        {
+            if (!visited.Add(type)) return;
+            allTypes.Add(type);
+            foreach (Type nested in type.GetNestedTypes(AccessTools.all))
+            {
+                AddTypeRecursively(nested, allTypes, visited);
+            }
         }
         public static void RegisterTypes(ModPlugin plugin)
         {
             foreach (Type type in plugin.AllTypes)
             {
+                if (type.GetCustomAttribute<FungleIgnore>() != null) continue;
                 try
                 {
-                    if (type.GetCustomAttribute<FungleIgnore>() == null)
-                    {
-                        if (type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
-                        {
-                            ClassInjector.RegisterTypeInIl2Cpp(type);
-                        }
-                        if (typeof(ModSettings).IsAssignableFrom(type) && type != typeof(ModSettings))
-                        {
-                            plugin.Settings = (ModSettings)Activator.CreateInstance(type);
-                        }
-                        else if (typeof(ModFolderConfig).IsAssignableFrom(type))
-                        {
-                            plugin.FolderConfig = (ModFolderConfig)Activator.CreateInstance(type);
-                        }
-                        else if (typeof(CustomAbilityButton).IsAssignableFrom(type))
-                        {
-                            RegisterButton(type, plugin);
-                        }
-                        else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
-                        {
-                            RegisterRole(type, plugin);
-                        }
-                        else if (typeof(CustomGameOver).IsAssignableFrom(type))
-                        {
-                            RegisterGameOver(type, plugin);
-                        }
-                        else if (typeof(ModdedTeam).IsAssignableFrom(type))
-                        {
-                            RegisterTeam(type, plugin);
-                        }
-                        else if (typeof(RpcHelper).IsAssignableFrom(type))
-                        {
-                            RegisterRpc(type, plugin);
-                        }
-                        else if (typeof(PlayerComponent).IsAssignableFrom(type))
-                        {
-                            ClassInjector.RegisterTypeInIl2Cpp(type);
-                            PlayerControlPatch.AllPlayerComponents.Add(Il2CppType.From(type));
-                        }
-                        else if (typeof(DeadBodyComponent).IsAssignableFrom(type))
-                        {
-                            ClassInjector.RegisterTypeInIl2Cpp(type);
-                            DeadBodyHelper.AllBodyComponents.Add(Il2CppType.From(type));
-                        }
-                        else if (typeof(VentComponent).IsAssignableFrom(type))
-                        {
-                            ClassInjector.RegisterTypeInIl2Cpp(type);
-                            VentPatch.AllVentComponents.Add(Il2CppType.From(type));
-                        }
-                        else if (typeof(VentComponent).IsAssignableFrom(type))
-                        {
-                            ClassInjector.RegisterTypeInIl2Cpp(type);
-                            VentPatch.AllVentComponents.Add(Il2CppType.From(type));
-                        }
-                        else if (typeof(ModCosmetics).IsAssignableFrom(type))
-                        {
-                            plugin.Cosmetics = RegisterCosmetics(type, plugin);
-                        }
-                    }
+                    ProcessType(type, plugin);
                 }
                 catch (Exception ex)
                 {
-                    plugin.BasePlugin.Log.LogError(ex);
+                    plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
+                }
+            }
+            if (plugin != FungleAPIPlugin.Plugin)
+            {
+                IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
+                if (fungleBasePlugin != null)
+                {
+                    fungleBasePlugin.LoadTabs(plugin);
                 }
             }
         }
-        public static ModCosmetics RegisterCosmetics(Type type, ModPlugin plugin)
+        private static void ProcessType(Type type, ModPlugin plugin)
         {
-            ModCosmetics cosmetics = (ModCosmetics)Activator.CreateInstance(type);
-            CosmeticManager.Add(cosmetics);
-            plugin.BasePlugin.Log.LogInfo("Registered Cosmetics " + type.Name);
-            return cosmetics;
-        }
-        public static RpcHelper RegisterRpc(Type type, ModPlugin plugin)
-        {
-            LastRpcId++;
-            RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
-            rpc.RpcId = LastRpcId;
-            CustomRpcManager.AllRpc.Add(rpc);
-            plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
-            return rpc;
-        }
-        public static object RegisterTeam(Type type, ModPlugin plugin)
-        {
-            LastTeamId++;
-            ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
-            team.TeamId = LastTeamId;
-            plugin.Teams.Add(team);
-            ModdedTeamManager.Teams.Add(type, team);
-            ConfigurationManager.InitializeTeamCountAndPriority(team, plugin);
-            team.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
-            team.CountData.Type = OptionTypes.Float;
-            team.CountData.Title = FungleTranslation.CountText;
-            team.CountData.Increment = 1;
-            team.CountData.ValidRange = new FloatRange(0, team.MaxCount);
-            team.CountData.FormatString = null;
-            team.CountData.ZeroIsInfinity = false;
-            team.CountData.SuffixType = NumberSuffixes.None;
-            team.CountData.OptionName = FloatOptionNames.Invalid;
-            team.PriorityData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
-            team.PriorityData.Type = OptionTypes.Float;
-            team.PriorityData.Title = FungleTranslation.TeamPriorityText;
-            team.PriorityData.Increment = 1;
-            team.PriorityData.ValidRange = new FloatRange(0, 500);
-            team.PriorityData.FormatString = null;
-            team.PriorityData.ZeroIsInfinity = false;
-            team.PriorityData.SuffixType = NumberSuffixes.None;
-            team.PriorityData.OptionName = FloatOptionNames.Invalid;
-            plugin.BasePlugin.Log.LogInfo("Registered Team " + type.Name);
-            return team;
-        }
-        public static CustomGameOver RegisterGameOver(Type type, ModPlugin plugin)
-        {
-            CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
-            if (plugin == FungleAPIPlugin.Plugin)
+            if (type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
             {
-                gameOver.GameOverId = (int)gameOver.Reason;
+                ClassInjector.RegisterTypeInIl2Cpp(type);
             }
-            else
+            if (typeof(ModSettings).IsAssignableFrom(type))
             {
-                gameOver.GameOverId = (int)GameOverManager.GetValidGameOver();
+                plugin.Settings = (ModSettings)Activator.CreateInstance(type);
             }
-            plugin.GameOvers.Add(gameOver);
-            plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
-            GameOverManager.CustomGameOvers.Add(type, gameOver);
-            return gameOver;
-        }
-        public static RoleTypes RegisterRole(Type type, ModPlugin plugin)
-        {
-            LastRoleId++;
-            RoleTypes role = (RoleTypes)LastRoleId;
-            CustomRoleManager.WaitingToRegister.Add(new CachedWaitingRole(role, type, plugin));
-            ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, new ChangeableValue<RoleOptions>(new RoleOptions()));
-            return role;
-        }
-        public static CustomAbilityButton RegisterButton(Type type, ModPlugin plugin)
-        {
-            CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
-            HudHelper.Buttons.Add(type, button);
-            plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
-            return button;
+            else if (typeof(ModFolderConfig).IsAssignableFrom(type))
+            {
+                plugin.FolderConfig = (ModFolderConfig)Activator.CreateInstance(type);
+            }
+            else if (typeof(CustomAbilityButton).IsAssignableFrom(type))
+            {
+                HudHelper.RegisterButton(type, plugin);
+            }
+            else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
+            {
+                plugin.HasRoles = true;
+                CustomRoleManager.RegisterRole(type, plugin);
+            }
+            else if (typeof(CustomGameOver).IsAssignableFrom(type))
+            {
+                GameOverManager.RegisterGameOver(type, plugin);
+            }
+            else if (typeof(ModdedTeam).IsAssignableFrom(type))
+            {
+                ModdedTeamManager.RegisterTeam(type, plugin);
+            }
+            else if (typeof(RpcHelper).IsAssignableFrom(type))
+            {
+                CustomRpcManager.RegisterRpc(type, plugin);
+            }
+            else if (typeof(PlayerComponent).IsAssignableFrom(type))
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(type);
+                PlayerControlPatch.AllPlayerComponents.Add(Il2CppType.From(type));
+            }
+            else if (typeof(DeadBodyComponent).IsAssignableFrom(type))
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(type);
+                DeadBodyHelper.AllBodyComponents.Add(Il2CppType.From(type));
+            }
+            else if (typeof(VentComponent).IsAssignableFrom(type))
+            {
+                ClassInjector.RegisterTypeInIl2Cpp(type);
+                VentPatch.AllVentComponents.Add(Il2CppType.From(type));
+            }
+            else if (typeof(ModCosmetics).IsAssignableFrom(type))
+            {
+                plugin.Cosmetics = CosmeticManager.RegisterCosmetics(type, plugin);
+            }
+            else if (typeof(CustomGameMode).IsAssignableFrom(type))
+            {
+                GameModeManager.RegisterGameMode(type, plugin);
+            }
         }
         public static ModPlugin GetModPlugin(Assembly assembly)
         {
-            foreach (ModPlugin mod in ModPlugin.AllPlugins)
+            if (AllAssemblies.TryGetValue(assembly, out ModPlugin modPlugin))
             {
-                if (mod.ModAssembly == assembly)
-                {
-                    return mod;
-                }
+                return modPlugin;
             }
             return null;
         }
-        public static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string ModName = null, string ModCredits = null)
+        public static PluginInfo TryGetPluginInfo(BasePlugin basePlugin)
+        {
+            PluginInfo pluginInfo = IL2CPPChainloader.Instance.Plugins.Values.FirstOrDefault(p => p.Instance == basePlugin);
+            if (pluginInfo != null)
+            {
+                return pluginInfo;
+            }
+            basePlugin?.Log.LogError("Failed to get PluginInfo");
+            return null;
+        }
+        internal static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string modName, string modCredits)
         {
             ModPlugin plugin = new ModPlugin();
-            if (FungleAPIPlugin.Plugin != null)
+            Register(plugin, basePlugin);
+
+            plugin.RulePreset = basePlugin.Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
+
+            plugin.ModName = modName;
+            plugin.RealName = modName;
+            int count = AllPlugins.Count(p => p.RealName == plugin.RealName);
+            if (count > 0)
             {
-                Register(plugin, basePlugin);
-                List<ModPlugin> sameNamePlugins = new List<ModPlugin>();
-                if (ModName != null)
-                {
-                    plugin.ModName = ModName;
-                    plugin.RealName = ModName;
-                }
-                ModPlugin.AllPlugins.ForEach(new Action<ModPlugin>(delegate (ModPlugin pl)
-                {
-                    if (pl.RealName == plugin.RealName)
-                    {
-                        sameNamePlugins.Add(pl);
-                    }
-                }));
-                if (sameNamePlugins.Count > 0)
-                {
-                    plugin.ModName += " (" + sameNamePlugins.Count + ")";
-                }
-                plugin.ModVersion = modVersion;
-                ModPlugin.AllPlugins.Add(plugin);
+                plugin.ModName += $" ({count})";
             }
-            if (ModCredits == null)
-            {
-                ModCredits = "[" + plugin.RealName + " v" + plugin.ModVersion + "]";
-            }
-            plugin.ModCredits = ModCredits;
-            plugin.LocalMod = new ModPlugin.Mod(plugin);
-            plugin.PluginPreset = new Configuration.Presets.PluginPreset() { Plugin = plugin, CurrentPresetVersion = basePlugin.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId) };
-            if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
-            {
-                plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
-            }
-            plugin.PluginPreset.Initialize();
+            plugin.ModVersion = modVersion;
+            plugin.ModCredits = modCredits;
+            AllPlugins.Add(plugin);
+            AllAssemblies.Add(plugin.ModAssembly, plugin);
             return plugin;
         }
-        public static ModPlugin GetByNameAndGUID(string modName, string modVersion)
-        {
-            return ModPlugin.AllPlugins.FirstOrDefault(plugin => plugin.ModName == modName && plugin.ModVersion == modVersion);
-        }
-        internal static int LastRpcId = int.MinValue;
-        internal static int LastTeamId = int.MinValue;
-        internal static int LastRoleId = 30;
     }
 }

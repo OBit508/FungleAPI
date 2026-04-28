@@ -5,7 +5,7 @@ using FungleAPI.Base.Roles;
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
@@ -31,14 +31,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = __instance.CustomRole();
             if (role != null)
             {
-                if (role.ShowTeamColor)
-                {
-                    __result = role.Team.TeamColor;
-                }
-                else
-                {
-                    __result = role.RoleColor;
-                }
+                __result = role.Configuration.ShowedTeamColor;
                 return false;
             }
             __result = __instance.GetTeam().TeamColor;

@@ -17,7 +17,6 @@ namespace FungleAPI.Networking
     public static class HostGameHelper
     {
         public const byte HostModdedGame = 25;
-        public static List<ModPlugin.Mod> Mods = new List<ModPlugin.Mod>();
         private static bool Prefix(InnerNetClient __instance, IGameOptions settings, GameFilterOptions filterOpts)
         {
             __instance.IsGamePublic = false;
@@ -28,7 +27,7 @@ namespace FungleAPI.Networking
             filterOpts.Serialize(msg);
             using (MD5 md5 = MD5.Create())
             {
-                msg.Write(md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join(",", Mods))).Take(16).ToArray());
+                msg.Write(md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join(",", BepInMod.Mods))).Take(16).ToArray());
             }
             msg.EndMessage();
             __instance.SendOrDisconnect(msg);

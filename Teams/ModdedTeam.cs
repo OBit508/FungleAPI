@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Attributes;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
+using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOver;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
@@ -29,7 +28,7 @@ namespace FungleAPI.Teams
     [FungleIgnore]
     public abstract class ModdedTeam
     {
-        public TeamOptions TeamOptions = new TeamOptions();
+        public TeamOptionCollection TeamOptions;
         public FloatGameSetting CountData;
         public FloatGameSetting PriorityData;
         public bool Initialized;
@@ -76,11 +75,11 @@ namespace FungleAPI.Teams
         /// <summary>
         /// Default number of players in this team
         /// </summary>
-        public virtual uint DefaultCount => 1;
+        public virtual int DefaultCount => 1;
         /// <summary>
         /// Default priority value for team assignment
         /// </summary>
-        public virtual uint DefaultPriority => 1;
+        public virtual int DefaultPriority => 1;
         /// <summary>
         /// Determines whether only enabled roles can be assigned
         /// </summary>
@@ -89,7 +88,8 @@ namespace FungleAPI.Teams
         {
             if (!Initialized)
             {
-                TeamOptions.ExtraOptions = ConfigurationManager.RegisterAllOptions(GetType(), ConfigFileType.TeamOptions, plugin);
+                TeamOptions = new TeamOptionCollection(this);
+                TeamOptions.Initialize(GetType(), plugin);
                 Initialized = true;
             }
         }
@@ -132,15 +132,15 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual OptionBehaviour CreateCountOption(Transform transform)
         {
-            NumberOption option = ModdedNumberOption.CreateNumberOption(transform, CountData, delegate (NumberOption option)
+            NumberOption option = OptionManager.CreateNumberOption(transform, CountData, delegate (NumberOption option)
             {
                 if (this == ModdedTeamManager.Impostors)
                 {
                     GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }
-                TeamOptions.SetCount((int)option.Value);
+                TeamOptions.SetLocal((int)option.Value, TeamOptions.LocalTeamPriority);
             });
-            option.Value = TeamOptions.GetCount();
+            option.Value = TeamOptions.LocalTeamCount;
             return option;
         }
         /// <summary>
@@ -148,11 +148,11 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual OptionBehaviour CreatePriorityOption(Transform transform)
         {
-            NumberOption option = ModdedNumberOption.CreateNumberOption(transform, PriorityData, delegate (NumberOption option)
+            NumberOption option = OptionManager.CreateNumberOption(transform, PriorityData, delegate (NumberOption option)
             {
-                TeamOptions.SetPriority((int)option.Value);
+                TeamOptions.SetLocal(TeamOptions.LocalTeamCount, (int)option.Value);
             });
-            option.Value = TeamOptions.GetPriority();
+            option.Value = TeamOptions.LocalTeamPriority;
             return option;
         }
     }

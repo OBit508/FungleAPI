@@ -2,6 +2,7 @@
 using FungleAPI.Attributes;
 using FungleAPI.Player;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,6 +62,10 @@ namespace FungleAPI.Base.Roles
         public override bool CanUse(IUsable usable)
         {
             if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
+            {
+                return false;
+            }
+            if (!this.CanUseVent() && usable.SafeCast<Vent>() != null)
             {
                 return false;
             }

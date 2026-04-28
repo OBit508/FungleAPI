@@ -3,7 +3,7 @@ using FungleAPI.Attributes;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
-using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -66,6 +66,10 @@ namespace FungleAPI.Base.Roles
             if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
             {
                 return false;
+            }
+            if (this.CanUseVent() && usable.SafeCast<Vent>() != null)
+            {
+                return true;
             }
             Console console = usable.SafeCast<Console>();
             return console == null || DoTasks;

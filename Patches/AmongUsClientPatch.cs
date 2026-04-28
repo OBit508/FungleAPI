@@ -3,7 +3,7 @@ using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
-using FungleAPI.Configuration.Networking;
+using FungleAPI.GameOptions;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -30,14 +30,13 @@ namespace FungleAPI.Patches
         [HarmonyPostfix]
         public static void AwakePostfix(AmongUsClient __instance)
         {
-            foreach (ModdedTeam team in ModdedTeamManager.Teams.Values)
-            {
-                team.Initialize(ModPluginManager.GetModPlugin(team.GetType().Assembly));
-            }
-            foreach (ModPlugin plugin in ModPlugin.AllPlugins)
+            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
                 plugin.Settings.Initialize(plugin);
-                plugin.Options.AddRange(plugin.Settings.Options);
+                foreach (ModdedTeam moddedTeam in plugin.Teams)
+                {
+                    moddedTeam.Initialize(plugin);
+                }
             }
         }
         [HarmonyPatch("CreatePlayer")]
@@ -48,7 +47,7 @@ namespace FungleAPI.Patches
             {
                 return;
             }
-            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, clientData.Id);
+            SyncManager.RpcSyncEverything(clientData.Id);
         }
     }
 }

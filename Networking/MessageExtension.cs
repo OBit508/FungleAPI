@@ -1,9 +1,8 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Helpers;
+using FungleAPI.GameMode;
+using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
@@ -57,9 +56,9 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Write a option
         /// </summary>
-        public static void WriteOption(this MessageWriter messageWriter, ModdedOption config)
+        public static void WriteOption(this MessageWriter messageWriter, IModdedOption config)
         {
-            messageWriter.Write(config.FullConfigName);
+            messageWriter.Write(config.OptionId);
         }
         /// <summary>
         ///  Write a color
@@ -74,9 +73,16 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Write a mod
         /// </summary>
-        public static void WriteMod(this MessageWriter messageWriter, ModPlugin.Mod mod)
+        public static void WriteMod(this MessageWriter messageWriter, BepInMod mod)
         {
             messageWriter.Write(mod.GUID);
+        }
+        /// <summary>
+        /// Write a game mode
+        /// </summary>
+        public static void WriteGameMode(this MessageWriter messageWriter, CustomGameMode customGameMode)
+        {
+            messageWriter.Write(customGameMode.GameModeId);
         }
         /// <summary>
         /// Write a game over
@@ -142,10 +148,14 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Read a option
         /// </summary>
-        public static ModdedOption ReadOption(this MessageReader messageReader)
+        public static IModdedOption ReadOption(this MessageReader messageReader)
         {
-            string fullConfigName = messageReader.ReadString();
-            return ConfigurationManager.Options.FirstOrDefault(c => c.FullConfigName == fullConfigName);
+            string optionId = messageReader.ReadString();
+            if (OptionManager.AllOptions.TryGetValue(optionId, out IModdedOption moddedOption))
+            {
+                return moddedOption;
+            }
+            return null;
         }
         /// <summary>
         /// Read a color
@@ -161,10 +171,17 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Read a mod
         /// </summary>
-        public static ModPlugin.Mod ReadMod(this MessageReader messageReader)
+        public static BepInMod ReadMod(this MessageReader messageReader)
         {
             string GUID = messageReader.ReadString();
-            return ModPlugin.Mod.AllMods.FirstOrDefault(m => m.GUID == GUID);
+            return BepInMod.Mods.Values.FirstOrDefault(m => m.GUID == GUID);
+        }
+        /// <summary>
+        /// Read a game mode
+        /// </summary>
+        public static CustomGameMode ReadGameMode(this MessageReader messageReader)
+        {
+            return GameModeManager.GameModes.Values.FirstOrDefault(g => g.GameModeId == messageReader.ReadInt32());
         }
         /// <summary>
         /// Read a game over
@@ -201,7 +218,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static ModPlugin ReadPlugin(this MessageReader messageReader)
         {
-            return messageReader.ReadMod().Plugin;
+            return ModPluginManager.GetModPlugin(messageReader.ReadMod().Assembly);
         }
     }
 }

@@ -8,12 +8,12 @@ using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Epic.OnlineServices;
 using FungleAPI.Components;
-using FungleAPI.Configuration;
-using FungleAPI.Configuration.Attributes;
-using FungleAPI.Configuration.Patches;
 using FungleAPI.Cosmetics;
 using FungleAPI.Cosmetics.Patches;
 using FungleAPI.Event;
+using FungleAPI.GameMode;
+using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
@@ -56,7 +56,7 @@ namespace FungleAPI
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
     [BepInDependency("gg.reactor.api", DependencyFlags.SoftDependency)]
-    public class FungleAPIPlugin : BasePlugin
+    public class FungleAPIPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.8";
@@ -79,23 +79,13 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
-                    plugin.ClickModName = new Action(OpenCreditsScreen);
-                    plugin.LocalMod = new ModPlugin.Mod(plugin);
-                    plugin.PluginPreset = new Configuration.Presets.PluginPreset()
-                    {
-                        Plugin = plugin,
-                        CurrentPresetVersion = Instance.Config.Bind("Presets", "Current Version", ConfigurationManager.NullId)
-                    };
-                    if (plugin.PluginPreset.CurrentPresetVersion.Value == ConfigurationManager.NullId)
-                    {
-                        plugin.PluginPreset.CurrentPresetVersion.Value = ConfigurationManager.CurrentVersion;
-                    }
-                    plugin.PluginPreset.Initialize();
-                    ModPlugin.AllPlugins.Add(plugin);
+                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+                    ModPluginManager.AllPlugins.Add(plugin);
                 }
                 return plugin;
             }
         }
+
         public override void Load()
         {
             Instance = this;
@@ -117,16 +107,17 @@ namespace FungleAPI
                     ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName, fungle.ModCredits);
                     fungle.OnRegisterInFungleAPI();
                 }
+                new BepInMod(pluginInfo.Metadata.GUID, pluginInfo.Metadata.Version.Clean(), pluginInfo.Metadata.Name, assembly);
             };
             IL2CPPChainloader.Instance.Finished += () => // Chamado quando o BeplnEx termina de carregar os mods
             {
                 // Organiza os mods registrados por GUID
-                List<ModPlugin> ordered = ModPlugin.AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
+                List<ModPlugin> ordered = ModPluginManager.AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
                 ordered.Remove(Plugin);
-                ModPlugin.AllPlugins.Clear();
-                ModPlugin.AllPlugins.Add(Plugin);
-                ModPlugin.AllPlugins.AddRange(ordered);
-                foreach (ModPlugin mod in ModPlugin.AllPlugins)
+                ModPluginManager.AllPlugins.Clear();
+                ModPluginManager.AllPlugins.Add(Plugin);
+                ModPluginManager.AllPlugins.AddRange(ordered);
+                foreach (ModPlugin mod in ModPluginManager.AllPlugins)
                 {
                     ModPluginManager.RegisterTypes(mod);
                 }
@@ -138,6 +129,9 @@ namespace FungleAPI
 
                 // Carrega as cores (futuramente mais cosméticos)
                 CosmeticManager.SetPaletta();
+
+                // Inicializa o game mode manager
+                GameModeManager.Initialize();
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
@@ -199,6 +193,6 @@ namespace FungleAPI
             }
             CreditScreen?.SetActive(true);
         }
-        internal class FungleHelper : MonoBehaviour { }
+        internal class FungleHelper : MonoBehaviour { public void OnApplicationQuit() { OptionManager.SaveOptionCollections(); } }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FungleAPI.Utilities;
+﻿using FungleAPI.PluginLoading;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,12 @@ namespace FungleAPI.Hud
                 return button;
             }
             return null;
+        }
+        public static void RegisterButton(Type type, ModPlugin plugin)
+        {
+            CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
+            Buttons.Add(type, button);
+            plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);
         }
     }
 }
