@@ -1,5 +1,4 @@
-FungleAPI is a lightweight modding API developed primarily by a single contributor, with support from a small group of collaborators for testing and development.
-Its design is influenced by existing community projects such as MiraAPI and Reactor, incorporating selected ideas and approaches that helped shape its architecture.
+FungleAPI is a lightweight modding API. Its design is influenced by existing community projects such as MiraAPI and Reactor, incorporating selected ideas and approaches that helped shape its architecture.
 
 This mod is not affiliated with or endorsed by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.
 
