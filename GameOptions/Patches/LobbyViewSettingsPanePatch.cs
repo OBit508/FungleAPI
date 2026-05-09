@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Assets;
 using FungleAPI.Components;
-using FungleAPI.GameMode;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.PluginLoading;
@@ -9,7 +10,6 @@ using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -30,6 +30,8 @@ namespace FungleAPI.GameOptions.Patches
         public static List<LobbyTab> Tabs = new List<LobbyTab>();
         public static LobbyTab Tab;
 
+        public static Scroller scroller;
+
         public static PluginChanger pluginChanger;
 
         [HarmonyPatch(nameof(LobbyViewSettingsPane.Awake))]
@@ -44,13 +46,14 @@ namespace FungleAPI.GameOptions.Patches
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
             UiElement buttonPrefab = GameObject.Instantiate(__instance.ControllerSelectable[3], __instance.transform);
+
             buttonPrefab.gameObject.SetActive(false);
 
             pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
             {
                 foreach (UiElement uiElement in __instance.ControllerSelectable)
                 {
-                    uiElement.Destroy();
+                    uiElement?.gameObject.Destroy();
                 }
                 __instance.ControllerSelectable.Clear();
 
@@ -67,29 +70,89 @@ namespace FungleAPI.GameOptions.Patches
                 }
 
                 float num = 0;
-                int index = 0;
+
                 for (int i = 0; i < __instance.ControllerSelectable.Count; i++)
                 {
                     UiElement uiElement = __instance.ControllerSelectable[i];
-                    if (uiElement != null && uiElement.isActiveAndEnabled)
-                    {
-                        uiElement.transform.localPosition = new Vector3(-4.871f + (index * 3.471f), 1.404f, 0);
-                        num += 1f;
-                        index++;
-                    }
+                    uiElement.transform.localPosition = new Vector3(-4.871f + (3.471f * i), 1.404f, 0);
+                    num += 0.243f;
                 }
+
+                scroller.ContentXBounds.min = -num;
 
                 __instance.scrollBar.ScrollToTop();
             });
+
+            GameObject gameObject = new GameObject("Hitbox")
+            {
+                layer = 5,
+                transform =
+                    {
+                        parent = __instance.transform,
+                        localScale = new Vector3(1.14f, 0.07f, 1),
+                        localPosition = new Vector3(-0.7f, 1.35f, 0f)
+                    }
+            };
+
+            scroller = gameObject.AddComponent<Scroller>();
+            scroller.allowX = true;
+            scroller.allowY = false;
+            scroller.ContentYBounds.max = 0;
+            scroller.Inner = new GameObject()
+            {
+                name = "Inner",
+                transform =
+                    {
+                        parent = buttonPrefab.transform.parent,
+                        localPosition = Vector3.zero,
+                        localScale = Vector3.one
+                    }
+            }.transform;
+
+            ManualScrollHelper manualScrollHelper = gameObject.AddComponent<ManualScrollHelper>();
+            manualScrollHelper.scroller = scroller;
+            manualScrollHelper.verticalAxis = RewiredConstsEnum.Action.TaskLHorizontal;
+            manualScrollHelper.scrollSpeed = 10f;
+
+            SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
+            spriteMask.sprite = FungleAssets.Empty;
+            spriteMask.alphaCutoff = 0f;
+
+            scroller.ClickMask = gameObject.AddComponent<BoxCollider2D>();
+
+            gameObject.AddComponent<Updater>().update = () =>
+            {
+                scroller.enabled = scroller.ClickMask.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                __instance.scrollBar.enabled = !scroller.enabled;
+            };
 
             pluginChanger.OnChange(FungleAPIPlugin.Plugin);
         }
         public static PassiveButton CreateButton(LobbyViewSettingsPane lobbyViewSettingsPane, string name, Action onClick)
         {
-            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(lobbyViewSettingsPane.rolesTabButton, lobbyViewSettingsPane.transform);
+            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(lobbyViewSettingsPane.rolesTabButton, scroller.Inner);
             passiveButton.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
             passiveButton.buttonText.text = name;
+            passiveButton.ClickMask = scroller.ClickMask;
+
+            foreach (SpriteRenderer spriteRenderer in passiveButton.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+                spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            }
+
+            foreach (TextMeshPro textMeshPro in passiveButton.GetComponentsInChildren<TextMeshPro>(true))
+            {
+                textMeshPro.fontMaterial.SetFloat("_Stencil", 1f);
+                textMeshPro.fontMaterial.SetFloat("_StencilComp", 4f);
+            }
+
+            foreach (Behaviour behaviour in passiveButton.GetComponents<Behaviour>())
+            {
+                behaviour.enabled = true;
+            }
+
             passiveButton.SetNewAction(onClick);
+
             lobbyViewSettingsPane.ControllerSelectable.Add(passiveButton);
             return passiveButton;
         }

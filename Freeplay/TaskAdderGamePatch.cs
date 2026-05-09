@@ -1,13 +1,14 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Assets;
 using FungleAPI.Components;
+using FungleAPI.Extensions;
 using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using Il2CppSystem.Threading.Tasks;
 using MS.Internal.Xml.XPath;

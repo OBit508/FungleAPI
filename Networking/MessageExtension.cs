@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
-using FungleAPI.GameMode;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Player;
@@ -76,13 +75,6 @@ namespace FungleAPI.Networking
         public static void WriteMod(this MessageWriter messageWriter, BepInMod mod)
         {
             messageWriter.Write(mod.GUID);
-        }
-        /// <summary>
-        /// Write a game mode
-        /// </summary>
-        public static void WriteGameMode(this MessageWriter messageWriter, CustomGameMode customGameMode)
-        {
-            messageWriter.Write(customGameMode.GameModeId);
         }
         /// <summary>
         /// Write a game over
@@ -175,13 +167,6 @@ namespace FungleAPI.Networking
         {
             string GUID = messageReader.ReadString();
             return BepInMod.Mods.Values.FirstOrDefault(m => m.GUID == GUID);
-        }
-        /// <summary>
-        /// Read a game mode
-        /// </summary>
-        public static CustomGameMode ReadGameMode(this MessageReader messageReader)
-        {
-            return GameModeManager.GameModes.Values.FirstOrDefault(g => g.GameModeId == messageReader.ReadInt32());
         }
         /// <summary>
         /// Read a game over

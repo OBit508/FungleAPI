@@ -14,6 +14,7 @@ using FungleAPI.Hud;
 using FungleAPI.Base.Roles;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
+using FungleAPI.Extensions;
 
 namespace FungleAPI.Role
 {
@@ -96,6 +97,22 @@ namespace FungleAPI.Role
                 return Color.gray;
             }
         }
+        public KillButtonConfig KillButton => new KillButtonConfig(out KillButtonConfig self)
+        {
+            CheckClick = (PlayerControl target) =>
+            {
+                if (self.Button.currentTarget && self.Button.currentTarget == target)
+                {
+                    self.DoClick();
+                    return;
+                }
+                if (self.Button.currentTarget && self.Button.currentTarget != target && PlayerControl.LocalPlayer.Data.Role.GetPlayersInAbilityRangeSorted(new Il2CppSystem.Collections.Generic.List<PlayerControl>()).Contains(target))
+                {
+                    self.SetTarget(target);
+                    self.DoClick();
+                }
+            }
+        };
         public RoleConfiguration Configuration => new RoleConfiguration()
         {
             CanUseVent = false,

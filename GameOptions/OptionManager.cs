@@ -2,7 +2,7 @@
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Options;
-using FungleAPI.Utilities;
+using FungleAPI.Utilities.Harmony;
 using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using System;

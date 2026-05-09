@@ -1,36 +1,18 @@
-﻿using AmongUs.GameOptions;
-using BepInEx;
-using BepInEx.Configuration;
+﻿using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
-using FungleAPI.Attributes;
 using FungleAPI.Base.Rpc;
-using FungleAPI.Components;
 using FungleAPI.Cosmetics;
 using FungleAPI.Freeplay;
-using FungleAPI.GameMode;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
-using FungleAPI.Networking;
-using FungleAPI.Patches;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
-using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
-using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.Injection;
-using InnerNet;
-using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine.AddressableAssets;
-using UnityEngine.UIElements;
-using xCloud;
 
 namespace FungleAPI.PluginLoading
 {
@@ -53,7 +35,6 @@ namespace FungleAPI.PluginLoading
 
         public List<Type> AllTypes = new List<Type>();
         public List<LobbyTab> LobbyTabs = new List<LobbyTab>();
-        public List<CustomGameMode> GameModes = new List<CustomGameMode>();
         public List<CustomGameOver> GameOvers = new List<CustomGameOver>();
         public List<RpcHelper> RPCs = new List<RpcHelper>();
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();

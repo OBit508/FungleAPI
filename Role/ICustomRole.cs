@@ -76,7 +76,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Create the Mira role tab config for the role
         /// </summary>
-        MiraRoleTabConfig CreateRoleTabConfig() => null;
+        PlayerTabConfig CreateRoleTabConfig() => null;
         /// <summary>
         /// Called when the role dies
         /// </summary>

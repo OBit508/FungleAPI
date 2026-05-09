@@ -30,10 +30,9 @@
     <Compile Include="Base\Rpc\SimpleRpc.cs" />
     <Compile Include="BelpnEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BelpnEx\PatcherAutoPluginAttribute.cs" />
-    <Compile Include="Components\GameModeChanger.cs" />
+    <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
-    <Compile Include="GameOptions\Networking\RpcSyncCurrentGameMode.cs" />
     <Compile Include="GameOptions\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
@@ -66,10 +65,6 @@
     <Compile Include="Freeplay\Helpers\Folder.cs" />
     <Compile Include="Freeplay\Helpers\FolderItem.cs" />
     <Compile Include="Freeplay\VanillaFolder.cs" />
-    <Compile Include="GameMode\CustomGameMode.cs" />
-    <Compile Include="GameMode\GameModeManager.cs" />
-    <Compile Include="GameMode\NormalGameMode.cs" />
-    <Compile Include="GameMode\Patches\LogicUsablesBasicPatch.cs" />
     <Compile Include="GameOptions\Attributes\ModdedNumberOptionAttribute.cs" />
     <Compile Include="GameOptions\Attributes\ModdedToggleOptionAttribute.cs" />
     <Compile Include="GameOptions\Collections\DefaultOptionCollection.cs" />
@@ -117,7 +112,7 @@
     <Compile Include="Ship\Patches\AirshipStatusPatch.cs" />
     <Compile Include="Role\Utilities\KillButtonConfig.cs" />
     <Compile Include="Role\Utilities\LightSourceConfig.cs" />
-    <Compile Include="Role\Utilities\MiraRoleTabConfig.cs" />
+    <Compile Include="Role\Utilities\PlayerTabConfig.cs" />
     <Compile Include="Role\Utilities\ReportButtonConfig.cs" />
     <Compile Include="Role\RoleConfigManager.cs" />
     <Compile Include="Role\Utilities\SabotageButtonConfig.cs" />
@@ -129,21 +124,21 @@
     <Compile Include="Teams\ModdedTeamManager.cs" />
     <Compile Include="Teams\Team.cs" />
     <Compile Include="Translation\TranslationManager.cs" />
-    <Compile Include="Utilities\Assets\Late\LateAsset.cs" />
-    <Compile Include="Utilities\Assets\Late\LateAudio.cs" />
-    <Compile Include="Utilities\Assets\Late\LateBundle.cs" />
-    <Compile Include="Utilities\Assets\Late\LateBundleAsset.cs" />
-    <Compile Include="Utilities\Assets\Late\LateGIF.cs" />
-    <Compile Include="Utilities\Assets\Late\LateSprite.cs" />
-    <Compile Include="Utilities\ColorExtensions.cs" />
-    <Compile Include="Utilities\EnumerableExtensions.cs" />
-    <Compile Include="Utilities\HarmonyHelper.cs" />
+    <Compile Include="Assets\Late\LateAsset.cs" />
+    <Compile Include="Assets\Late\LateAudio.cs" />
+    <Compile Include="Assets\Late\LateBundle.cs" />
+    <Compile Include="Assets\Late\LateBundleAsset.cs" />
+    <Compile Include="Assets\Late\LateGIF.cs" />
+    <Compile Include="Assets\Late\LateSprite.cs" />
+    <Compile Include="Extensions\ColorExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Utilities\Harmony\HarmonyHelper.cs" />
     <Compile Include="GameOver\Patches\LogicGameFlowNormalPatch.cs" />
     <Compile Include="Hud\ButtonLocation.cs" />
     <Compile Include="Hud\Patches\TaskPanelBehaviourPatch.cs" />
     <Compile Include="GameOptions\Networking\RpcUpdatePreset.cs" />
-    <Compile Include="Patches\NameTextBehaviourPatch.cs" />
-    <Compile Include="GameMode\Patches\NormalGameManagerPatch.cs" />
+    <Compile Include="GlobalPatches\NameTextBehaviourPatch.cs" />
+    <Compile Include="GlobalPatches\NormalGameManagerPatch.cs" />
     <Compile Include="Components\ModsPage.cs" />
     <Compile Include="Components\PluginChanger.cs" />
     <Compile Include="GameOptions\SettingsGroup.cs" />
@@ -170,23 +165,23 @@
     <Compile Include="Components\PlayerComponent.cs" />
     <Compile Include="Components\PlayerHelper.cs" />
     <Compile Include="GameOver\GameOverManager.cs" />
-    <Compile Include="Patches\AmongUsClientPatch.cs" />
+    <Compile Include="GlobalPatches\AmongUsClientPatch.cs" />
     <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
-    <Compile Include="Patches\GameStartManagerPatch.cs" />
-    <Compile Include="Patches\ImpostorRolePatch.cs" />
+    <Compile Include="GlobalPatches\GameStartManagerPatch.cs" />
+    <Compile Include="GlobalPatches\ImpostorRolePatch.cs" />
     <Compile Include="Hud\Patches\KillButtonPatch.cs" />
-    <Compile Include="Patches\MainMenuManager.cs" />
-    <Compile Include="Patches\MeetingPatch.cs" />
-    <Compile Include="Patches\ModManagerPatch.cs" />
-    <Compile Include="Patches\PingTrackerPatch.cs" />
+    <Compile Include="GlobalPatches\MainMenuManager.cs" />
+    <Compile Include="GlobalPatches\MeetingPatch.cs" />
+    <Compile Include="GlobalPatches\ModManagerPatch.cs" />
+    <Compile Include="GlobalPatches\PingTrackerPatch.cs" />
     <Compile Include="Ship\Patches\ShipStatusPatch.cs" />
     <Compile Include="PluginLoading\FunglePlugin.cs" />
     <Compile Include="PluginLoading\IFungleBasePlugin.cs" />
     <Compile Include="PluginLoading\ModPluginManager.cs" />
-    <Compile Include="Patches\DetectiveNotesMinigamePatch.cs" />
+    <Compile Include="GlobalPatches\DetectiveNotesMinigamePatch.cs" />
     <Compile Include="Role\Patches\RoleManagerPatch.cs" />
     <Compile Include="Translation\FungleTranslation.cs" />
-    <Compile Include="Utilities\Assets\FungleAssets.cs" />
+    <Compile Include="Assets\FungleAssets.cs" />
     <Compile Include="Player\DeadBodyType.cs" />
     <Compile Include="Utilities\ChangeableValue.cs" />
     <Compile Include="Role\ICustomRole.cs" />
@@ -200,22 +195,23 @@
     <Compile Include="Base\Rpc\RpcHelper.cs" />
     <Compile Include="Networking\MessageExtension.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
-    <Compile Include="Utilities\Assets\GifDecoder.cs" />
-    <Compile Include="Utilities\Assets\GifFile.cs" />
+    <Compile Include="Assets\GifDecoder.cs" />
+    <Compile Include="Assets\GifFile.cs" />
     <Compile Include="Components\Updater.cs" />
-    <Compile Include="Patches\ExileControllerPatch.cs" />
-    <Compile Include="Patches\GameManagerPatch.cs" />
+    <Compile Include="GlobalPatches\ExileControllerPatch.cs" />
+    <Compile Include="GlobalPatches\GameManagerPatch.cs" />
     <Compile Include="Hud\CustomAbilityButton.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
     <Compile Include="Player\Patches\PlayerControlPatch.cs" />
-    <Compile Include="Utilities\Assets\AssetLoader.cs" />
+    <Compile Include="Assets\AssetLoader.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
     <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
     <Compile Include="Freeplay\TaskAdderGamePatch.cs" />
+    <Compile Include="Utilities\Harmony\MainLogic.cs" />
     <Compile Include="Utilities\Helpers.cs" />
-    <Compile Include="GameMode\Patches\VentPatch.cs" />
-    <Compile Include="Patches\VersionShowerPatch.cs" />
+    <Compile Include="Ship\Patches\VentPatch.cs" />
+    <Compile Include="GlobalPatches\VersionShowerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FungleAPIPlugin.cs" />
     <Compile Include="PluginLoading\ModPlugin.cs" />
@@ -225,38 +221,28 @@
     <Compile Include="Networking\CustomRpcManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
-    <Compile Include="Utilities\Il2CppExtensions.cs" />
+    <Compile Include="Extensions\Il2CppExtensions.cs" />
     <Compile Include="Utilities\Prefabs\Prefab.cs" />
     <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
     <Compile Include="Role\RoleHintType.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />
-    <Compile Include="Utilities\StringExtensions.cs" />
-    <Compile Include="Utilities\UnityEngineObjectExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\UnityEngineObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\cog.png" />
+    <EmbeddedResource Include="Assets\FungleAssets\cog.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\folder.png" />
+    <EmbeddedResource Include="Assets\FungleAssets\UI_Hover.wav" />
+    <EmbeddedResource Include="Assets\FungleAssets\UI_Select.wav" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\xMark.png" />
+    <EmbeddedResource Include="Assets\FungleAssets\pluginChangerBackground.png" />
+    <EmbeddedResource Include="Assets\FungleAssets\nextButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\inactive.png" />
-    <EmbeddedResource Include="Assets\highlight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\UI_Hover.wav" />
-    <EmbeddedResource Include="Assets\UI_Select.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\pluginChangerBackground.png" />
-    <EmbeddedResource Include="Assets\nextButton.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Assets\empty.png" />
+    <EmbeddedResource Include="Assets\FungleAssets\empty.png" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">

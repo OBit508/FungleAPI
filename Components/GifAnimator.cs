@@ -1,6 +1,6 @@
-﻿using FungleAPI.Attributes;
+﻿using FungleAPI.Assets;
+using FungleAPI.Attributes;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,11 +1,11 @@
 ﻿using AmongUs.Data;
 using AsmResolver.PE.DotNet.ReadyToRun;
-using FungleAPI.GameMode;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
+using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ namespace FungleAPI.GameOver.Patches
     {
         public static bool Prefix(LogicGameFlowNormal __instance)
         {
-            GameModeManager.GetActiveGameMode().CheckEndCriteria(__instance.Manager);
+            MainLogic.CheckEndCriteria(__instance.Manager);
             return false;
         }
     }

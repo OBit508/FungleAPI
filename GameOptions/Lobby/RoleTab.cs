@@ -1,11 +1,12 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Assets;
 using FungleAPI.Components;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;

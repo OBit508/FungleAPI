@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Attributes;
+using FungleAPI.Extensions;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -85,7 +86,7 @@ namespace FungleAPI.Base.Roles
         /// </summary>
         public virtual void AppendHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
         {
-            if (this.GetHintType() == RoleHintType.MiraAPI_RoleTab)
+            if (this.GetHintType() == RoleHintType.PlayerTab)
             {
                 taskStringBuilder.AppendLine(TeamColor.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + NiceName + "</b>.</color>");
                 taskStringBuilder.AppendLine("<size=70%>" + BlurbMed);

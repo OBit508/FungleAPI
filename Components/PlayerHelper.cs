@@ -1,13 +1,4 @@
-﻿using FungleAPI.Player;
-using FungleAPI.Role;
-using FungleAPI.Utilities.Assets;
-using Sentry.Protocol;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using FungleAPI.Role;
 
 namespace FungleAPI.Components
 {

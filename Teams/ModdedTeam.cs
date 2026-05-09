@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Attributes;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOver;

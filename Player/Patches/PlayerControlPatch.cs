@@ -1,35 +1,11 @@
-﻿using AmongUs.GameOptions;
-using AsmResolver.PE.DotNet.ReadyToRun;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Epic.OnlineServices.Presence;
-using FungleAPI.Components;
+﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
-using FungleAPI.Networking;
-using FungleAPI.Patches;
-using FungleAPI.PluginLoading;
 using FungleAPI.Role;
-using FungleAPI.Role.Patches;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using HarmonyLib;
-using Hazel;
-using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
-using Il2CppInterop.Runtime.Runtime;
-using Il2CppSystem.Net;
-using InnerNet;
-using Rewired;
-using Rewired.Utils;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Purchasing;
-using xCloud;
-using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Player.Patches
 {

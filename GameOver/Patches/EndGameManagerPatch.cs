@@ -8,8 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.Utilities;
 using UnityEngine.Audio;
+using FungleAPI.Extensions;
 
 namespace FungleAPI.GameOver.Patches
 {

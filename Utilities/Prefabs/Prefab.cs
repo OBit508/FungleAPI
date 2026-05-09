@@ -1,4 +1,5 @@
-﻿using Sentry.Internal;
+﻿using FungleAPI.Extensions;
+using Sentry.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;

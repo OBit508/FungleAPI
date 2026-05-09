@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics.Helpers;
-using FungleAPI.Utilities;
+using FungleAPI.Extensions;
 using HarmonyLib;
 using UnityEngine;
 

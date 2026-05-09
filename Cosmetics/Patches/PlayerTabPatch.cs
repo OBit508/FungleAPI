@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AmongUs.Data;
+using FungleAPI.Assets;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics.Helpers;
-using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
+using FungleAPI.Extensions;
 using HarmonyLib;
 using UnityEngine;
 

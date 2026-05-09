@@ -1,4 +1,5 @@
 ﻿using AsmResolver.PE.DotNet.StrongName;
+using FungleAPI.Extensions;
 using FungleAPI.ModCompatibility;
 using Il2CppInterop.Runtime;
 using System;

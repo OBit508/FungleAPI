@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Base.Roles;
 using FungleAPI.Event;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;

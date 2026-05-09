@@ -2,11 +2,11 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.GameMode;
+using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
-using FungleAPI.Utilities;
+using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
 using InnerNet;
 using MonoMod.Cil;
@@ -59,7 +59,7 @@ namespace FungleAPI.Role.Patches
                 targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(role.Role);
                 if (role.CanUseKillButton)
                 {
-                    RoleConfigManager.KillConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.KillConfig?.ResetButton();
                 }
                 if (role.CanSabotage())
                 {
@@ -107,7 +107,7 @@ namespace FungleAPI.Role.Patches
             CustomRoleManager.UpdateRole(roleBehaviour);
             if (roleBehaviour.CanUseKillButton)
             {
-                RoleConfigManager.KillConfig.InitializeButton?.Invoke();
+                RoleConfigManager.KillConfig.InitializeButton();
             }
             if (roleBehaviour.CanSabotage())
             {
@@ -143,7 +143,7 @@ namespace FungleAPI.Role.Patches
         {
             if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
             {
-                GameModeManager.GetActiveGameMode().SelectRoles(__instance);
+                MainLogic.SelectRoles(__instance);
                 return false;
             }
             return true;

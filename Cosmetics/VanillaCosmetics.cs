@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FungleAPI.Cosmetics.Helpers;
-using FungleAPI.Translation;
-using FungleAPI.Utilities.Assets;
-using UnityEngine;
 
 namespace FungleAPI.Cosmetics
 {

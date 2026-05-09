@@ -9,7 +9,7 @@ namespace FungleAPI.Role
     public enum RoleHintType
     {
         TaskHint,
-        MiraAPI_RoleTab,
+        PlayerTab,
         None
     }
 }

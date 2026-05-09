@@ -1,49 +1,23 @@
-﻿using AmongUs.GameOptions;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.Core.Logging.Interpolation;
-using BepInEx.Logging;
+﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
-using BepInEx.Unity.IL2CPP.Utils;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Epic.OnlineServices;
-using FungleAPI.Components;
+using FungleAPI.Assets;
 using FungleAPI.Cosmetics;
-using FungleAPI.Cosmetics.Patches;
-using FungleAPI.Event;
-using FungleAPI.GameMode;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
-using FungleAPI.GameOver;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Networking;
-using FungleAPI.Patches;
-using FungleAPI.Player;
 using FungleAPI.PluginLoading;
-using FungleAPI.Role;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
-using Hazel;
-using Il2CppInterop.Generator.Extensions;
-using Il2CppInterop.Runtime;
-using Il2CppInterop.Runtime.Injection;
-using Il2CppSystem.Text;
-using InnerNet;
-using Microsoft.VisualBasic;
-using Steamworks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TMPro;
-using Unity.Services.Core.Internal;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
 using static BepInEx.BepInDependency;
 
 [assembly: AssemblyMetadata("Reactor.ModFlags", "RequireOnAllClients")]
@@ -79,7 +53,7 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
-                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
                     ModPluginManager.AllPlugins.Add(plugin);
                 }
                 return plugin;
@@ -129,9 +103,6 @@ namespace FungleAPI
 
                 // Carrega as cores (futuramente mais cosméticos)
                 CosmeticManager.SetPaletta();
-
-                // Inicializa o game mode manager
-                GameModeManager.Initialize();
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {

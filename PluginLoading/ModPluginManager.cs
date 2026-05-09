@@ -2,38 +2,26 @@
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Attributes;
-using FungleAPI.Base.Roles;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics;
 using FungleAPI.Event;
 using FungleAPI.Freeplay;
-using FungleAPI.GameMode;
-using FungleAPI.GameMode.Patches;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
-using FungleAPI.Role.Utilities;
+using FungleAPI.Ship.Patches;
 using FungleAPI.Teams;
-using FungleAPI.Translation;
-using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
-using Rewired.Utils.Classes.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
-using UnityEngine.UIElements.UIR;
-using xCloud;
 
 namespace FungleAPI.PluginLoading
 {
@@ -142,10 +130,6 @@ namespace FungleAPI.PluginLoading
             else if (typeof(ModCosmetics).IsAssignableFrom(type))
             {
                 plugin.Cosmetics = CosmeticManager.RegisterCosmetics(type, plugin);
-            }
-            else if (typeof(CustomGameMode).IsAssignableFrom(type))
-            {
-                GameModeManager.RegisterGameMode(type, plugin);
             }
         }
         public static ModPlugin GetModPlugin(Assembly assembly)

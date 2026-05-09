@@ -1,29 +1,10 @@
 ﻿using AmongUs.GameOptions;
-using BepInEx.Unity.IL2CPP.Utils.Collections;
-using Discord;
-using Epic.OnlineServices;
-using FungleAPI.Utilities.Assets;
-using FungleAPI.Components;
-using FungleAPI.Role;
-using FungleAPI.Networking;
-using FungleAPI.Utilities;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using UnityEngine.ProBuilder;
-using static Rewired.Controller;
-using static Rewired.Platforms.Custom.CustomPlatformUnifiedKeyboardSource.KeyPropertyMap;
-using static Rewired.UI.ControlMapper.ControlMapper;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
-using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 
 namespace FungleAPI.GameOptions.Patches

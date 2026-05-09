@@ -23,7 +23,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Current role tab configuration
         /// </summary>
-        public static MiraRoleTabConfig RoleTabConfig { get; private set; } = new MiraRoleTabConfig();
+        public static PlayerTabConfig RoleTabConfig { get; private set; } = new PlayerTabConfig();
         /// <summary>
         /// Current report button configuration
         /// </summary>
@@ -62,10 +62,6 @@ namespace FungleAPI.Role
                     ReportConfig = customRole.CreateReportConfig();
                     SabotageConfig = customRole.CreateSabotageConfig();
                     VentConfig = customRole.CreateVentConfig();
-                    if (RoleTabConfig == null)
-                    {
-                        RoleTabConfig = new MiraRoleTabConfig(customRole);
-                    }
                 }
             }
             if (KillConfig == null)
@@ -78,11 +74,7 @@ namespace FungleAPI.Role
             }
             if (RoleTabConfig == null)
             {
-                RoleTabConfig = new MiraRoleTabConfig
-                {
-                    __text = role.NiceName,
-                    TabNameColor = role.TeamColor
-                };
+                RoleTabConfig = PlayerTabConfig.Default;
             }
             if (ReportConfig == null)
             {

@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices.RTC;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;

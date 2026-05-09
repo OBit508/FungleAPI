@@ -13,7 +13,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static KillButtonConfig Default { get; } = new KillButtonConfig();
         public KillButtonConfig()
+            : this(out _) { }
+        public KillButtonConfig(out KillButtonConfig killButtonConfig)
         {
+            killButtonConfig = this;
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove;
             Cooldown = () => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(AmongUs.GameOptions.FloatOptionNames.KillCooldown);
             CheckClick = delegate (PlayerControl target)
@@ -59,6 +62,19 @@ namespace FungleAPI.Role.Utilities
                     SetTarget(null);
                 }
             };
+            Update = delegate
+            {
+                if (CanUse() != Enabled)
+                {
+                    Enabled = CanUse();
+                    if (Enabled)
+                    {
+                        Button.SetEnabled();
+                        return;
+                    }
+                    Button.SetDisabled();
+                }
+            };
             ResetButton = delegate
             {
                 PlayerControl.LocalPlayer?.SetKillTimer(10f);
@@ -67,19 +83,10 @@ namespace FungleAPI.Role.Utilities
                 Button.graphic.SetCooldownNormalizedUvs();
                 Button.buttonLabelText.SetOutlineColor(Palette.ImpostorRed);
             };
-            bool enabled = true;
-            Update = delegate
+            InitializeButton = delegate
             {
-                if (CanUse() != enabled)
-                {
-                    enabled = CanUse();
-                    if (enabled)
-                    {
-                        Button.SetEnabled();
-                        return;
-                    }
-                    Button.SetDisabled();
-                }
+                Enabled = false;
+                Button.SetDisabled();
             };
         }
         /// <summary>
@@ -118,5 +125,6 @@ namespace FungleAPI.Role.Utilities
         /// Gets the current KillButton instance from the Hud
         /// </summary>
         public KillButton Button => HudManager.Instance.KillButton;
+        public bool Enabled;
     }
 }

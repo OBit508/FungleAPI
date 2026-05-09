@@ -1,9 +1,10 @@
-﻿using FungleAPI.Components;
+﻿using FungleAPI.Assets;
+using FungleAPI.Components;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Assets;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace FungleAPI.GameOptions.Patches
     internal static class GameSettingMenuPatch
     {
         public static Scroller scroller;
+
         public static PluginChanger pluginChanger;
 
         public static LobbyTab CurrentTab;
@@ -52,7 +54,7 @@ namespace FungleAPI.GameOptions.Patches
                     foreach (UiElement uiElement in __instance.ControllerSelectable)
                     {
                         if (uiElement == presetTab) continue;
-                        uiElement.Destroy();
+                        uiElement.gameObject.Destroy();
                     }
                     __instance.ControllerSelectable.Clear();
                     __instance.ControllerSelectable.Add(presetTab);
@@ -83,16 +85,6 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.transform.GetChild(2).gameObject.SetActive(false);
                 __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0, 0.3f, -1);
 
-                Transform parent = new GameObject()
-                {
-                    name = "Inner",
-                    transform =
-                    {
-                        parent = __instance.ControllerSelectable[0].transform.parent,
-                        localPosition = Vector3.zero
-                    }
-                }.transform;
-
                 GameObject gameObject = new GameObject("Hitbox")
                 {
                     layer = 5,
@@ -107,7 +99,15 @@ namespace FungleAPI.GameOptions.Patches
                 scroller = gameObject.AddComponent<Scroller>();
                 scroller.allowX = false;
                 scroller.allowY = true;
-                scroller.Inner = parent;
+                scroller.Inner = new GameObject()
+                {
+                    name = "Inner",
+                    transform =
+                    {
+                        parent = __instance.ControllerSelectable[0].transform.parent,
+                        localPosition = Vector3.zero
+                    }
+                }.transform;
 
                 ManualScrollHelper manualScrollHelper = gameObject.AddComponent<ManualScrollHelper>();
                 manualScrollHelper.scroller = scroller;
@@ -146,7 +146,9 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static bool ChangeTabPrefix(GameSettingMenu __instance, int tabNum, bool previewOnly)
         {
-            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == AmongUs.GameOptions.GameModes.HideNSeek || GameOptionsManager.Instance.CurrentGameOptions.GameMode == AmongUs.GameOptions.GameModes.SeekFools) return true;
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            if (previewOnly) return false;
 
             __instance.PresetsTab.gameObject.SetActive(false);
             __instance.GameSettingsTab.gameObject.SetActive(false);

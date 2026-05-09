@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Extensions;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
