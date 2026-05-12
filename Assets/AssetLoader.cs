@@ -107,26 +107,24 @@ namespace FungleAPI.Assets
         /// <summary>
         /// Loads a GIF file from an embedded resource and converts it into a GifFile
         /// </summary>
-        public static GifFile LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
+        public static Gif LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
         {
             resource += ".gif";
-            GifDecoder decoder = new GifDecoder();
-            using (MemoryStream stream = new MemoryStream())
+            using (GifDecoder gifDecoder = new GifDecoder())
             {
-                using (Stream s = assembly.GetManifestResourceStream(resource))
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    s.CopyTo(stream);
-                    decoder.LoadGif(stream.ToArray());
-                    GifFile gif = new GifFile();
-                    gif.Loop = loop;
-                    List<Sprite> sprites = new List<Sprite>();
-                    for (int i = 0; i < decoder.Frames.Count; i++)
+                    using (Stream s = assembly.GetManifestResourceStream(resource))
                     {
-                        Texture2D texture = decoder.Frames[i];
-                        sprites.Add(Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), PixelPerUnit).DontUnload());
+                        s.CopyTo(stream);
+                        gifDecoder.LoadGif(stream.ToArray());
+                        Gif gif = new Gif()
+                        {
+                            Loop = loop
+                        };
+                        gif.SetGif(gifDecoder.Frames, gifDecoder.FrameDelays);
+                        return gif;
                     }
-                    gif.SetGif(sprites.ToArray(), decoder.FrameDelays.ToArray());
-                    return gif;
                 }
             }
         }
@@ -138,7 +136,7 @@ namespace FungleAPI.Assets
             resource = resource + ".png";
             using (Stream manifestResourceStream = assembly.GetManifestResourceStream(resource))
             {
-                Texture2D texture2D = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+                Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false);
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
                     manifestResourceStream.CopyTo(memoryStream);
@@ -152,22 +150,6 @@ namespace FungleAPI.Assets
                     return sprite;
                 }
             }
-        }
-        /// <summary>
-        /// Converts an array of sprites into a GifFile with uniform delay
-        /// </summary>
-        public static GifFile ToGIF(Sprite[] sprites, float delay, bool loop = true)
-        {
-            GifFile animation = new GifFile();
-            animation.Sprites = sprites;
-            animation.Delays = new float[sprites.Count()];
-            for (int i = 0; i < animation.Delays.Count(); i++)
-            {
-                animation.Delays[i] = delay;
-            }
-            animation.SetGif(animation.Sprites, animation.Delays);
-            animation.Loop = loop;
-            return animation;
         }
         private static float[] ConvertPcmToFloat(byte[] data, int bitsPerSample)
         {

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using FungleAPI.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 namespace FungleAPI.Assets
 {
-    internal class GifDecoder // Thanks to null guy
+    internal class GifDecoder : IDisposable // Thanks to null guy
     {
         public List<Texture2D> Frames = new List<Texture2D>();
         public List<float> FrameDelays = new List<float>();
@@ -106,7 +107,7 @@ namespace FungleAPI.Assets
                                 }
                             }
                             prevFramePixels = framePixels;
-                            Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false);
+                            Texture2D tex = new Texture2D(width, height, TextureFormat.RGBA32, false).DontUnload();
                             tex.SetPixels32(framePixels);
                             tex.Apply();
                             Frames.Add(tex);
@@ -201,6 +202,13 @@ namespace FungleAPI.Assets
                 prevCode = code;
             }
             return output.ToArray();
+        }
+        public void Dispose()
+        {
+            Frames = null;
+            FrameDelays = null;
+            globalColorTable = null;
+            prevFramePixels = null;
         }
     }
 }

@@ -196,7 +196,7 @@
     <Compile Include="Networking\MessageExtension.cs" />
     <Compile Include="Translation\TranslationControllerPatch.cs" />
     <Compile Include="Assets\GifDecoder.cs" />
-    <Compile Include="Assets\GifFile.cs" />
+    <Compile Include="Assets\Gif.cs" />
     <Compile Include="Components\Updater.cs" />
     <Compile Include="GlobalPatches\ExileControllerPatch.cs" />
     <Compile Include="GlobalPatches\GameManagerPatch.cs" />
