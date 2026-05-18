@@ -16,7 +16,7 @@ using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Role;
 using FungleAPI.Translation;
-using FungleAPI.Utilities.Prefabs;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;
@@ -109,6 +109,11 @@ namespace FungleAPI.Utilities
             {
                 return null;
             }
+        }
+        public static bool Is<T>(this Il2CppObjectBase obj, out T result) where T : Il2CppObjectBase
+        {
+            result = obj.SafeCast<T>();
+            return result != null;
         }
         /// <summary>
         /// Cast something

@@ -4,7 +4,6 @@ using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -91,8 +90,9 @@ namespace FungleAPI.GameOptions.Options
             OptionManager.FixOption(stringOption);
             return stringOption;
         }
-        public ModdedEnumOption(StringNames optionName, Dictionary<TEnum, StringNames> valuesNames)
+        public ModdedEnumOption(StringNames optionName, TEnum defaultValue, Dictionary<TEnum, StringNames> valuesNames)
         {
+            DefaultValue = defaultValue;
             Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
             stringGameSetting.Type = OptionTypes.String;

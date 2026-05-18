@@ -105,6 +105,10 @@ namespace FungleAPI.Components
                 if (Gif.maxTime <= timer)
                 {
                     timer = 0;
+                    if (!Gif.Loop)
+                    {
+                        Stop();
+                    }
                 }
             }
         }

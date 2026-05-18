@@ -2,7 +2,6 @@
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +20,6 @@ namespace FungleAPI.Teams
         public override StringNames PluralName => StringNames.Crewmates;
         public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
         public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<CrewmatesByTask>();
-        public override bool AssignOnlyEnabledRoles => false;
         public override int DefaultCount => int.MaxValue;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {

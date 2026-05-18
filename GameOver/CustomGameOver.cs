@@ -23,8 +23,8 @@ namespace FungleAPI.GameOver
         public virtual string WinText { get; }
         public virtual Color BackgroundColor { get; }
         public virtual Color NameColor { get; }
-        public virtual GameOverReason Reason { get; } = GameOverManager.GetValidGameOver();
         public virtual AudioClip Clip { get; }
+        public GameOverReason Reason => (GameOverReason)GameOverId;
         public virtual void SetData()
         {
             Winners.Clear();

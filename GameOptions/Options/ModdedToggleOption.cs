@@ -2,7 +2,6 @@
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -76,8 +75,9 @@ namespace FungleAPI.GameOptions.Options
             OptionManager.FixOption(toggleOption);
             return toggleOption;
         }
-        public ModdedToggleOption(StringNames optionName)
+        public ModdedToggleOption(StringNames optionName, bool defaultValue)
         {
+            DefaultValue = defaultValue;
             Data = ScriptableObject.CreateInstance<CheckboxGameSetting>().DontUnload();
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
             checkboxGameSetting.Title = optionName;

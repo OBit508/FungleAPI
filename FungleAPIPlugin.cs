@@ -53,7 +53,7 @@ namespace FungleAPI
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
                     plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
-                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
                     ModPluginManager.AllPlugins.Add(plugin);
                 }
                 return plugin;
@@ -79,18 +79,19 @@ namespace FungleAPI
                 if (basePlugin is IFungleBasePlugin fungle)
                 {
                     ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName, fungle.ModCredits);
-                    fungle.OnRegisterInFungleAPI();
+                    fungle.AlmostLoaded();
                 }
                 new BepInMod(pluginInfo.Metadata.GUID, pluginInfo.Metadata.Version.Clean(), pluginInfo.Metadata.Name, assembly);
             };
             IL2CPPChainloader.Instance.Finished += () => // Chamado quando o BeplnEx termina de carregar os mods
             {
                 // Organiza os mods registrados por GUID
-                List<ModPlugin> ordered = ModPluginManager.AllPlugins.OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal).ToList();
-                ordered.Remove(Plugin);
+
+                IOrderedEnumerable<ModPlugin> ordered = ModPluginManager.AllPlugins.FindAll(p => p != Plugin).OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal);
                 ModPluginManager.AllPlugins.Clear();
                 ModPluginManager.AllPlugins.Add(Plugin);
                 ModPluginManager.AllPlugins.AddRange(ordered);
+
                 foreach (ModPlugin mod in ModPluginManager.AllPlugins)
                 {
                     ModPluginManager.RegisterTypes(mod);
@@ -131,7 +132,7 @@ namespace FungleAPI
             // Adiciona um MonoBehaviour no BasePlugin para alguns metodos do Helpers
             Helper = AddComponent<FungleHelper>();
         }
-        public static void OpenCreditsScreen()
+        public void ClickOnModName()
         {
             if (CreditScreen == null && AccountManager.InstanceExists)
             {

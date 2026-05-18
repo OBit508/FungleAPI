@@ -19,7 +19,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static LightSourceConfig Default { get; } = new LightSourceConfig();
         public LightSourceConfig()
+            : this(out _) { }
+        public LightSourceConfig(out LightSourceConfig lightSourceConfig)
         {
+            lightSourceConfig = this;
             CalculateLightRadius = (NetworkedPlayerInfo player, bool airship) =>
             {
                 if (airship)

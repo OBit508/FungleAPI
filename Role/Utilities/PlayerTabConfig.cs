@@ -1,4 +1,6 @@
 ﻿using FungleAPI.Utilities;
+using Il2CppSystem.Reflection.Metadata.Ecma335;
+using Il2CppSystem.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,20 +16,21 @@ namespace FungleAPI.Role.Utilities
     public class PlayerTabConfig
     {
         public static PlayerTabConfig Default { get; } = new PlayerTabConfig();
+        public PlayerTabConfig()
+            : this(out _) { }
+        public PlayerTabConfig(out PlayerTabConfig playerTabConfig)
+        {
+            playerTabConfig = this;
+            TabName = () => $"{Color.white.ToTextColor()}{PlayerControl.LocalPlayer.Data.PlayerName}</color>";
+            AppendTabText = delegate (Il2CppSystem.Text.StringBuilder stringBuilder) { RoleExtensions.AppendHint(PlayerControl.LocalPlayer.Data.Role, stringBuilder); };
+        }
         /// <summary>
         /// Returns the tab name
         /// </summary>
-        public virtual string TabName => PlayerControl.LocalPlayer.Data.PlayerName;
+        public Func<string> TabName;
         /// <summary>
         /// Appends the showed text on the tab
         /// </summary>
-        public virtual void AppendTabText(Il2CppSystem.Text.StringBuilder stringBuilder)
-        {
-            RoleExtensions.AppendHint(PlayerControl.LocalPlayer.Data.Role, stringBuilder);
-        }
-        /// <summary>
-        /// Color used for the tab name
-        /// </summary>
-        public virtual Color TabNameColor => Color.white;
+        public Action<Il2CppSystem.Text.StringBuilder> AppendTabText;
     }
 }

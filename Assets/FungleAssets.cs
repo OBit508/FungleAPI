@@ -1,7 +1,8 @@
 ﻿using FungleAPI.Assets.Late;
 using FungleAPI.Components;
 using FungleAPI.Event;
-using FungleAPI.Utilities.Prefabs;
+using FungleAPI.Extensions;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,15 +21,16 @@ namespace FungleAPI.Assets
     /// </summary>
     public static class FungleAssets
     {
-        public static LateSprite Cog = new LateSprite("FungleAPI.Assets.FungleAssets.cog", 90);
-        public static LateSprite Empty = new LateSprite("FungleAPI.Assets.FungleAssets.empty", 100);
-        public static LateSprite NextButton = new LateSprite("FungleAPI.Assets.FungleAssets.nextButton", 100);
-        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Assets.FungleAssets.pluginChangerBackground", 100);
-        public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Hover");
-        public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Select");
-        public static Prefab<GameObject> PluginChangerPrefab;
-        public static Prefab<GameObject> ModsPagePrefab;
-        public static Prefab<GameObject> CogPrefab;
+        private static Transform Parent = new GameObject("Fungle Prefabs") { active = false }.DontDestroy().transform;
+        public static LateSprite Cog = new LateSprite("FungleAPI.Assets.FungleAssets.cog.png", 90);
+        public static LateSprite Empty = new LateSprite("FungleAPI.Assets.FungleAssets.empty.png", 100);
+        public static LateSprite NextButton = new LateSprite("FungleAPI.Assets.FungleAssets.nextButton.png", 100);
+        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Assets.FungleAssets.pluginChangerBackground.png", 100);
+        public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Hover.wav");
+        public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Select.wav");
+        public static PluginChanger PluginChangerPrefab;
+        public static ModsPage ModsPagePrefab;
+        public static PassiveButton CogPrefab;
         public static void LoadAll()
         {
             CreatePluginChanger();
@@ -37,45 +39,43 @@ namespace FungleAPI.Assets
         }
         private static void CreateCog()
         {
-            CogPrefab = new Prefab<GameObject>(new GameObject("Cog"));
-            PassiveButton cog = CogPrefab.prefab.AddComponent<PassiveButton>();
-            cog.ClickSound = SelectSound;
-            BoxCollider2D boxCollider2D = cog.gameObject.AddComponent<BoxCollider2D>();
+            CogPrefab = new GameObject("Cog") { transform = { parent = Parent } }.AddComponent<PassiveButton>();
+            CogPrefab.ClickSound = SelectSound;
+            BoxCollider2D boxCollider2D = CogPrefab.gameObject.AddComponent<BoxCollider2D>();
             boxCollider2D.isTrigger = true;
-            SpriteRenderer rend = cog.gameObject.AddComponent<SpriteRenderer>();
+            SpriteRenderer rend = CogPrefab.gameObject.AddComponent<SpriteRenderer>();
             rend.sprite = Cog;
             rend.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-            ButtonRolloverHandler buttonRolloverHandler = cog.gameObject.AddComponent<ButtonRolloverHandler>();
+            ButtonRolloverHandler buttonRolloverHandler = CogPrefab.gameObject.AddComponent<ButtonRolloverHandler>();
             buttonRolloverHandler.Target = rend;
             buttonRolloverHandler.OutColor = Color.white;
             buttonRolloverHandler.OverColor = Color.gray;
-            cog.gameObject.layer = 5;
-            cog.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+            CogPrefab.gameObject.layer = 5;
+            CogPrefab.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
         }
         private static void CreateModsPage()
         {
-            ModsPagePrefab = new Prefab<GameObject>(new GameObject("ModsPage"));
-            ModsPage page = ModsPagePrefab.prefab.AddComponent<ModsPage>();
-            page.gameObject.layer = 5;
+            ModsPagePrefab = new GameObject("ModsPage") { transform = { parent = Parent } }.AddComponent<ModsPage>();
+            ModsPagePrefab.gameObject.layer = 5;
             TextMeshPro text = new GameObject("ModsText").AddComponent<TextMeshPro>();
             text.alignment = TextAlignmentOptions.Center;
             text.characterSpacing = 7;
             text.enableWordWrapping = false;
-            text.transform.SetParent(page.transform);
+            text.transform.SetParent(ModsPagePrefab.transform);
             text.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
             text.transform.localPosition = new Vector3(0, 1.9f, 0);
             TextMeshPro pageText = new GameObject("PageText").AddComponent<TextMeshPro>();
             pageText.alignment = TextAlignmentOptions.Center;
             pageText.text = "0/10";
-            pageText.transform.SetParent(page.transform);
+            pageText.transform.SetParent(ModsPagePrefab.transform);
             pageText.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
             pageText.transform.localPosition = new Vector3(0, -1.8f, -0.1f);
             PassiveButton rightButton = CreateNextButton("RightButton");
-            rightButton.transform.SetParent(page.transform);
+            rightButton.transform.SetParent(ModsPagePrefab.transform);
             rightButton.transform.localPosition = new Vector3(1, -1.8f, -0.1f);
             rightButton.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
             PassiveButton leftButton = CreateNextButton("LeftButton");
-            leftButton.transform.SetParent(page.transform);
+            leftButton.transform.SetParent(ModsPagePrefab.transform);
             leftButton.transform.localPosition = new Vector3(-1, -1.8f, -0.1f);
             leftButton.transform.localScale = new Vector3(-0.3f, 0.3f, 0.3f);
             for (int i = 0; i < 10; i++)
@@ -84,7 +84,7 @@ namespace FungleAPI.Assets
                 modsText.alignment = TextAlignmentOptions.Top;
                 modsText.horizontalAlignment = HorizontalAlignmentOptions.Center;
                 modsText.enableWordWrapping = false;
-                modsText.transform.SetParent(page.transform);
+                modsText.transform.SetParent(ModsPagePrefab.transform);
                 modsText.transform.localScale = new Vector3(0.07f, 0.07f, 0.07f);
                 modsText.transform.localPosition = new Vector3(0, 1.25f - i * 0.27f, -0.1f);
                 modsText.gameObject.AddComponent<BoxCollider2D>().isTrigger = true;
@@ -96,24 +96,23 @@ namespace FungleAPI.Assets
         }
         private static void CreatePluginChanger()
         {
-            PluginChangerPrefab = new Prefab<GameObject>(new GameObject("PluginChanger"));
-            PluginChanger pluginChanger = PluginChangerPrefab.prefab.AddComponent<PluginChanger>();
-            pluginChanger.gameObject.layer = 5;
-            pluginChanger.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-            pluginChanger.gameObject.AddComponent<SpriteRenderer>().sprite = PluginChangerBackground;
+            PluginChangerPrefab = new GameObject("PluginChanger") { transform = { parent = Parent } }.AddComponent<PluginChanger>();
+            PluginChangerPrefab.gameObject.layer = 5;
+            PluginChangerPrefab.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+            PluginChangerPrefab.gameObject.AddComponent<SpriteRenderer>().sprite = PluginChangerBackground;
             TextMeshPro text = new GameObject("Text").AddComponent<TextMeshPro>();
             text.alignment = TextAlignmentOptions.Center;
             text.horizontalAlignment = HorizontalAlignmentOptions.Center;
-            text.transform.SetParent(pluginChanger.transform);
+            text.transform.SetParent(PluginChangerPrefab.transform);
             text.transform.localScale = new Vector3(0.28f, 0.28f, 0.28f);
             text.gameObject.layer = 5;
             text.enableAutoSizing = true;
             PassiveButton rightButton = CreateNextButton("RightButton");
-            rightButton.transform.SetParent(pluginChanger.transform);
+            rightButton.transform.SetParent(PluginChangerPrefab.transform);
             rightButton.transform.localPosition = new Vector3(4, 0, 0);
             rightButton.transform.localScale = Vector3.one;
             PassiveButton leftButton = CreateNextButton("LeftButton");
-            leftButton.transform.SetParent(pluginChanger.transform);
+            leftButton.transform.SetParent(PluginChangerPrefab.transform);
             leftButton.transform.localScale = new Vector3(-1, 1, 1);
             leftButton.transform.localPosition = new Vector3(-4, 0, 0);
         }

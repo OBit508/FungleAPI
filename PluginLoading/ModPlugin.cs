@@ -42,10 +42,9 @@ namespace FungleAPI.PluginLoading
         public List<OptionCollection> OptionCollections = new List<OptionCollection>();
 
 
-        public ModCosmetics Cosmetics = new ModCosmetics();
-        public ModSettings Settings = new ModSettings();
-        public ModFolderConfig FolderConfig = new ModFolderConfig();
-
+        public ModCosmetics Cosmetics;
+        public ModSettings Settings;
+        public ModFolderConfig FolderConfig;
 
         public BepInMod LocalMod => BepInMod.GetMod(ModAssembly);
         internal ModPlugin()

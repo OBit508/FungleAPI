@@ -17,7 +17,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static Sprite DefaultSprite;
         public VentButtonConfig()
+            : this(out _) { }
+        public VentButtonConfig(out VentButtonConfig ventButtonConfig)
         {
+            ventButtonConfig = this;
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.IsOnCooldown && !PlayerControl.LocalPlayer.Data.IsDead;
             Cooldown = () => 0;
             ShowOutline = () => Button.isActiveAndEnabled && !Button.IsOnCooldown && !PlayerControl.LocalPlayer.Data.IsDead;

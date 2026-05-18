@@ -17,6 +17,5 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText => FungleTranslation.CrewmateGameOver.GetString();
         public override Color BackgroundColor { get; } = Palette.CrewmateBlue;
         public override Color NameColor { get; } = Palette.CrewmateBlue;
-        public override GameOverReason Reason => GameOverReason.CrewmatesByVote;
     }
 }

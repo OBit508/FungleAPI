@@ -1,7 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Ship.Patches;
-using FungleAPI.Utilities.Prefabs;
+using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using System;
 using System.Collections.Generic;

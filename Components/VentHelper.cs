@@ -7,7 +7,6 @@ using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Ship;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;

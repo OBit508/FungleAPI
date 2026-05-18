@@ -57,7 +57,7 @@ namespace FungleAPI.Patches
                 color.a = 0.5f;
                 spriteRenderer.color = color;
             }
-            AspectPosition follower = FungleAssets.ModsPagePrefab.Instantiate().AddComponent<AspectPosition>();
+            AspectPosition follower = GameObject.Instantiate(FungleAssets.ModsPagePrefab).gameObject.AddComponent<AspectPosition>();
             follower.transform.parent = __instance.creditsScreen.transform.parent;
             follower.anchorPoint = new Vector2(0.45f, 0.5f);
             follower.DistanceFromEdge = new Vector3(0, 0, -10);
@@ -121,7 +121,7 @@ namespace FungleAPI.Patches
             if (!ShipsLoaded)
             {
                 string baseText = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">" + FungleTranslation.LoadingPrefabsText.GetString();
-                yield return Utilities.Prefabs.PrefabUtils.CoLoadShipPrefabs(textMeshPro, baseText);
+                yield return PrefabUtils.CoLoadShipPrefabs(textMeshPro, baseText);
                 ShipsLoaded = true;
             }
             foreach (ModPlugin plugin in ModPluginManager.AllPlugins)

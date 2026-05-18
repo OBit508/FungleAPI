@@ -25,7 +25,9 @@ namespace FungleAPI.PluginLoading
         string ModVersion => PluginInfo.Metadata.Version.Clean();
         string ModCredits => $"[{ModName} v{ModVersion}]";
         void ClickOnModName() { }
-        void OnRegisterInFungleAPI() { }
+
+        void AlmostLoaded() { }
+        void FullyLoaded() { }
 
         void LoadTabs(ModPlugin modPlugin) 
         {

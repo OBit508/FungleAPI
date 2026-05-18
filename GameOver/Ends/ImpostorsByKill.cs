@@ -17,6 +17,5 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText => FungleTranslation.ImpostorGameOver.GetString();
         public override Color BackgroundColor { get; } = Color.red;
         public override Color NameColor { get; } = Color.red;
-        public override GameOverReason Reason => GameOverReason.ImpostorsByKill;
     }
 }

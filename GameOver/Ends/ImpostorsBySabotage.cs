@@ -11,6 +11,5 @@ namespace FungleAPI.GameOver.Ends
     /// </summary>
     public class ImpostorsBySabotage : ImpostorsByKill
     {
-        public override GameOverReason Reason => GameOverReason.ImpostorsBySabotage;
     }
 }

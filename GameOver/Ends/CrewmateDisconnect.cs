@@ -11,6 +11,5 @@ namespace FungleAPI.GameOver.Ends
     /// </summary>
     public class CrewmateDisconnect : ImpostorsByKill
     {
-        public override GameOverReason Reason => GameOverReason.CrewmateDisconnect;
     }
 }

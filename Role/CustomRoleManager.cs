@@ -9,7 +9,6 @@ using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
@@ -29,7 +28,7 @@ namespace FungleAPI.Role
     /// </summary>
     public static class CustomRoleManager
     {
-        internal static int LastRoleId = 30;
+        internal static int LastRoleId = 19;
         internal static List<CachedWaitingRole> WaitingToRegister = new List<CachedWaitingRole>();
         /// <summary>
         /// Returns the NeutralGhost role created by the API
@@ -123,10 +122,14 @@ namespace FungleAPI.Role
         {
             return ModPluginManager.AllPlugins.FirstOrDefault(p => p.Roles.Contains(GetRole(type)));
         }
-        public static void RegisterRole(Type type, ModPlugin plugin)
+        public static void RegisterRole(Type type, ModPlugin modPlugin)
         {
+            if (WaitingToRegister == null)
+            {
+                throw new Exception("You can't register a Role when the RoleManager already loadded");
+            }
+            WaitingToRegister.Add(new CachedWaitingRole((RoleTypes)LastRoleId, type, modPlugin));
             LastRoleId++;
-            WaitingToRegister.Add(new CachedWaitingRole((RoleTypes)LastRoleId, type, plugin));
             ClassInjector.RegisterTypeInIl2Cpp(type);
             ICustomRole.Save.Add(type, new ChangeableValue<RoleOptionCollection>(new RoleOptionCollection()));
         }

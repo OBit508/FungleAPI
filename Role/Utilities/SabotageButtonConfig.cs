@@ -17,7 +17,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static Sprite DefaultSprite;
         public SabotageButtonConfig()
+            : this(out _) { }
+        public SabotageButtonConfig(out SabotageButtonConfig sabotageButtonConfig)
         {
+            sabotageButtonConfig = this;
             Cooldown = () => 0;
             CanUse = () => Button.isActiveAndEnabled && !Button.IsOnCooldown;
             Refresh = delegate

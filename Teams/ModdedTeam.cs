@@ -14,7 +14,6 @@ using FungleAPI.GameOver;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppSystem.Linq.Expressions;
 using MonoMod.Cil;
@@ -81,10 +80,6 @@ namespace FungleAPI.Teams
         /// Default priority value for team assignment
         /// </summary>
         public virtual int DefaultPriority => 1;
-        /// <summary>
-        /// Determines whether only enabled roles can be assigned
-        /// </summary>
-        public virtual bool AssignOnlyEnabledRoles => true;
         public virtual void Initialize(ModPlugin plugin)
         {
             if (!Initialized)

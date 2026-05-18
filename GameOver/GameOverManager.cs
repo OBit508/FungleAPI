@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using xCloud;
 
 namespace FungleAPI.GameOver
 {
@@ -28,12 +29,19 @@ namespace FungleAPI.GameOver
     {
         public static bool AllowNonHostGameOverRequest = true;
         public static Dictionary<Type ,CustomGameOver> CustomGameOvers = new Dictionary<Type, CustomGameOver>();
-        internal static int gameOverId = Enum.GetNames<GameOverReason>().Length;
-        public static GameOverReason GetValidGameOver()
+        internal static int GameOverId = 9;
+        internal static Dictionary<Type, GameOverReason> VanillaGameOvers = new Dictionary<Type, GameOverReason>()
         {
-            gameOverId++;
-            return (GameOverReason)gameOverId;
-        }
+            { typeof(CrewmateDisconnect), GameOverReason.CrewmateDisconnect },
+            { typeof(CrewmatesByTask), GameOverReason.CrewmatesByTask },
+            { typeof(CrewmatesByVote), GameOverReason.CrewmatesByVote },
+            { typeof(HideAndSeek_CrewmatesByTimer), GameOverReason.HideAndSeek_CrewmatesByTimer },
+            { typeof(HideAndSeek_ImpostorsByKills), GameOverReason.HideAndSeek_ImpostorsByKills },
+            { typeof(ImpostorDisconnect), GameOverReason.ImpostorDisconnect },
+            { typeof(ImpostorsByKill), GameOverReason.ImpostorsByKill },
+            { typeof(ImpostorsBySabotage), GameOverReason.ImpostorsBySabotage },
+            { typeof(ImpostorsByVote), GameOverReason.ImpostorsByVote },
+        };
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>
@@ -89,19 +97,25 @@ namespace FungleAPI.GameOver
             gameOver.Serialize(messageWriter);
             amongUsClient.FinishEndGame(messageWriter);
         }
-        public static void RegisterGameOver(Type type, ModPlugin plugin)
+        public static void RegisterGameOver(Type type, ModPlugin modPlugin)
         {
             CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
-            if (plugin == FungleAPIPlugin.Plugin)
+            if (VanillaGameOvers != null && VanillaGameOvers.TryGetValue(type, out GameOverReason gameOverReason))
             {
-                gameOver.GameOverId = (int)gameOver.Reason;
+                gameOver.GameOverId = (int)gameOverReason;
+                VanillaGameOvers.Remove(type);
+                if (VanillaGameOvers.Count <= 0)
+                {
+                    VanillaGameOvers = null;
+                }
             }
             else
             {
-                gameOver.GameOverId = (int)GetValidGameOver();
+                gameOver.GameOverId = GameOverId;
+                GameOverId++;
             }
-            plugin.GameOvers.Add(gameOver);
-            plugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
+            modPlugin.GameOvers.Add(gameOver);
+            modPlugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             CustomGameOvers.Add(type, gameOver);
         }
         [HarmonyPatch("Create")]

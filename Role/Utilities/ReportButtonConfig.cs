@@ -17,7 +17,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static Sprite DefaultSprite;
         public ReportButtonConfig()
+            : this(out _) { }
+        public ReportButtonConfig(out ReportButtonConfig reportButtonConfig)
         {
+            reportButtonConfig = this;
             CanUse = () => true;
             SetActive = delegate (bool isActive)
             {

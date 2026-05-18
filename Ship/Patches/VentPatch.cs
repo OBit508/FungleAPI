@@ -6,7 +6,6 @@ using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Harmony;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using PowerTools;

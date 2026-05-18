@@ -44,7 +44,7 @@ namespace FungleAPI.Components
                     Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
                     RoleConfigManager.RoleTabConfig.AppendTabText(stringBuilder);
                     TabText.text = stringBuilder.ToString();
-                    TabName.text = RoleConfigManager.RoleTabConfig.TabName;
+                    TabName.text = RoleConfigManager.RoleTabConfig.TabName();
                 }
             }
         }

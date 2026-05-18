@@ -41,7 +41,7 @@ namespace FungleAPI.GameOptions.Patches
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek || GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.SeekFools) return;
 
             __instance.gameModeText.gameObject.SetActive(false);
-            pluginChanger = FungleAssets.PluginChangerPrefab.Instantiate(__instance.rolesTabButton.transform.parent).GetComponent<PluginChanger>();
+            pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.rolesTabButton.transform.parent);
             pluginChanger.transform.localPosition = __instance.gameModeText.transform.localPosition;
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
@@ -62,10 +62,10 @@ namespace FungleAPI.GameOptions.Patches
 
                 foreach (LobbyTab lobbyTab in Tabs)
                 {
-                    lobbyTab.ViewSettingsButton = CreateButton(__instance, lobbyTab.ViewTabButtonText, delegate
+                    lobbyTab.ViewSettingsButton = CreateButton(__instance, buttonPrefab, lobbyTab.ViewTabButtonText, delegate
                     {
                         Tab = lobbyTab;
-                        __instance.RefreshTab();
+                        __instance.ChangeTab(StringNames.None);
                     });
                 }
 
@@ -75,7 +75,7 @@ namespace FungleAPI.GameOptions.Patches
                 {
                     UiElement uiElement = __instance.ControllerSelectable[i];
                     uiElement.transform.localPosition = new Vector3(-4.871f + (3.471f * i), 1.404f, 0);
-                    num += 0.243f;
+                    num += 1.1f;
                 }
 
                 scroller.ContentXBounds.min = -num;
@@ -97,7 +97,7 @@ namespace FungleAPI.GameOptions.Patches
             scroller = gameObject.AddComponent<Scroller>();
             scroller.allowX = true;
             scroller.allowY = false;
-            scroller.ContentYBounds.max = 0;
+            scroller.ContentXBounds.max = 0;
             scroller.Inner = new GameObject()
             {
                 name = "Inner",
@@ -128,9 +128,30 @@ namespace FungleAPI.GameOptions.Patches
 
             pluginChanger.OnChange(FungleAPIPlugin.Plugin);
         }
-        public static PassiveButton CreateButton(LobbyViewSettingsPane lobbyViewSettingsPane, string name, Action onClick)
+        [HarmonyPatch(nameof(LobbyViewSettingsPane.ChangeTab))]
+        [HarmonyPrefix]
+        public static bool Change(LobbyViewSettingsPane __instance)
         {
-            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(lobbyViewSettingsPane.rolesTabButton, scroller.Inner);
+            __instance.RefreshTab();
+            __instance.scrollBar.ScrollToTop();
+            return false;
+        }
+        [HarmonyPatch(nameof(LobbyViewSettingsPane.RefreshTab))]
+        [HarmonyPrefix]
+        public static bool Refresh(LobbyViewSettingsPane __instance)
+        {
+            foreach (GameObject gameObject in __instance.settingsInfo)
+            {
+                gameObject?.Destroy();
+            }
+            __instance.settingsInfo.Clear();
+            SetTab(__instance);
+            return false;
+        }
+        public static PassiveButton CreateButton(LobbyViewSettingsPane lobbyViewSettingsPane, UiElement prefab, string name, Action onClick)
+        {
+            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(prefab.SafeCast<PassiveButton>(), scroller.Inner);
+            passiveButton.gameObject.SetActive(true);
             passiveButton.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
             passiveButton.buttonText.text = name;
             passiveButton.ClickMask = scroller.ClickMask;
@@ -156,9 +177,7 @@ namespace FungleAPI.GameOptions.Patches
             lobbyViewSettingsPane.ControllerSelectable.Add(passiveButton);
             return passiveButton;
         }
-        [HarmonyPatch(nameof(LobbyViewSettingsPane.SetTab))]
-        [HarmonyPrefix]
-        public static bool DrawTabPrefix(LobbyViewSettingsPane __instance)
+        public static void SetTab(LobbyViewSettingsPane lobbyViewSettingsPane)
         {
             foreach (LobbyTab lobbyTab in Tabs)
             {
@@ -167,19 +186,19 @@ namespace FungleAPI.GameOptions.Patches
             Tab.ViewSettingsButton.SelectButton(true);
             if (!(Tab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleAPIPlugin.Plugin))
             {
-                Tab.BuildViewTab(__instance);
+                Tab.BuildViewTab(lobbyViewSettingsPane);
             }
             else
             {
                 float num = 1.44f;
                 foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
                 {
-                    CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                    CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(lobbyViewSettingsPane.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(rulesCategory.CategoryName, 61);
-                    categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
+                    categoryHeaderMasked.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
-                    __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                    lobbyViewSettingsPane.settingsInfo.Add(categoryHeaderMasked.gameObject);
                     num -= 1.05f;
                     List<BaseGameSetting> list = rulesCategory.AllGameSettings.ToSystemList();
                     if (rulesCategory.CategoryName == StringNames.ImpostorsCategory)
@@ -188,8 +207,8 @@ namespace FungleAPI.GameOptions.Patches
                     }
                     for (int i = 0; i < list.Count; i++)
                     {
-                        ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
-                        viewSettingsInfoPanel.transform.SetParent(__instance.settingsContainer);
+                        ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(lobbyViewSettingsPane.infoPanelOrigin);
+                        viewSettingsInfoPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
                         viewSettingsInfoPanel.transform.localScale = Vector3.one;
                         float num2;
                         if (i % 2 == 0)
@@ -214,13 +233,12 @@ namespace FungleAPI.GameOptions.Patches
                         {
                             viewSettingsInfoPanel.SetInfo(list[i].Title, list[i].GetValueString(value), 61);
                         }
-                        __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                        lobbyViewSettingsPane.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
                     }
                     num -= 0.85f;
                 }
-                __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + 10), 2f, 6f, 0.85f);
+                lobbyViewSettingsPane.scrollBar.CalculateAndSetYBounds((float)(lobbyViewSettingsPane.settingsInfo.Count + 10), 2f, 6f, 0.85f);
             }
-            return false;
         }
     }
 }

@@ -160,7 +160,7 @@ namespace FungleAPI.GameOptions.Lobby
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {
-                    SyncManager.RpcSyncRole(customRole as RoleBehaviour);
+                    SyncManager.RpcSyncRole(customRole);
                 }
             });
             option.roleMaxCount = customRole.Configuration.MaxRoleCount;
@@ -173,7 +173,7 @@ namespace FungleAPI.GameOptions.Lobby
             option.chanceText.text = customRole.RoleOptions.LocalRoleChance.ToString();
             if (customRole.RoleOptions.Options.Count > 0)
             {
-                PassiveButton cog = FungleAssets.CogPrefab.Instantiate(option.transform).GetComponent<PassiveButton>();
+                PassiveButton cog = GameObject.Instantiate(FungleAssets.CogPrefab, option.transform);
                 cog.transform.localPosition = new Vector3(-1.278f, -0.3f, 0f);
                 cog.ClickMask = rolesSettingsMenu.ButtonClickMask;
                 cog.SetNewAction(delegate
@@ -225,7 +225,7 @@ namespace FungleAPI.GameOptions.Lobby
                 op.SetClickMask(rolesSettingsMenu.ButtonClickMask);
                 op.OnValueChanged += new Action<OptionBehaviour>(delegate
                 {
-                    SyncManager.RpcSyncOption(config);
+                    SyncManager.RpcSyncRoleOption(customRole, config);
                 });
                 op.transform.localPosition = new Vector3(2.17f, num, -2f);
                 rolesSettingsMenu.advancedSettingChildren.Add(op);

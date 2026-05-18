@@ -33,6 +33,17 @@
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncEverything.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncOption.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncRole.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncTeam.cs" />
+    <Compile Include="GameOptions\Networking\SyncOptionType.cs" />
+    <Compile Include="GModes\Logics\LGameFlow.cs" />
+    <Compile Include="GModes\Logics\LMinigame.cs" />
+    <Compile Include="GModes\Logics\LOptions.cs" />
+    <Compile Include="GModes\Logics\LRoleSelection.cs" />
+    <Compile Include="GModes\Logics\LUsasbles.cs" />
+    <Compile Include="GModes\Patches\NormalGameManagerPatch.cs" />
     <Compile Include="GameOptions\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
@@ -222,8 +233,7 @@
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
     <Compile Include="Extensions\Il2CppExtensions.cs" />
-    <Compile Include="Utilities\Prefabs\Prefab.cs" />
-    <Compile Include="Utilities\Prefabs\PrefabUtils.cs" />
+    <Compile Include="Utilities\PrefabUtils.cs" />
     <Compile Include="Role\RoleHintType.cs" />
     <Compile Include="Utilities\Sound\DynamicSound.cs" />
     <Compile Include="Utilities\Sound\SoundManagerHelper.cs" />

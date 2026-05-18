@@ -53,13 +53,17 @@ namespace FungleAPI.Teams
         {
             return Teams.Values.FirstOrDefault(t => t.TeamId == id);
         }
+        internal static void SetID(ModdedTeam moddedTeam)
+        {
+            
+        }
         public static void RegisterTeam(Type type, ModPlugin plugin)
         {
-            LastTeamId++;
             ModdedTeam team = (ModdedTeam)Activator.CreateInstance(type);
-            team.TeamId = LastTeamId;
             plugin.Teams.Add(team);
             Teams.Add(type, team);
+            team.TeamId = LastTeamId;
+            LastTeamId++;
             team.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             team.CountData.Type = OptionTypes.Float;
             team.CountData.Title = FungleTranslation.CountText;

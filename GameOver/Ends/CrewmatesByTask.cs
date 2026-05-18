@@ -11,6 +11,5 @@ namespace FungleAPI.GameOver.Ends
     /// </summary>
     public class CrewmatesByTask : CrewmatesByVote
     {
-        public override GameOverReason Reason => GameOverReason.CrewmatesByTask;
     }
 }

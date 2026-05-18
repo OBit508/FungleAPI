@@ -48,10 +48,6 @@ namespace FungleAPI.Components
                 {
                     click = fungleBasePlugin.ClickOnModName;
                 }
-                else if (plugin == FungleAPIPlugin.Plugin)
-                {
-                    click = FungleAPIPlugin.OpenCreditsScreen;
-                }
 
                 strings.Add((plugin.ModCredits, click));
                 if (strings.Count >= 10)

@@ -74,8 +74,9 @@ namespace FungleAPI.GameOptions.Options
             option.Value = LocalValue;
             return option;
         }
-        public ModdedNumberOption(StringNames optionName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
+        public ModdedNumberOption(StringNames optionName, float defaultValue, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
         {
+            DefaultValue = defaultValue;
             Data = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             FloatGameSetting floatGameSetting = (FloatGameSetting)Data;
             floatGameSetting.Title = optionName;

@@ -11,6 +11,5 @@ namespace FungleAPI.GameOver.Ends
     /// </summary>
     public class HideAndSeek_ImpostorsByKills : ImpostorsByKill
     {
-        public override GameOverReason Reason => GameOverReason.HideAndSeek_ImpostorsByKills;
     }
 }

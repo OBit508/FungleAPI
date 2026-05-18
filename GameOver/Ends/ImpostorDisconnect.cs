@@ -17,6 +17,5 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText => StringNames.ImpostorDisconnected.GetString();
         public override Color BackgroundColor { get; } = Color.red;
         public override Color NameColor { get; } = Palette.CrewmateBlue;
-        public override GameOverReason Reason => GameOverReason.ImpostorDisconnect;
     }
 }

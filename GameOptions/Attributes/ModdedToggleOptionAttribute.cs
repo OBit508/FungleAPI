@@ -3,7 +3,6 @@ using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using Hazel;
 using System;
 using System.Collections.Generic;

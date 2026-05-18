@@ -3,7 +3,6 @@ using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Prefabs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +41,5 @@ namespace FungleAPI.Teams
         }
         public override RoleTypes DefaultRole => RoleTypes.Impostor;
         public override int DefaultPriority => 10;
-        public override bool AssignOnlyEnabledRoles => false;
-        
     }
 }

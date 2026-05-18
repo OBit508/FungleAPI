@@ -19,7 +19,6 @@ namespace FungleAPI.GameOver.Ends
     {
         public string win;
         public Color? color;
-        public override GameOverReason Reason { get; } = GameOverManager.GetValidGameOver();
         public override string WinText => win == null ? FungleTranslation.NeutralGameOver.GetString() : win;
         public override Color BackgroundColor => color == null ? Color.gray : color.Value;
         public override Color NameColor => BackgroundColor;

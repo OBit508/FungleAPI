@@ -48,11 +48,7 @@ namespace FungleAPI.Assets
         {
             using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    stream.CopyTo(ms);
-                    return AssetBundle.LoadFromMemory(ms.ToArray());
-                }
+                return AssetBundle.LoadFromMemory(stream.ToArray());
             }
         }
         /// <summary>
@@ -60,7 +56,6 @@ namespace FungleAPI.Assets
         /// </summary>
         public static AudioClip LoadAudio(Assembly assembly, string resource, string clipName, bool dontUnload = true)
         {
-            resource += ".wav";
             using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
                 using (BinaryReader reader = new BinaryReader(stream))
@@ -109,47 +104,43 @@ namespace FungleAPI.Assets
         /// </summary>
         public static Gif LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
         {
-            resource += ".gif";
             using (GifDecoder gifDecoder = new GifDecoder())
             {
-                using (MemoryStream stream = new MemoryStream())
+                using (Stream stream = assembly.GetManifestResourceStream(resource))
                 {
-                    using (Stream s = assembly.GetManifestResourceStream(resource))
+                    gifDecoder.LoadGif(stream.ToArray());
+                    Gif gif = new Gif()
                     {
-                        s.CopyTo(stream);
-                        gifDecoder.LoadGif(stream.ToArray());
-                        Gif gif = new Gif()
-                        {
-                            Loop = loop
-                        };
-                        gif.SetGif(gifDecoder.Frames, gifDecoder.FrameDelays);
-                        return gif;
-                    }
+                        Loop = loop
+                    };
+                    gif.SetGif(gifDecoder.Frames, gifDecoder.FrameDelays);
+                    return gif;
                 }
             }
         }
         /// <summary>
-        /// Loads a PNG sprite from an embedded resource
+        /// Loads a sprite from an embedded resource
         /// </summary>
         public static Sprite LoadSprite(Assembly assembly, string resource, float PixelPerUnit, bool dontUnload = true)
         {
-            resource = resource + ".png";
-            using (Stream manifestResourceStream = assembly.GetManifestResourceStream(resource))
+            using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
-                Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-                using (MemoryStream memoryStream = new MemoryStream())
+                Texture2D texture2D = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+                texture2D.LoadImage(stream.ToArray(), true);
+
+                Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
+                if (dontUnload)
                 {
-                    manifestResourceStream.CopyTo(memoryStream);
-                    texture2D.LoadImage(memoryStream.ToArray(), false);
-                    texture2D.Apply();
-                    Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
-                    if (dontUnload)
-                    {
-                        sprite.DontUnload();
-                    }
-                    return sprite;
+                    sprite.DontUnload();
                 }
+                return sprite;
             }
+        }
+        private static byte[] ToArray(this Stream stream)
+        {
+            byte[] data = new byte[stream.Length];
+            stream.Read(data, 0, data.Length);
+            return data;
         }
         private static float[] ConvertPcmToFloat(byte[] data, int bitsPerSample)
         {

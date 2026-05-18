@@ -2,8 +2,8 @@
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Options;
+using FungleAPI.Utilities;
 using FungleAPI.Utilities.Harmony;
-using FungleAPI.Utilities.Prefabs;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace FungleAPI.GameOptions
             {
                 try
                 {
-                    if (propertyInfo.GetMethod != null && typeof(ModdedOption).IsSubclassOf(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is ModdedOption option && option != null)
+                    if (propertyInfo.GetMethod != null && typeof(ModdedOption).IsAssignableFrom(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is ModdedOption option && option != null)
                     {
                         option.Initialize(propertyInfo);
                         moddedOptions.Add(option);
@@ -63,7 +63,7 @@ namespace FungleAPI.GameOptions
             {
                 try
                 {
-                    if (typeof(ModdedOption).IsSubclassOf(fieldInfo.FieldType) && fieldInfo.GetValue(null) is ModdedOption option && option != null)
+                    if (typeof(ModdedOption).IsAssignableFrom(fieldInfo.FieldType) && fieldInfo.GetValue(null) is ModdedOption option && option != null)
                     {
                         option.Initialize(fieldInfo);
                         moddedOptions.Add(option);
