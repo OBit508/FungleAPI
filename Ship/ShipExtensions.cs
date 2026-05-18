@@ -55,6 +55,14 @@ namespace FungleAPI.Ship
         /// </summary>
         public static Vent CreateVent(this ShipStatus shipStatus, VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
+            if (type == VentType.Polus && PrefabUtils.PolusPrefab == null)
+            {
+                throw new Exception("Polus ship is not loaded");
+            }
+            if (type == VentType.Fungle && PrefabUtils.FunglePrefab == null)
+            {
+                throw new Exception("TheFungle ship is not loaded");
+            }
             Vent prefab = null;
             switch (type)
             {

@@ -15,8 +15,6 @@ namespace FungleAPI.GameOptions.Collections
         public string CollectionId;
         public Dictionary<string, IModdedOption> Options = new Dictionary<string, IModdedOption>();
 
-        public abstract void Serialize(MessageWriter messageWriter, bool includeOption);
-        public abstract void Deserialize(MessageReader messageReader, bool includeOption);
         public abstract void Initialize(Type type, ModPlugin modPlugin);
         public abstract void WriteLocalOptions();
         public abstract void ReadLocalOptions();

@@ -20,11 +20,11 @@ namespace FungleAPI.GameOptions
     /// </summary>
     public abstract class SettingsGroup
     {
-        public DefaultOptionCollection OptionCollection = new DefaultOptionCollection();
+        public List<IModdedOption> Options;
         public abstract StringNames GroupName { get; }
         public virtual void Initialize(ModPlugin modPlugin)
         {
-            OptionCollection.Initialize(GetType(), modPlugin);
+            Options = OptionManager.GetAndInitializeModdedOptions(GetType());
         }
     }
 }

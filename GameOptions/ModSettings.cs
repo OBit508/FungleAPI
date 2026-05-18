@@ -19,13 +19,13 @@ namespace FungleAPI.GameOptions
     public class ModSettings
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
+        public GameOptionCollection OptionCollection;
         public bool initialized;
         public virtual void Initialize(ModPlugin modPlugin)
         {
             if (!initialized)
             {
-                Type type = GetType();
-                foreach (Type t in type.GetNestedTypes())
+                foreach (Type t in GetType().GetNestedTypes())
                 {
                     if (typeof(SettingsGroup).IsAssignableFrom(t))
                     {
@@ -34,6 +34,7 @@ namespace FungleAPI.GameOptions
                         Groups.Add(group);
                     }
                 }
+                OptionCollection = new GameOptionCollection(this);
                 initialized = true;
             }
         }

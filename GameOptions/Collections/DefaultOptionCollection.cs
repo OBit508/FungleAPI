@@ -29,33 +29,6 @@ namespace FungleAPI.GameOptions.Collections
             }
             ReadLocalOptions();
         }
-        public override void Serialize(MessageWriter messageWriter, bool includeOption)
-        {
-            if (includeOption)
-            {
-                messageWriter.WritePacked(Options.Count);
-                foreach (IModdedOption moddedOption in Options.Values)
-                {
-                    messageWriter.Write(moddedOption.OptionId);
-                    moddedOption.Serialize(messageWriter);
-                }
-            }
-        }
-        public override void Deserialize(MessageReader messageReader, bool includeOption)
-        {
-            if (includeOption)
-            {
-                int optionCount = messageReader.ReadPackedInt32();
-                for (int i = 0; i < optionCount; i++)
-                {
-                    string optionId = messageReader.ReadString();
-                    if (Options.TryGetValue(optionId, out IModdedOption moddedOption))
-                    {
-                        moddedOption.Deserialize(messageReader);
-                    }
-                }
-            }
-        }
         public override void WriteLocalOptions()
         {
             using (FileStream fileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))

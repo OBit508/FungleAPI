@@ -33,6 +33,7 @@
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
+    <Compile Include="GameOptions\Collections\GameOptionCollection.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncEverything.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncOption.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncRole.cs" />

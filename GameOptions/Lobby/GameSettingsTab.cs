@@ -27,7 +27,7 @@ namespace FungleAPI.GameOptions.Lobby
                 categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                 lobbyViewSettingsPane.settingsInfo.Add(categoryHeaderMasked.gameObject);
                 num -= 1.05f;
-                for (int i = 0; i < group.OptionCollection.Options.Count; i++)
+                for (int i = 0; i < group.Options.Count; i++)
                 {
                     ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate(lobbyViewSettingsPane.infoPanelOrigin);
                     viewSettingsInfoPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
@@ -46,7 +46,7 @@ namespace FungleAPI.GameOptions.Lobby
                         num2 = -3f;
                     }
                     viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
-                    IModdedOption moddedOption = group.OptionCollection.Options.Values.ElementAt(i);
+                    IModdedOption moddedOption = group.Options.ElementAt(i);
                     if (moddedOption.Data.Type == OptionTypes.Checkbox)
                     {
                         viewSettingsInfoPanel.SetInfoCheckbox(moddedOption.Data.Title, 61, bool.Parse(moddedOption.GetStringValue(AmongUsClient.Instance.AmHost)));
@@ -71,7 +71,7 @@ namespace FungleAPI.GameOptions.Lobby
                 categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                 categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                 num -= 0.63f;
-                foreach (IModdedOption option in group.OptionCollection.Options.Values)
+                foreach (IModdedOption option in group.Options)
                 {
                     OptionBehaviour op = option.CreateOption(gameOptionsMenu.settingsContainer);
                     op.LabelBackground.enabled = true;

@@ -90,11 +90,11 @@ namespace FungleAPI.Hud
         public abstract void OnClick();
         public virtual void CreateButton()
         {
+            Reset(ResetType.Create);
             if (Button)
             {
                 return;
             }
-            Reset(ResetType.Create);
             Button = GameObject.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
             Button.name = OverrideText;
             Button.graphic.sprite = ButtonSprite;

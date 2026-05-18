@@ -3,37 +3,31 @@ using FungleAPI.Utilities;
 using Hazel;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnityEngine.UIElements.UIR;
+using System.IO;
 
 namespace FungleAPI.GameOptions.Collections
 {
-    public class RoleOptionCollection : OptionCollection
+    public class GameOptionCollection : OptionCollection
     {
-        public const int RoleOptionVersion = 1;
+        public const int GameOptionVersion = 1;
 
-        public int LocalRoleCount;
-        public int NonHostRoleCount;
+        public ModSettings Settings;
 
-        public int LocalRoleChance;
-        public int NonHostRoleChance;
-
-        public int RoleCount => AmongUsClient.Instance.AmHost ? LocalRoleCount : NonHostRoleCount;
-        public int RoleChance => AmongUsClient.Instance.AmHost ? LocalRoleChance : NonHostRoleChance;
-
-        public void SetLocal(int count, int chance)
-        {
-            if (LocalRoleCount != count) { LocalRoleCount = count; Dirty = true; }
-            if (LocalRoleChance != chance) { LocalRoleChance = chance; Dirty = true; }
-        }
         public override void Initialize(Type type, ModPlugin modPlugin)
         {
             CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
-            FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.Roles), $"{CollectionId}.funglecfg");
-            foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type))
+            FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.GameSettings), $"{CollectionId}.funglecfg");
+
+            List<IModdedOption> EveryOption = new List<IModdedOption>();
+            foreach (SettingsGroup settingsGroup in Settings.Groups)
+            {
+                EveryOption.AddRange(settingsGroup.Options);
+            }
+
+            foreach (IModdedOption moddedOption in EveryOption)
             {
                 moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
@@ -47,10 +41,7 @@ namespace FungleAPI.GameOptions.Collections
             {
                 using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
                 {
-                    binaryWriter.Write(RoleOptionVersion);
-
-                    binaryWriter.Write(LocalRoleCount);
-                    binaryWriter.Write(LocalRoleChance);
+                    binaryWriter.Write(GameOptionVersion);
 
                     binaryWriter.Write(Options.Count);
                     foreach (IModdedOption moddedOption in Options.Values)
@@ -77,17 +68,13 @@ namespace FungleAPI.GameOptions.Collections
                 {
                     using (BinaryReader binaryReader = new BinaryReader(memoryStream))
                     {
-                        int roleOptionVersion = binaryReader.ReadInt32();
-                        if (roleOptionVersion < RoleOptionVersion)
+                        int gameOptionVersion = binaryReader.ReadInt32();
+                        if (gameOptionVersion < GameOptionVersion)
                         {
                             FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Role Option Collection from {FilePath} founded, loading and saving default.");
                             SetAsDefault();
                             return;
                         }
-
-                        LocalRoleCount = binaryReader.ReadInt32();
-                        LocalRoleChance = binaryReader.ReadInt32();
-
                         int optionCount = binaryReader.ReadInt32();
                         for (int i = 0; i < optionCount; i++)
                         {
@@ -104,14 +91,12 @@ namespace FungleAPI.GameOptions.Collections
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Failed to read Role Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleAPIPlugin.Instance.Log.LogError($"Failed to read Game Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
                 SetAsDefault();
             }
         }
         public void SyncNonHostWithLocal()
         {
-            NonHostRoleCount = LocalRoleCount;
-            NonHostRoleChance = LocalRoleChance;
             foreach (IModdedOption moddedOption in Options.Values)
             {
                 moddedOption.SyncNonHostWithLocal();
@@ -119,14 +104,16 @@ namespace FungleAPI.GameOptions.Collections
         }
         public void SetAsDefault()
         {
-            LocalRoleCount = 0;
-            LocalRoleChance = 0;
             foreach (IModdedOption moddedOption in Options.Values)
             {
                 moddedOption.SetValue(moddedOption.DefaultValue, true);
             }
             WriteLocalOptions();
             SyncNonHostWithLocal();
+        }
+        public GameOptionCollection(ModSettings modSettings)
+        {
+            Settings = modSettings;
         }
     }
 }
