@@ -79,30 +79,30 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Write a game over
         /// </summary>
-        public static void WriteGameOver(this MessageWriter messageWriter, CustomGameOver customGameOver)
+        public static void WriteGameOver(this MessageWriter messageWriter, BaseGameOver customGameOver)
         {
-            messageWriter.Write(customGameOver.GameOverId);
+            messageWriter.WritePacked((byte)customGameOver.Reason);
         }
         /// <summary>
         /// Write a role
         /// </summary>
         public static void WriteRole(this MessageWriter messageWriter, RoleBehaviour role)
         {
-            messageWriter.Write((int)role.Role);
+            messageWriter.WritePacked((int)role.Role);
         }
         /// <summary>
         /// Write a team
         /// </summary>
         public static void WriteTeam(this MessageWriter messageWriter, ModdedTeam team)
         {
-            messageWriter.Write(team.TeamId);
+            messageWriter.WritePacked(team.TeamId);
         }
         /// <summary>
         /// Write a rpc
         /// </summary>
         public static void WriteRPC(this MessageWriter messageWriter, RpcHelper rpcHelper)
         {
-            messageWriter.Write(rpcHelper.RpcId);
+            messageWriter.WritePacked(rpcHelper.RpcId);
         }
         /// <summary>
         /// Write a plugin
@@ -171,23 +171,24 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Read a game over
         /// </summary>
-        public static CustomGameOver ReadGameOver(this MessageReader messageReader)
+        public static BaseGameOver ReadGameOver(this MessageReader messageReader)
         {
-            return GameOverManager.GetGameOverById(messageReader.ReadInt32());
+            GameOverReason reason = (GameOverReason)messageReader.ReadByte();
+            return reason.GetGameOver();
         }
         /// <summary>
         /// Read a role
         /// </summary>
         public static RoleBehaviour ReadRole(this MessageReader messageReader)
         {
-            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadInt32());
+            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadPackedInt32());
         }
         /// <summary>
         /// Read a team
         /// </summary>
         public static ModdedTeam ReadTeam(this MessageReader messageReader)
         {
-            int id = messageReader.ReadInt32();
+            int id = messageReader.ReadPackedInt32();
             return ModdedTeamManager.Teams.Values.FirstOrDefault(t => t.TeamId == id);
         }
         /// <summary>
@@ -195,7 +196,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static RpcHelper ReadRPC(this MessageReader messageReader)
         {
-            int id = messageReader.ReadInt32();
+            int id = messageReader.ReadPackedInt32();
             return CustomRpcManager.AllRpc.FirstOrDefault(r => r.RpcId == id);
         }
         /// <summary>

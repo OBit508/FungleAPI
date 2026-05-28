@@ -27,9 +27,8 @@ namespace FungleAPI.GameOver
     [HarmonyPatch(typeof(EndGameResult))]
     public static class GameOverManager
     {
-        public static bool AllowNonHostGameOverRequest = true;
-        public static Dictionary<Type ,CustomGameOver> CustomGameOvers = new Dictionary<Type, CustomGameOver>();
-        internal static int GameOverId = 9;
+        public static Dictionary<Type ,BaseGameOver> CustomGameOvers = new Dictionary<Type, BaseGameOver>();
+        internal static byte GameOverId = 9;
         internal static Dictionary<Type, GameOverReason> VanillaGameOvers = new Dictionary<Type, GameOverReason>()
         {
             { typeof(CrewmateDisconnect), GameOverReason.CrewmateDisconnect },
@@ -45,16 +44,16 @@ namespace FungleAPI.GameOver
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>
-        public static T GetGameOverInstance<T>() where T : CustomGameOver
+        public static T GetGameOverInstance<T>() where T : BaseGameOver
         {
             return GetGameOverInstance(typeof(T)).SimpleCast<T>() ?? null;
         }
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>
-        public static CustomGameOver GetGameOverInstance(Type type)
+        public static BaseGameOver GetGameOverInstance(Type type)
         {
-            if (CustomGameOvers.TryGetValue(type, out CustomGameOver customGameOver))
+            if (CustomGameOvers.TryGetValue(type, out BaseGameOver customGameOver))
             {
                 return customGameOver;
             }
@@ -63,27 +62,19 @@ namespace FungleAPI.GameOver
         /// <summary>
         /// Returns the instance of the given GameOverReason
         /// </summary>
-        public static CustomGameOver GetGameOver(this GameOverReason gameOverReason)
+        public static BaseGameOver GetGameOver(this GameOverReason gameOverReason)
         {
             return CustomGameOvers.Values.FirstOrDefault(g => g.Reason == gameOverReason);
         }
-        /// <summary>
-        /// Returns the instance of the given id
-        /// </summary>
-        public static CustomGameOver GetGameOverById(int Id)
-        {
-            return CustomGameOvers.Values.FirstOrDefault(g => g.GameOverId == Id);
-        }
-        public static void RpcEndGame<T>(this GameManager gameManager) where T : CustomGameOver
+        public static void RpcEndGame<T>(this GameManager gameManager) where T : BaseGameOver
         {
             RpcEndGame(gameManager, GetGameOverInstance<T>());
         }
-        public static void RpcEndGame(this GameManager gameManager, CustomGameOver gameOver)
+        public static void RpcEndGame(this GameManager gameManager, BaseGameOver gameOver)
         {
             AmongUsClient amongUsClient = AmongUsClient.Instance;
-            if (!amongUsClient.AmHost && AllowNonHostGameOverRequest)
+            if (!amongUsClient.AmHost)
             {
-                Rpc<RpcRequestGameOver>.Instance.Send(gameOver, PlayerControl.LocalPlayer, SendOption.Reliable, amongUsClient.HostId);
                 return;
             }
             if (EventManager.CallEvent(new BeforeGameOver(gameOver)).Cancelled)
@@ -94,15 +85,51 @@ namespace FungleAPI.GameOver
             gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);
-            gameOver.Serialize(messageWriter);
+            if (gameOver.HasExtraByte)
+            {
+                messageWriter.Write(gameOver.GetExtraByte());
+            }
+            amongUsClient.FinishEndGame(messageWriter);
+        }
+        public static void RpcEndGame<T, DataT>(this GameManager gameManager, DataT data) where T : BaseGameOver<DataT>
+        {
+            RpcEndGame(gameManager, GetGameOverInstance<T>(), data);
+        }
+        public static void RpcEndGame<DataT>(this GameManager gameManager, BaseGameOver<DataT> gameOver, DataT data)
+        {
+            AmongUsClient amongUsClient = AmongUsClient.Instance;
+            if (!amongUsClient.AmHost)
+            {
+                return;
+            }
+            if (EventManager.CallEvent(new BeforeGameOver(gameOver)).Cancelled)
+            {
+                return;
+            }
+
+            gameOver.ReceiveDataFromRpcEndGame(data);
+
+            gameManager.ShouldCheckForGameEnd = false;
+            gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
+            MessageWriter messageWriter = amongUsClient.StartEndGame();
+            messageWriter.WriteGameOver(gameOver);
+            if (gameOver.HasExtraByte)
+            {
+                messageWriter.Write(gameOver.GetExtraByte());
+            }
             amongUsClient.FinishEndGame(messageWriter);
         }
         public static void RegisterGameOver(Type type, ModPlugin modPlugin)
         {
-            CustomGameOver gameOver = (CustomGameOver)Activator.CreateInstance(type);
+            if (GameOverId == 255)
+            {
+                FungleAPIPlugin.Instance.Log.LogError("FungleAPI supports only 255 GameOvers at the same time.");
+                return;
+            }
+            BaseGameOver gameOver = (BaseGameOver)Activator.CreateInstance(type);
             if (VanillaGameOvers != null && VanillaGameOvers.TryGetValue(type, out GameOverReason gameOverReason))
             {
-                gameOver.GameOverId = (int)gameOverReason;
+                gameOver.Reason = gameOverReason;
                 VanillaGameOvers.Remove(type);
                 if (VanillaGameOvers.Count <= 0)
                 {
@@ -111,7 +138,7 @@ namespace FungleAPI.GameOver
             }
             else
             {
-                gameOver.GameOverId = GameOverId;
+                gameOver.Reason = (GameOverReason)GameOverId;
                 GameOverId++;
             }
             modPlugin.GameOvers.Add(gameOver);
@@ -122,10 +149,15 @@ namespace FungleAPI.GameOver
         [HarmonyPrefix]
         private static bool CreatePrefix([HarmonyArgument(0)] MessageReader reader, ref EndGameResult __result)
         {
-            CustomGameOver.CachedGameOver = reader.ReadGameOver();
-            CustomGameOver.CachedGameOver.Deserialize(reader);
-            CustomGameOver.CachedGameOver.SetData();
-            EventManager.CallEvent(new AfterGameOver(CustomGameOver.CachedGameOver));
+            BaseGameOver.CachedGameOver = reader.ReadGameOver();
+            if (BaseGameOver.CachedGameOver.HasExtraByte)
+            {
+                BaseGameOver.CachedGameOver.InterpretExtraByte(reader.ReadByte());
+            }
+            BaseGameOver.CachedGameOver.SetData();
+
+
+            EventManager.CallEvent(new AfterGameOver(BaseGameOver.CachedGameOver));
             if (reader.Position < reader.Length)
             {
                 MessageReader messageReader = reader.ReadMessage();
@@ -156,11 +188,11 @@ namespace FungleAPI.GameOver
                     ProgressionManager.XpGrantResult xpGrantResult = new ProgressionManager.XpGrantResult(grantedXp, oldXpAmount, num, xpRequiredToLevelUpNextLevel, flag, oldLevel, newLevel, maxLevel);
                     ProgressionManager.CurrencyGrantResult podsGrantResult = new ProgressionManager.CurrencyGrantResult(text, (uint)DestroyableSingleton<InventoryManager>.Instance.GetPodCount(text), grantedPodsWithMultiplierApplied, multiplier);
                     ProgressionManager.CurrencyGrantResult beansGrantResult = new ProgressionManager.CurrencyGrantResult(Constants.Beans, (uint)DestroyableSingleton<InventoryManager>.Instance.UnusedBeans, grantedPodsWithMultiplierApplied2, multiplier2);
-                    __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, false, xpGrantResult, podsGrantResult, beansGrantResult);
+                    __result = new EndGameResult(BaseGameOver.CachedGameOver.Reason, false, xpGrantResult, podsGrantResult, beansGrantResult);
                     return false;
                 }
             }
-            __result = new EndGameResult(CustomGameOver.CachedGameOver.Reason, false, null, null, null);
+            __result = new EndGameResult(BaseGameOver.CachedGameOver.Reason, false, null, null, null);
             return false;
         }
     }

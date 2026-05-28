@@ -1,8 +1,8 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.GModes;
 using FungleAPI.Role;
-using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -34,7 +34,7 @@ namespace FungleAPI.Ship.Patches
         {
             if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
             {
-                MainLogic.AssignTasks(__instance);
+                GameModeManager.GetCurrentGameMode().AssignTasks(__instance);
                 PlayerControl.LocalPlayer.cosmetics.SetAsLocalPlayer();
                 return false;
             }

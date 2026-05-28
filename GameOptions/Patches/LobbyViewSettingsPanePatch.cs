@@ -38,7 +38,7 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPostfix]
         public static void AwakePostfix(LobbyViewSettingsPane __instance)
         {
-            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek || GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.SeekFools) return;
+            if (GameManager.Instance.IsHideAndSeek()) return;
 
             __instance.gameModeText.gameObject.SetActive(false);
             pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.rolesTabButton.transform.parent);
@@ -58,7 +58,7 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.ControllerSelectable.Clear();
 
                 Tabs = plugin.LobbyTabs;
-                Tab = Tabs[0];
+                Tab = Tabs.First();
 
                 foreach (LobbyTab lobbyTab in Tabs)
                 {
@@ -132,6 +132,8 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static bool Change(LobbyViewSettingsPane __instance)
         {
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
             __instance.RefreshTab();
             __instance.scrollBar.ScrollToTop();
             return false;
@@ -140,6 +142,8 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static bool Refresh(LobbyViewSettingsPane __instance)
         {
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
             foreach (GameObject gameObject in __instance.settingsInfo)
             {
                 gameObject?.Destroy();
@@ -181,9 +185,9 @@ namespace FungleAPI.GameOptions.Patches
         {
             foreach (LobbyTab lobbyTab in Tabs)
             {
-                lobbyTab.ViewSettingsButton.SelectButton(false);
+                lobbyTab.ViewSettingsButton?.SelectButton(false);
             }
-            Tab.ViewSettingsButton.SelectButton(true);
+            Tab.ViewSettingsButton?.SelectButton(true);
             if (!(Tab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleAPIPlugin.Plugin))
             {
                 Tab.BuildViewTab(lobbyViewSettingsPane);

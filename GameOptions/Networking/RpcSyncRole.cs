@@ -16,6 +16,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncRole : AdvancedRpc<ICustomRole>
     {
+        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
         public override void Write(MessageWriter messageWriter, ICustomRole data)
         {
             messageWriter.WriteRole(data as RoleBehaviour);

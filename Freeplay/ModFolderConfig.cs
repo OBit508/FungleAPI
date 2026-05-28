@@ -39,6 +39,8 @@ namespace FungleAPI.Freeplay
                 teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().Configuration.HideInFreeplay);
                 if (teams.Value.Count > 0)
                 {
+                    if (teams.Key.HideInFreeplay) continue;
+
                     Folder teamFolder = new Folder() { FolderName = teams.Key.TeamName.GetString(), FolderColor = teams.Key.TeamColor };
                     foreach (RoleBehaviour roleBehaviour in teams.Value)
                     {

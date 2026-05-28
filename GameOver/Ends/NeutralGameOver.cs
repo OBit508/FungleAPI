@@ -1,4 +1,5 @@
-﻿using FungleAPI.Role;
+﻿using FungleAPI.Player;
+using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -15,36 +16,36 @@ namespace FungleAPI.GameOver.Ends
     /// <summary>
     /// Used to give the victory to the last neutral assassin alive
     /// </summary>
-    public class NeutralGameOver : CustomGameOver
+    public class NeutralGameOver : BaseGameOver<PlayerControl>
     {
-        public string win;
-        public Color? color;
-        public override string WinText => win == null ? FungleTranslation.NeutralGameOver.GetString() : win;
-        public override Color BackgroundColor => color == null ? Color.gray : color.Value;
+        public PlayerControl Winner;
+        public override string WinText { get; set; }
+        public override Color BackgroundColor { get; set; }
         public override Color NameColor => BackgroundColor;
+        public override bool HasExtraByte => true;
         public override void SetData()
         {
-            win = null;
-            color = null;
-            List<NetworkedPlayerInfo> winners = new List<NetworkedPlayerInfo>();
-            foreach (NetworkedPlayerInfo networkedPlayerInfo in GameData.Instance.AllPlayers)
+            ICustomRole customRole = Winner.Data.Role.CustomRole();
+            if (customRole != null)
             {
-                if (networkedPlayerInfo.Role.DidWin(Reason))
-                {
-                    winners.Add(networkedPlayerInfo);
-                    Winners.Add(new CachedPlayerData(networkedPlayerInfo));
-                }
+                WinText = customRole.Configuration.NeutralWinText;
+                BackgroundColor = customRole.RoleColor;
+                return;
             }
-            if (winners.Count == 1)
-            {
-                NetworkedPlayerInfo winner = winners[0];
-                ICustomRole customRole = winner.Role.CustomRole();
-                if (customRole != null)
-                {
-                    win = customRole.Configuration.NeutralWinText;
-                    color = customRole.RoleColor;
-                }
-            }
+            WinText = $"{FungleTranslation.VictoryText.GetString()} " + customRole.RoleName.GetString();
+            BackgroundColor = Winner.Data.Role.NameColor;
+        }
+        public override void ReceiveDataFromRpcEndGame(PlayerControl data)
+        {
+            Winner = data;
+        }
+        public override byte GetExtraByte()
+        {
+            return Winner.PlayerId;
+        }
+        public override void InterpretExtraByte(byte b)
+        {
+            Winner = PlayerExtensions.GetPlayerById(b);
         }
     }
 }

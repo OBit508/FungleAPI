@@ -12,5 +12,13 @@ namespace FungleAPI.GModes.Logics
     {
         public LMinigame(GameManager gameManager) : base(gameManager) { }
         public LMinigame(IntPtr intPtr) : base(intPtr) { }
+        public override void OnMinigameClose()
+        {
+            GameModeManager.GetCurrentGameMode().OnMinigameClose();
+        }
+        public override void OnMinigameOpen()
+        {
+            GameModeManager.GetCurrentGameMode().OnMinigameOpen();
+        }
     }
 }

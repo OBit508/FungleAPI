@@ -12,10 +12,10 @@ namespace FungleAPI.GameOver.Ends
     /// <summary>
     /// Class equivalent to the value of the GameOverReason enum
     /// </summary>
-    public class ImpostorDisconnect : CustomGameOver
+    public class ImpostorDisconnect : BaseGameOver
     {
         public override string WinText => StringNames.ImpostorDisconnected.GetString();
-        public override Color BackgroundColor { get; } = Color.red;
-        public override Color NameColor { get; } = Palette.CrewmateBlue;
+        public override Color BackgroundColor { get; set; } = Color.red;
+        public override Color NameColor { get; set; } = Palette.CrewmateBlue;
     }
 }

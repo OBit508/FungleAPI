@@ -1,4 +1,6 @@
 ﻿using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Event;
+using FungleAPI.Event.BelpInEx;
 using FungleAPI.PluginLoading;
 using HarmonyLib;
 using Innersloth.Assets;
@@ -72,7 +74,9 @@ namespace FungleAPI.Cosmetics
             plugin.BasePlugin.Log.LogInfo("Registered Cosmetics " + type.Name);
             return cosmetics;
         }
-        internal static void SetPaletta()
+
+        [EventRegister]
+        internal static void SetPaletta(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
         {
             List<Color32> PlayerColors = new List<Color32>();
             List<Color32> ShadowColors = new List<Color32>();

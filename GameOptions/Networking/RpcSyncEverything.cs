@@ -2,6 +2,8 @@
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Teams;
+using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using Hazel;
 using InnerNet;
 using System;
@@ -14,6 +16,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncEverything : SimpleRpc
     {
+        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
         public static bool Synced;
         public override void Write(MessageWriter messageWriter)
         {
@@ -40,28 +43,35 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(MessageReader messageReader)
         {
-            Synced = false;
-            int optionCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < optionCount; i++)
+            try
             {
-                IModdedOption moddedOption = messageReader.ReadOption();
-                moddedOption.Deserialize(messageReader);
-            }
+                Synced = false;
+                int optionCount = messageReader.ReadPackedInt32();
+                for (int i = 0; i < optionCount; i++)
+                {
+                    IModdedOption moddedOption = messageReader.ReadOption();
+                    moddedOption.Deserialize(messageReader);
+                }
 
-            RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
-            RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
+                RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
+                RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
 
-            int roleCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < roleCount; i++)
-            {
-                rpcSyncRole.Handle(messageReader);
+                int roleCount = messageReader.ReadPackedInt32();
+                for (int i = 0; i < roleCount; i++)
+                {
+                    rpcSyncRole.Handle(messageReader);
+                }
+                int teamCount = messageReader.ReadPackedInt32();
+                for (int i = 0; i < teamCount; i++)
+                {
+                    rpcSyncTeam.Handle(messageReader);
+                }
+                Synced = true;
             }
-            int teamCount = messageReader.ReadPackedInt32();
-            for (int i = 0; i < teamCount; i++)
+            catch (Exception ex)
             {
-                rpcSyncTeam.Handle(messageReader);
+                HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
             }
-            Synced = true;
         }
     }
 }

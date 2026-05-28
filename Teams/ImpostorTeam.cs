@@ -20,7 +20,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName => StringNames.Impostor;
         public override StringNames PluralName { get; } = FungleTranslation.ImpostorsText;
         public override string VictoryText => FungleTranslation.ImpostorGameOver.GetString();
-        public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<ImpostorsByKill>();
+        public override BaseGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<ImpostorsByKill>();
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);

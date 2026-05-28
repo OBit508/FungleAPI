@@ -9,6 +9,7 @@ using FungleAPI.Event;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
+using FungleAPI.GModes;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.Player.Patches;
@@ -75,6 +76,11 @@ namespace FungleAPI.PluginLoading
                     plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
                 }
             }
+            IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
+            if (plugin != FungleAPIPlugin.Plugin)
+            {
+                fungleBasePlugin?.LoadTabs(plugin);
+            }
             if (plugin.Settings == null)
             {
                 plugin.Settings = new ModSettings();
@@ -86,11 +92,6 @@ namespace FungleAPI.PluginLoading
             if (plugin.Cosmetics == null)
             {
                 plugin.Cosmetics = new ModCosmetics();
-            }
-            IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
-            if (plugin != FungleAPIPlugin.Plugin)
-            {
-                fungleBasePlugin?.LoadTabs(plugin);
             }
             fungleBasePlugin?.FullyLoaded();
         }
@@ -122,9 +123,14 @@ namespace FungleAPI.PluginLoading
                 CustomRoleManager.RegisterRole(type, plugin);
                 return;
             }
-            else if (typeof(CustomGameOver).IsAssignableFrom(type))
+            else if (typeof(BaseGameOver).IsAssignableFrom(type))
             {
                 GameOverManager.RegisterGameOver(type, plugin);
+                return;
+            }
+            else if (typeof(BaseGameMode).IsAssignableFrom(type))
+            {
+                GameModeManager.RegisterGameMode(type, plugin);
                 return;
             }
             else if (typeof(ModdedTeam).IsAssignableFrom(type))

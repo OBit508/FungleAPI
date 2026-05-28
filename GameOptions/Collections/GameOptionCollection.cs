@@ -71,7 +71,7 @@ namespace FungleAPI.GameOptions.Collections
                         int gameOptionVersion = binaryReader.ReadInt32();
                         if (gameOptionVersion < GameOptionVersion)
                         {
-                            FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Role Option Collection from {FilePath} founded, loading and saving default.");
+                            FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Game Option Collection from {FilePath} founded, loading and saving default.");
                             SetAsDefault();
                             return;
                         }

@@ -12,5 +12,9 @@ namespace FungleAPI.GModes.Logics
     {
         public LRoleSelection(GameManager gameManager) : base(gameManager) { }
         public LRoleSelection(IntPtr intPtr) : base(intPtr) { }
+        public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
+        {
+            GameModeManager.GetCurrentGameMode().OnPlayerDeath(player, assignGhostRole);
+        }
     }
 }

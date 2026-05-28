@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using FungleAPI.Assets.Late;
+using System.Collections.Generic;
 
 namespace FungleAPI.Translation
 {
@@ -42,6 +43,10 @@ namespace FungleAPI.Translation
         public override string ToString()
         {
             return GetString();
+        }
+        public static implicit operator StringNames(Translator translator)
+        {
+            return translator.StringName;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace FungleAPI.PluginLoading
 
         public List<Type> AllTypes = new List<Type>();
         public List<LobbyTab> LobbyTabs = new List<LobbyTab>();
-        public List<CustomGameOver> GameOvers = new List<CustomGameOver>();
+        public List<BaseGameOver> GameOvers = new List<BaseGameOver>();
         public List<RpcHelper> RPCs = new List<RpcHelper>();
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
@@ -46,7 +46,7 @@ namespace FungleAPI.PluginLoading
         public ModSettings Settings;
         public ModFolderConfig FolderConfig;
 
-        public BepInMod LocalMod => BepInMod.GetMod(ModAssembly);
+        public BepInMod LocalMod;
         internal ModPlugin()
         {
         }

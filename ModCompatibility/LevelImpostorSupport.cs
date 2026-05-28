@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Event;
+using FungleAPI.Event.BelpInEx;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,9 @@ namespace FungleAPI.ModCompatibility
         public static Type LIShipStatus;
         public static PropertyInfo Instance;
         public static FieldInfo IsInit;
-        public static void Initialize()
+
+        [EventRegister]
+        public static void Initialize(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
         {
             if (IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out PluginInfo pluginInfo))
             {

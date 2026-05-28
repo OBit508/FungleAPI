@@ -12,5 +12,9 @@ namespace FungleAPI.GModes.Logics
     {
         public LGameFlow(GameManager gameManager) : base(gameManager) { }
         public LGameFlow(IntPtr intPtr) :base(intPtr) {}
+        public override void CheckEndCriteria()
+        {
+            GameModeManager.GetCurrentGameMode().CheckEndCriteria();
+        }
     }
 }

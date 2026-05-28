@@ -55,7 +55,7 @@ namespace FungleAPI.Teams
         /// <summary>
         /// Default game over
         /// </summary>
-        public abstract CustomGameOver DefaultGameOver { get; }
+        public abstract BaseGameOver DefaultGameOver { get; }
         /// <summary>
         /// Default role assigned to this team
         /// </summary>
@@ -80,6 +80,14 @@ namespace FungleAPI.Teams
         /// Default priority value for team assignment
         /// </summary>
         public virtual int DefaultPriority => 1;
+        /// <summary>
+        /// Indicates whether the team is hidden on the lobby panels
+        /// </summary>
+        public virtual bool HideInLobby => false;
+        /// <summary>
+        /// Indicates whether the team is hidden on freeplay computer
+        /// </summary>
+        public virtual bool HideInFreeplay => false;
         public virtual void Initialize(ModPlugin plugin)
         {
             if (!Initialized)

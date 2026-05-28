@@ -31,7 +31,7 @@ namespace FungleAPI.PluginLoading
 
         void LoadTabs(ModPlugin modPlugin) 
         {
-            if (modPlugin.Settings.Groups.Count > 0)
+            if (modPlugin.Settings != null)
             {
                 modPlugin.LobbyTabs.Add(new GameSettingsTab() { Plugin = modPlugin });
             }

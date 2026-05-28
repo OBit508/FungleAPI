@@ -39,15 +39,5 @@ namespace FungleAPI.Patches
                 }
             }
         }
-        [HarmonyPatch("CreatePlayer")]
-        [HarmonyPostfix]
-        public static void CreatePlayerPostfix(AmongUsClient __instance, ClientData clientData)
-        {
-            if (!__instance.AmHost || __instance.HostId == clientData.Id || ReactorSupport.ReactorAssembly != null)
-            {
-                return;
-            }
-            SyncManager.RpcSyncEverything(clientData.Id);
-        }
     }
 }

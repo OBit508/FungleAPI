@@ -3,6 +3,7 @@ using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
 using FungleAPI.Teams;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -92,9 +93,9 @@ namespace FungleAPI.Role
         /// </summary>
         public Color OutlineColor;
         /// <summary>
-        /// Role neutral game over
+        /// Call game over as neutral
         /// </summary>
-        public CustomGameOver NeutralGameOver = GameOverManager.GetGameOverInstance<NeutralGameOver>();
+        public Action<PlayerControl> CallGameOverAsNeutral;
         public RoleConfiguration(ICustomRole customRole)
         {
             CanUseVent = customRole.Team == ModdedTeamManager.Impostors;
@@ -102,11 +103,15 @@ namespace FungleAPI.Role
             UseVanillaKillButton = customRole.Team == ModdedTeamManager.Impostors;
             CanSabotage = customRole.Team == ModdedTeamManager.Impostors;
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
-            GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost.Role);
+            GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
             ShowedTeamColor = customRole.RoleColor;
-            NeutralWinText = "Victory of the " + customRole.RoleName.GetString();
+            NeutralWinText = $"{FungleTranslation.VictoryText.GetString()} " + customRole.RoleName.GetString();
             CanKill = UseVanillaKillButton;
             OutlineColor = customRole.RoleColor;
+            CallGameOverAsNeutral = delegate (PlayerControl playerControl)
+            {
+                GameManager.Instance?.RpcEndGame<NeutralGameOver, PlayerControl>(playerControl);
+            };
         }
     }
 }

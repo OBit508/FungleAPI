@@ -12,10 +12,10 @@ namespace FungleAPI.GameOver.Ends
     /// <summary>
     /// Class equivalent to the value of the GameOverReason enum
     /// </summary>
-    public class CrewmatesByVote : CustomGameOver
+    public class CrewmatesByVote : BaseGameOver
     {
         public override string WinText => FungleTranslation.CrewmateGameOver.GetString();
-        public override Color BackgroundColor { get; } = Palette.CrewmateBlue;
-        public override Color NameColor { get; } = Palette.CrewmateBlue;
+        public override Color BackgroundColor { get; set; } = Palette.CrewmateBlue;
+        public override Color NameColor { get; set; } = Palette.CrewmateBlue;
     }
 }

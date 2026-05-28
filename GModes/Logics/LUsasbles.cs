@@ -12,5 +12,9 @@ namespace FungleAPI.GModes.Logics
     {
         public LUsasbles(GameManager gameManager) : base(gameManager) { }
         public LUsasbles(IntPtr intPtr) : base(intPtr) { }
+        public override bool CanUse(IUsable usable, PlayerControl player)
+        {
+            return GameModeManager.GetCurrentGameMode().CanUse(usable, player);
+        }
     }
 }

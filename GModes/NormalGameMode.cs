@@ -1,13 +1,12 @@
-﻿using AmongUs.Data;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using FungleAPI.Extensions;
-using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
+using FungleAPI.Utilities;
 using InnerNet;
 using System;
 using System.Collections.Generic;
@@ -16,25 +15,126 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Utilities.Harmony
+namespace FungleAPI.GModes
 {
-    /// <summary>
-    /// Patch this class methods to change the API main logic easily
-    /// </summary>
-    public static class MainLogic
+    public class NormalGameMode : BaseGameMode
     {
-        public static DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole)
+        public override StringNames GameModeName => StringNames.GameTypeClassic;
+        public override bool CanUse(IUsable usable, PlayerControl player) => true;
+        public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
         {
-            return gameManager.deadBodyPrefab[impostorRole.GetCreatedDeadBody() == DeadBodyType.Viper ? 1 : 0];
+            if (AmongUsClient.Instance.AmHost && assignGhostRole)
+            {
+                RoleManager.Instance.AssignRoleOnDeath(player, true);
+            }
         }
-        public static MapOptions GetMapOptions()
+        public override int GetVotingTime()
+        {
+            if (GameOptions.TryGetInt(Int32OptionNames.VotingTime, out int votingTime))
+            {
+                return votingTime;
+            }
+            return 120;
+        }
+        public override int GetDiscussionTime()
+        {
+            if (GameOptions.TryGetInt(Int32OptionNames.DiscussionTime, out int discussionTime))
+            {
+                return discussionTime;
+            }
+            return 15;
+        }
+        public override bool GetGhostsDoTasks()
+        {
+            bool flag;
+            return GameOptions.TryGetBool(BoolOptionNames.GhostsDoTasks, out flag) && flag;
+        }
+        public override float GetKillCooldown()
+        {
+            float num;
+            if (!GameOptions.TryGetFloat(FloatOptionNames.KillCooldown, out num))
+            {
+                return 1f;
+            }
+            return num;
+        }
+        public override float GetKillDistance()
+        {
+            float[] floatArray = GameOptions.GetFloatArray(FloatArrayOptionNames.KillDistances);
+            int @int = GameOptions.GetInt(Int32OptionNames.KillDistance);
+            return floatArray[Mathf.Clamp(@int, 0, floatArray.Length - 1)];
+        }
+        public override float GetPlayerSpeedMod(PlayerControl pc)
+        {
+            float num;
+            if (!GameOptions.TryGetFloat(FloatOptionNames.PlayerSpeedMod, out num))
+            {
+                return 1f;
+            }
+            return num;
+        }
+        public override bool GetConfirmImpostor()
+        {
+            bool flag;
+            return GameOptions.TryGetBool(BoolOptionNames.ConfirmImpostor, out flag) && flag;
+        }
+        public override int GetEmergencyCooldown()
+        {
+            int num;
+            if (!GameOptions.TryGetInt(Int32OptionNames.EmergencyCooldown, out num))
+            {
+                return 1;
+            }
+            return num;
+        }
+        public override int GetNumEmergencyMeetings()
+        {
+            int num;
+            if (!GameOptions.TryGetInt(Int32OptionNames.NumEmergencyMeetings, out num))
+            {
+                return 0;
+            }
+            return num;
+        }
+        public override bool GetVisualTasks()
+        {
+            bool flag;
+            return GameOptions.TryGetBool(BoolOptionNames.VisualTasks, out flag) && flag;
+        }
+        public override bool GetAnonymousVotes()
+        {
+            bool flag;
+            return GameOptions.TryGetBool(BoolOptionNames.AnonymousVotes, out flag) && flag;
+        }
+        public override TaskBarMode GetTaskBarMode()
+        {
+            int num;
+            if (!GameOptions.TryGetInt(Int32OptionNames.TaskBarMode, out num))
+            {
+                return TaskBarMode.Normal;
+            }
+            return (TaskBarMode)num;
+        }
+        public override float GetEngineerCooldown()
+        {
+            return Manager.LogicOptions.GetRoleFloat(FloatOptionNames.EngineerCooldown);
+        }
+        public override float GetEngineerInVentTime()
+        {
+            return Manager.LogicOptions.GetRoleFloat(FloatOptionNames.EngineerInVentMaxTime);
+        }
+        public override MapOptions GetMapOptions()
         {
             return new MapOptions
             {
                 Mode = (PlayerControl.LocalPlayer.Data.Role.CanSabotage() && !MeetingHud.Instance) ? MapOptions.Modes.Sabotage : MapOptions.Modes.Normal
             };
         }
-        public static float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
+        public override DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole)
+        {
+            return gameManager.deadBodyPrefab[impostorRole.GetCreatedDeadBody() == DeadBodyType.Viper ? 1 : 0];
+        }
+        public override float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
             float num = float.MaxValue;
             PlayerControl @object = pc.Object;
@@ -59,9 +159,9 @@ namespace FungleAPI.Utilities.Harmony
             }
             return num;
         }
-        public static void SelectRoles(RoleManager roleManager)
+        public override void SelectRoles(RoleManager roleManager)
         {
-            if (GameManager.Instance != null && GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal logicRoleSelectionNormal)
+            if (Manager.LogicRoleSelection is LogicRoleSelectionNormal logicRoleSelectionNormal)
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 Il2CppSystem.Collections.Generic.List<ClientData> list = new Il2CppSystem.Collections.Generic.List<ClientData>();
@@ -83,7 +183,7 @@ namespace FungleAPI.Utilities.Harmony
                 }
             }
         }
-        public static void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)
+        public void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)
         {
             int rolesAssigned = 0;
             IEnumerable<RoleBehaviour> availableRoles = RoleManager.Instance.AllRoles.ToSystemList().Where(role => role.GetTeam() == team && !RoleManager.IsGhostRole(role.Role));
@@ -92,7 +192,7 @@ namespace FungleAPI.Utilities.Harmony
 
             Il2CppSystem.Collections.Generic.List<RoleTypes> roleList = new Il2CppSystem.Collections.Generic.List<RoleTypes>();
 
-            IEnumerable<RoleManager.RoleAssignmentData> guaranteedRoles = availableRoles.Where(role => roleOptions.GetChancePerGame(role.Role) == 100).Select(role => new RoleManager.RoleAssignmentData( role, roleOptions.GetNumPerGame(role.Role), 100));
+            IEnumerable<RoleManager.RoleAssignmentData> guaranteedRoles = availableRoles.Where(role => roleOptions.GetChancePerGame(role.Role) == 100).Select(role => new RoleManager.RoleAssignmentData(role, roleOptions.GetNumPerGame(role.Role), 100));
 
             foreach (RoleManager.RoleAssignmentData assignment in guaranteedRoles)
             {
@@ -104,8 +204,7 @@ namespace FungleAPI.Utilities.Harmony
 
             logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
 
-            List<RoleManager.RoleAssignmentData> randomRoles = availableRoles.Select(role => new { Role = role, Chance = roleOptions.GetChancePerGame(role.Role)})
-                    .Where(x => x.Chance > 0 && x.Chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.Role, roleOptions.GetNumPerGame(x.Role.Role), x.Chance)).ToList();
+            List<RoleManager.RoleAssignmentData> randomRoles = availableRoles.Select(role => new { Role = role, Chance = roleOptions.GetChancePerGame(role.Role) }).Where(x => x.Chance > 0 && x.Chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.Role, roleOptions.GetNumPerGame(x.Role.Role), x.Chance)).ToList();
 
             roleList.Clear();
 
@@ -128,77 +227,70 @@ namespace FungleAPI.Utilities.Harmony
             }
             logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
         }
-        public static void AssignTasks(ShipStatus shipStatus)
+        public override void AssignTasks(ShipStatus shipStatus)
         {
             shipStatus.numScans = 0;
             shipStatus.AssignTaskIndexes();
-            IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-            Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> allPlayers = GameData.Instance.AllPlayers;
-            Il2CppSystem.Collections.Generic.HashSet<TaskTypes> hashSet = new Il2CppSystem.Collections.Generic.HashSet<TaskTypes>();
-            Il2CppSystem.Collections.Generic.List<byte> list = new Il2CppSystem.Collections.Generic.List<byte>(10);
-            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> list2 = shipStatus.CommonTasks.ToList().ToIl2CppList();
-            list2.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle();
-            list2.ToSystemList().ForEach(delegate (NormalPlayerTask t)
+
+            IGameOptions options = GameOptionsManager.Instance.CurrentGameOptions;
+            Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = GameData.Instance.AllPlayers;
+            Il2CppSystem.Collections.Generic.HashSet<TaskTypes> used = new Il2CppSystem.Collections.Generic.HashSet<TaskTypes>();
+            Il2CppSystem.Collections.Generic.List<byte> tasks = new Il2CppSystem.Collections.Generic.List<byte>(10);
+            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> common = shipStatus.CommonTasks.ToList().ToIl2CppList();
+            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> longTasks = shipStatus.LongTasks.ToList().ToIl2CppList();
+            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> shortTasks = shipStatus.ShortTasks.ToList().ToIl2CppList();
+
+            common.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle();
+            longTasks.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle(0);
+            shortTasks.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle(0);
+            common.ToSystemList().ForEach(t => t.Length = NormalPlayerTask.TaskLength.Common);
+            longTasks.ToSystemList().ForEach(t => t.Length = NormalPlayerTask.TaskLength.Long);
+            shortTasks.ToSystemList().ForEach(t => t.Length = NormalPlayerTask.TaskLength.Short);
+
+            int commonCount = options.GetInt(Int32OptionNames.NumCommonTasks);
+            int longCount = options.GetInt(Int32OptionNames.NumLongTasks);
+            int shortCount = options.GetInt(Int32OptionNames.NumShortTasks);
+
+            if (commonCount + longCount + shortCount == 0)
             {
-                t.Length = NormalPlayerTask.TaskLength.Common;
-            });
-            int num = 0;
-            int @int = currentGameOptions.GetInt(Int32OptionNames.NumCommonTasks);
-            shipStatus.AddTasksFromList(ref num, @int, list, hashSet, list2);
-            for (int i = 0; i < @int; i++)
-            {
-                if (list2.Count == 0)
-                {
-                    Debug.LogWarning("Not enough common tasks");
-                    break;
-                }
-                int index = list2.ToArray().RandomIdx<NormalPlayerTask>();
-                list.Add((byte)list2[index].Index);
-                list2.RemoveAt(index);
+                shortCount = 1;
             }
-            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> list3 = shipStatus.LongTasks.ToList<NormalPlayerTask>().ToIl2CppList();
-            list3.ToSystemList().ForEach(delegate (NormalPlayerTask t)
+
+            int commonIdx = 0;
+            int longIdx = 0;
+            int shortIdx = 0;
+
+            shipStatus.AddTasksFromList(ref commonIdx, commonCount, tasks, used, common);
+
+            for (int i = 0; i < commonCount && common.Count > 0; i++)
             {
-                t.Length = NormalPlayerTask.TaskLength.Long;
-            });
-            list3.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle(0);
-            Il2CppSystem.Collections.Generic.List<NormalPlayerTask> list4 = shipStatus.ShortTasks.ToList<NormalPlayerTask>().ToIl2CppList();
-            list4.ToSystemList().ForEach(delegate (NormalPlayerTask t)
-            {
-                t.Length = NormalPlayerTask.TaskLength.Short;
-            });
-            list4.SafeCast<Il2CppSystem.Collections.Generic.IList<NormalPlayerTask>>().Shuffle(0);
-            int num2 = 0;
-            int num3 = 0;
-            int num4 = currentGameOptions.GetInt(Int32OptionNames.NumShortTasks);
-            int int2 = currentGameOptions.GetInt(Int32OptionNames.NumCommonTasks);
-            int int3 = currentGameOptions.GetInt(Int32OptionNames.NumLongTasks);
-            if (int2 + int3 + num4 == 0)
-            {
-                num4 = 1;
+                int idx = common.ToArray().RandomIdx();
+                tasks.Add((byte)common[idx].Index);
+                common.RemoveAt(idx);
             }
-            byte b = 0;
-            while ((int)b < allPlayers.Count)
+
+            for (byte i = 0; i < players.Count; i++)
             {
-                hashSet.Clear();
-                list.RemoveRange(int2, list.Count - int2);
-                shipStatus.AddTasksFromList(ref num2, int3, list, hashSet, list3);
-                shipStatus.AddTasksFromList(ref num3, num4, list, hashSet, list4);
-                NetworkedPlayerInfo networkedPlayerInfo = allPlayers[(int)b];
-                if (networkedPlayerInfo.Object && !networkedPlayerInfo.Object.GetComponent<DummyBehaviour>().enabled)
+                used.Clear();
+                tasks.RemoveRange(commonCount, tasks.Count - commonCount);
+
+                shipStatus.AddTasksFromList(ref longIdx, longCount, tasks, used, longTasks);
+                shipStatus.AddTasksFromList(ref shortIdx, shortCount, tasks, used, shortTasks);
+
+                NetworkedPlayerInfo player = players[i];
+                if (player.Object && !player.Object.GetComponent<DummyBehaviour>().enabled)
                 {
-                    byte[] taskTypeIds = list.ToArray();
-                    networkedPlayerInfo.RpcSetTasks(taskTypeIds);
+                    player.RpcSetTasks((byte[])tasks.ToArray());
                 }
-                b += 1;
             }
         }
-        public static void CheckEndCriteria(GameManager gameManager)
+        public override void CheckEndCriteria()
         {
             if (!GameData.Instance)
             {
                 return;
             }
+
             ISystemType systemType;
             if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.LifeSupp, out systemType))
             {
@@ -207,13 +299,14 @@ namespace FungleAPI.Utilities.Harmony
                 {
                     if (!TutorialManager.InstanceExists)
                     {
-                        gameManager.RpcEndGame(GameOverReason.ImpostorsBySabotage, !DataManager.Player.Ads.HasPurchasedAdRemoval);
+                        Manager.RpcEndGame<ImpostorsBySabotage>();
                         return;
                     }
                     HudManager.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverSabotage));
                     lifeSuppSystemType.Countdown = 10000f;
                 }
             }
+
             foreach (ISystemType systemType2 in ShipStatus.Instance.Systems.Values)
             {
                 ICriticalSabotage criticalSabotage = systemType2.SafeCast<ICriticalSabotage>();
@@ -221,17 +314,19 @@ namespace FungleAPI.Utilities.Harmony
                 {
                     if (!TutorialManager.InstanceExists)
                     {
-                        gameManager.RpcEndGame(GameOverReason.ImpostorsBySabotage, !DataManager.Player.Ads.HasPurchasedAdRemoval);
+                        Manager.RpcEndGame<ImpostorsBySabotage>();
                         return;
                     }
                     HudManager.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverSabotage));
                     criticalSabotage.ClearSabotage();
                 }
             }
+
             bool onlyCrewmates = true;
             Dictionary<ModdedTeam, int> independentTeams = new Dictionary<ModdedTeam, int>();
             List<PlayerControl> neutralKillerCount = new List<PlayerControl>();
             int crewmateCount = 0;
+
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
                 if (!player.Data.IsDead)
@@ -266,6 +361,7 @@ namespace FungleAPI.Utilities.Harmony
                     }
                 }
             }
+
             if (!onlyCrewmates && TutorialManager.InstanceExists || !TutorialManager.InstanceExists)
             {
                 if (independentTeams.Count <= 0)
@@ -277,34 +373,35 @@ namespace FungleAPI.Utilities.Harmony
                             if (TutorialManager.InstanceExists)
                             {
                                 DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorDead));
-                                gameManager.ReviveEveryoneFreeplay();
+                                Manager.ReviveEveryoneFreeplay();
                             }
                             else
                             {
-                                gameManager.RpcEndGame<ImpostorDisconnect>();
+                                Manager.RpcEndGame<ImpostorDisconnect>();
                             }
                             return;
                         }
                         if (TutorialManager.InstanceExists)
                         {
                             DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorDead));
-                            gameManager.ReviveEveryoneFreeplay();
+                            Manager.ReviveEveryoneFreeplay();
                         }
                         else
                         {
-                            gameManager.RpcEndGame<CrewmatesByVote>();
+                            Manager.RpcEndGame<CrewmatesByVote>();
                         }
                     }
                     else if (neutralKillerCount.Count == 1 && crewmateCount <= 1)
                     {
-                        NetworkedPlayerInfo data = neutralKillerCount[0].Data;
-                        ICustomRole customRole = data.Role.CustomRole();
-                        if (customRole != null && customRole.Configuration.NeutralGameOver != null)
+                        PlayerControl winner = neutralKillerCount[0];
+                        ICustomRole customRole = winner.Data.Role.CustomRole();
+                        if (customRole != null && customRole.Configuration.CallGameOverAsNeutral != null)
                         {
-                            gameManager.RpcEndGame(customRole.Configuration.NeutralGameOver);
+                            customRole.Configuration.CallGameOverAsNeutral(winner);
                             return;
                         }
-                        gameManager.RpcEndGame(customRole.Configuration.NeutralGameOver);
+
+                        GameManager.Instance?.RpcEndGame<NeutralGameOver, PlayerControl>(winner);
                     }
                 }
                 else if (independentTeams.Count == 1)
@@ -317,20 +414,20 @@ namespace FungleAPI.Utilities.Harmony
                             if (TutorialManager.InstanceExists)
                             {
                                 DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorKills));
-                                gameManager.ReviveEveryoneFreeplay();
+                                Manager.ReviveEveryoneFreeplay();
                             }
                             else
                             {
                                 switch (GameData.LastDeathReason)
                                 {
                                     case DeathReason.Exile:
-                                        gameManager.RpcEndGame<ImpostorsByVote>();
+                                        Manager.RpcEndGame<ImpostorsByVote>();
                                         break;
                                     case DeathReason.Kill:
-                                        gameManager.RpcEndGame<ImpostorsByKill>();
+                                        Manager.RpcEndGame<ImpostorsByKill>();
                                         break;
                                     default:
-                                        gameManager.RpcEndGame<CrewmateDisconnect>();
+                                        Manager.RpcEndGame<CrewmateDisconnect>();
                                         break;
                                 }
                             }
@@ -342,11 +439,12 @@ namespace FungleAPI.Utilities.Harmony
                         }
                         else
                         {
-                            gameManager.RpcEndGame(pair.Key.DefaultGameOver);
+                            Manager.RpcEndGame(pair.Key.DefaultGameOver);
                         }
                     }
                 }
             }
+
             if (onlyCrewmates && TutorialManager.InstanceExists || !TutorialManager.InstanceExists)
             {
                 if (TutorialManager.InstanceExists)
@@ -360,7 +458,7 @@ namespace FungleAPI.Utilities.Harmony
                 }
                 else
                 {
-                    gameManager.CheckEndGameViaTasks();
+                    Manager.CheckEndGameViaTasks();
                 }
             }
         }

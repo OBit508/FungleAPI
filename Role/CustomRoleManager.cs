@@ -30,10 +30,26 @@ namespace FungleAPI.Role
     {
         internal static int LastRoleId = 19;
         internal static List<CachedWaitingRole> WaitingToRegister = new List<CachedWaitingRole>();
+        internal static Dictionary<Type, RoleTypes> Types = new Dictionary<Type, RoleTypes>() 
+        {
+            { typeof(CrewmateRole), RoleTypes.Crewmate },
+            { typeof(ImpostorRole), RoleTypes.Impostor },
+            { typeof(ScientistRole), RoleTypes.Scientist },
+            { typeof(GuardianAngelRole), RoleTypes.GuardianAngel },
+            { typeof(EngineerRole), RoleTypes.Engineer },
+            { typeof(ShapeshifterRole), RoleTypes.Shapeshifter },
+            { typeof(CrewmateGhostRole), RoleTypes.CrewmateGhost },
+            { typeof(ImpostorGhostRole), RoleTypes.ImpostorGhost },
+            { typeof(NoisemakerRole), RoleTypes.Noisemaker },
+            { typeof(PhantomRole), RoleTypes.Phantom },
+            { typeof(TrackerRole), RoleTypes.Tracker },
+            { typeof(ViperRole), RoleTypes.Viper },
+            { typeof(DetectiveRole), RoleTypes.Detective },
+        };
         /// <summary>
         /// Returns the NeutralGhost role created by the API
         /// </summary>
-        public static RoleBehaviour NeutralGhost => GetRole<NeutralGhost>();
+        public static RoleTypes NeutralGhost => GetRoleType<NeutralGhost>();
         /// <summary>
         /// Returns all game roles
         /// </summary>
@@ -78,7 +94,7 @@ namespace FungleAPI.Role
         /// </summary>
         public static RoleBehaviour GetRole(Type type)
         {
-            return CustomRoleManager.AllRoles.FirstOrDefault(r => r.GetType() == type);
+            return AllRoles.FirstOrDefault(r => r.GetType() == type);
         }
         /// <summary>
         /// Returns a role instance
@@ -92,7 +108,11 @@ namespace FungleAPI.Role
         /// </summary>
         public static RoleTypes GetRoleType(Type type)
         {
-            return GetRole(type).Role;
+            if (Types.TryGetValue(type, out RoleTypes roleTypes))
+            {
+                return roleTypes;
+            }
+            return default;
         }
         /// <summary>
         /// Returns a role type
@@ -128,7 +148,9 @@ namespace FungleAPI.Role
             {
                 throw new Exception("You can't register a Role when the RoleManager already loadded");
             }
-            WaitingToRegister.Add(new CachedWaitingRole((RoleTypes)LastRoleId, type, modPlugin));
+            RoleTypes roleTypes = (RoleTypes)LastRoleId;
+            WaitingToRegister.Add(new CachedWaitingRole(roleTypes, type, modPlugin));
+            Types.Add(type, roleTypes);
             LastRoleId++;
             ClassInjector.RegisterTypeInIl2Cpp(type);
             ICustomRole.Save.Add(type, new ChangeableValue<RoleOptionCollection>(new RoleOptionCollection()));

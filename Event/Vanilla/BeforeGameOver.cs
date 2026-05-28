@@ -10,8 +10,8 @@ namespace FungleAPI.Event.Vanilla
 {
     public class BeforeGameOver : CancelableEvent
     {
-        public readonly CustomGameOver GameOver;
-        public BeforeGameOver(CustomGameOver gameOver)
+        public readonly BaseGameOver GameOver;
+        public BeforeGameOver(BaseGameOver gameOver)
         {
             GameOver = gameOver;
         }

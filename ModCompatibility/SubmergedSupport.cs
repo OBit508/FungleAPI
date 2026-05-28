@@ -1,5 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Event;
+using FungleAPI.Event.BelpInEx;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -17,7 +19,9 @@ namespace FungleAPI.ModCompatibility
     {
         public static Assembly SubmergedAssembly;
         public static Type SubmarineStatus;
-        public static void Initialize()
+
+        [EventRegister]
+        public static void Initialize(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
         {
             if (IL2CPPChainloader.Instance.Plugins.TryGetValue("Submerged", out PluginInfo pluginInfo))
             {

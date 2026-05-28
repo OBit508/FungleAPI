@@ -10,8 +10,8 @@ namespace FungleAPI.Event.Vanilla
 {
     public class AfterGameOver : FungleEvent
     {
-        public readonly CustomGameOver GameOver;
-        public AfterGameOver(CustomGameOver gameOver)
+        public readonly BaseGameOver GameOver;
+        public AfterGameOver(BaseGameOver gameOver)
         {
             GameOver = gameOver;
         }

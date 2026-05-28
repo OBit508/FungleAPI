@@ -13,7 +13,7 @@ namespace FungleAPI.GameOptions.Patches
     {
         public static bool Prefix(GamePresetsTab __instance)
         {
-            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin) return true;
+            if (GameSettingMenuPatch.pluginChanger == null || GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin || GameManager.Instance.IsHideAndSeek()) return true;
 
             RulesPresets rulesPresets = (RulesPresets)GameSettingMenuPatch.pluginChanger.CurrentPlugin.RulePreset.Value;
 

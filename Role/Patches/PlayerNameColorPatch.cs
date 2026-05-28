@@ -10,19 +10,16 @@ using FungleAPI.Role.Utilities;
 
 namespace FungleAPI.Role.Patches
 {
-    [HarmonyPatch(typeof(PlayerNameColor), "Get", new Type[] { typeof(RoleBehaviour) })]
+    [HarmonyPatch(typeof(PlayerNameColor), nameof(PlayerNameColor.Get), new Type[] { typeof(RoleBehaviour) })]
     internal static class PlayerNameColorPatch
     {
-        public static bool Prefix([HarmonyArgument(0)] RoleBehaviour otherPlayerRole, ref Color __result)
+        public static bool Prefix(RoleBehaviour otherPlayerRole, ref Color __result)
         {
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
-            if (role.GetTeam() != ModdedTeamManager.Crewmates && role.GetTeam() != ModdedTeamManager.Impostors && role.GetTeam() == otherPlayerRole.GetTeam() && role.GetTeam().KnowMembers)
+            ModdedTeam team = role.GetTeam();
+
+            if (team == otherPlayerRole.GetTeam() && team.KnowMembers || otherPlayerRole.Player != null && otherPlayerRole.Player.AmOwner)
             {
-                if (otherPlayerRole.CustomRole() != null)
-                {
-                    __result = otherPlayerRole.CustomRole().Configuration.ShowedTeamColor;
-                    return false;
-                }
                 __result = otherPlayerRole.NameColor;
                 return false;
             }

@@ -25,7 +25,8 @@ namespace FungleAPI.GameOptions
         {
             if (!initialized)
             {
-                foreach (Type t in GetType().GetNestedTypes())
+                Type type = GetType();
+                foreach (Type t in type.GetNestedTypes())
                 {
                     if (typeof(SettingsGroup).IsAssignableFrom(t))
                     {
@@ -35,6 +36,7 @@ namespace FungleAPI.GameOptions
                     }
                 }
                 OptionCollection = new GameOptionCollection(this);
+                OptionCollection.Initialize(type, modPlugin);
                 initialized = true;
             }
         }

@@ -2,11 +2,12 @@
 using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
+using FungleAPI.GModes;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
-using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
 using InnerNet;
 using MonoMod.Cil;
@@ -51,26 +52,10 @@ namespace FungleAPI.Role.Patches
         }
         [HarmonyPatch("SetRole")]
         [HarmonyPrefix]
-        public static bool SetRolePrefix(RoleManager __instance, [HarmonyArgument(0)] PlayerControl targetPlayer, [HarmonyArgument(1)] RoleTypes roleType)
+        public static bool SetRolePrefix(RoleManager __instance, PlayerControl targetPlayer, RoleTypes roleType)
         {
-            RoleBehaviour role = targetPlayer.Data.Role;
-            if (role != null)
-            {
-                targetPlayer.GetComponent<PlayerHelper>().OldRole = __instance.GetRole(role.Role);
-                if (role.CanUseKillButton)
-                {
-                    RoleConfigManager.KillConfig?.ResetButton();
-                }
-                if (role.CanSabotage())
-                {
-                    RoleConfigManager.SabotageConfig?.ResetButton?.Invoke();
-                }
-                if (role.CanVent)
-                {
-                    RoleConfigManager.VentConfig?.ResetButton?.Invoke();
-                }
-                RoleConfigManager.ReportConfig?.ResetButton?.Invoke();
-            }
+            if (EventManager.CallEvent(new BeforeSetRoleEvent(targetPlayer, roleType)).Cancelled) return false;
+
             if (!targetPlayer)
             {
                 return false;
@@ -83,8 +68,35 @@ namespace FungleAPI.Role.Patches
             }
             if (data.Role)
             {
-                data.Role.Deinitialize(targetPlayer);
-                GameObject.Destroy(data.Role.gameObject);
+                RoleBehaviour role = data.Role;
+
+                if (RoleManager.IsGhostRole(role.Role))
+                {
+                    targetPlayer.GetComponent<PlayerHelper>().LastDeadRole = role.Role;
+                }
+                else
+                {
+                    targetPlayer.GetComponent<PlayerHelper>().LastAliveRole = role.Role;
+                }
+
+                if (role != null)
+                {
+                    if (role.CanUseKillButton)
+                    {
+                        RoleConfigManager.KillConfig?.ResetButton();
+                    }
+                    if (role.CanSabotage())
+                    {
+                        RoleConfigManager.SabotageConfig?.ResetButton?.Invoke();
+                    }
+                    if (role.CanVent)
+                    {
+                        RoleConfigManager.VentConfig?.ResetButton?.Invoke();
+                    }
+                    RoleConfigManager.ReportConfig?.ResetButton?.Invoke();
+                }
+                role.Deinitialize(targetPlayer);
+                GameObject.Destroy(role.gameObject);
             }
             RoleBehaviour roleBehaviour = GameObject.Instantiate<RoleBehaviour>(__instance.AllRoles.FirstOrDefault(r => r.Role == roleType), data.gameObject.transform);
             targetPlayer.Data.Role = roleBehaviour;
@@ -118,6 +130,8 @@ namespace FungleAPI.Role.Patches
                 RoleConfigManager.VentConfig.InitializeButton?.Invoke();
             }
             RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
+
+            EventManager.CallEvent(new AfterSetRoleEvent(targetPlayer, roleType));
             return false;
         }
         [HarmonyPrefix]
@@ -141,12 +155,8 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)
         {
-            if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
-            {
-                MainLogic.SelectRoles(__instance);
-                return false;
-            }
-            return true;
+            GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
+            return false;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace FungleAPI.GameOptions.Lobby
             float num = 1.44f;
             foreach (ModdedTeam group in Plugin.Teams)
             {
-                if (group != ModdedTeamManager.Crewmates)
+                if (!group.HideInLobby)
                 {
                     CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(lobbyViewSettingsPane.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(group.TeamName, 61);
@@ -83,7 +83,7 @@ namespace FungleAPI.GameOptions.Lobby
             float num = 2;
             foreach (ModdedTeam team in Plugin.Teams)
             {
-                if (team != ModdedTeamManager.Crewmates)
+                if (!team.HideInLobby)
                 {
                     CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(gameOptionsMenu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.settingsContainer);
                     categoryHeaderMasked.SetHeader(team.TeamName, 20);

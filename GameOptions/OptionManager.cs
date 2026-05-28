@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions
 {
@@ -74,7 +75,19 @@ namespace FungleAPI.GameOptions
 
             return moddedOptions;
         }
-
+        public static StringOption CreateEnumOption(Transform transform, StringGameSetting data, Action<StringOption> onChange)
+        {
+            StringOption stringOption = GameObject.Instantiate(PrefabUtils.FindPrefab<StringOption>(), transform);
+            stringOption.SetUpFromData(data, 20);
+            stringOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            {
+                onChange(stringOption);
+            });
+            stringOption.Title = data.Title;
+            stringOption.Values = data.Values;
+            FixOption(stringOption);
+            return stringOption;
+        }
         public static NumberOption CreateNumberOption(Transform transform, FloatGameSetting data, Action<NumberOption> onChange)
         {
             NumberOption option = GameObject.Instantiate(PrefabUtils.FindPrefab<NumberOption>(), Vector3.zero, Quaternion.identity, transform);

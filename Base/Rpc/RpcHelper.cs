@@ -21,7 +21,11 @@ namespace FungleAPI.Base.Rpc
         /// The Rpc identifier.
         /// </summary>
         public int RpcId;
+        public virtual bool CanAcceptRPCsWithoutInnerNetObject => false;
         internal virtual void __handle(InnerNetObject innerNetObject, MessageReader messageReader)
+        {
+        }
+        internal virtual void __handle(MessageReader messageReader)
         {
         }
     }
@@ -56,6 +60,10 @@ namespace FungleAPI.Base.Rpc
             {
                 FungleAPIPlugin.Instance.Log.LogError(GetType().Name + "-Rpc is trying to handle with the wrong InnerNetObject");
             }
+        }
+        internal override void __handle(MessageReader messageReader)
+        {
+            Handle(messageReader);
         }
     }
 }

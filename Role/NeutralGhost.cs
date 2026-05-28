@@ -20,17 +20,7 @@ namespace FungleAPI.Role
 {
     public class NeutralGhost : CrewmateGhostRole, ICustomRole
     {
-        public RoleBehaviour OldRole 
-        {
-            get
-            {
-                if (Player != null)
-                {
-                    return Player.GetComponent<PlayerHelper>().OldRole;
-                }
-                return null;
-            }
-        }
+        public RoleBehaviour OldRole;
         public ModdedTeam Team
         {
             get
@@ -136,6 +126,10 @@ namespace FungleAPI.Role
                     HauntMenu = crewmateGhost.HauntMenu;
                     Ability = crewmateGhost.Ability;
                 }
+            }
+            if (Player != null)
+            {
+                OldRole = RoleManager.Instance.GetRole(Player.GetComponent<PlayerHelper>().LastAliveRole);
             }
         }
         public override bool DidWin(GameOverReason gameOverReason)

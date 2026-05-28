@@ -2,6 +2,8 @@
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Assets;
 using FungleAPI.Cosmetics;
+using FungleAPI.Event;
+using FungleAPI.Event.BelpInEx;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
@@ -34,6 +36,7 @@ namespace FungleAPI
 	{
         public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.8";
+        public const bool InDev = true;
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
@@ -52,8 +55,8 @@ namespace FungleAPI
                     ModPluginManager.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
-                    plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}]";
-                    plugin.LobbyTabs = new List<LobbyTab>() { new GameSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+                    plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}{(InDev ? "-Dev" : "")}]";
+                    plugin.LobbyTabs = new List<LobbyTab>() { new VanillaSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
                     ModPluginManager.AllPlugins.Add(plugin);
                 }
                 return plugin;
@@ -81,10 +84,23 @@ namespace FungleAPI
                     ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName, fungle.ModCredits);
                     fungle.AlmostLoaded();
                 }
-                new BepInMod(pluginInfo.Metadata.GUID, pluginInfo.Metadata.Version.Clean(), pluginInfo.Metadata.Name, assembly);
             };
             IL2CPPChainloader.Instance.Finished += () => // Chamado quando o BeplnEx termina de carregar os mods
             {
+                foreach (PluginInfo pluginInfo in IL2CPPChainloader.Instance.Plugins.Values)
+                {
+                    Assembly assembly = pluginInfo.Instance.GetType().Assembly;
+
+                    BepInMod bepInMod = new BepInMod(pluginInfo.Metadata.GUID, pluginInfo.Metadata.Version.Clean(), pluginInfo.Metadata.Name, assembly);
+
+                    ModPlugin modPlugin = ModPluginManager.GetModPlugin(assembly);
+                    if (modPlugin != null)
+                    {
+                        modPlugin.LocalMod = bepInMod;
+                        HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
+                    }
+                }
+
                 // Organiza os mods registrados por GUID
 
                 IOrderedEnumerable<ModPlugin> ordered = ModPluginManager.AllPlugins.FindAll(p => p != Plugin).OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal);
@@ -97,13 +113,7 @@ namespace FungleAPI
                     ModPluginManager.RegisterTypes(mod);
                 }
 
-                // Inicializa o suporte para alguns mods
-                ReactorSupport.Initialize();
-                LevelImpostorSupport.Initialize();
-                SubmergedSupport.Initialize();
-
-                // Carrega as cores (futuramente mais cosméticos)
-                CosmeticManager.SetPaletta();
+                EventManager.CallEvent(new FinishedPluginLoadingEvent());
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {

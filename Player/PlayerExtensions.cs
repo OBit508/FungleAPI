@@ -30,33 +30,6 @@ namespace FungleAPI.Player
         // RPCs
 
         /// <summary>
-        /// Request to the host to end the game
-        /// </summary>
-        public static void RpcRequestGameOver(this PlayerControl source, CustomGameOver customGameOver)
-        {
-            if (AmongUsClient.Instance.AmLocalHost || AmongUsClient.Instance.AmModdedHost)
-            {
-                GameManager.Instance?.RpcEndGame(customGameOver);
-                return;
-            }
-            Rpc<RpcRequestGameOver>.Instance.Send(customGameOver, source);
-        }
-        /// <summary>
-        /// Request to the host to end the game
-        /// </summary>
-        public static void RpcRequestGameOver<T>(this PlayerControl source) where T : CustomGameOver
-        {
-            source.RpcRequestGameOver(GameOverManager.GetGameOverInstance<T>());
-        }
-        /// <summary>
-        /// Request to the host to end the game
-        /// </summary>
-        public static void RpcRequestGameOver(this PlayerControl source, Type type)
-        {
-            source.RpcRequestGameOver(GameOverManager.GetGameOverInstance(type));
-        }
-
-        /// <summary>
         /// Makes the player move to the given vent
         /// </summary>
         public static void RpcMoveToVent(this PlayerControl source, VentHelper ventHelper)

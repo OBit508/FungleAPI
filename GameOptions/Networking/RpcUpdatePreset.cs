@@ -20,6 +20,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcUpdatePreset : AdvancedRpc<(RulesPresets preset, ModPlugin modPlugin)>
     {
+        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
         public override void Write(MessageWriter messageWriter, (RulesPresets preset, ModPlugin modPlugin) value)
         {
             messageWriter.Write((byte)value.preset);

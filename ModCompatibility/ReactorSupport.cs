@@ -1,6 +1,8 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Event;
+using FungleAPI.Event.BelpInEx;
 using FungleAPI.GameOptions;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -33,7 +35,9 @@ namespace FungleAPI.ModCompatibility
         public static Assembly ReactorAssembly;
         public static BasePlugin ReactorPlugin;
         public static Harmony ReactorHarmony;
-        public static void Initialize()
+
+        [EventRegister]
+        public static void Initialize(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
         {
             if (IL2CPPChainloader.Instance.Plugins.TryGetValue("gg.reactor.api", out PluginInfo pluginInfo))
             {

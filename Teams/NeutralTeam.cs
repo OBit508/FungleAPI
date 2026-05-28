@@ -19,7 +19,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName { get; } = FungleTranslation.NeutralText;
         public override StringNames PluralName { get; } = FungleTranslation.NeutralsText;
         public override string VictoryText => FungleTranslation.NeutralGameOver.GetString();
-        public override CustomGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
+        public override BaseGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
         public override uint MaxCount => 50;
     }
 }

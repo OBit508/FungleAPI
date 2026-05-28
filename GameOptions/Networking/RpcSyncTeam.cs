@@ -15,6 +15,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncTeam : AdvancedRpc<ModdedTeam>
     {
+        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
         public override void Write(MessageWriter messageWriter, ModdedTeam data)
         {
             messageWriter.WriteTeam(data);

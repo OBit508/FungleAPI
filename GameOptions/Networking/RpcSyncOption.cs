@@ -19,6 +19,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncOption : AdvancedRpc<(SyncOptionType, IModdedOption, object)>
     {
+        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
         public override void Write(MessageWriter messageWriter, (SyncOptionType, IModdedOption, object) data)
         {
             messageWriter.WriteOption(data.Item2);

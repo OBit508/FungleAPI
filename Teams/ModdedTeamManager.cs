@@ -19,15 +19,15 @@ namespace FungleAPI.Teams
         /// <summary>
         /// Gets the Crewmates team instance
         /// </summary>
-        public static ModdedTeam Crewmates => GetTeamInstance<CrewmateTeam>();
+        public static CrewmateTeam Crewmates => GetTeamInstance<CrewmateTeam>();
         /// <summary>
         /// Gets the Impostors team instance
         /// </summary>
-        public static ModdedTeam Impostors => GetTeamInstance<ImpostorTeam>();
+        public static ImpostorTeam Impostors => GetTeamInstance<ImpostorTeam>();
         /// <summary>
         /// Gets the Neutrals team instance
         /// </summary>
-        public static ModdedTeam Neutrals => GetTeamInstance<NeutralTeam>();
+        public static NeutralTeam Neutrals => GetTeamInstance<NeutralTeam>();
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>

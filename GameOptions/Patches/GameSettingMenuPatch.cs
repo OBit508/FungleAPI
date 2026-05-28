@@ -30,6 +30,8 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPostfix]
         public static void StartPostfix(GameSettingMenu __instance)
         {
+            if (GameManager.Instance.IsHideAndSeek()) return;
+
             RolesSettingMenuPatch.chanceTabPlugin = null;
 
             if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.HideNSeek && GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.SeekFools)

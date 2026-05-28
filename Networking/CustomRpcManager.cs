@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Epic.OnlineServices.RTC;
 using FungleAPI.Base.Rpc;
 using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
@@ -11,8 +6,15 @@ using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;
+using Il2CppInterop.Generator.Extensions;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using InnerNet;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using static Il2CppSystem.Globalization.CultureInfo;
 using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
@@ -25,6 +27,7 @@ namespace FungleAPI.Networking
     [HarmonyPatch]
     public static class CustomRpcManager
     {
+        internal const string RpcIdentifier = "FungleAPINonInnerNetObjectRPC";
         internal static int LastRpcId = int.MinValue;
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         internal static bool SafeModEnabled;
@@ -71,6 +74,25 @@ namespace FungleAPI.Networking
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
+        public static void SendRpc(Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        {
+            MessageWriter messageWriter = MessageWriter.Get(sendOption);
+            if (targetClientId < 0)
+            {
+                messageWriter.StartMessage(5);
+                messageWriter.Write(AmongUsClient.Instance.GameId);
+            }
+            else
+            {
+                messageWriter.StartMessage(6);
+                messageWriter.Write(AmongUsClient.Instance.GameId);
+                messageWriter.WritePacked(targetClientId);
+            }
+            messageWriter.StartMessage(2);
+            messageWriter.Write(true);
+            write(messageWriter);
+            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
+        }
         public static void RegisterRpc(Type type, ModPlugin plugin)
         {
             LastRpcId++;
@@ -89,6 +111,11 @@ namespace FungleAPI.Networking
                     FungleAPIPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
                 }
             }
+        }
+        internal static void HandleNonInnerNetObjectRpc(MessageReader messageReader)
+        {
+            RpcHelper rpc = messageReader.ReadRPC();
+            rpc.__handle(messageReader.ReadMessage());
         }
         private static bool HandleRpcPrefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
         {

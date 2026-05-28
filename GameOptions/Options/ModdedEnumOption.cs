@@ -76,18 +76,13 @@ namespace FungleAPI.GameOptions.Options
         }
         public override OptionBehaviour CreateOption(Transform parent)
         {
-            StringOption stringOption = GameObject.Instantiate(PrefabUtils.FindPrefab<StringOption>(), parent);
             StringGameSetting stringGameSetting = Data.SafeCast<StringGameSetting>();
-            stringOption.SetUpFromData(Data, 20);
-            stringOption.OnValueChanged = new Action<OptionBehaviour>(delegate
+            StringOption stringOption = OptionManager.CreateEnumOption(parent, stringGameSetting, delegate (StringOption stringOption)
             {
                 SetValue(stringOption.Value, true);
                 stringGameSetting.Index = stringOption.Value;
             });
-            stringOption.Title = stringGameSetting.Title;
-            stringOption.Values = stringGameSetting.Values;
             stringOption.Value = LocalValue;
-            OptionManager.FixOption(stringOption);
             return stringOption;
         }
         public ModdedEnumOption(StringNames optionName, TEnum defaultValue, Dictionary<TEnum, StringNames> valuesNames)

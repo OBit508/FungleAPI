@@ -12,7 +12,7 @@ namespace FungleAPI.PluginLoading
 {
     public static class FileManager
     {
-        private static string FungleAPI_Folder = Path.Combine(Application.dataPath, "FungleAPI");
+        private static string FungleAPI_Folder = Path.Combine(Application.persistentDataPath, "FungleAPI");
         public static string GetAPI_Folder()
         {
             if (!Directory.Exists(FungleAPI_Folder))

@@ -1,11 +1,11 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.GModes;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
-using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using PowerTools;
@@ -71,7 +71,7 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool CanUsePrefix(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
         {
-            __result = MainLogic.CanUseVent(__instance, pc, out canUse, out couldUse);
+            __result = GameModeManager.GetCurrentGameMode().CanUseVent(__instance, pc, out canUse, out couldUse);
             return false;
         }
         [HarmonyPatch("NearbyVents", MethodType.Getter)]
