@@ -89,7 +89,8 @@ namespace FungleAPI.Networking
                 messageWriter.WritePacked(targetClientId);
             }
             messageWriter.StartMessage(2);
-            messageWriter.Write(true);
+            messageWriter.WritePacked(5);
+            messageWriter.Write((byte)241);
             write(messageWriter);
             AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
         }

@@ -33,6 +33,7 @@ namespace FungleAPI.PluginLoading
         public ConfigEntry<byte> RulePreset;
         public bool HasRoles;
 
+        public Dictionary<int, Type> AllPriorityTypes = new Dictionary<int, Type>();
         public List<Type> AllTypes = new List<Type>();
         public List<LobbyTab> LobbyTabs = new List<LobbyTab>();
         public List<BaseGameOver> GameOvers = new List<BaseGameOver>();

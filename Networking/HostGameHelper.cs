@@ -27,7 +27,7 @@ namespace FungleAPI.Networking
             filterOpts.Serialize(msg);
             using (MD5 md5 = MD5.Create())
             {
-                msg.Write(md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join(",", BepInMod.Mods))).Take(16).ToArray());
+                msg.Write(md5.ComputeHash(Encoding.UTF8.GetBytes(string.Join(",", HandShakeManager.RequiredMods.Values))).Take(16).ToArray());
             }
             msg.EndMessage();
             __instance.SendOrDisconnect(msg);

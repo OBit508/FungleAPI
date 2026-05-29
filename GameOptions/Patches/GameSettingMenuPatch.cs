@@ -51,6 +51,7 @@ namespace FungleAPI.GameOptions.Patches
 
                 pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.ControllerSelectable[0].transform.parent);
                 pluginChanger.transform.localPosition = new Vector3(-3.36f, 1.67f, -2);
+                pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.Count > 0);
                 pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
                 {
                     foreach (UiElement uiElement in __instance.ControllerSelectable)

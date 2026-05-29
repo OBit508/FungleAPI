@@ -55,11 +55,11 @@ namespace FungleAPI.Ship
         /// </summary>
         public static Vent CreateVent(this ShipStatus shipStatus, VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
         {
-            if (type == VentType.Polus && PrefabUtils.PolusPrefab == null)
+            if (type == VentType.Polus && ShipPrefabLoader.PolusPrefab == null)
             {
                 throw new Exception("Polus ship is not loaded");
             }
-            if (type == VentType.Fungle && PrefabUtils.FunglePrefab == null)
+            if (type == VentType.Fungle && ShipPrefabLoader.FunglePrefab == null)
             {
                 throw new Exception("TheFungle ship is not loaded");
             }
@@ -67,11 +67,11 @@ namespace FungleAPI.Ship
             switch (type)
             {
                 case VentType.Skeld:
-                    prefab = PrefabUtils.SkeldPrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.SkeldPrefab.AllVents[0]; break;
                 case VentType.Polus:
-                    prefab = PrefabUtils.PolusPrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.PolusPrefab.AllVents[0]; break;
                 case VentType.Fungle:
-                    prefab = PrefabUtils.FunglePrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.FunglePrefab.AllVents[0]; break;
             }
             if (prefab == null && !VentExtensions.VentPrefabs.TryGetValue(type, out prefab))
             {

@@ -43,23 +43,53 @@ namespace FungleAPI.PluginLoading
             HashSet<Type> visited = new HashSet<Type>();
             foreach (Type type in plugin.ModAssembly.GetTypes())
             {
-                AddTypeRecursively(type, plugin.AllTypes, visited);
+                AddTypeRecursively(type, plugin, visited);
             }
+
+            plugin.AllPriorityTypes = plugin.AllPriorityTypes.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+
             EventManager.RegisterEvents(plugin);
         }
-        private static void AddTypeRecursively(Type type, List<Type> allTypes, HashSet<Type> visited)
+        private static void AddTypeRecursively(Type type, ModPlugin plugin, HashSet<Type> visited)
         {
             if (!visited.Add(type)) return;
-            allTypes.Add(type);
+
+            plugin.AllTypes.Add(type);
+
+            RegisterPriority registerPriority = type.GetCustomAttribute<RegisterPriority>();
+            if (registerPriority != null)
+            {
+                plugin.AllPriorityTypes.Add(registerPriority.Priority, type);
+            }
+
             foreach (Type nested in type.GetNestedTypes(AccessTools.all))
             {
-                AddTypeRecursively(nested, allTypes, visited);
+                AddTypeRecursively(nested, plugin, visited);
             }
         }
         public static void RegisterTypes(ModPlugin plugin)
         {
             plugin.BasePlugin.Log.LogInfo($"Registering Types on FungleAPI");
-            foreach (Type type in plugin.AllTypes)
+
+            foreach (Type type in plugin.AllPriorityTypes.Values)
+            {
+                if (type.GetCustomAttribute<FungleIgnore>() != null) continue;
+                try
+                {
+                    bool registeredInIl2cpp = false;
+                    ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
+                    if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
+                    {
+                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
+                }
+            }
+
+            foreach (Type type in plugin.AllTypes.FindAll(t => !plugin.AllPriorityTypes.Values.Contains(t)))
             {
                 if (type.GetCustomAttribute<FungleIgnore>() != null) continue;
                 try

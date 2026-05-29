@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using FungleAPI.Components;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -25,7 +26,7 @@ namespace FungleAPI.Hud.Patches
         public static void StartPostfix(HudManager __instance)
         {
             timer = 0;
-            if (ShipStatus.Instance != null)
+            if (ShipStatus.Instance != null && LevelImpostorSupport.LevelImpostorAssembly == null)
             {
                 MapBehaviour.Instance = UnityEngine.Object.Instantiate(ShipStatus.Instance.MapPrefab, __instance.transform);
                 MapBehaviour.Instance.gameObject.SetActive(false);

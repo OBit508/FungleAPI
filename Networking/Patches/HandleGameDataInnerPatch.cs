@@ -27,12 +27,20 @@ namespace FungleAPI.Networking.Patches
 
             if (messageReader.Tag == (byte)GameDataTypes.RpcFlag)
             {
-                bool isCustom = messageReader.ReadBoolean();
+                MessageReader clone = MessageReader.Get(messageReader.Buffer);
+                clone.Position = messageReader.Position;
 
-                if (!isCustom) return true;
+                clone.ReadPackedUInt32();
+                byte callId = clone.ReadByte();
 
-                CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
-                return false;
+                if (callId == 241)
+                {
+                    messageReader.ReadPackedUInt32();
+                    messageReader.ReadByte();
+
+                    CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
+                    return false;
+                }
             }
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag && ReactorSupport.ReactorAssembly == null)

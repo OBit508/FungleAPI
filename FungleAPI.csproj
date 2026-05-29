@@ -14,6 +14,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Compile Include="Attributes\RegisterPriority.cs" />
     <Compile Include="Attributes\TranslationHelper.cs" />
     <Compile Include="Attributes\FungleIgnore.cs" />
     <Compile Include="Attributes\RegisterTypeInIl2Cpp.cs" />
@@ -36,6 +37,7 @@
     <Compile Include="Event\BepInEx\FinishedPluginLoadingEvent.cs" />
     <Compile Include="Event\Vanilla\AfterSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\BeforeSetRoleEvent.cs" />
+    <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
     <Compile Include="GameOptions\Collections\GameOptionCollection.cs" />
     <Compile Include="GameOptions\ModeOptionCollection.cs" />
     <Compile Include="GModes\GameModeOptions.cs" />
@@ -121,7 +123,6 @@
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />
     <Compile Include="Networking\HandShakeManager.cs" />
     <Compile Include="Networking\HostGameHelper.cs" />
-    <Compile Include="Networking\Patches\InnerNetClientPatch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
     <Compile Include="Networking\RpcKickWithReason.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Role\RoleConfigManager.cs" />
     <Compile Include="Role\Utilities\SabotageButtonConfig.cs" />
     <Compile Include="Role\Utilities\VentButtonConfig.cs" />
+    <Compile Include="Ship\ShipPrefabLoader.cs" />
     <Compile Include="Ship\ShipType.cs" />
     <Compile Include="Ship\ShipExtensions.cs" />
     <Compile Include="Ship\VentExtensions.cs" />

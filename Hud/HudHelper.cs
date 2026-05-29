@@ -21,6 +21,7 @@ namespace FungleAPI.Hud
         internal static bool Active;
         public static Transform BottomLeft;
         public static Transform BottomRight;
+        public static bool IsActive => Active;
         /// <summary>
         /// Changes when the Hud buttons need to be updated
         /// </summary>

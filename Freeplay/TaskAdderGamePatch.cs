@@ -12,6 +12,7 @@ using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppSystem.Threading.Tasks;
 using MS.Internal.Xml.XPath;
+using Sentry.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,8 @@ namespace FungleAPI.Freeplay
                 ModFolderConfig folderConfig = plugin.FolderConfig;
                 folderConfig.Initialize(plugin);
 
+                if (folderConfig.Items.Count <= 0 && folderConfig.SubFolders.Count <= 0) continue;
+
                 TaskFolder folder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
                 folder.Text.enableAutoSizing = true;
                 folder.gameObject.SetActive(false);
@@ -83,6 +86,7 @@ namespace FungleAPI.Freeplay
                     taskFolder.SetFolderColor(folder.FolderColor);
                     Items[taskFolder] = folder.Items;
                     parent.SubFolders.Add(taskFolder);
+
                     foreach (Folder sub in folder.SubFolders)
                     {
                         PopulateFolder(sub, taskFolder);

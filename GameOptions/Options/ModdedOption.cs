@@ -32,11 +32,11 @@ namespace FungleAPI.GameOptions.Options
         public abstract OptionBehaviour CreateOption(Transform parent);
         public virtual void Initialize(PropertyInfo propertyInfo)
         {
-            OptionId = $"{propertyInfo.DeclaringType.Name}:{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
+            OptionId = $"{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
         }
         public virtual void Initialize(FieldInfo fieldInfo)
         {
-            OptionId = $"{fieldInfo.DeclaringType.Name}:{fieldInfo.Name}:{fieldInfo.DeclaringType.GetShortUniqueId()}";
+            OptionId = $"{fieldInfo.Name}:{fieldInfo.DeclaringType.GetShortUniqueId()}";
         }
     }
 }

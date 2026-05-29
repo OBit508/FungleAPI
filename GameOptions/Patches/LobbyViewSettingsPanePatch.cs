@@ -45,6 +45,8 @@ namespace FungleAPI.GameOptions.Patches
             pluginChanger.transform.localPosition = __instance.gameModeText.transform.localPosition;
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
+            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.Count > 0);
+
             UiElement buttonPrefab = GameObject.Instantiate(__instance.ControllerSelectable[3], __instance.transform);
 
             buttonPrefab.gameObject.SetActive(false);
@@ -58,7 +60,12 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.ControllerSelectable.Clear();
 
                 Tabs = plugin.LobbyTabs;
-                Tab = Tabs.First();
+
+                Tab = null;
+                if (Tabs.Count > 0)
+                {
+                    Tab = Tabs.First();
+                }
 
                 foreach (LobbyTab lobbyTab in Tabs)
                 {

@@ -60,15 +60,16 @@ namespace FungleAPI.Extensions
         /// </summary>
         public static int GetIndex<T>(this IEnumerable<T> values, T thing)
         {
-            T[] list = values.ToArray();
-            for (int i = 0; i < list.Length; i++)
+            int index = 0;
+            foreach (T value in values)
             {
-                if (list[i].Equals(thing))
+                if (EqualityComparer<T>.Default.Equals(value, thing))
                 {
-                    return i;
+                    return index;
                 }
+                index++;
             }
-            return -1;
+            return 0;
         }
     }
 }

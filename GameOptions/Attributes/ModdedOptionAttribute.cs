@@ -35,7 +35,7 @@ namespace FungleAPI.GameOptions.Attributes
         {
             ReturnedType = propertyInfo.PropertyType;
             DefaultValue = propertyInfo.GetValue(null);
-            OptionId = $"{propertyInfo.DeclaringType.Name}:{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
+            OptionId = $"{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
             TranslationHelper attributeTranslationID = propertyInfo.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {

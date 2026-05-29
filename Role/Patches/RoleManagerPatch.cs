@@ -6,8 +6,10 @@ using FungleAPI.Event.Vanilla;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GModes;
+using FungleAPI.GModes.Logics;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using InnerNet;
 using MonoMod.Cil;
@@ -155,8 +157,12 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)
         {
-            GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
-            return false;
+            if (GameManager.Instance.LogicRoleSelection.Is(out LRoleSelection _))
+            {
+                GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
+                return false;
+            }
+            return true;
         }
     }
 }

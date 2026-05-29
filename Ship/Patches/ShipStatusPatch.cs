@@ -2,7 +2,9 @@
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.GModes;
+using FungleAPI.GModes.Logics;
 using FungleAPI.Role;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -32,7 +34,9 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool BeginPrefix(ShipStatus __instance)
         {
-            if (GameManager.Instance.LogicRoleSelection is LogicRoleSelectionNormal)
+            EventManager.CallEvent(new ShipStartEvent());
+
+            if (GameManager.Instance.LogicRoleSelection.Is(out LRoleSelection _))
             {
                 GameModeManager.GetCurrentGameMode().AssignTasks(__instance);
                 PlayerControl.LocalPlayer.cosmetics.SetAsLocalPlayer();

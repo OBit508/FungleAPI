@@ -19,6 +19,7 @@ namespace FungleAPI.Components
     {
         public int CurrentIndex;
         public ModPlugin CurrentPlugin;
+        public List<ModPlugin> Plugins;
         public Action<ModPlugin> OnChange;
         public TextMeshPro Text;
         public PassiveButton RightButton;
@@ -32,7 +33,7 @@ namespace FungleAPI.Components
             Text.text = CurrentPlugin.ModName;
             RightButton.SetNewAction(new Action(delegate
             {
-                if ((CurrentIndex + 1) >= ModPluginManager.AllPlugins.Count)
+                if ((CurrentIndex + 1) >= Plugins.Count)
                 {
                     CurrentIndex = 0;
                 }
@@ -40,7 +41,7 @@ namespace FungleAPI.Components
                 {
                     CurrentIndex++;
                 }
-                CurrentPlugin = ModPluginManager.AllPlugins[CurrentIndex];
+                CurrentPlugin = Plugins[CurrentIndex];
                 Text.text = CurrentPlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
@@ -48,7 +49,7 @@ namespace FungleAPI.Components
             {
                 if ((CurrentIndex - 1) <= -1)
                 {
-                    CurrentIndex = ModPluginManager.AllPlugins.Count - 1;
+                    CurrentIndex = Plugins.Count - 1;
                 }
                 else
                 {
@@ -58,6 +59,7 @@ namespace FungleAPI.Components
                 Text.text = CurrentPlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
+            Plugins = ModPluginManager.AllPlugins;
         }
     }
 }

@@ -176,7 +176,7 @@ namespace FungleAPI.Ship.Patches
             VentHelper helper = vent.GetComponent<VentHelper>();
             if (VentHelper.ArrowPrefab == null)
             {
-                VentHelper.ArrowPrefab = PrefabUtils.SkeldPrefab.AllVents[0].Buttons[0];
+                VentHelper.ArrowPrefab = ShipPrefabLoader.SkeldPrefab.AllVents[0].Buttons[0];
             }
             VentHelper.ShipVents.Add(vent, helper);
             if (vent.Right != null)

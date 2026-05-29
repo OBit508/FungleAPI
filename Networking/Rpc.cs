@@ -12,9 +12,20 @@ namespace FungleAPI.Networking
     /// </summary>
     public static class Rpc<TRpc> where TRpc : RpcHelper
     {
+        private static TRpc __rpc;
         /// <summary>
         /// The instance
         /// </summary>
-        public static TRpc Instance => CustomRpcManager.GetRpcInstance<TRpc>();
+        public static TRpc Instance
+        {
+            get
+            {
+                if (__rpc == null)
+                {
+                    __rpc = CustomRpcManager.GetRpcInstance<TRpc>();
+                }
+                return __rpc;
+            }
+        }
     }
 }

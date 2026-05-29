@@ -5,6 +5,7 @@ using FungleAPI.Assets;
 using FungleAPI.Components;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
+using FungleAPI.Ship;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -121,7 +122,7 @@ namespace FungleAPI.Patches
             if (!ShipsLoaded)
             {
                 string baseText = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">" + FungleTranslation.LoadingPrefabsText.GetString();
-                yield return PrefabUtils.CoLoadShipPrefabs(textMeshPro, baseText);
+                yield return ShipPrefabLoader.CoLoadShipPrefabs(textMeshPro, baseText);
                 ShipsLoaded = true;
             }
             foreach (ModPlugin plugin in ModPluginManager.AllPlugins)

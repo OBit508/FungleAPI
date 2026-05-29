@@ -24,7 +24,7 @@ namespace FungleAPI.Networking
 
             foreach (BepInMod bepInMod in RequiredMods.Values)
             {
-                missingMods.Add(bepInMod.GUID, new KeyValuePair<string, string>(bepInMod.Version, bepInMod.Name));
+                missingMods.Add(bepInMod.GUID, new KeyValuePair<string, string>(bepInMod.Name, bepInMod.Version));
             }
             
             foreach ((string, string, string) mod in mods)
