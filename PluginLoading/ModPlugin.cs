@@ -24,7 +24,7 @@ namespace FungleAPI.PluginLoading
         public string RealName;
         public string ModName;
         public string ModVersion;
-        public string ModCredits;
+        public bool InBeta;
 
 
         public Assembly ModAssembly;

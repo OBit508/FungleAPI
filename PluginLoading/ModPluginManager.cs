@@ -213,7 +213,7 @@ namespace FungleAPI.PluginLoading
             basePlugin?.Log.LogError("Failed to get PluginInfo");
             return null;
         }
-        internal static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string modName, string modCredits)
+        internal static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string modName)
         {
             ModPlugin plugin = new ModPlugin();
             Register(plugin, basePlugin);
@@ -228,7 +228,6 @@ namespace FungleAPI.PluginLoading
                 plugin.ModName += $" ({count})";
             }
             plugin.ModVersion = modVersion;
-            plugin.ModCredits = modCredits;
             AllPlugins.Add(plugin);
             AllAssemblies.Add(plugin.ModAssembly, plugin);
             return plugin;

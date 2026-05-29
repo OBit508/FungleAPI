@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Assets.Late;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using System.Collections.Generic;
 
 namespace FungleAPI.Translation
@@ -8,8 +9,17 @@ namespace FungleAPI.Translation
         public Translator(string defaultText)
         {
             Default = defaultText;
-            StringName = (StringNames)TranslationManager.validId;
-            TranslationManager.validId++;
+            
+            if (ReactorCompatibility.Instance == null)
+            {
+                StringName = (StringNames)TranslationManager.validId;
+                TranslationManager.validId++;
+            }
+            else
+            {
+                StringName = ReactorCompatibility.Instance.CreateStringName();
+            }
+
             TranslationManager.Translators.Add(StringName, this);
         }
         public string Default;

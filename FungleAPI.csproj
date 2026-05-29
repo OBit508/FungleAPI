@@ -116,7 +116,8 @@
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
-    <Compile Include="ModCompatibility\ReactorSupport.cs" />
+    <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
+    <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedSupport.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
@@ -725,5 +726,8 @@
     <Reference Include="__Generated">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\__Generated.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
   </ItemGroup>
 </Project>

@@ -2,6 +2,7 @@
 using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.GameOptions;
 using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Player.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
@@ -19,6 +20,7 @@ using UnityEngine;
 namespace FungleAPI.Networking.Patches
 {
     [HarmonyPatch(typeof(InnerNetClient._HandleGameDataInner_d__165), nameof(InnerNetClient._HandleGameDataInner_d__165.MoveNext))]
+    [HarmonyPriority(Priority.Last)]
     internal static class HandleGameDataInnerPatch
     {
         public static bool Prefix(InnerNetClient._HandleGameDataInner_d__165 __instance, ref bool __result)
@@ -43,11 +45,20 @@ namespace FungleAPI.Networking.Patches
                 }
             }
 
-            if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag && ReactorSupport.ReactorAssembly == null)
+            if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)
             {
                 InnerNetClient innerNetClient = __instance.__4__this;
 
-                int clientId = messageReader.ReadPackedInt32();
+                MessageReader clone = MessageReader.Get(messageReader.Buffer);
+                clone.Position = messageReader.Position;
+
+                int clientId = clone.ReadPackedInt32();
+
+                SyncManager.RpcSyncEverything(clientId);
+
+                if (ReactorCompatibility.Instance != null) return true;
+
+                messageReader.ReadPackedInt32();
 
                 string sceneName = messageReader.ReadString();
 
@@ -125,10 +136,6 @@ namespace FungleAPI.Networking.Patches
                         }
 
                         HandShakeManager.KickWithReason(clientData.Id, stringBuilder.ToString());
-                    }
-                    else
-                    {
-                        SyncManager.RpcSyncEverything(clientData.Id);
                     }
                 }
                 else 

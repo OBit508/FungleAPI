@@ -1,4 +1,5 @@
 ﻿using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Patches;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
@@ -14,26 +15,26 @@ namespace FungleAPI.Translation
     internal static class TranslationControllerPatch
     {
         [HarmonyPatch("GetString", new Type[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
-        [HarmonyPrefix]
-        public static bool GetStringPrefix(StringNames id, Il2CppReferenceArray<Il2CppSystem.Object> parts, ref string __result)
+        [HarmonyPostfix]
+        public static void GetStringPostfix(StringNames id, Il2CppReferenceArray<Il2CppSystem.Object> parts, ref string __result)
         {
+            if (ReactorCompatibility.Instance != null) return;
+
             if (TranslationManager.Translators.TryGetValue(id, out Translator translator))
             {
                 __result = translator.GetString();
-                return false;
             }
-            return !ReactorSupport.LocalizationManager_TryGetTextFormatted(id, parts, out __result);
         }
         [HarmonyPatch("GetStringWithDefault", new Type[] { typeof(StringNames), typeof(string), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
-        [HarmonyPrefix]
-        public static bool GetStringWithDefaultPrefix( StringNames id, string defaultStr, Il2CppReferenceArray<Il2CppSystem.Object> parts, ref string __result)
+        [HarmonyPostfix]
+        public static void GetStringWithDefaultPostfix(StringNames id, string defaultStr, Il2CppReferenceArray<Il2CppSystem.Object> parts, ref string __result)
         {
+            if (ReactorCompatibility.Instance != null) return;
+
             if (TranslationManager.Translators.TryGetValue(id, out Translator translator))
             {
                 __result = translator.GetString();
-                return false;
             }
-            return !ReactorSupport.LocalizationManager_TryGetTextFormatted(id, parts, out __result);
         }
     }
 }

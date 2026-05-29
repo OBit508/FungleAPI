@@ -49,7 +49,7 @@ namespace FungleAPI.Components
                     click = fungleBasePlugin.ClickOnModName;
                 }
 
-                strings.Add((plugin.ModCredits, click));
+                strings.Add(($"[{plugin.ModName} {plugin.ModVersion}]", click));
                 if (strings.Count >= 10)
                 {
                     Pages.Add(new List<(string, Action)>());

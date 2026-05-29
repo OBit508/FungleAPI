@@ -23,7 +23,6 @@ namespace FungleAPI.PluginLoading
         PluginInfo PluginInfo => ModPluginManager.TryGetPluginInfo(this as BasePlugin);
         string ModName => PluginInfo.Metadata.Name;
         string ModVersion => PluginInfo.Metadata.Version.Clean();
-        string ModCredits => $"[{ModName} v{ModVersion}]";
         void ClickOnModName() { }
 
         void AlmostLoaded() { }

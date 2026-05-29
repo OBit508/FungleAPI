@@ -1,5 +1,6 @@
 ﻿using BepInEx.Core.Logging.Interpolation;
 using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -18,7 +19,9 @@ namespace FungleAPI.Networking.Patches
     {
         public static void Postfix(InnerNetClient._CoHandleSpawn_d__166 __instance, bool __result)
         {
-            if (!__result && !AmongUsClient.Instance.AmHost && __instance._ownerId_5__2 == AmongUsClient.Instance.ClientId && ReactorSupport.ReactorAssembly == null)
+            if (ReactorCompatibility.Instance != null || __result) return;
+
+            if (!AmongUsClient.Instance.AmHost && __instance._ownerId_5__2 == AmongUsClient.Instance.ClientId)
             {
                 MessageReader reader = __instance.reader;
                 if (reader.BytesRemaining > 0)

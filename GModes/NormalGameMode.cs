@@ -445,21 +445,18 @@ namespace FungleAPI.GModes
                 }
             }
 
-            if (onlyCrewmates && TutorialManager.InstanceExists || !TutorialManager.InstanceExists)
+            if (TutorialManager.InstanceExists)
             {
-                if (TutorialManager.InstanceExists)
+                GameData.Instance.RecomputeTaskCounts();
+                if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && PlayerControl.LocalPlayer.Data.Role.TasksCountTowardProgress)
                 {
-                    GameData.Instance.RecomputeTaskCounts();
-                    if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && PlayerControl.LocalPlayer.Data.Role.TasksCountTowardProgress)
-                    {
-                        DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverTaskWin));
-                        ShipStatus.Instance.Begin();
-                    }
+                    HudManager.Instance.ShowPopUp(TranslationController.Instance.GetString(StringNames.GameOverTaskWin));
+                    ShipStatus.Instance.Begin();
                 }
-                else
-                {
-                    Manager.CheckEndGameViaTasks();
-                }
+            }
+            else
+            {
+                Manager.CheckEndGameViaTasks();
             }
         }
     }

@@ -8,6 +8,7 @@ using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
@@ -22,7 +23,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static BepInEx.BepInDependency;
 
-[assembly: AssemblyMetadata("Reactor.ModFlags", "RequireOnAllClients")]
+[assembly: AssemblyMetadata("Reactor.ModFlags", "RequireOnAllClients, DisableServerAuthority")]
 
 namespace FungleAPI
 {
@@ -36,7 +37,6 @@ namespace FungleAPI
 	{
         public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.8";
-        public const bool InDev = true;
         public static Harmony Harmony = new Harmony(ModId);
         public static FungleAPIPlugin Instance;
         internal static FungleHelper Helper;
@@ -55,7 +55,6 @@ namespace FungleAPI
                     ModPluginManager.Register(plugin, Instance);
                     plugin.ModName = "Vanilla";
                     plugin.ModVersion = ModV;
-                    plugin.ModCredits = $"[{plugin.RealName} v{plugin.ModVersion}{(InDev ? "-Dev" : "")}]";
                     plugin.LobbyTabs = new List<LobbyTab>() { new VanillaSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
                     ModPluginManager.AllPlugins.Add(plugin);
                 }
@@ -76,12 +75,13 @@ namespace FungleAPI
 
             // Da patch nos InnerNetObjects para o sistema de Rpc
             CustomRpcManager.PatchInnerNetObjects();
+            ReactorCompatibility.CheckReactor();
             IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) => // Chamado quando um mod é carregado
             {
                 // Se o mod tiver a interface de registro da API ele auto registra e não precisa chamar direto no ModPluginManager
                 if (basePlugin is IFungleBasePlugin fungle)
                 {
-                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName, fungle.ModCredits);
+                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName);
                     fungle.AlmostLoaded();
                 }
             };
@@ -97,6 +97,7 @@ namespace FungleAPI
                     if (modPlugin != null)
                     {
                         modPlugin.LocalMod = bepInMod;
+                        ReactorCompatibility.Instance?.Register(modPlugin.ModName, modPlugin.ModVersion, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
                     }
                 }
@@ -121,16 +122,6 @@ namespace FungleAPI
                 if (scene.name == "SplashIntro" && !Helpers.GameIsRunning)
                 {
                     Helpers.GameIsRunning = true;
-                    Type type = typeof(Constants);
-                    HarmonyLib.Patches patches = Harmony.GetPatchInfo(type.GetMethod("GetBroadcastVersion"));
-                    HarmonyLib.Patches patches2 = Harmony.GetPatchInfo(type.GetMethod("IsVersionModded"));
-                    if (patches.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
-                        patches.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
-                        patches2.Prefixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly) ||
-                        patches2.Postfixes.Any(p => p.PatchMethod.DeclaringType.Assembly != Plugin.ModAssembly))
-                    {
-                        CustomRpcManager.SafeModEnabled = true;
-                    }
                     FungleAssets.LoadAll();
                 }
             }));

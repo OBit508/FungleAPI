@@ -1,4 +1,5 @@
 ﻿using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Player.Networking;
 using FungleAPI.PluginLoading;
 using HarmonyLib;
@@ -13,12 +14,15 @@ using System.Threading.Tasks;
 namespace FungleAPI.Networking.Patches
 {
     [HarmonyPatch(typeof(InnerNetClient._CoSendSceneChange_d__156), nameof(InnerNetClient._CoSendSceneChange_d__156.MoveNext))]
+    [HarmonyPriority(Priority.Last)]
     internal static class CoSendSceneChangePatch
     {
         public static bool Prefix(InnerNetClient._CoSendSceneChange_d__156 __instance, ref bool __result)
         {
+            if (ReactorCompatibility.Instance != null) return true;
+
             InnerNetClient innerNetClient = __instance.__4__this;
-            if (!innerNetClient.AmHost && innerNetClient.connection.State == ConnectionState.Connected && innerNetClient.ClientId >= 0 && ReactorSupport.ReactorAssembly == null)
+            if (!innerNetClient.AmHost && innerNetClient.connection.State == ConnectionState.Connected && innerNetClient.ClientId >= 0)
             {
                 ClientData clientData = innerNetClient.FindClientById(innerNetClient.ClientId);
                 if (clientData != null)

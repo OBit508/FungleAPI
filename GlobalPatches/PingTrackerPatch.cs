@@ -1,4 +1,5 @@
 ﻿using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.PluginLoading;
 using HarmonyLib;
 using Newtonsoft.Json.Bson;
@@ -16,22 +17,24 @@ namespace FungleAPI.Patches
         public static string modsText;
         public static void Postfix(PingTracker __instance)
         {
+            if (ReactorCompatibility.Instance != null) return;
+
             if (modsText == null)
             {
                 modsText = "";
+                ModPlugin last = ModPluginManager.AllPlugins.Last();
                 foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
                 {
-                    modsText += (plugin == ModPluginManager.AllPlugins[0] ? "" : ", ") + plugin.ModCredits;
+                    modsText += $"{(plugin != FungleAPIPlugin.Plugin ? plugin.ModName : "FungleAPI")} {plugin.ModVersion}";
+                    if (plugin != last)
+                    {
+                        modsText += ", ";
+                    }
                 }
             }
             __instance.text.enableWordWrapping = false;
             __instance.text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
-            __instance.text.text += "\n<size=2>" + modsText + "</size>";
-            string extraText = ReactorSupport.ReactorCreditsText;
-            if (extraText != null)
-            {
-                __instance.text.text += "\n" + extraText;
-            }
+            __instance.text.text += "\n<align=center><size=50%>" + modsText + "</size></align>";
         }
     }
 }

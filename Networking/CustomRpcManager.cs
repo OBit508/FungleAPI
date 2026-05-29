@@ -1,6 +1,7 @@
 ﻿using Epic.OnlineServices.RTC;
 using FungleAPI.Base.Rpc;
 using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -30,27 +31,6 @@ namespace FungleAPI.Networking
         internal const string RpcIdentifier = "FungleAPINonInnerNetObjectRPC";
         internal static int LastRpcId = int.MinValue;
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
-        internal static bool SafeModEnabled;
-        /// <summary>
-        /// Returns whether the host authority is active
-        /// </summary>
-        public static bool HostAuthorityActive
-        { 
-            get
-            {
-                if (ReactorSupport.DisableServerAuthority)
-                {
-                    return true;
-                }
-                if (HostAuthority == HostAuthorityUsage.Never || UseSafeMode && SafeModEnabled || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
-                {
-                    return false;
-                }
-                return true;
-            } 
-        }
-        public static HostAuthorityUsage HostAuthority = HostAuthorityUsage.Always;
-        public static bool UseSafeMode = true;
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>
@@ -132,34 +112,27 @@ namespace FungleAPI.Networking
         internal static class ConstantsPatch
         {
             [HarmonyPatch("GetBroadcastVersion")]
+            [HarmonyPriority(Priority.Last)]
             [HarmonyPostfix]
             public static void GetBroadcastVersionPostfix(ref int __result)
             {
-                if (!HostAuthorityActive)
-                {
-                    return;
-                }
+                if (ReactorCompatibility.Instance != null || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame) return;
+
                 if (__result % 50 < 25)
                 {
                     __result += 25;
                 }
             }
             [HarmonyPatch("IsVersionModded")]
+            [HarmonyPriority(Priority.Last)]
             [HarmonyPrefix]
             public static bool IsVersionModdedPrefix(ref bool __result)
             {
-                if (!HostAuthorityActive)
-                {
-                    return true;
-                }
+                if (ReactorCompatibility.Instance != null) return true;
+
                 __result = true;
                 return false;
             }
-        }
-        public enum HostAuthorityUsage
-        {
-            Always,
-            Never
         }
     }
 }

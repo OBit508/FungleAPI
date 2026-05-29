@@ -136,7 +136,7 @@ namespace FungleAPI.Assets
                 return sprite;
             }
         }
-        private static byte[] ToArray(this Stream stream)
+        public static byte[] ToArray(this Stream stream)
         {
             byte[] data = new byte[stream.Length];
             stream.Read(data, 0, data.Length);
