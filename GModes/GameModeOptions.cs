@@ -1,5 +1,5 @@
 ﻿using FungleAPI.GameOptions;
-using FungleAPI.GameOptions.Options;
+using FungleAPI.GameOptions.Collections;
 using FungleAPI.PluginLoading;
 using System;
 using System.Collections.Generic;

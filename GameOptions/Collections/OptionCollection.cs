@@ -13,7 +13,8 @@ namespace FungleAPI.GameOptions.Collections
         public bool Dirty;
         public string FilePath;
         public string CollectionId;
-        public Dictionary<string, IModdedOption> Options = new Dictionary<string, IModdedOption>();
+        public ModPlugin Plugin;
+        public Dictionary<uint, IModdedOption> Options = new Dictionary<uint, IModdedOption>();
 
         public abstract void Initialize(Type type, ModPlugin modPlugin);
         public abstract void WriteLocalOptions();

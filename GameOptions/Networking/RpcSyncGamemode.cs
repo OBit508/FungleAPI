@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Base.Rpc;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.GModes;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -25,11 +26,18 @@ namespace FungleAPI.GameOptions.Networking
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{FungleTranslation.GameModeText.GetString()}</font>: " +
                 $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", false);
+
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == FungleApiPlugin.Plugin)
+                {
+                    LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+                }
+
+                LobbyViewSettingsPanePatch.OnChangeGamemode?.Invoke();
             }
         }
         public override void Handle(MessageReader messageReader)
         {
-            int gameModeId = messageReader.ReadPackedInt32();
+            uint gameModeId = messageReader.ReadPackedUInt32();
 
             BaseGameMode baseGameMode = GameModeManager.GameModes[gameModeId];
 
@@ -37,6 +45,16 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{FungleTranslation.GameModeText.GetString()}</font>: " +
                 $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", !RpcSyncEverything.UnSynced);
+
+            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null)
+            {
+                if (LobbyViewSettingsPanePatch.Tab.Plugin == FungleApiPlugin.Plugin)
+                {
+                    LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+                }
+
+                LobbyViewSettingsPanePatch.OnChangeGamemode?.Invoke();
+            }
         }
     }
 }

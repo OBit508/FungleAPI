@@ -20,7 +20,8 @@ namespace FungleAPI.GameOptions.Options
         public Action<bool> OnValueChance;
         public BaseGameSetting Data { get; set; }
         public object DefaultValue { get; set; }
-        public string OptionId { get; set; }
+        public uint OptionId { get; set; }
+        public string StringOptionId { get; set; }
         public ModPlugin OwnerPlugin { get; set; }
         public void SetOnValueChance(Action<bool> action) => OnValueChance += action;
         public abstract void SetValue(object value, bool amHost);
@@ -31,13 +32,7 @@ namespace FungleAPI.GameOptions.Options
         public abstract void ReadLocalValue(BinaryReader binaryReader);
         public abstract void SyncNonHostWithLocal();
         public abstract OptionBehaviour CreateOption(Transform parent);
-        public virtual void Initialize(PropertyInfo propertyInfo)
-        {
-            OptionId = $"{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
-        }
-        public virtual void Initialize(FieldInfo fieldInfo)
-        {
-            OptionId = $"{fieldInfo.Name}:{fieldInfo.DeclaringType.GetShortUniqueId()}";
-        }
+        public virtual void Initialize(PropertyInfo propertyInfo) { StringOptionId = $"{propertyInfo.Name}.{propertyInfo.DeclaringType.GetShortUniqueId()}"; }
+        public virtual void Initialize(FieldInfo fieldInfo) { StringOptionId = $"{fieldInfo.Name}.{fieldInfo.DeclaringType.GetShortUniqueId()}"; }
     }
 }

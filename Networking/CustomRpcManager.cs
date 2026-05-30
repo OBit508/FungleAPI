@@ -29,7 +29,7 @@ namespace FungleAPI.Networking
     public static class CustomRpcManager
     {
         internal const string RpcIdentifier = "FungleAPINonInnerNetObjectRPC";
-        internal static int LastRpcId = int.MinValue;
+        internal static uint LastRpcId = uint.MinValue;
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         /// <summary>
         /// Returns the instance of the given type

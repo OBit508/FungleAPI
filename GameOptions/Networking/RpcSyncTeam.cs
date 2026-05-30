@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Base.Rpc;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Networking
 {
@@ -27,6 +29,11 @@ namespace FungleAPI.GameOptions.Networking
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.TeamColor.ToTextColor()}{data.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.TeamOptions.LocalTeamCount}</font>, " +
                 $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{data.TeamOptions.LocalTeamPriority}</font>.", false);
+
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.TeamOptions.Plugin)
+                {
+                    LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+                }
             }
         }
         public override void Handle(MessageReader messageReader)
@@ -38,6 +45,11 @@ namespace FungleAPI.GameOptions.Networking
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{moddedTeam.TeamColor.ToTextColor()}{moddedTeam.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamCount}</font>, " +
                 $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", !RpcSyncEverything.UnSynced);
+
+            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == moddedTeam.TeamOptions.Plugin)
+            {
+                LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+            }
         }
     }
 }

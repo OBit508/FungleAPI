@@ -20,7 +20,7 @@ namespace FungleAPI.Base.Rpc
         /// <summary>
         /// The Rpc identifier.
         /// </summary>
-        public int RpcId;
+        public uint RpcId;
         public virtual bool CanAcceptRPCsWithoutInnerNetObject => false;
         internal virtual void __handle(InnerNetObject innerNetObject, MessageReader messageReader)
         {

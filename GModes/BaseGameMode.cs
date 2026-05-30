@@ -23,7 +23,7 @@ namespace FungleAPI.GModes
     public abstract class BaseGameMode
     {
         public abstract StringNames GameModeName { get; }
-        public int GameModeId { get; internal set; }
+        public uint GameModeId { get; internal set; }
         public GameManager Manager => GameManager.Instance;
         public IGameOptions GameOptions => Manager.LogicOptions.currentGameOptions;
         public virtual GameModeOptions ModeOptions { get; }

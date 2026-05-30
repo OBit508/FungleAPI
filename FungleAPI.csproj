@@ -41,7 +41,7 @@
     <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
     <Compile Include="GameOptions\Collections\GameOptionCollection.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncGamemode.cs" />
-    <Compile Include="GameOptions\Options\ModeOptionCollection.cs" />
+    <Compile Include="GameOptions\Collections\ModeOptionCollection.cs" />
     <Compile Include="GModes\GameModeOptions.cs" />
     <Compile Include="GameOptions\Lobby\VanillaSettingsTab.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncEverything.cs" />

@@ -21,7 +21,8 @@ namespace FungleAPI.GameOptions.Attributes
         public Type ReturnedType;
         public BaseGameSetting Data { get; set; }
         public object DefaultValue { get; set; }
-        public string OptionId { get; set; }
+        public uint OptionId { get; set; }
+        public string StringOptionId { get; set; }
         public ModPlugin OwnerPlugin { get; set; }
         public abstract object GetReturnedValue();
         public void SetOnValueChance(Action<bool> action) => OnValueChance += action;
@@ -35,9 +36,9 @@ namespace FungleAPI.GameOptions.Attributes
         public abstract OptionBehaviour CreateOption(Transform parent);
         public virtual void Initialize(PropertyInfo propertyInfo)
         {
+            StringOptionId = $"{propertyInfo.Name}.{propertyInfo.DeclaringType.GetShortUniqueId()}";
             ReturnedType = propertyInfo.PropertyType;
             DefaultValue = propertyInfo.GetValue(null);
-            OptionId = $"{propertyInfo.Name}:{propertyInfo.DeclaringType.GetShortUniqueId()}";
             TranslationHelper attributeTranslationID = propertyInfo.GetCustomAttribute<TranslationHelper>();
             if (attributeTranslationID != null && TranslationManager.TranslationIDs.TryGetValue(attributeTranslationID.TranslationID, out Translator translator))
             {

@@ -14,7 +14,8 @@ namespace FungleAPI.GameOptions
     public interface IModdedOption
     {
         BaseGameSetting Data { get; set; }
-        string OptionId { get; set; }
+        uint OptionId { get; set; }
+        string StringOptionId { get; set; }
         ModPlugin OwnerPlugin { get; set; }
         object DefaultValue { get; set; }
         void SetValue(object value, bool amHost);

@@ -14,7 +14,7 @@ namespace FungleAPI.Teams
 {
     public static class ModdedTeamManager
     {
-        internal static int LastTeamId = int.MinValue;
+        internal static uint LastTeamId = uint.MinValue;
         public static Dictionary<Type, ModdedTeam> Teams = new Dictionary<Type, ModdedTeam>();
         /// <summary>
         /// Gets the Crewmates team instance

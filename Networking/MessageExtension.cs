@@ -57,7 +57,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteOption(this MessageWriter messageWriter, IModdedOption config)
         {
-            messageWriter.Write(config.OptionId);
+            messageWriter.WritePacked(config.OptionId);
         }
         /// <summary>
         ///  Write a color
@@ -88,7 +88,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteRole(this MessageWriter messageWriter, RoleBehaviour role)
         {
-            messageWriter.WritePacked((int)role.Role);
+            messageWriter.WritePacked((uint)role.Role);
         }
         /// <summary>
         /// Write a team
@@ -142,7 +142,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static IModdedOption ReadOption(this MessageReader messageReader)
         {
-            string optionId = messageReader.ReadString();
+            uint optionId = messageReader.ReadPackedUInt32();
             if (OptionManager.AllOptions.TryGetValue(optionId, out IModdedOption moddedOption))
             {
                 return moddedOption;
@@ -181,14 +181,14 @@ namespace FungleAPI.Networking
         /// </summary>
         public static RoleBehaviour ReadRole(this MessageReader messageReader)
         {
-            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadPackedInt32());
+            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadPackedUInt32());
         }
         /// <summary>
         /// Read a team
         /// </summary>
         public static ModdedTeam ReadTeam(this MessageReader messageReader)
         {
-            int id = messageReader.ReadPackedInt32();
+            uint id = messageReader.ReadPackedUInt32();
             return ModdedTeamManager.Teams.Values.FirstOrDefault(t => t.TeamId == id);
         }
         /// <summary>
@@ -196,7 +196,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static RpcHelper ReadRPC(this MessageReader messageReader)
         {
-            int id = messageReader.ReadPackedInt32();
+            uint id = messageReader.ReadPackedUInt32();
             return CustomRpcManager.AllRpc.FirstOrDefault(r => r.RpcId == id);
         }
         /// <summary>

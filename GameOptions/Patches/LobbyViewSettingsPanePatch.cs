@@ -4,6 +4,7 @@ using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
+using FungleAPI.GModes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -34,15 +35,22 @@ namespace FungleAPI.GameOptions.Patches
 
         public static PluginChanger pluginChanger;
 
+        public static Action OnChangeGamemode;
+
         [HarmonyPatch(nameof(LobbyViewSettingsPane.Awake))]
         [HarmonyPostfix]
         public static void AwakePostfix(LobbyViewSettingsPane __instance)
         {
             if (GameManager.Instance.IsHideAndSeek()) return;
 
-            __instance.gameModeText.gameObject.SetActive(false);
+            __instance.gameModeText.transform.localPosition = new Vector3(-0.2586f, 2.4241f, -1.9999f);
+            __instance.gameModeText.text = GameModeManager.GetCurrentGameMode().GameModeName.GetString();
+            __instance.gameModeText.alignment = TextAlignmentOptions.Center;
+
+            OnChangeGamemode = delegate { try { __instance.gameModeText.text = GameModeManager.GetCurrentGameMode().GameModeName.GetString(); } catch { } };
+
             pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.rolesTabButton.transform.parent);
-            pluginChanger.transform.localPosition = __instance.gameModeText.transform.localPosition;
+            pluginChanger.transform.localPosition = new Vector3(-4.2586f, 2.4241f, -1.9999f);
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
             pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.Count > 0);
@@ -156,7 +164,12 @@ namespace FungleAPI.GameOptions.Patches
                 gameObject?.Destroy();
             }
             __instance.settingsInfo.Clear();
-            SetTab(__instance);
+            foreach (LobbyTab lobbyTab in Tabs)
+            {
+                lobbyTab.ViewSettingsButton?.SelectButton(false);
+            }
+            Tab.ViewSettingsButton?.SelectButton(true);
+            Tab.BuildViewTab(__instance);
             return false;
         }
         public static PassiveButton CreateButton(LobbyViewSettingsPane lobbyViewSettingsPane, UiElement prefab, string name, Action onClick)
@@ -187,69 +200,6 @@ namespace FungleAPI.GameOptions.Patches
 
             lobbyViewSettingsPane.ControllerSelectable.Add(passiveButton);
             return passiveButton;
-        }
-        public static void SetTab(LobbyViewSettingsPane lobbyViewSettingsPane)
-        {
-            foreach (LobbyTab lobbyTab in Tabs)
-            {
-                lobbyTab.ViewSettingsButton?.SelectButton(false);
-            }
-            Tab.ViewSettingsButton?.SelectButton(true);
-            if (!(Tab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin))
-            {
-                Tab.BuildViewTab(lobbyViewSettingsPane);
-            }
-            else
-            {
-                float num = 1.44f;
-                foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
-                {
-                    CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(lobbyViewSettingsPane.categoryHeaderOrigin);
-                    categoryHeaderMasked.SetHeader(rulesCategory.CategoryName, 61);
-                    categoryHeaderMasked.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
-                    categoryHeaderMasked.transform.localScale = Vector3.one;
-                    categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
-                    lobbyViewSettingsPane.settingsInfo.Add(categoryHeaderMasked.gameObject);
-                    num -= 1.05f;
-                    List<BaseGameSetting> list = rulesCategory.AllGameSettings.ToSystemList();
-                    if (rulesCategory.CategoryName == StringNames.ImpostorsCategory)
-                    {
-                        if (list.Count > 0) list.RemoveAt(0);
-                    }
-                    for (int i = 0; i < list.Count; i++)
-                    {
-                        ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(lobbyViewSettingsPane.infoPanelOrigin);
-                        viewSettingsInfoPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
-                        viewSettingsInfoPanel.transform.localScale = Vector3.one;
-                        float num2;
-                        if (i % 2 == 0)
-                        {
-                            num2 = -8.95f;
-                            if (i > 0)
-                            {
-                                num -= 0.85f;
-                            }
-                        }
-                        else
-                        {
-                            num2 = -3f;
-                        }
-                        viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
-                        float value = GameOptionsManager.Instance.CurrentGameOptions.GetValue(list[i]);
-                        if (list[i].Type == OptionTypes.Checkbox)
-                        {
-                            viewSettingsInfoPanel.SetInfoCheckbox(list[i].Title, 61, value > 0f);
-                        }
-                        else
-                        {
-                            viewSettingsInfoPanel.SetInfo(list[i].Title, list[i].GetValueString(value), 61);
-                        }
-                        lobbyViewSettingsPane.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
-                    }
-                    num -= 0.85f;
-                }
-                lobbyViewSettingsPane.scrollBar.CalculateAndSetYBounds((float)(lobbyViewSettingsPane.settingsInfo.Count + 10), 2f, 6f, 0.85f);
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FungleAPI.GModes;
+﻿using FungleAPI.Extensions;
+using FungleAPI.GModes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,107 @@ namespace FungleAPI.GameOptions.Lobby
             }
             gameOptionsMenu.Children.Clear();
             gameOptionsMenu.Children.Add(gameOptionsMenu.MapPicker);
+        }
+        public override void BuildViewTab(LobbyViewSettingsPane lobbyViewSettingsPane)
+        {
+            float num = 1.44f;
+
+            BaseGameMode baseGameMode = GameModeManager.GetCurrentGameMode();
+
+            if (baseGameMode.GetType() != typeof(NormalGameMode) && baseGameMode.ModeOptions != null)
+            {
+                foreach (SettingsGroup group in Plugin.Settings.Groups)
+                {
+                    CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(lobbyViewSettingsPane.categoryHeaderOrigin);
+                    categoryHeaderMasked.SetHeader(group.GroupName, 61);
+                    categoryHeaderMasked.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
+                    categoryHeaderMasked.transform.localScale = Vector3.one;
+                    categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                    lobbyViewSettingsPane.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                    num -= 1.05f;
+                    for (int i = 0; i < group.Options.Count; i++)
+                    {
+                        ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate(lobbyViewSettingsPane.infoPanelOrigin);
+                        viewSettingsInfoPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
+                        viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                        float num2;
+                        if (i % 2 == 0)
+                        {
+                            num2 = -8.95f;
+                            if (i > 0)
+                            {
+                                num -= 0.85f;
+                            }
+                        }
+                        else
+                        {
+                            num2 = -3f;
+                        }
+                        viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                        IModdedOption moddedOption = group.Options.ElementAt(i);
+                        if (moddedOption.Data.Type == OptionTypes.Checkbox)
+                        {
+                            viewSettingsInfoPanel.SetInfoCheckbox(moddedOption.Data.Title, 61, bool.Parse(moddedOption.GetStringValue(AmongUsClient.Instance.AmHost)));
+                        }
+                        else
+                        {
+                            viewSettingsInfoPanel.SetInfo(moddedOption.Data.Title, moddedOption.GetStringValue(AmongUsClient.Instance.AmHost), 61);
+                        }
+                        lobbyViewSettingsPane.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                    }
+                    num -= 0.85f;
+                }
+            }
+            else
+            {
+                foreach (RulesCategory rulesCategory in GameManager.Instance.GameSettingsList.AllCategories)
+                {
+                    CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate<CategoryHeaderMasked>(lobbyViewSettingsPane.categoryHeaderOrigin);
+                    categoryHeaderMasked.SetHeader(rulesCategory.CategoryName, 61);
+                    categoryHeaderMasked.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
+                    categoryHeaderMasked.transform.localScale = Vector3.one;
+                    categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                    lobbyViewSettingsPane.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                    num -= 1.05f;
+                    List<BaseGameSetting> list = rulesCategory.AllGameSettings.ToSystemList();
+                    if (rulesCategory.CategoryName == StringNames.ImpostorsCategory)
+                    {
+                        if (list.Count > 0) list.RemoveAt(0);
+                    }
+                    for (int i = 0; i < list.Count; i++)
+                    {
+                        ViewSettingsInfoPanel viewSettingsInfoPanel = GameObject.Instantiate<ViewSettingsInfoPanel>(lobbyViewSettingsPane.infoPanelOrigin);
+                        viewSettingsInfoPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
+                        viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                        float num2;
+                        if (i % 2 == 0)
+                        {
+                            num2 = -8.95f;
+                            if (i > 0)
+                            {
+                                num -= 0.85f;
+                            }
+                        }
+                        else
+                        {
+                            num2 = -3f;
+                        }
+                        viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                        float value = GameOptionsManager.Instance.CurrentGameOptions.GetValue(list[i]);
+                        if (list[i].Type == OptionTypes.Checkbox)
+                        {
+                            viewSettingsInfoPanel.SetInfoCheckbox(list[i].Title, 61, value > 0f);
+                        }
+                        else
+                        {
+                            viewSettingsInfoPanel.SetInfo(list[i].Title, list[i].GetValueString(value), 61);
+                        }
+                        lobbyViewSettingsPane.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+                    }
+                    num -= 0.85f;
+                }
+            }
+            lobbyViewSettingsPane.scrollBar.CalculateAndSetYBounds(lobbyViewSettingsPane.settingsInfo.Count + 10, 2f, 6f, 0.85f);
         }
         public override void BuildEditTab(GameOptionsMenu gameOptionsMenu)
         {

@@ -21,12 +21,12 @@ namespace FungleAPI.GModes
     public static class GameModeManager
     {
         public static NormalGameMode Default = new NormalGameMode();
-        public static Dictionary<int, BaseGameMode> GameModes = new Dictionary<int, BaseGameMode>();
+        public static Dictionary<uint, BaseGameMode> GameModes = new Dictionary<uint, BaseGameMode>();
 
         private static List<StringNames> Values = new List<StringNames>();
         private static StringGameSetting Data;
-        internal static ConfigEntry<int> HostValue;
-        internal static int NonHostValue;
+        internal static ConfigEntry<uint> HostValue;
+        internal static uint NonHostValue;
 
         public static BaseGameMode GetCurrentGameMode() 
         {
@@ -40,7 +40,7 @@ namespace FungleAPI.GModes
         public static void RegisterGameMode(Type type, ModPlugin modPlugin)
         {
             BaseGameMode gameMode = (BaseGameMode)Activator.CreateInstance(type);
-            gameMode.GameModeId = Values.Count;
+            gameMode.GameModeId = (uint)Values.Count;
             Values.Add(gameMode.GameModeName);
             if (Data != null)
             {
@@ -58,7 +58,7 @@ namespace FungleAPI.GModes
             {
                 bool changed = HostValue.Value != stringOption.Value;
 
-                HostValue.Value = stringOption.Value;
+                HostValue.Value = (uint)stringOption.Value;
                 stringGameSetting.Index = stringOption.Value;
 
                 if (changed)
@@ -66,7 +66,8 @@ namespace FungleAPI.GModes
                     SyncManager.RpcSyncGamemode();
                 }
             });
-            stringOption.Value = HostValue.Value;
+            stringGameSetting.Index = (int)HostValue.Value;
+            stringOption.Value = (int)HostValue.Value;
             return stringOption;
         }
 
@@ -79,14 +80,14 @@ namespace FungleAPI.GModes
             stringGameSetting.Title = FungleTranslation.GameModeText;
             stringGameSetting.Values = Values.ToArray();
 
-            HostValue = FungleApiPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", 0);
+            HostValue = FungleApiPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", (uint)0);
 
             if (Values.Count > HostValue.Value)
             {
                 HostValue.Value = 0;
             }
 
-            stringGameSetting.Index = HostValue.Value;
+            stringGameSetting.Index = (int)HostValue.Value;
         }
     }
 }

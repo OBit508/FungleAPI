@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Options;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -44,16 +45,17 @@ namespace FungleAPI.GameOptions.Networking
                     }
                     break;
                 case SyncOptionType.Game:
-                    if (data.Item3 is ModPlugin modPlugin)
-                    {
-                        str += $"({modPlugin.FunglePlugin.ModName}) ";
-                        messageWriter.WritePlugin(modPlugin);
-                    }
+                    str += $"({data.Item2.OwnerPlugin.FunglePlugin.ModName}) ";
                     break;
             }
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{str}{data.Item2.Data.Title.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.Item2.GetStringValue(true)}</font>", false);
+
+            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.Item2.OwnerPlugin)
+            {
+                LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+            }
         }
         public override void Handle(MessageReader messageReader)
         {
@@ -74,13 +76,17 @@ namespace FungleAPI.GameOptions.Networking
                     str = $"{moddedTeam.TeamColor.ToTextColor()}({moddedTeam.TeamName.GetString()}) ";
                     break;
                 case SyncOptionType.Game:
-                    ModPlugin modPlugin = messageReader.ReadPlugin();
-                    str += $"({modPlugin.FunglePlugin.ModName}) ";
+                    str += $"({moddedOption.OwnerPlugin.FunglePlugin.ModName}) ";
                     break;
             }
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{str}{moddedOption.Data.Title.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedOption.GetStringValue(false)}</font>", true);
+
+            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == moddedOption.OwnerPlugin)
+            {
+                LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+            }
         }
     }
 }

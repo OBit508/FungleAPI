@@ -35,7 +35,7 @@ namespace FungleAPI.Teams
         /// <summary>
         /// Team id
         /// </summary>
-        public int TeamId;
+        public uint TeamId;
         /// <summary>
         /// Team color
         /// </summary>
@@ -144,6 +144,7 @@ namespace FungleAPI.Teams
                 }
                 TeamOptions.SetLocal((int)option.Value, TeamOptions.LocalTeamPriority);
             });
+            CountData.Value = TeamOptions.LocalTeamCount;
             option.Value = TeamOptions.LocalTeamCount;
             return option;
         }
@@ -156,6 +157,7 @@ namespace FungleAPI.Teams
             {
                 TeamOptions.SetLocal(TeamOptions.LocalTeamCount, (int)option.Value);
             });
+            PriorityData.Value = TeamOptions.LocalTeamPriority;
             option.Value = TeamOptions.LocalTeamPriority;
             return option;
         }

@@ -85,13 +85,9 @@ namespace FungleAPI.GameOptions
             }
             Rpc<RpcSyncOption>.Instance.Send((SyncOptionType.Team, moddedOption, moddedTeam));
         }
-        public static void RpcSyncGameOption(ModPlugin modPlugin, IModdedOption moddedOption)
+        public static void RpcSyncGameOption(IModdedOption moddedOption)
         {
-            if (!AmongUsClient.Instance.AmHost)
-            {
-                return;
-            }
-            Rpc<RpcSyncOption>.Instance.Send((SyncOptionType.Game, moddedOption, modPlugin));
+            RpcSyncOption(moddedOption);
         }
     }
 }

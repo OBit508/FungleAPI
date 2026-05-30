@@ -13,12 +13,13 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class GameOptionCollection : OptionCollection
     {
-        public const int GameOptionVersion = 1;
+        public const int GameOptionVersion = 2;
 
         public ModSettings Settings;
 
         public override void Initialize(Type type, ModPlugin modPlugin)
         {
+            Plugin = modPlugin;
             CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
             FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.GameSettings), $"{CollectionId}.funglecfg");
 
@@ -30,7 +31,7 @@ namespace FungleAPI.GameOptions.Collections
 
             foreach (IModdedOption moddedOption in EveryOption)
             {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == modPlugin) { LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke(); } });
+                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }
@@ -47,7 +48,7 @@ namespace FungleAPI.GameOptions.Collections
                     binaryWriter.Write(Options.Count);
                     foreach (IModdedOption moddedOption in Options.Values)
                     {
-                        binaryWriter.Write(moddedOption.OptionId);
+                        binaryWriter.Write(moddedOption.StringOptionId);
                         moddedOption.WriteLocalValue(binaryWriter);
                     }
 
@@ -80,7 +81,8 @@ namespace FungleAPI.GameOptions.Collections
                         for (int i = 0; i < optionCount; i++)
                         {
                             string optionId = binaryReader.ReadString();
-                            if (Options.TryGetValue(optionId, out IModdedOption moddedOption))
+                            IModdedOption moddedOption = Options.Values.FirstOrDefault(m => m.StringOptionId == optionId);
+                            if (moddedOption != null)
                             {
                                 moddedOption.ReadLocalValue(binaryReader);
                             }

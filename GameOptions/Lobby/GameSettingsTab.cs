@@ -81,7 +81,7 @@ namespace FungleAPI.GameOptions.Lobby
                     op.SetClickMask(gameOptionsMenu.ButtonClickMask);
                     op.OnValueChanged += new Action<OptionBehaviour>(delegate
                     {
-                        SyncManager.RpcSyncGameOption(Plugin, option);
+                        SyncManager.RpcSyncGameOption(option);
                     });
                     gameOptionsMenu.Children.Add(op);
                     num -= 0.45f;

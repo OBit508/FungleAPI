@@ -20,7 +20,8 @@ namespace FungleAPI.GameOptions
 {
     public static class OptionManager
     {
-        public static Dictionary<string, IModdedOption> AllOptions = new Dictionary<string, IModdedOption>();
+        private static uint __optionId = uint.MinValue;
+        public static Dictionary<uint, IModdedOption> AllOptions = new Dictionary<uint, IModdedOption>();
         public static List<OptionCollection> OptionCollections = new List<OptionCollection>();
 
         public static void SaveOptionCollections()
@@ -46,6 +47,8 @@ namespace FungleAPI.GameOptions
                     {
                         option.Initialize(propertyInfo);
                         option.OwnerPlugin = modPlugin;
+                        option.OptionId = __optionId;
+                        __optionId++;
 
                         moddedOptions.Add(option);
                         continue;
@@ -57,6 +60,8 @@ namespace FungleAPI.GameOptions
                     {
                         moddedOptionAttribute.Initialize(propertyInfo);
                         moddedOptionAttribute.OwnerPlugin = modPlugin;
+                        moddedOptionAttribute.OptionId = __optionId;
+                        __optionId++;
 
                         moddedOptions.Add(moddedOptionAttribute);
                         HarmonyHelper.Patches.Add(method, new Func<object>(moddedOptionAttribute.GetReturnedValue));
@@ -73,6 +78,8 @@ namespace FungleAPI.GameOptions
                     {
                         option.Initialize(fieldInfo);
                         option.OwnerPlugin = modPlugin;
+                        option.OptionId = __optionId;
+                        __optionId++;
 
                         moddedOptions.Add(option);
                     }

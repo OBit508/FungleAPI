@@ -14,7 +14,7 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class RoleOptionCollection : OptionCollection
     {
-        public const int RoleOptionVersion = 1;
+        public const int RoleOptionVersion = 2;
 
         public int LocalRoleCount;
         public int NonHostRoleCount;
@@ -32,6 +32,7 @@ namespace FungleAPI.GameOptions.Collections
         }
         public override void Initialize(Type type, ModPlugin modPlugin)
         {
+            Plugin = modPlugin;
             CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
             FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.Roles), $"{CollectionId}.funglecfg");
             foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type, modPlugin))
@@ -56,7 +57,7 @@ namespace FungleAPI.GameOptions.Collections
                     binaryWriter.Write(Options.Count);
                     foreach (IModdedOption moddedOption in Options.Values)
                     {
-                        binaryWriter.Write(moddedOption.OptionId);
+                        binaryWriter.Write(moddedOption.StringOptionId);
                         moddedOption.WriteLocalValue(binaryWriter);
                     }
 
@@ -93,7 +94,8 @@ namespace FungleAPI.GameOptions.Collections
                         for (int i = 0; i < optionCount; i++)
                         {
                             string optionId = binaryReader.ReadString();
-                            if (Options.TryGetValue(optionId, out IModdedOption moddedOption))
+                            IModdedOption moddedOption = Options.Values.FirstOrDefault(m => m.StringOptionId == optionId);
+                            if (moddedOption != null)
                             {
                                 moddedOption.ReadLocalValue(binaryReader);
                             }

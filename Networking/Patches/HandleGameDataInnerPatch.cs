@@ -47,18 +47,11 @@ namespace FungleAPI.Networking.Patches
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)
             {
-                InnerNetClient innerNetClient = __instance.__4__this;
-
-                MessageReader clone = MessageReader.Get(messageReader.Buffer);
-                clone.Position = messageReader.Position;
-
-                int clientId = clone.ReadPackedInt32();
-
-                SyncManager.RpcSyncEverything(clientId);
-
                 if (ReactorCompatibility.Instance != null) return true;
 
-                messageReader.ReadPackedInt32();
+                InnerNetClient innerNetClient = __instance.__4__this;
+
+                int clientId = messageReader.ReadPackedInt32();
 
                 string sceneName = messageReader.ReadString();
 

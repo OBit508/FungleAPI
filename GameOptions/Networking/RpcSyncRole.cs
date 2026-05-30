@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Base.Rpc;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -28,6 +29,11 @@ namespace FungleAPI.GameOptions.Networking
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.RoleColor.ToTextColor()}{data.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount}</font>, " +
                 $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{data.RoleOptions.LocalRoleChance}%</font>.", false);
+
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.RoleOptions.Plugin)
+                {
+                    LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+                }
             }
         }
         public override void Handle(MessageReader messageReader)
@@ -39,6 +45,11 @@ namespace FungleAPI.GameOptions.Networking
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{customRole.RoleColor.ToTextColor()}{customRole.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleCount}</font>, " +
                 $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", !RpcSyncEverything.UnSynced);
+
+            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == customRole.RoleOptions.Plugin)
+            {
+                LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+            }
         }
     }
 }

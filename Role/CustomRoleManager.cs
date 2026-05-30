@@ -28,7 +28,7 @@ namespace FungleAPI.Role
     /// </summary>
     public static class CustomRoleManager
     {
-        internal static int LastRoleId = 19;
+        internal static uint LastRoleId = 19;
         internal static List<CachedWaitingRole> WaitingToRegister = new List<CachedWaitingRole>();
         internal static Dictionary<Type, RoleTypes> Types = new Dictionary<Type, RoleTypes>() 
         {
