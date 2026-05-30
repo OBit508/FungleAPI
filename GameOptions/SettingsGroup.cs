@@ -24,7 +24,7 @@ namespace FungleAPI.GameOptions
         public abstract StringNames GroupName { get; }
         public virtual void Initialize(ModPlugin modPlugin)
         {
-            Options = OptionManager.GetAndInitializeModdedOptions(GetType());
+            Options = OptionManager.GetAndInitializeModdedOptions(GetType(), modPlugin);
         }
     }
 }

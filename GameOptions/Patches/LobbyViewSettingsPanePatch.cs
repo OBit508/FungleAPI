@@ -74,6 +74,7 @@ namespace FungleAPI.GameOptions.Patches
                         Tab = lobbyTab;
                         __instance.ChangeTab(StringNames.None);
                     });
+                    lobbyTab.RefreshViewTab = __instance.RefreshTab;
                 }
 
                 float num = 0;
@@ -86,8 +87,7 @@ namespace FungleAPI.GameOptions.Patches
                 }
 
                 scroller.ContentXBounds.min = -num;
-
-                __instance.scrollBar.ScrollToTop();
+                scroller.transform.localPosition = new Vector3(-0.7f, 1.35f, 0);
             });
 
             GameObject gameObject = new GameObject("Hitbox")

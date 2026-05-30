@@ -1,4 +1,5 @@
-﻿using FungleAPI.PluginLoading;
+﻿using FungleAPI.GameOptions.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using Hazel;
@@ -36,9 +37,9 @@ namespace FungleAPI.GameOptions.Collections
         {
             CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
             FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.Teams), $"{CollectionId}.funglecfg");
-            foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type))
+            foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type, modPlugin))
             {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
+                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == modPlugin) { LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke(); } } });
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }

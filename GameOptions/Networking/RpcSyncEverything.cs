@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Base.Rpc;
+using FungleAPI.GModes;
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -17,7 +18,7 @@ namespace FungleAPI.GameOptions.Networking
     internal class RpcSyncEverything : SimpleRpc
     {
         public override bool CanAcceptRPCsWithoutInnerNetObject => true;
-        public static bool Synced;
+        public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
         {
             messageWriter.WritePacked(OptionManager.AllOptions.Count);
@@ -27,9 +28,11 @@ namespace FungleAPI.GameOptions.Networking
                 moddedOption.Serialize(messageWriter);
             }
 
+            RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
             RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
             RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
 
+            rpcSyncGamemode.Write(messageWriter);
             messageWriter.WritePacked(CustomRoleManager.AllCustomRoles.Count);
             foreach (ICustomRole customRole in CustomRoleManager.AllCustomRoles)
             {
@@ -45,7 +48,7 @@ namespace FungleAPI.GameOptions.Networking
         {
             try
             {
-                Synced = false;
+                UnSynced = true;
                 int optionCount = messageReader.ReadPackedInt32();
                 for (int i = 0; i < optionCount; i++)
                 {
@@ -53,9 +56,11 @@ namespace FungleAPI.GameOptions.Networking
                     moddedOption.Deserialize(messageReader);
                 }
 
+                RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
                 RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
                 RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
 
+                rpcSyncGamemode.Handle(messageReader);
                 int roleCount = messageReader.ReadPackedInt32();
                 for (int i = 0; i < roleCount; i++)
                 {
@@ -66,7 +71,7 @@ namespace FungleAPI.GameOptions.Networking
                 {
                     rpcSyncTeam.Handle(messageReader);
                 }
-                Synced = true;
+                UnSynced = false;
             }
             catch (Exception ex)
             {

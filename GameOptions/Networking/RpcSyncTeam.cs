@@ -22,7 +22,7 @@ namespace FungleAPI.GameOptions.Networking
             messageWriter.WritePacked(data.TeamOptions.LocalTeamCount);
             messageWriter.WritePacked(data.TeamOptions.LocalTeamPriority);
 
-            if (RpcSyncEverything.Synced)
+            if (!RpcSyncEverything.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.TeamColor.ToTextColor()}{data.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.TeamOptions.LocalTeamCount}</font>, " +
@@ -37,7 +37,7 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{moddedTeam.TeamColor.ToTextColor()}{moddedTeam.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamCount}</font>, " +
-                $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", RpcSyncEverything.Synced);
+                $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", !RpcSyncEverything.UnSynced);
         }
     }
 }

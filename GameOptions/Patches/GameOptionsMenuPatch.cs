@@ -36,47 +36,55 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static bool InitializePrefix(GameOptionsMenu __instance)
         {
-            if (GameManager.Instance.IsHideAndSeek()) return true;
+            try
+            {
+                if (GameManager.Instance.IsHideAndSeek()) return true;
 
-            if (__instance.gameObject.active && __instance.Children == null || __instance.Children.Count == 0)
-            {
-                __instance.MapPicker.Initialize(20);
-                BaseGameSetting mapNameSetting = GameManager.Instance.GameSettingsList.MapNameSetting;
-                __instance.MapPicker.SetUpFromData(mapNameSetting, 20);
-                __instance.Children = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
-                __instance.Children.Add(__instance.MapPicker);
-                GameSettingMenuPatch.CurrentTab.BuildEditTab(__instance);
-                __instance.cachedData = GameOptionsManager.Instance.CurrentGameOptions;
-                for (int i = 0; i < __instance.Children.Count; i++)
+                if (__instance.gameObject.active && __instance.Children == null || __instance.Children.Count == 0)
                 {
-                    OptionBehaviour optionBehaviour = __instance.Children[i];
-                    if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
+                    __instance.MapPicker.Initialize(20);
+                    BaseGameSetting mapNameSetting = GameManager.Instance.GameSettingsList.MapNameSetting;
+                    __instance.MapPicker.SetUpFromData(mapNameSetting, 20);
+                    __instance.Children = new Il2CppSystem.Collections.Generic.List<OptionBehaviour>();
+                    __instance.Children.Add(__instance.MapPicker);
+                    GameSettingMenuPatch.CurrentTab.BuildEditTab(__instance);
+                    __instance.cachedData = GameOptionsManager.Instance.CurrentGameOptions;
+                    for (int i = 0; i < __instance.Children.Count; i++)
                     {
-                        optionBehaviour.SetAsPlayer();
+                        OptionBehaviour optionBehaviour = __instance.Children[i];
+                        if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
+                        {
+                            optionBehaviour.SetAsPlayer();
+                        }
                     }
+                    __instance.InitializeControllerNavigation();
                 }
-                __instance.InitializeControllerNavigation();
-            }
-            else if (Update)
-            {
-                foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
+                else if (Update)
                 {
-                    UnityEngine.Object.Destroy(categoryHeaderMasked.gameObject);
-                }
-                foreach (OptionBehaviour op in __instance.Children)
-                {
-                    if (op != __instance.MapPicker)
+                    foreach (CategoryHeaderMasked categoryHeaderMasked in __instance.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())
                     {
-                        UnityEngine.Object.Destroy(op.gameObject);
+                        UnityEngine.Object.Destroy(categoryHeaderMasked.gameObject);
                     }
+                    foreach (OptionBehaviour op in __instance.Children)
+                    {
+                        if (op != __instance.MapPicker)
+                        {
+                            UnityEngine.Object.Destroy(op.gameObject);
+                        }
+                    }
+                    __instance.Children.Clear();
+                    __instance.Children.Add(__instance.MapPicker);
+                    try
+                    {
+                        GameSettingMenuPatch.CurrentTab.BuildEditTab(__instance);
+                    }
+                    catch (Exception ex) { Debug.LogError(ex.Message); }
+                    Update = false;
                 }
-                __instance.Children.Clear();
-                __instance.Children.Add(__instance.MapPicker);
-                GameSettingMenuPatch.CurrentTab.BuildEditTab(__instance);
-                Update = false;
+                __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin);
+                return false;
             }
-            __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin);
-            return false;
+            catch { return true; }
         }
         [HarmonyPatch(nameof(GameOptionsMenu.ClickPresetButton))]
         [HarmonyPrefix]

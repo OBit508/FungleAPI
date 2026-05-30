@@ -23,7 +23,7 @@ namespace FungleAPI.GameOptions.Networking
             messageWriter.WritePacked(data.RoleOptions.LocalRoleCount);
             messageWriter.WritePacked(data.RoleOptions.LocalRoleChance);
 
-            if (RpcSyncEverything.Synced)
+            if (!RpcSyncEverything.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.RoleColor.ToTextColor()}{data.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount}</font>, " +
@@ -38,7 +38,7 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{customRole.RoleColor.ToTextColor()}{customRole.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleCount}</font>, " +
-                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", RpcSyncEverything.Synced);
+                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", !RpcSyncEverything.UnSynced);
         }
     }
 }

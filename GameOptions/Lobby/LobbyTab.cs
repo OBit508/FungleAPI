@@ -14,6 +14,8 @@ namespace FungleAPI.GameOptions.Lobby
         public PassiveButton ViewSettingsButton;
         public PassiveButton EditSettingsButton;
 
+        public Action RefreshViewTab;
+
         public abstract string ViewTabButtonText { get; }
         public abstract string EditTabButtonText { get; }
 

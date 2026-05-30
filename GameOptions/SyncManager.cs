@@ -45,6 +45,14 @@ namespace FungleAPI.GameOptions
             }
             Rpc<RpcSyncRole>.Instance.Send(customRole);
         }
+        public static void RpcSyncGamemode()
+        {
+            if (!AmongUsClient.Instance.AmHost)
+            {
+                return;
+            }
+            Rpc<RpcSyncGamemode>.Instance.Send();
+        }
         public static void RpcUpdatePreset(RulesPresets rulesPresets, ModPlugin modPlugin)
         {
             if (!AmongUsClient.Instance.AmHost)

@@ -21,6 +21,7 @@ namespace FungleAPI.GameOptions.Options
         public BaseGameSetting Data { get; set; }
         public object DefaultValue { get; set; }
         public string OptionId { get; set; }
+        public ModPlugin OwnerPlugin { get; set; }
         public void SetOnValueChance(Action<bool> action) => OnValueChance += action;
         public abstract void SetValue(object value, bool amHost);
         public abstract string GetStringValue(bool amHost);

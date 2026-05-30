@@ -2,6 +2,7 @@
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Options;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Harmony;
 using HarmonyLib;
@@ -33,7 +34,7 @@ namespace FungleAPI.GameOptions
             }
         }
 
-        public static List<IModdedOption> GetAndInitializeModdedOptions(Type type)
+        public static List<IModdedOption> GetAndInitializeModdedOptions(Type type, ModPlugin modPlugin)
         {
             List<IModdedOption> moddedOptions = new List<IModdedOption>();
 
@@ -44,6 +45,8 @@ namespace FungleAPI.GameOptions
                     if (propertyInfo.GetMethod != null && typeof(BaseModdedOption).IsAssignableFrom(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is BaseModdedOption option && option != null)
                     {
                         option.Initialize(propertyInfo);
+                        option.OwnerPlugin = modPlugin;
+
                         moddedOptions.Add(option);
                         continue;
                     }
@@ -53,6 +56,8 @@ namespace FungleAPI.GameOptions
                     if (moddedOptionAttribute != null)
                     {
                         moddedOptionAttribute.Initialize(propertyInfo);
+                        moddedOptionAttribute.OwnerPlugin = modPlugin;
+
                         moddedOptions.Add(moddedOptionAttribute);
                         HarmonyHelper.Patches.Add(method, new Func<object>(moddedOptionAttribute.GetReturnedValue));
                         FungleApiPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
@@ -67,6 +72,8 @@ namespace FungleAPI.GameOptions
                     if (typeof(BaseModdedOption).IsAssignableFrom(fieldInfo.FieldType) && fieldInfo.GetValue(null) is BaseModdedOption option && option != null)
                     {
                         option.Initialize(fieldInfo);
+                        option.OwnerPlugin = modPlugin;
+
                         moddedOptions.Add(option);
                     }
                 }

@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Attributes;
+using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
@@ -21,6 +22,7 @@ namespace FungleAPI.GameOptions.Attributes
         public BaseGameSetting Data { get; set; }
         public object DefaultValue { get; set; }
         public string OptionId { get; set; }
+        public ModPlugin OwnerPlugin { get; set; }
         public abstract object GetReturnedValue();
         public void SetOnValueChance(Action<bool> action) => OnValueChance += action;
         public abstract void SetValue(object value, bool amHost);

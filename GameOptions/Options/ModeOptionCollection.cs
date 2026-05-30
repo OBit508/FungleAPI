@@ -1,4 +1,5 @@
 ﻿using FungleAPI.GameOptions.Collections;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.GModes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.GameOptions
+namespace FungleAPI.GameOptions.Options
 {
     public class ModeOptionCollection : OptionCollection
     {
@@ -30,7 +31,7 @@ namespace FungleAPI.GameOptions
 
             foreach (IModdedOption moddedOption in EveryOption)
             {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
+                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == modPlugin) { LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke(); } } });
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }

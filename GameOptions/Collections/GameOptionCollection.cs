@@ -1,12 +1,13 @@
-﻿using FungleAPI.PluginLoading;
+﻿using FungleAPI.GameOptions.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using Hazel;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace FungleAPI.GameOptions.Collections
 {
@@ -29,7 +30,7 @@ namespace FungleAPI.GameOptions.Collections
 
             foreach (IModdedOption moddedOption in EveryOption)
             {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
+                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == modPlugin) { LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke(); } });
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }
