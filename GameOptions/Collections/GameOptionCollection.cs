@@ -71,7 +71,7 @@ namespace FungleAPI.GameOptions.Collections
                         int gameOptionVersion = binaryReader.ReadInt32();
                         if (gameOptionVersion < GameOptionVersion)
                         {
-                            FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Game Option Collection from {FilePath} founded, loading and saving default.");
+                            FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Game Option Collection from {FilePath} founded, loading and saving default.");
                             SetAsDefault();
                             return;
                         }
@@ -91,7 +91,7 @@ namespace FungleAPI.GameOptions.Collections
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Failed to read Game Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to read Game Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
                 SetAsDefault();
             }
         }

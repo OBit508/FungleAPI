@@ -24,12 +24,12 @@ namespace FungleAPI.Assets.Late
             T asset = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogInfo($"Loaded bundle asset {__name}");
+                FungleApiPlugin.Instance.Log.LogInfo($"Loaded bundle asset {__name}");
                 asset = AssetLoader.LoadAsset<T>(__bundle, __name);
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to load bundle asset message:\n" + ex.Message);
+                FungleApiPlugin.Instance.Log.LogError("Failed to load bundle asset message:\n" + ex.Message);
             }
             return asset;
         }

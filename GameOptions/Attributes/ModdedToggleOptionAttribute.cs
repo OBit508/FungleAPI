@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Attributes
 {
-    public class ModdedToggleOptionAttribute : ModdedOptionAttribute
+    public class ModdedToggleOptionAttribute : BaseModdedOptionAttribute
     {
         public bool LocalValue;
         public bool NonHostValue;

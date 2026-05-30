@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Options
 {
-    public class ModdedToggleOption : ModdedOption
+    public class ModdedToggleOption : BaseModdedOption
     {
         public bool LocalValue;
         public bool NonHostValue;

@@ -91,8 +91,8 @@ namespace FungleAPI.GameOptions.Lobby
                             {
                                 list.Add(roleBehaviour);
                             }
-                            viewPanel.SetInfo(roleBehaviour.NiceName, numPerGame, chancePerGame, 61, roleBehaviour.CustomRole() == null ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed : roleBehaviour.CustomRole().RoleColor, roleBehaviour.RoleIconSolid, Plugin == FungleAPIPlugin.Plugin ? i == 0 : true, disabled);
-                            if (Plugin != FungleAPIPlugin.Plugin)
+                            viewPanel.SetInfo(roleBehaviour.NiceName, numPerGame, chancePerGame, 61, roleBehaviour.CustomRole() == null ? i == 0 ? Palette.CrewmateRoleBlue : Palette.ImpostorRoleRed : roleBehaviour.CustomRole().RoleColor, roleBehaviour.RoleIconSolid, Plugin == FungleApiPlugin.Plugin ? i == 0 : true, disabled);
+                            if (Plugin != FungleApiPlugin.Plugin)
                             {
                                 viewPanel.chanceBackground.color = roleBehaviour.TeamColor.Darken();
                                 viewPanel.background.color = viewPanel.chanceBackground.color;
@@ -138,7 +138,7 @@ namespace FungleAPI.GameOptions.Lobby
                     advancedPanel.transform.SetParent(lobbyViewSettingsPane.settingsContainer);
                     advancedPanel.transform.localScale = Vector3.one;
                     advancedPanel.transform.localPosition = new Vector3(posX, num, -2f);
-                    float height = Plugin == FungleAPIPlugin.Plugin ? advancedPanel.SetUp(list[k], 0.85f, 61) : SetUp(advancedPanel, list[k].CustomRole(), 0.85f, 61);
+                    float height = Plugin == FungleApiPlugin.Plugin ? advancedPanel.SetUp(list[k], 0.85f, 61) : SetUp(advancedPanel, list[k].CustomRole(), 0.85f, 61);
                     if (height > maxHeightInRow)
                     {
                         maxHeightInRow = height;

@@ -29,8 +29,8 @@ namespace FungleAPI.Components
             Text = GetComponentInChildren<TextMeshPro>();
             RightButton = GetComponentsInChildren<PassiveButton>()[0];
             LeftButton = GetComponentsInChildren<PassiveButton>()[1];
-            CurrentPlugin = FungleAPIPlugin.Plugin;
-            Text.text = CurrentPlugin.ModName;
+            CurrentPlugin = FungleApiPlugin.Plugin;
+            Text.text = CurrentPlugin.FunglePlugin.ModName;
             RightButton.SetNewAction(new Action(delegate
             {
                 if ((CurrentIndex + 1) >= Plugins.Count)
@@ -42,7 +42,7 @@ namespace FungleAPI.Components
                     CurrentIndex++;
                 }
                 CurrentPlugin = Plugins[CurrentIndex];
-                Text.text = CurrentPlugin.ModName;
+                Text.text = CurrentPlugin.FunglePlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
             LeftButton.SetNewAction(new Action(delegate
@@ -56,7 +56,7 @@ namespace FungleAPI.Components
                     CurrentIndex--;
                 }
                 CurrentPlugin = ModPluginManager.AllPlugins[CurrentIndex];
-                Text.text = CurrentPlugin.ModName;
+                Text.text = CurrentPlugin.FunglePlugin.ModName;
                 OnChange?.Invoke(CurrentPlugin);
             }));
             Plugins = ModPluginManager.AllPlugins;

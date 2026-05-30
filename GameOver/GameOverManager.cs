@@ -123,7 +123,7 @@ namespace FungleAPI.GameOver
         {
             if (GameOverId == 255)
             {
-                FungleAPIPlugin.Instance.Log.LogError("FungleAPI supports only 255 GameOvers at the same time.");
+                FungleApiPlugin.Instance.Log.LogError("FungleAPI supports only 255 GameOvers at the same time.");
                 return;
             }
             BaseGameOver gameOver = (BaseGameOver)Activator.CreateInstance(type);

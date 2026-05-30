@@ -41,21 +41,21 @@ namespace FungleAPI.GameOptions
             {
                 try
                 {
-                    if (propertyInfo.GetMethod != null && typeof(ModdedOption).IsAssignableFrom(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is ModdedOption option && option != null)
+                    if (propertyInfo.GetMethod != null && typeof(BaseModdedOption).IsAssignableFrom(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is BaseModdedOption option && option != null)
                     {
                         option.Initialize(propertyInfo);
                         moddedOptions.Add(option);
                         continue;
                     }
 
-                    ModdedOptionAttribute moddedOptionAttribute = propertyInfo.GetCustomAttribute<ModdedOptionAttribute>();
+                    BaseModdedOptionAttribute moddedOptionAttribute = propertyInfo.GetCustomAttribute<BaseModdedOptionAttribute>();
                     MethodInfo method = propertyInfo.GetGetMethod(true);
                     if (moddedOptionAttribute != null)
                     {
                         moddedOptionAttribute.Initialize(propertyInfo);
                         moddedOptions.Add(moddedOptionAttribute);
                         HarmonyHelper.Patches.Add(method, new Func<object>(moddedOptionAttribute.GetReturnedValue));
-                        FungleAPIPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
+                        FungleApiPlugin.Harmony.Patch(method, new HarmonyMethod(typeof(HarmonyHelper).GetMethod("GetPrefix", BindingFlags.Static | BindingFlags.Public)));
                     }
                 }
                 catch { }
@@ -64,7 +64,7 @@ namespace FungleAPI.GameOptions
             {
                 try
                 {
-                    if (typeof(ModdedOption).IsAssignableFrom(fieldInfo.FieldType) && fieldInfo.GetValue(null) is ModdedOption option && option != null)
+                    if (typeof(BaseModdedOption).IsAssignableFrom(fieldInfo.FieldType) && fieldInfo.GetValue(null) is BaseModdedOption option && option != null)
                     {
                         option.Initialize(fieldInfo);
                         moddedOptions.Add(option);

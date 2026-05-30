@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Options
 {
-    public abstract class ModdedOption : IModdedOption
+    public abstract class BaseModdedOption : IModdedOption
     {
         public Action<bool> OnValueChance;
         public BaseGameSetting Data { get; set; }

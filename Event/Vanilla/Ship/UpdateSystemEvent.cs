@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Vanilla
+namespace FungleAPI.Event.Vanilla.Ship
 {
     public class UpdateSystemEvent : FungleEvent
     {

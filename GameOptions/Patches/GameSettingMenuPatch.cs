@@ -132,7 +132,7 @@ namespace FungleAPI.GameOptions.Patches
 
                 presetTab.transform.parent = scroller.Inner;
 
-                pluginChanger.OnChange(FungleAPIPlugin.Plugin);
+                pluginChanger.OnChange(FungleApiPlugin.Plugin);
             }
         }
 

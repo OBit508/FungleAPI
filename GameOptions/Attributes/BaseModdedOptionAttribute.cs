@@ -14,7 +14,7 @@ using UnityEngine;
 namespace FungleAPI.GameOptions.Attributes
 {
     [AttributeUsage(AttributeTargets.Property)]
-    public abstract class ModdedOptionAttribute : Attribute, IModdedOption
+    public abstract class BaseModdedOptionAttribute : Attribute, IModdedOption
     {
         public Action<bool> OnValueChance;
         public Type ReturnedType;

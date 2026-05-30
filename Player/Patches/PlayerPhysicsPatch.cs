@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.Event.Vanilla.Player;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;

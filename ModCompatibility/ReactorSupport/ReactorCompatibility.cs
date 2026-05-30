@@ -25,7 +25,7 @@ namespace FungleAPI.ModCompatibility.ReactorSupportTemp
         {
             if (IL2CPPChainloader.Instance.Plugins.TryGetValue("gg.reactor.api", out _))
             {
-                using (Stream stream = FungleAPIPlugin.Plugin.ModAssembly.GetManifestResourceStream("FungleAPI.ModCompatibility.DLLs.ReactorWithFungle.dll"))
+                using (Stream stream = FungleApiPlugin.Plugin.ModAssembly.GetManifestResourceStream("FungleAPI.ModCompatibility.DLLs.ReactorWithFungle.dll"))
                 {
                     Assembly assembly = Assembly.Load(stream.ToArray());
 
@@ -33,7 +33,7 @@ namespace FungleAPI.ModCompatibility.ReactorSupportTemp
 
                     Instance.Initialize();
 
-                    Instance.Register("FungleAPI", FungleAPIPlugin.ModV, false, (p) => p == ReactorCreditsLocation.PingTracker);
+                    Instance.Register("FungleAPI", FungleApiPlugin.ModV, false, (p) => p == ReactorCreditsLocation.PingTracker);
                 }
             }
         }

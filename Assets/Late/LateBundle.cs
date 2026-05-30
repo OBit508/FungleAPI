@@ -28,12 +28,12 @@ namespace FungleAPI.Assets.Late
             AssetBundle assetBundle = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
+                FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 assetBundle = AssetLoader.LoadBundle(__assembly, __resource);
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
+                FungleApiPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
             }
             return assetBundle;
         }

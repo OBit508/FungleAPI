@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Vanilla
+namespace FungleAPI.Event.Vanilla.Player
 {
-    public class AfterExitVent : FungleEvent
+    public class ReportBodyEvent : FungleEvent
     {
         public readonly PlayerControl Source;
-        public readonly Vent Vent;
-        public AfterExitVent(PlayerControl source, Vent vent)
+        public readonly NetworkedPlayerInfo Target;
+        public ReportBodyEvent(PlayerControl source, NetworkedPlayerInfo target)
         {
             Source = source;
-            Vent = vent;
+            Target = target;
         }
     }
 }

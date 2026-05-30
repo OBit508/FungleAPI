@@ -84,12 +84,12 @@ namespace FungleAPI.Networking
         }
         internal static void PatchInnerNetObjects()
         {
-            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().ToList().FindAll(t => t.IsSubclassOf(typeof(InnerNetObject))))
+            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().ToList().FindAll(t => typeof(InnerNetObject).IsAssignableFrom(t)))
             {
-                MethodInfo methodInfo = type.GetMethod("HandleRpc");
-                if (methodInfo != null)
+                MethodInfo methodInfo = type.GetMethod("HandleRpc", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                if (methodInfo != null && !methodInfo.IsVirtual)
                 {
-                    FungleAPIPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
+                    FungleApiPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
                 }
             }
         }

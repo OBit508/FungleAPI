@@ -23,7 +23,7 @@ namespace FungleAPI.PluginLoading
         }
         public static string GetPlugin_Folder(ModPlugin modPlugin)
         {
-            string path = Path.Combine(GetAPI_Folder(), TurnSafe($"{modPlugin.RealName} - {modPlugin.LocalMod.GUID}"));
+            string path = Path.Combine(GetAPI_Folder(), TurnSafe(modPlugin.LocalMod.GUID));
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

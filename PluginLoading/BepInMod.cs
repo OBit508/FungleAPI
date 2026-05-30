@@ -28,7 +28,7 @@ namespace FungleAPI.PluginLoading
             {
                 return bepInMod;
             }
-            return new BepInMod() { GUID = FungleAPIPlugin.ModId, Version = FungleAPIPlugin.ModV, Name = "FungleAPI" };
+            return default;
         }
     }
 }

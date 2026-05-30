@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.Event.Vanilla.Ship;
 using FungleAPI.GModes;
 using FungleAPI.GModes.Logics;
 using FungleAPI.Role;

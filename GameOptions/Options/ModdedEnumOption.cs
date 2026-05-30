@@ -16,7 +16,7 @@ using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
 namespace FungleAPI.GameOptions.Options
 {
-    public class ModdedEnumOption<TEnum> : ModdedOption where TEnum : Enum
+    public class ModdedEnumOption<TEnum> : BaseModdedOption where TEnum : Enum
     {
         public int LocalValue;
         public int NonHostValue;

@@ -53,10 +53,6 @@ namespace FungleAPI.Role
         /// </summary>
         public RoleTypes GhostRole;
         /// <summary>
-        /// Indicates the color that is showed on the role to represent the team color
-        /// </summary>
-        public Color ShowedTeamColor;
-        /// <summary>
         /// Role screenshot
         /// </summary>
         public Sprite Screenshot = null;
@@ -104,7 +100,6 @@ namespace FungleAPI.Role
             CanSabotage = customRole.Team == ModdedTeamManager.Impostors;
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
             GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
-            ShowedTeamColor = customRole.RoleColor;
             NeutralWinText = $"{FungleTranslation.VictoryText.GetString()} " + customRole.RoleName.GetString();
             CanKill = UseVanillaKillButton;
             OutlineColor = customRole.RoleColor;

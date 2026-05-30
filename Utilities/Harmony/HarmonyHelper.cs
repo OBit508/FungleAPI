@@ -14,13 +14,13 @@ namespace FungleAPI.Utilities.Harmony
         public static Dictionary<MethodBase, Func<object>> Patches = new Dictionary<MethodBase, Func<object>>();
         public static void Remove_FungleAPI_HarmonyLib_Patch(MethodInfo original, string TypeName, string MethodName)
         {
-            Type type = FungleAPIPlugin.Plugin.AllTypes.FirstOrDefault(t => t.Name == TypeName);
+            Type type = FungleApiPlugin.Plugin.AllTypes.FirstOrDefault(t => t.Name == TypeName);
             if (type != null)
             {
                 MethodInfo methodInfo = type.GetMethod(MethodName, AccessTools.all);
                 if (methodInfo != null)
                 {
-                    FungleAPIPlugin.Harmony.Unpatch(original, methodInfo);
+                    FungleApiPlugin.Harmony.Unpatch(original, methodInfo);
                 }
             }
         }

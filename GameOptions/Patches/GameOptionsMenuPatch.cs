@@ -75,7 +75,7 @@ namespace FungleAPI.GameOptions.Patches
                 GameSettingMenuPatch.CurrentTab.BuildEditTab(__instance);
                 Update = false;
             }
-            __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleAPIPlugin.Plugin);
+            __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin);
             return false;
         }
         [HarmonyPatch(nameof(GameOptionsMenu.ClickPresetButton))]
@@ -91,7 +91,7 @@ namespace FungleAPI.GameOptions.Patches
                 SyncManager.RpcUpdatePreset(preset, GameSettingMenuPatch.pluginChanger.CurrentPlugin);
             }
 
-            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleAPIPlugin.Plugin) return true;
+            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin) return true;
 
             __instance.RefreshChildren();
             __instance.RolesMenu.RefreshChildren();

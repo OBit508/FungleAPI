@@ -3,6 +3,7 @@ using AsmResolver.PE.DotNet.ReadyToRun;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GModes;
@@ -44,8 +45,8 @@ namespace FungleAPI.Role.Patches
             }
             if (waitingRegister)
             {
-                FungleAPIPlugin.Plugin.Roles.AddRange(__instance.AllRoles.ToArray());
-                CustomRoleManager.AllRoles.AddRange(FungleAPIPlugin.Plugin.Roles);
+                FungleApiPlugin.Plugin.Roles.AddRange(__instance.AllRoles.ToArray());
+                CustomRoleManager.AllRoles.AddRange(FungleApiPlugin.Plugin.Roles);
                 CustomRoleManager.CreateRoles();
                 __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
                 waitingRegister = false;

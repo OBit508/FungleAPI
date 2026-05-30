@@ -20,35 +20,29 @@ namespace FungleAPI.ModCompatibility
     {
         public static Assembly LevelImpostorAssembly;
         public static Type LIShipStatus;
-        public static PropertyInfo Instance;
-        public static FieldInfo IsInit;
+        public static PropertyInfo IsInit;
+        private static bool IsLoaded;
 
         [EventRegister]
         public static void Initialize(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
         {
             if (IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out PluginInfo pluginInfo))
             {
-                FungleAPIPlugin.Instance.Log.LogInfo("Initializing LevelImpostor Support");
                 LevelImpostorAssembly = pluginInfo.Instance.GetType().Assembly;
                 Type type = LevelImpostorAssembly.GetType("LevelImposter.DB.AssetDB");
-                Instance = type.GetProperty("Instance");
-                IsInit = type.GetField("_isInit", AccessTools.all);
+                IsInit = type.GetProperty("IsInit", AccessTools.all);
                 LIShipStatus = LevelImpostorAssembly.GetType("LevelImposter.Core.LIShipStatus");
             }
         }
-        public static System.Collections.IEnumerator CoUnsafeWaitForMapLoading()
+        public static System.Collections.IEnumerator CoWaitMapLoading()
         {
-            if (Instance != null)
+            if (IsLoaded) yield break;
+
+            while (!(bool)IsInit.GetValue(null))
             {
-                while (Instance.GetValue(null) == null)
-                {
-                    yield return null;
-                }
-                while (!(bool)IsInit.GetValue(Instance.GetValue(null)))
-                {
-                    yield return null;
-                }
+                yield return null;
             }
+            IsLoaded = true;
         }
     }
 }

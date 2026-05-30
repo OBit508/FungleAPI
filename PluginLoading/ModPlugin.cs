@@ -21,14 +21,9 @@ namespace FungleAPI.PluginLoading
     /// </summary>
     public class ModPlugin
     {
-        public string RealName;
-        public string ModName;
-        public string ModVersion;
-        public bool InBeta;
-
-
         public Assembly ModAssembly;
         public BasePlugin BasePlugin;
+        public IFungleBasePlugin FunglePlugin;
 
         public ConfigEntry<byte> RulePreset;
         public bool HasRoles;

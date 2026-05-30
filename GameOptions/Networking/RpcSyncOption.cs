@@ -46,7 +46,7 @@ namespace FungleAPI.GameOptions.Networking
                 case SyncOptionType.Game:
                     if (data.Item3 is ModPlugin modPlugin)
                     {
-                        str += $"({modPlugin.ModName}) ";
+                        str += $"({modPlugin.FunglePlugin.ModName}) ";
                         messageWriter.WritePlugin(modPlugin);
                     }
                     break;
@@ -75,7 +75,7 @@ namespace FungleAPI.GameOptions.Networking
                     break;
                 case SyncOptionType.Game:
                     ModPlugin modPlugin = messageReader.ReadPlugin();
-                    str += $"({modPlugin.ModName}) ";
+                    str += $"({modPlugin.FunglePlugin.ModName}) ";
                     break;
             }
 

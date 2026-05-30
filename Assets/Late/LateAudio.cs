@@ -32,12 +32,12 @@ namespace FungleAPI.Assets.Late
             AudioClip audioClip = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
+                FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 audioClip = AssetLoader.LoadAudio(__assembly, __resource, __clipName ?? __resource);
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
+                FungleApiPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
             }
             return audioClip;
         }

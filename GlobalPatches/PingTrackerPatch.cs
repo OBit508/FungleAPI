@@ -21,11 +21,14 @@ namespace FungleAPI.Patches
 
             if (modsText == null)
             {
-                modsText = "";
-                ModPlugin last = ModPluginManager.AllPlugins.Last();
-                foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
+                modsText = $"FungleAPI {FungleApiPlugin.ModV}";
+
+                List<ModPlugin> plugins = ModPluginManager.AllPlugins.FindAll(p => p.FunglePlugin.ApperOnCredits);
+
+                ModPlugin last = plugins.Last();
+                foreach (ModPlugin plugin in plugins)
                 {
-                    modsText += $"{(plugin != FungleAPIPlugin.Plugin ? plugin.ModName : "FungleAPI")} {plugin.ModVersion}";
+                    modsText += $"{plugin.FunglePlugin.ModName} {plugin.FunglePlugin.ModVersion}";
                     if (plugin != last)
                     {
                         modsText += ", ";

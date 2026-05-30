@@ -80,7 +80,7 @@ namespace FungleAPI.GameOptions.Collections
                         int roleOptionVersion = binaryReader.ReadInt32();
                         if (roleOptionVersion < RoleOptionVersion)
                         {
-                            FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Role Option Collection from {FilePath} founded, loading and saving default.");
+                            FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Role Option Collection from {FilePath} founded, loading and saving default.");
                             SetAsDefault();
                             return;
                         }
@@ -104,7 +104,7 @@ namespace FungleAPI.GameOptions.Collections
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Failed to read Role Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to read Role Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
                 SetAsDefault();
             }
         }

@@ -156,21 +156,21 @@ namespace FungleAPI.Utilities
         /// </summary>
         public static Coroutine StartCoroutine(System.Collections.IEnumerator enumerator)
         {
-            return FungleAPIPlugin.Helper.StartCoroutine(enumerator.WrapToIl2Cpp());
+            return FungleApiPlugin.Helper.StartCoroutine(enumerator.WrapToIl2Cpp());
         }
         /// <summary>
         /// Start a coroutine
         /// </summary>
         public static Coroutine StartCoroutine(Il2CppSystem.Collections.IEnumerator enumerator)
         {
-            return FungleAPIPlugin.Helper.StartCoroutine(enumerator);
+            return FungleApiPlugin.Helper.StartCoroutine(enumerator);
         }
         /// <summary>
         /// Stop a coroutine
         /// </summary>
         public static void StopCoroutine(Coroutine coroutine)
         {
-            FungleAPIPlugin.Helper.StopCoroutine(coroutine);
+            FungleApiPlugin.Helper.StopCoroutine(coroutine);
         }
         public static T[] AsArray<T>(this T obj)
         {

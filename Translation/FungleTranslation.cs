@@ -22,8 +22,6 @@ namespace FungleAPI.Translation
                     .AddTranslation(SupportedLangs.Brazilian, "Chance");
         public static StringNames PriorityText { get; } = new Translator("Priority")
                     .AddTranslation(SupportedLangs.Brazilian, "Prioridade");
-        public static StringNames FailedToSyncSettings { get; } = new Translator("There was a failure while trying to sync the settings.")
-                    .AddTranslation(SupportedLangs.Brazilian, "Houve uma falha tentando sincronizar as configurações.");
         public static StringNames ChangeToPublicText { get; } = new Translator("Public rooms are disabled for security reasons.")
                     .AddTranslation(SupportedLangs.Brazilian, "Salas públicas estão desativadas por segurança.");
         public static StringNames LoadingPrefabsText { get; } = new Translator("Loading Prefabs")

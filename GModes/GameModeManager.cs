@@ -71,7 +71,7 @@ namespace FungleAPI.GModes
             stringGameSetting.Title = FungleTranslation.GameModeText;
             stringGameSetting.Values = Values.ToArray();
 
-            Value = FungleAPIPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", 0);
+            Value = FungleApiPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", 0);
 
             if (Values.Count > Value.Value)
             {

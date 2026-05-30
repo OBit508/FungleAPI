@@ -35,12 +35,12 @@ namespace FungleAPI.Assets.Late
             Sprite sprite = null;
             try
             {
-                FungleAPIPlugin.Instance.Log.LogInfo($"Created {__resource}");
+                FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");
                 sprite = AssetLoader.LoadSprite(__assembly, __resource, __pixelPerUnit);
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
+                FungleApiPlugin.Instance.Log.LogError("Failed to create late asset message:\n" + ex.Message);
             }
             return sprite;
         }

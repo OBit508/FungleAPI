@@ -58,7 +58,7 @@ namespace FungleAPI.Base.Rpc
             }
             else
             {
-                FungleAPIPlugin.Instance.Log.LogError(GetType().Name + "-Rpc is trying to handle with the wrong InnerNetObject");
+                FungleApiPlugin.Instance.Log.LogError(GetType().Name + "-Rpc is trying to handle with the wrong InnerNetObject");
             }
         }
         internal override void __handle(MessageReader messageReader)

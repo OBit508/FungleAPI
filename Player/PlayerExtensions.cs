@@ -5,6 +5,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;

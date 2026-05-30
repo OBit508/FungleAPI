@@ -14,7 +14,7 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Attributes
 {
-    public class ModdedNumberOptionAttribute : ModdedOptionAttribute
+    public class ModdedNumberOptionAttribute : BaseModdedOptionAttribute
     {
         public float LocalValue;
         public float NonHostValue;

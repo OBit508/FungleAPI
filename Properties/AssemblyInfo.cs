@@ -5,11 +5,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 
-[assembly: AssemblyVersion(FungleAPIPlugin.ModV)]
-[assembly: AssemblyCompany("Rafael")]
+[assembly: AssemblyVersion(FungleApiPlugin.ModV)]
+[assembly: AssemblyCompany("OBit5080")]
 [assembly: AssemblyConfiguration("Release")]
-[assembly: AssemblyDescription("This is a simple API for the game Among Us")]
-[assembly: AssemblyFileVersion(FungleAPIPlugin.ModV)]
-[assembly: AssemblyInformationalVersion(FungleAPIPlugin.ModV)]
-[assembly: AssemblyProduct(FungleAPIPlugin.ModId)]
+[assembly: AssemblyDescription("AmongUs modding API")]
+[assembly: AssemblyFileVersion(FungleApiPlugin.ModV)]
+[assembly: AssemblyInformationalVersion(FungleApiPlugin.ModV)]
+[assembly: AssemblyProduct(FungleApiPlugin.ModId)]
 [assembly: AssemblyTitle("FungleAPI")]

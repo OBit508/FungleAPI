@@ -29,7 +29,7 @@ namespace FungleAPI.Cosmetics
         }
         public static bool IsCustom(int colorId)
         {
-            return !FungleAPIPlugin.Plugin.Cosmetics.Colors.Any(c => c.ColorId == colorId);
+            return !FungleApiPlugin.Plugin.Cosmetics.Colors.Any(c => c.ColorId == colorId);
         }
         public static bool IsInvalid(int colorId)
         {

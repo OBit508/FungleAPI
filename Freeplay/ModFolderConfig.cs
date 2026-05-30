@@ -33,7 +33,7 @@ namespace FungleAPI.Freeplay
             {
                 return;
             }
-            FolderName = modPlugin.ModName;
+            FolderName = modPlugin.FunglePlugin.ModName;
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> teams in modPlugin.GetTeamsAndRoles())
             {
                 teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().Configuration.HideInFreeplay);

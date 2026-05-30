@@ -133,7 +133,7 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.scrollBar.enabled = !scroller.enabled;
             };
 
-            pluginChanger.OnChange(FungleAPIPlugin.Plugin);
+            pluginChanger.OnChange(FungleApiPlugin.Plugin);
         }
         [HarmonyPatch(nameof(LobbyViewSettingsPane.ChangeTab))]
         [HarmonyPrefix]
@@ -195,7 +195,7 @@ namespace FungleAPI.GameOptions.Patches
                 lobbyTab.ViewSettingsButton?.SelectButton(false);
             }
             Tab.ViewSettingsButton?.SelectButton(true);
-            if (!(Tab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleAPIPlugin.Plugin))
+            if (!(Tab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin))
             {
                 Tab.BuildViewTab(lobbyViewSettingsPane);
             }

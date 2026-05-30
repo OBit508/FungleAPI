@@ -83,7 +83,7 @@ namespace FungleAPI.GameOptions.Collections
                         int teamOptionVersion = binaryReader.ReadInt32();
                         if (teamOptionVersion < TeamOptionVersion)
                         {
-                            FungleAPIPlugin.Instance.Log.LogWarning($"Newer version of the Team Option Collection from {FilePath} founded, loading and saving default.");
+                            FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Team Option Collection from {FilePath} founded, loading and saving default.");
                             SetAsDefault();
                             return;
                         }
@@ -107,7 +107,7 @@ namespace FungleAPI.GameOptions.Collections
             }
             catch (Exception ex)
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
                 SetAsDefault();
             }
         }

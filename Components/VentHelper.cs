@@ -2,6 +2,7 @@
 using FungleAPI.Attributes;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Networking;
 using FungleAPI.Player;
 using FungleAPI.Role;
@@ -48,7 +49,7 @@ namespace FungleAPI.Components
                     string errorText;
                     if (!CheckForMoveVent(vent, out errorText))
                     {
-                        FungleAPIPlugin.Instance.Log.LogError("Local Player failed to move to " + vent.name + " because of " + errorText);
+                        FungleApiPlugin.Instance.Log.LogError("Local Player failed to move to " + vent.name + " because of " + errorText);
                     }
                     else
                     {

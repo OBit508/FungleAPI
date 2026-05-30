@@ -1,8 +1,10 @@
-﻿using BepInEx;
+﻿using AmongUs.GameOptions;
+using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Assets;
 using FungleAPI.Cosmetics;
 using FungleAPI.Event;
+using FungleAPI.Event.Api;
 using FungleAPI.Event.BelpInEx;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
@@ -33,55 +35,54 @@ namespace FungleAPI
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
     [BepInDependency("gg.reactor.api", DependencyFlags.SoftDependency)]
-    public class FungleAPIPlugin : BasePlugin, IFungleBasePlugin
+    [BepInDependency("Submerged", DependencyFlags.SoftDependency)]
+    public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
         public const string ModV = "0.2.8";
-        public static Harmony Harmony = new Harmony(ModId);
-        public static FungleAPIPlugin Instance;
+        public static readonly Harmony Harmony = new Harmony(ModId);
+        public static FungleApiPlugin Instance { get; private set; }
+
+        public string ModName { get; } = "Vanilla";
+        public string ModVersion { get; } = ModV;
+
         internal static FungleHelper Helper;
-        internal static ModPlugin plugin;
         private static GameObject CreditScreen;
         /// <summary>
         /// The API Plugin
         /// </summary>
-        public static ModPlugin Plugin
-        {
-            get
-            {
-                if (plugin == null)
-                {
-                    plugin = new ModPlugin();
-                    ModPluginManager.Register(plugin, Instance);
-                    plugin.ModName = "Vanilla";
-                    plugin.ModVersion = ModV;
-                    plugin.LobbyTabs = new List<LobbyTab>() { new VanillaSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
-                    ModPluginManager.AllPlugins.Add(plugin);
-                }
-                return plugin;
-            }
-        }
-
+        public static ModPlugin Plugin => FunglePlugin<FungleApiPlugin>.Plugin;
         public override void Load()
         {
+            ModPlugin plugin = new ModPlugin();
+            ModPluginManager.Register(plugin, Assembly.GetExecutingAssembly(), this);
+            plugin.FunglePlugin = this;
+            plugin.RulePreset = Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
+            plugin.LobbyTabs = new List<LobbyTab>() { new VanillaSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+            ModPluginManager.AllPlugins.Add(plugin);
+            ModPluginManager.AllAssemblies.Add(plugin.ModAssembly, plugin);
+
             Instance = this;
 
-            // Cria o ModPlugin da API
-            if (Plugin == null)
-            {
-                Log.LogError("Failed creating ModPlugin from API");
-            }
             Harmony.PatchAll();
 
             // Da patch nos InnerNetObjects para o sistema de Rpc
             CustomRpcManager.PatchInnerNetObjects();
+
             ReactorCompatibility.CheckReactor();
+            SubmergedCompatibility.CheckSubmerged();
+
             IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) => // Chamado quando um mod é carregado
             {
                 // Se o mod tiver a interface de registro da API ele auto registra e não precisa chamar direto no ModPluginManager
                 if (basePlugin is IFungleBasePlugin fungle)
                 {
-                    ModPluginManager.RegisterMod(basePlugin, fungle.ModVersion, fungle.ModName);
+                    ModPlugin plugin = new ModPlugin();
+                    ModPluginManager.Register(plugin, assembly, basePlugin);
+                    plugin.FunglePlugin = basePlugin as IFungleBasePlugin;
+                    plugin.RulePreset = basePlugin.Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
+                    ModPluginManager.AllPlugins.Add(plugin);
+                    ModPluginManager.AllAssemblies.Add(plugin.ModAssembly, plugin);
                     fungle.AlmostLoaded();
                 }
             };
@@ -97,8 +98,12 @@ namespace FungleAPI
                     if (modPlugin != null)
                     {
                         modPlugin.LocalMod = bepInMod;
-                        ReactorCompatibility.Instance?.Register(modPlugin.ModName, modPlugin.ModVersion, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
+
+                        if (modPlugin.FunglePlugin.ApperOnCredits)
+                        {
+                            ReactorCompatibility.Instance?.Register(modPlugin.FunglePlugin.ModName, modPlugin.FunglePlugin.ModVersion, false, (l) => l == ReactorCreditsLocation.PingTracker);
+                        }
                     }
                 }
 
@@ -118,17 +123,15 @@ namespace FungleAPI
             };
             SceneManager.add_sceneLoaded(new Action<Scene, LoadSceneMode>(delegate (Scene scene, LoadSceneMode loadSceneMode)
             {
-                // Carrega os arquivos assim que o jogo realmente abre
-                if (scene.name == "SplashIntro" && !Helpers.GameIsRunning)
+                if (!Helpers.GameIsRunning)
                 {
                     Helpers.GameIsRunning = true;
+
+                    EventManager.CallEvent(new FirstSceneLoadEvent());
+
                     FungleAssets.LoadAll();
                 }
             }));
-            Log.LogInfo("Thanks MiraAPI for some features, if you like this API consider using MiraAPI as well :)");
-
-            // Carrega as mensagens de erro do handshake
-            DisconnectPopup.ErrorMessages.Add((DisconnectReasons)244, FungleTranslation.FailedToSyncSettings);
 
             // Adiciona um MonoBehaviour no BasePlugin para alguns metodos do Helpers
             Helper = AddComponent<FungleHelper>();

@@ -23,11 +23,10 @@ namespace FungleAPI.PluginLoading
         PluginInfo PluginInfo => ModPluginManager.TryGetPluginInfo(this as BasePlugin);
         string ModName => PluginInfo.Metadata.Name;
         string ModVersion => PluginInfo.Metadata.Version.Clean();
+        bool ApperOnCredits => false;
         void ClickOnModName() { }
-
         void AlmostLoaded() { }
         void FullyLoaded() { }
-
         void LoadTabs(ModPlugin modPlugin) 
         {
             if (modPlugin.Settings != null)
@@ -43,7 +42,6 @@ namespace FungleAPI.PluginLoading
                 modPlugin.LobbyTabs.Add(new RoleTab() { Plugin = modPlugin });
             }
         }
-
         void SetPreset(RulesPresets preset, ModPlugin modPlugin)
         {
             bool amHost = AmongUsClient.Instance.AmHost;
@@ -89,7 +87,6 @@ namespace FungleAPI.PluginLoading
                 modPlugin.RulePreset.Value = (byte)preset;
             }
         }
-
         System.Collections.IEnumerator CoLoadOnMainScreen(TextMeshPro loadingText)
         {
             yield return null;

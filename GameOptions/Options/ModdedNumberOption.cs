@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Options
 {
-    public class ModdedNumberOption : ModdedOption
+    public class ModdedNumberOption : BaseModdedOption
     {
         public float LocalValue;
         public float NonHostValue;

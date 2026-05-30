@@ -26,7 +26,7 @@ namespace FungleAPI.Ship
             {
                 return ShipType.LevelImpostor;
             }
-            if (SubmergedSupport.SubmergedAssembly != null && shipStatus.GetComponent(Il2CppType.From(SubmergedSupport.SubmarineStatus)) != null)
+            if (SubmergedCompatibility.Instance != null && shipStatus.GetComponent(Il2CppType.From(SubmergedCompatibility.Instance.SubmarineStatus)) != null)
             {
                 return ShipType.Submerged;
             }
@@ -75,7 +75,7 @@ namespace FungleAPI.Ship
             }
             if (prefab == null && !VentExtensions.VentPrefabs.TryGetValue(type, out prefab))
             {
-                FungleAPIPlugin.Instance.Log.LogError($"Failed to create a vent with type {type}, the prefab cant be found.");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to create a vent with type {type}, the prefab cant be found.");
                 return null;
             }
             Vent vent = GameObject.Instantiate<Vent>(prefab, shipStatus.transform);

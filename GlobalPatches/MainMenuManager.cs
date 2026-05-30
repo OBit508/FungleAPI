@@ -127,11 +127,7 @@ namespace FungleAPI.Patches
             }
             foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
-                IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
-                if (fungleBasePlugin != null)
-                {
-                    yield return fungleBasePlugin.CoLoadOnMainScreen(textMeshPro);
-                }
+                yield return plugin.FunglePlugin.CoLoadOnMainScreen(textMeshPro);
             }
             GameObject.Destroy(textMeshPro.gameObject);
             yield return mainMenuManager.RunStartUp();

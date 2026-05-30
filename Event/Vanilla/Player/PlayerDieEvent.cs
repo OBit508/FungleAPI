@@ -5,16 +5,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Event.Vanilla
+namespace FungleAPI.Event.Vanilla.Player
 {
-    public class ReportBodyEvent : FungleEvent
+    public class PlayerDieEvent : FungleEvent
     {
         public readonly PlayerControl Source;
-        public readonly NetworkedPlayerInfo Target;
-        public ReportBodyEvent(PlayerControl source, NetworkedPlayerInfo target)
+        public readonly DeathReason Reason;
+        public PlayerDieEvent(PlayerControl source, DeathReason reason)
         {
             Source = source;
-            Target = target;
+            Reason = reason;
         }
     }
 }

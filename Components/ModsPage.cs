@@ -41,15 +41,9 @@ namespace FungleAPI.Components
             {
                 List<(string, Action)> strings = Pages[Pages.Count - 1];
 
-                Action click = null;
+                Action click = plugin.FunglePlugin.ClickOnModName;
 
-                IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
-                if (fungleBasePlugin != null)
-                {
-                    click = fungleBasePlugin.ClickOnModName;
-                }
-
-                strings.Add(($"[{plugin.ModName} {plugin.ModVersion}]", click));
+                strings.Add(($"[{plugin.FunglePlugin.ModName} {plugin.FunglePlugin.ModVersion}]", click));
                 if (strings.Count >= 10)
                 {
                     Pages.Add(new List<(string, Action)>());

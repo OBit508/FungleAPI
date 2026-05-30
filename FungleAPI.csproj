@@ -34,9 +34,10 @@
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
+    <Compile Include="Event\Api\FirstSceneLoadEvent.cs" />
     <Compile Include="Event\BepInEx\FinishedPluginLoadingEvent.cs" />
-    <Compile Include="Event\Vanilla\AfterSetRoleEvent.cs" />
-    <Compile Include="Event\Vanilla\BeforeSetRoleEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\AfterSetRoleEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\BeforeSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
     <Compile Include="GameOptions\Collections\GameOptionCollection.cs" />
     <Compile Include="GameOptions\ModeOptionCollection.cs" />
@@ -68,24 +69,24 @@
     <Compile Include="Cosmetics\VanillaCosmetics.cs" />
     <Compile Include="Event\EventManager.cs" />
     <Compile Include="Event\Vanilla\AfterEjectionEvent.cs" />
-    <Compile Include="Event\Vanilla\AfterEnterVent.cs" />
-    <Compile Include="Event\Vanilla\AfterExitVent.cs" />
+    <Compile Include="Event\Vanilla\Player\AfterEnterVent.cs" />
+    <Compile Include="Event\Vanilla\Player\AfterExitVent.cs" />
     <Compile Include="Event\Vanilla\AfterGameOver.cs" />
-    <Compile Include="Event\Vanilla\AfterMoveVent.cs" />
-    <Compile Include="Event\Vanilla\AfterMurderEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\AfterMoveVent.cs" />
+    <Compile Include="Event\Vanilla\Player\AfterMurderEvent.cs" />
     <Compile Include="Event\Vanilla\BeforeEjectionEvent.cs" />
-    <Compile Include="Event\Vanilla\BeforeEnterVent.cs" />
-    <Compile Include="Event\Vanilla\BeforeExitVent.cs" />
+    <Compile Include="Event\Vanilla\Player\BeforeEnterVent.cs" />
+    <Compile Include="Event\Vanilla\Player\BeforeExitVent.cs" />
     <Compile Include="Event\Vanilla\BeforeGameOver.cs" />
-    <Compile Include="Event\Vanilla\BeforeMoveVent.cs" />
-    <Compile Include="Event\Vanilla\BeforeMurderEvent.cs" />
-    <Compile Include="Event\Vanilla\CloseDoorEvent.cs" />
-    <Compile Include="Event\Vanilla\CompleteTaskEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\BeforeMoveVent.cs" />
+    <Compile Include="Event\Vanilla\Player\BeforeMurderEvent.cs" />
+    <Compile Include="Event\Vanilla\Ship\CloseDoorEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\CompleteTaskEvent.cs" />
     <Compile Include="Event\Vanilla\EndMeetingEvent.cs" />
-    <Compile Include="Event\Vanilla\PlayerDieEvent.cs" />
-    <Compile Include="Event\Vanilla\ReportBodyEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\PlayerDieEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\ReportBodyEvent.cs" />
     <Compile Include="Event\Vanilla\StartMeetingEvent.cs" />
-    <Compile Include="Event\Vanilla\UpdateSystemEvent.cs" />
+    <Compile Include="Event\Vanilla\Ship\UpdateSystemEvent.cs" />
     <Compile Include="Freeplay\Helpers\Folder.cs" />
     <Compile Include="Freeplay\Helpers\FolderItem.cs" />
     <Compile Include="Freeplay\VanillaFolder.cs" />
@@ -102,8 +103,8 @@
     <Compile Include="GameOptions\OptionManager.cs" />
     <Compile Include="GameOptions\Options\ModdedEnumOption.cs" />
     <Compile Include="GameOptions\Options\ModdedNumberOption.cs" />
-    <Compile Include="GameOptions\Options\ModdedOption.cs" />
-    <Compile Include="GameOptions\Attributes\ModdedOptionAttribute.cs" />
+    <Compile Include="GameOptions\Options\BaseModdedOption.cs" />
+    <Compile Include="GameOptions\Attributes\BaseModdedOptionAttribute.cs" />
     <Compile Include="GameOptions\Options\ModdedToggleOption.cs" />
     <Compile Include="GameOptions\Patches\FixOptionsPatch.cs" />
     <Compile Include="GameOptions\Patches\GameOptionsMenuPatch.cs" />
@@ -118,7 +119,7 @@
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
-    <Compile Include="ModCompatibility\SubmergedSupport.cs" />
+    <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />
@@ -242,7 +243,7 @@
     <Compile Include="Ship\Patches\VentPatch.cs" />
     <Compile Include="GlobalPatches\VersionShowerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FungleAPIPlugin.cs" />
+    <Compile Include="FungleApiPlugin.cs" />
     <Compile Include="PluginLoading\ModPlugin.cs" />
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\Patches\IntroCutscenePatch.cs" />
@@ -729,5 +730,8 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModCompatibility\DLLs\SubWithFungle.dll" />
   </ItemGroup>
 </Project>

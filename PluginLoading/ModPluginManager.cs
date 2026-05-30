@@ -34,11 +34,9 @@ namespace FungleAPI.PluginLoading
     {
         public static readonly Dictionary<Assembly, ModPlugin> AllAssemblies = new Dictionary<Assembly, ModPlugin>();
         public static readonly List<ModPlugin> AllPlugins = new List<ModPlugin>();
-        internal static void Register(ModPlugin plugin, BasePlugin basePlugin)
+        internal static void Register(ModPlugin plugin, Assembly assembly, BasePlugin basePlugin)
         {
-            plugin.ModAssembly = basePlugin.GetType().Assembly;
-            plugin.ModName = plugin.ModAssembly.GetName().Name;
-            plugin.RealName = plugin.ModName;
+            plugin.ModAssembly = assembly;
             plugin.BasePlugin = basePlugin;
             HashSet<Type> visited = new HashSet<Type>();
             foreach (Type type in plugin.ModAssembly.GetTypes())
@@ -107,7 +105,7 @@ namespace FungleAPI.PluginLoading
                 }
             }
             IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
-            if (plugin != FungleAPIPlugin.Plugin)
+            if (plugin != FungleApiPlugin.Plugin)
             {
                 fungleBasePlugin?.LoadTabs(plugin);
             }
@@ -212,25 +210,6 @@ namespace FungleAPI.PluginLoading
             }
             basePlugin?.Log.LogError("Failed to get PluginInfo");
             return null;
-        }
-        internal static ModPlugin RegisterMod(BasePlugin basePlugin, string modVersion, string modName)
-        {
-            ModPlugin plugin = new ModPlugin();
-            Register(plugin, basePlugin);
-
-            plugin.RulePreset = basePlugin.Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
-
-            plugin.ModName = modName;
-            plugin.RealName = modName;
-            int count = AllPlugins.Count(p => p.RealName == plugin.RealName);
-            if (count > 0)
-            {
-                plugin.ModName += $" ({count})";
-            }
-            plugin.ModVersion = modVersion;
-            AllPlugins.Add(plugin);
-            AllAssemblies.Add(plugin.ModAssembly, plugin);
-            return plugin;
         }
     }
 }
