@@ -1,6 +1,6 @@
 # Fungle API
 
-Fungle API is a modding framework for Among Us, heavily inspired by both [https://github.com/All-Of-Us-Mods/MiraAPI](Mira API) and [https://github.com/nuclearpowered/reactor](Reactor). It provides a wide range of tools and systems designed to simplify mod development and extend the game's capabilities.
+Fungle API is a modding framework for Among Us, heavily inspired by both [Mira API](https://github.com/All-Of-Us-Mods/MiraAPI) and [Reactor](https://github.com/nuclearpowered/reactor). It provides a wide range of tools and systems designed to simplify mod development and extend the game's capabilities.
 
 ## Features
 
