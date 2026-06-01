@@ -21,6 +21,10 @@ namespace FungleAPI.Role
         /// </summary>
         public RoleHintType HintType = RoleHintType.TaskHint;
         /// <summary>
+        /// Indicates whether the Role text appers
+        /// </summary>
+        public bool ShowRoleText = true;
+        /// <summary>
         /// Indicates whether the role can use vents
         /// </summary>
         public bool CanUseVent;

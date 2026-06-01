@@ -31,13 +31,13 @@ namespace FungleAPI.Networking.Patches
                         string str = reader.ReadString();
                         if (str != "FClient")
                         {
-                            HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail.HostNotModded.GetString());
+                            HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail_HostNotModded.GetString());
                         }
                     }
-                    catch { HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail.HostNotModded.GetString()); }
+                    catch { HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail_HostNotModded.GetString()); }
                     return;
                 }
-                HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail.HostNotModded.GetString());
+                HandShakeManager.DisconnectWithReason(FungleTranslation.HandShakeFail_HostNotModded.GetString());
             }
         }
     }

@@ -103,27 +103,51 @@ namespace FungleAPI.Patches
                 }
                 __instance.Player.gameObject.SetActive(false);
             }
-            __instance.ImpostorText.text = FungleTranslation.TeamsRemainText.GetString();
-            Dictionary<ModdedTeam, ChangeableValue<int>> teams = new Dictionary<ModdedTeam, ChangeableValue<int>>();
+
+            string teamsText = "";
+
+            Dictionary<ModdedTeam, int> teams = new Dictionary<ModdedTeam, int>();
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                if (player.Data != __instance.initData.networkedPlayer && !player.Data.IsDead)
+                if (!player.Data.IsDead)
                 {
                     ModdedTeam team = player.Data.Role.GetTeam();
-                    if (teams.ContainsKey(team))
+                    if (teams.TryGetValue(team, out int value))
                     {
-                        teams[team].Value++;
+                        teams[team] = value + 1;
                     }
                     else
                     {
-                        teams.Add(team, new ChangeableValue<int>(1));
+                        teams[team] = 0;
                     }
                 }
             }
-            foreach (KeyValuePair<ModdedTeam, ChangeableValue<int>> pair in teams)
+
+            ModdedTeam last = teams.Last().Key;
+
+            foreach (KeyValuePair<ModdedTeam, int> pair in teams)
             {
-                __instance.ImpostorText.text += pair.Value.Value.ToString() + " " + pair.Key.TeamColor.ToTextColor() + (pair.Value.Value == 1 ? pair.Key.TeamName.GetString() : pair.Key.PluralName.GetString()) + "</color>" + (pair.Key == teams.Last().Key ? "" : ", ");
+                if (pair.Value > 1)
+                {
+                    teamsText += $"{pair.Value} {pair.Key.TeamColor.ToTextColor()}{pair.Key.PluralName.GetString()}</color>";
+                }
+                else
+                {
+                    teamsText += $"1 {pair.Key.TeamColor.ToTextColor()}{pair.Key.TeamName.GetString()}</color>";
+                }
+
+                if (pair.Key != last)
+                {
+                    teamsText += ", ";
+                }
+                else
+                {
+                    teamsText += ".";
+                }
             }
+
+            __instance.ImpostorText.text = string.Format(FungleTranslation.TeamsRemainText.GetString(), teamsText);
+
             __instance.StartCoroutine(__instance.Animate());
             EventManager.CallEvent(new AfterEjectionEvent(__instance, init));
             return false;

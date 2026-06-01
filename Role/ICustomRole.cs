@@ -6,6 +6,7 @@ using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Role options
         /// </summary>
-        RoleOptionCollection RoleOptions { get { return Save[GetType()].Value; } }
+        RoleOptionCollection RoleOptions { get { return Save[GetType()]; } }
         /// <summary>
         /// Create the Sabotage button config for the role
         /// </summary>
@@ -90,9 +91,9 @@ namespace FungleAPI.Role
         /// </summary>
         string ExileText(ExileController exileController)
         {
-            string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            return exileController.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + exileController.initData.networkedPlayer.Role.NiceName;
+            NetworkedPlayerInfo networkedPlayerInfo = exileController.initData.networkedPlayer;
+            return string.Format(FungleTranslation.ExileText.GetString(), networkedPlayerInfo.PlayerName, networkedPlayerInfo.Role.NiceName);
         }
-        internal static Dictionary<Type, ChangeableValue<RoleOptionCollection>> Save = new();
+        internal static Dictionary<Type, RoleOptionCollection> Save = new();
     }
 }

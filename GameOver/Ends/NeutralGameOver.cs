@@ -32,7 +32,7 @@ namespace FungleAPI.GameOver.Ends
                 BackgroundColor = customRole.RoleColor;
                 return;
             }
-            WinText = $"{FungleTranslation.VictoryText.GetString()} " + customRole.RoleName.GetString();
+            WinText = string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());
             BackgroundColor = Winner.Data.Role.NameColor;
         }
         public override void ReceiveDataFromRpcEndGame(PlayerControl data)

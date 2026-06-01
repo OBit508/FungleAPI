@@ -16,6 +16,7 @@ using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Ship.Patches;
 using FungleAPI.Teams;
+using FungleAPI.Translation;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
@@ -97,6 +98,12 @@ namespace FungleAPI.PluginLoading
                     if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
                     {
                         ClassInjector.RegisterTypeInIl2Cpp(type);
+                    }
+
+                    TranslationAttribute translationAttribute = type.GetCustomAttribute<TranslationAttribute>();
+                    if (translationAttribute != null)
+                    {
+                        TranslationManager.TranslateFromJsonFolder(plugin.ModAssembly, type, translationAttribute.JsonFolderPath);
                     }
                 }
                 catch (Exception ex)

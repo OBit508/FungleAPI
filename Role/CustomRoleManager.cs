@@ -153,7 +153,7 @@ namespace FungleAPI.Role
             Types.Add(type, roleTypes);
             LastRoleId++;
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, new ChangeableValue<RoleOptionCollection>(new RoleOptionCollection()));
+            ICustomRole.Save.Add(type, new RoleOptionCollection());
         }
         internal static void CreateRoles()
         {
@@ -168,11 +168,11 @@ namespace FungleAPI.Role
         }
         internal static RoleBehaviour RegisterRole(Type type, ModPlugin plugin, RoleTypes roleType)
         {
-            ChangeableValue<RoleOptionCollection> roleOptions = ICustomRole.Save[type];
+            RoleOptionCollection roleOptions = ICustomRole.Save[type];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
             RoleConfiguration roleConfiguration = customRole.Configuration;
-            roleOptions.Value.Initialize(type, plugin);
+            roleOptions.Initialize(type, plugin);
             role.name = type.Name;
             role.StringName = customRole.RoleName;
             role.BlurbName = customRole.RoleBlur;
@@ -187,7 +187,7 @@ namespace FungleAPI.Role
             role.RoleIconSolid = roleConfiguration.IconSolid;
             role.RoleIconWhite = roleConfiguration.IconWhite;
             role.Role = roleType;
-            role.TeamType = customRole.Team == ModdedTeamManager.Impostors ? RoleTeamTypes.Impostor : RoleTeamTypes.Crewmate;
+            role.TeamType = (RoleTeamTypes)customRole.Team.TeamId;
             if (roleConfiguration.IsGhostRole)
             {
                 RoleManager.GhostRoles.Add(roleType);

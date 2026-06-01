@@ -88,8 +88,8 @@ namespace FungleAPI.Base.Roles
         {
             if (this.GetHintType() == RoleHintType.PlayerTab)
             {
-                taskStringBuilder.AppendLine(TeamColor.ToTextColor() + FungleTranslation.YourRoleIsText.GetString() + "<b>" + NiceName + "</b>.</color>");
-                taskStringBuilder.AppendLine("<size=70%>" + BlurbMed);
+                taskStringBuilder.AppendLine(TeamColor.ToTextColor() + string.Format(FungleTranslation.YourRoleIsText.GetString(), $"<b>{NiceName}</b>.</color>"));
+                taskStringBuilder.AppendLine($"<size=70%>{BlurbMed}</size>");
                 return;
             }
             base.AppendTaskHint(taskStringBuilder);

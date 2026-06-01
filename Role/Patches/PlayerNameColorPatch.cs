@@ -16,6 +16,7 @@ namespace FungleAPI.Role.Patches
         public static bool Prefix(RoleBehaviour otherPlayerRole, ref Color __result)
         {
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
+
             ModdedTeam team = role.GetTeam();
 
             if (team == otherPlayerRole.GetTeam() && team.KnowMembers || otherPlayerRole.Player != null && otherPlayerRole.Player.AmOwner)

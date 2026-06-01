@@ -81,24 +81,25 @@ namespace FungleAPI.Networking.Patches
 
                         if (missingMods.Count > 0)
                         {
-                            stringBuilder.Append(FungleTranslation.HandShakeFail.MissingMods.GetString());
-                            stringBuilder.Append(" ");
+                            string missingModsText = "";
 
                             int i = 0;
                             foreach (KeyValuePair<string, KeyValuePair<string, string>> missingMod in missingMods)
                             {
-                                stringBuilder.Append($"{missingMod.Value.Key} v{missingMod.Value.Value}");
+                                missingModsText += $"{missingMod.Value.Key} v{missingMod.Value.Value}";
                                 i++;
 
                                 if (missingMods.Count > i)
                                 {
-                                    stringBuilder.Append(", ");
+                                    missingModsText += ", ";
                                 }
                                 else
                                 {
-                                    stringBuilder.Append(".");
+                                    missingModsText += ".";
                                 }
                             }
+
+                            stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), missingModsText));
 
                             if (haxExtraMods)
                             {
@@ -108,24 +109,25 @@ namespace FungleAPI.Networking.Patches
 
                         if (haxExtraMods)
                         {
-                            stringBuilder.Append(FungleTranslation.HandShakeFail.ExtraMods.GetString());
-                            stringBuilder.Append(" ");
+                            string extraModsText = "";
 
                             int i = 0;
                             foreach (KeyValuePair<string, string> extraMod in extraMods)
                             {
-                                stringBuilder.Append($"{extraMod.Key} v{extraMod.Value}");
+                                extraModsText += $"{extraMod.Key} v{extraMod.Value}";
                                 i++;
 
                                 if (missingMods.Count > i)
                                 {
-                                    stringBuilder.Append(", ");
+                                    extraModsText += ", ";
                                 }
                                 else
                                 {
-                                    stringBuilder.Append(".");
+                                    extraModsText += ".";
                                 }
                             }
+
+                            stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), extraModsText));
                         }
 
                         HandShakeManager.KickWithReason(clientData.Id, stringBuilder.ToString());
@@ -133,7 +135,7 @@ namespace FungleAPI.Networking.Patches
                 }
                 else 
                 {
-                    innerNetClient.StartCoroutine(HandShakeManager.CoKick(clientData, (string playerName) => string.Format(FungleTranslation.HandShakeFail.MissingAPIDisconnect.GetString(), playerName)));
+                    innerNetClient.StartCoroutine(HandShakeManager.CoKick(clientData, (string playerName) => string.Format(FungleTranslation.HandShakeFail_MissingAPIDisconnect.GetString(), playerName)));
                 }
 
                 innerNetClient.StartCoroutine(innerNetClient.CoOnPlayerChangedScene(clientData, sceneName));

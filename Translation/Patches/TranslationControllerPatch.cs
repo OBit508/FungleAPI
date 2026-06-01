@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Translation
+namespace FungleAPI.Translation.Patches
 {
     [HarmonyPatch(typeof(TranslationController))]
     internal static class TranslationControllerPatch

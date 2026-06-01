@@ -48,6 +48,17 @@ namespace FungleAPI.Role.Utilities
             return RoleHintType.TaskHint;
         }
         /// <summary>
+        /// Returns the role hint type
+        /// </summary>
+        public static bool ShowRoleText(this RoleBehaviour role)
+        {
+            if (role.CustomRole() != null)
+            {
+                return role.CustomRole().Configuration.ShowRoleText;
+            }
+            return true;
+        }
+        /// <summary>
         /// Returns the role team
         /// </summary>
         public static ModdedTeam GetTeam(this RoleBehaviour role)
