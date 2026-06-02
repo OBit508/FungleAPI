@@ -61,5 +61,5 @@ For developers who wish to take advantage of both frameworks, Fungle API include
 
 ## Credits
 
-Cosmetic system based on [CorsacCosmetics](https://github.com/XtraCube/CorsacCosmetics)
-Role tab [Mira API](https://github.com/All-Of-Us-Mods/MiraAPI)
+- Cosmetic system based on [CorsacCosmetics](https://github.com/XtraCube/CorsacCosmetics)
+- Role tab [Mira API](https://github.com/All-Of-Us-Mods/MiraAPI)
