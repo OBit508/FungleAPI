@@ -58,8 +58,8 @@ namespace FungleAPI.Patches
                     }
                     else
                     {
-                        string[] tx = StringNames.ExileTextSP.GetString().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                        __instance.completeString = __instance.initData.networkedPlayer.PlayerName + " " + tx[1] + " " + tx[2] + " " + __instance.initData.networkedPlayer.Role.NiceName;
+                        NetworkedPlayerInfo networkedPlayerInfo = __instance.initData.networkedPlayer;
+                        __instance.completeString = string.Format(FungleTranslation.ExileText.GetString(), networkedPlayerInfo.PlayerName, networkedPlayerInfo.Role.NiceName);
                     }
                 }
                 __instance.Player.UpdateFromPlayerOutfit(init.outfit, PlayerMaterial.MaskType.Exile, false, false, new Action(delegate

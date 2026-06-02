@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Attributes;
-using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Cosmetics.Colors;
+using FungleAPI.Cosmetics.Hats;
 
 namespace FungleAPI.Cosmetics
 {
@@ -14,6 +15,8 @@ namespace FungleAPI.Cosmetics
     [FungleIgnore]
     public class ModCosmetics
     {
-        public virtual List<CustomColor> Colors { get; }
+        public virtual CustomColor[] Colors { get; protected set; }
+        public virtual CustomHat[] Hats { get; protected set; }
+        public virtual void Initialize() { }
     }
 }

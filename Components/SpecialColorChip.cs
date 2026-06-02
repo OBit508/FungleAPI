@@ -1,5 +1,5 @@
 ﻿using FungleAPI.Attributes;
-using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Cosmetics.Colors;
 using Il2CppMono;
 using System;
 using System.Collections.Generic;

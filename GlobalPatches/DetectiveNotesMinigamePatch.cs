@@ -1,6 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Cosmetics;
-using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Cosmetics.Colors;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;

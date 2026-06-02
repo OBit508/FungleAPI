@@ -26,7 +26,20 @@ namespace FungleAPI.Freeplay
                     {
                         new FolderItem()
                         {
-                            Name = "Self-Kill",
+                            Name = "Show Intro",
+                            Color = Color.white,
+                            OnClick = delegate
+                            {
+                                HudManager hudManager = HudManager.Instance;
+                                hudManager.FullScreen.gameObject.SetActive(true);
+                                hudManager.FullScreen.color = Color.black;
+                                hudManager.StartCoroutine(hudManager.CoShowIntro());
+                                hudManager.HideGameLoader();
+                            }
+                        },
+                        new FolderItem()
+                        {
+                            Name = "Self Kill",
                             Color = Color.white,
                             OnClick = delegate
                             {
@@ -35,7 +48,7 @@ namespace FungleAPI.Freeplay
                         },
                         new FolderItem()
                         {
-                            Name = "<size=1.8>Self-Protect</size>",
+                            Name = "<size=1.8>Self Protect</size>",
                             Color = Color.white,
                             OnClick = delegate
                             {

@@ -70,6 +70,7 @@ namespace FungleAPI.Components
         }
         public void Update()
         {
+            player.cosmetics.colorBlindText.transform.localPosition = new Vector3(0, RoleText.gameObject.activeSelf ? -0.4f : -0.2f, 0);
             RoleConfigManager.LightConfig?.Update?.Invoke();
         }
 

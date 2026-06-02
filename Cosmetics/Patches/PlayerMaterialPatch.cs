@@ -1,12 +1,12 @@
-﻿using System;
+﻿using FungleAPI.Components;
+using FungleAPI.Cosmetics.Colors;
+using FungleAPI.Extensions;
+using HarmonyLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Components;
-using FungleAPI.Cosmetics.Helpers;
-using FungleAPI.Extensions;
-using HarmonyLib;
 using UnityEngine;
 
 namespace FungleAPI.Cosmetics.Patches

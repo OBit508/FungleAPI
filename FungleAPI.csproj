@@ -7,7 +7,8 @@
     <AssemblyName>FungleAPI</AssemblyName>
     <GenerateAssemblyInfo>False</GenerateAssemblyInfo>
     <FileAlignment>512</FileAlignment>
-    <TargetFramework>net6.0</TargetFramework>
+	<TargetFramework>net6.0</TargetFramework>
+	<LangVersion>12.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <EnableDefaultItems>False</EnableDefaultItems>
@@ -32,10 +33,20 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\PlayerTabBehaviour.cs" />
+    <Compile Include="Components\PlayerVoteAreaHelper.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
+    <Compile Include="Cosmetics\Hats\CustomHat.cs" />
+    <Compile Include="Cosmetics\Helpers\CosmeticLocator.cs" />
+    <Compile Include="Cosmetics\Helpers\CosmeticProvider.cs" />
+    <Compile Include="Cosmetics\Patches\AssetReferencePatch.cs" />
+    <Compile Include="Cosmetics\Patches\CosmeticDataPatch.cs" />
+    <Compile Include="Cosmetics\Patches\HatManagerPatch.cs" />
     <Compile Include="Event\Api\FirstSceneLoadEvent.cs" />
     <Compile Include="Event\BepInEx\FinishedPluginLoadingEvent.cs" />
+    <Compile Include="Event\Vanilla\AfterIntroBeginEvent.cs" />
+    <Compile Include="Event\Vanilla\BeforeIntroBeginEvent.cs" />
+    <Compile Include="Event\Vanilla\IntroEndEvent.cs" />
     <Compile Include="Event\Vanilla\Player\AfterSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\Player\BeforeSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
@@ -61,11 +72,11 @@
     <Compile Include="GModes\Patches\NormalGameManagerPatch.cs" />
     <Compile Include="GameOptions\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
-    <Compile Include="Cosmetics\Helpers\CustomColor.cs" />
+    <Compile Include="Cosmetics\Colors\CustomColor.cs" />
     <Compile Include="Cosmetics\ModCosmetics.cs" />
     <Compile Include="Cosmetics\Patches\HostInfoPanelPatch.cs" />
     <Compile Include="Cosmetics\Patches\PlayerMaterialPatch.cs" />
-    <Compile Include="Cosmetics\Helpers\SpecialColor.cs" />
+    <Compile Include="Cosmetics\Colors\SpecialColor.cs" />
     <Compile Include="Cosmetics\Patches\PlayerTabPatch.cs" />
     <Compile Include="Cosmetics\VanillaCosmetics.cs" />
     <Compile Include="Event\EventManager.cs" />
@@ -138,6 +149,8 @@
     <Compile Include="PluginLoading\BepInMod.cs" />
     <Compile Include="PluginLoading\FileManager.cs" />
     <Compile Include="PluginLoading\FolderType.cs" />
+    <Compile Include="Role\Patches\IntroCoBeginPatch.cs" />
+    <Compile Include="Role\Patches\MeetingIntroAnimationPatch.cs" />
     <Compile Include="Role\Utilities\CachedWaitingRole.cs" />
     <Compile Include="Role\RoleConfiguration.cs" />
     <Compile Include="Role\Utilities\RoleExtensions.cs" />

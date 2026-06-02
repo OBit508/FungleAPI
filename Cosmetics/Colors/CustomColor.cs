@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Cosmetics.Helpers
+namespace FungleAPI.Cosmetics.Colors
 {
     /// <summary>
     /// Base class to create a color

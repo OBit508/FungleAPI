@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx.Core.Logging.Interpolation;
+﻿using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using FungleAPI.Components;
 using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Patches;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -17,6 +12,12 @@ using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes;
 using LibCpp2IL.Elf;
 using Steamworks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using Unity.IL2CPP.Metadata;
 using UnityEngine;
 using UnityEngine.UIElements.UIR;
@@ -55,6 +56,8 @@ namespace FungleAPI.Role.Patches
         [HarmonyPostfix]
         public static void BeginCustom(IntroCutscene __instance)
         {
+            if (EventManager.CallEvent(new BeforeIntroBeginEvent(__instance)).Cancelled) return; 
+
             ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
             if (customRole != null && customRole.Team != ModdedTeamManager.Crewmates)
             {
@@ -112,6 +115,8 @@ namespace FungleAPI.Role.Patches
             }
 
             __instance.ImpostorText.text = string.Format(FungleTranslation.TeamsRemainText.GetString(), teamsText);
+
+            EventManager.CallEvent(new AfterIntroBeginEvent(__instance));
         }
     }
 }

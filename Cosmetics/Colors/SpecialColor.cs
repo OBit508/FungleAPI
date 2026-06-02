@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FungleAPI.Cosmetics.Helpers;
+using FungleAPI.Cosmetics.Colors;
 using UnityEngine;
 
-namespace FungleAPI.Cosmetics.Helpers
+namespace FungleAPI.Cosmetics.Colors
 {
     /// <summary>
     /// Base class to create a animated color

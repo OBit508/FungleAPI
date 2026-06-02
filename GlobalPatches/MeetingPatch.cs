@@ -1,12 +1,15 @@
-﻿using FungleAPI.Event;
+﻿using FungleAPI.Components;
+using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Hud;
+using FungleAPI.Player;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FungleAPI.Patches
 {

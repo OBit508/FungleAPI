@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Assets;
 using FungleAPI.Cosmetics;
+using FungleAPI.Cosmetics.Helpers;
 using FungleAPI.Event;
 using FungleAPI.Event.Api;
 using FungleAPI.Event.BelpInEx;
@@ -16,12 +17,15 @@ using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+using UnityEngine.AddressableAssets.ResourceLocators;
+using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using static BepInEx.BepInDependency;
 
@@ -63,6 +67,15 @@ namespace FungleAPI
             ModPluginManager.AllAssemblies.Add(plugin.ModAssembly, plugin);
 
             Instance = this;
+
+            ClassInjector.RegisterTypeInIl2Cpp<CosmeticLocator>(new RegisterTypeOptions
+            {
+                Interfaces = new Il2CppInterfaceCollection([typeof(IResourceLocator)])
+            });
+            ClassInjector.RegisterTypeInIl2Cpp<CosmeticProvider>(new RegisterTypeOptions
+            {
+                Interfaces = new Il2CppInterfaceCollection([typeof(IResourceProvider)])
+            });
 
             Harmony.PatchAll();
 

@@ -1,7 +1,8 @@
-﻿using FungleAPI.Cosmetics.Helpers;
+﻿
 using FungleAPI.Event;
 using FungleAPI.Event.BelpInEx;
 using FungleAPI.PluginLoading;
+using FungleAPI.Cosmetics.Colors;
 using HarmonyLib;
 using Innersloth.Assets;
 using System;
@@ -10,6 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using FungleAPI.Cosmetics.Hats;
+using FungleAPI.Event.Api;
 
 namespace FungleAPI.Cosmetics
 {
@@ -20,8 +24,20 @@ namespace FungleAPI.Cosmetics
     {
         internal const float r = 0.618033988749895f;
         internal static float hue = UnityEngine.Random.value;
+        internal static Dictionary<string, UnityEngine.Object> Assets = new Dictionary<string, UnityEngine.Object>();
+        internal static Dictionary<CosmeticData, StringNames> CosmeticsNames = new Dictionary<CosmeticData, StringNames>();
+
+        public static List<CustomHat> AllHats = new List<CustomHat>();
+
         public static List<CustomColor> AllColors = new List<CustomColor>();
         public static List<CustomColor> SpecialColors = new List<CustomColor>();
+
+        public static AssetReference Register(UnityEngine.Object @object, string id)
+        {
+            Assets.Add(id, @object);
+            return new AssetReference(id);
+        }
+
         public static bool IsSpecialColor(int colorId, out SpecialColor specialColor)
         {
             specialColor = (SpecialColor)SpecialColors.FirstOrDefault(c => c.ColorId == colorId);
@@ -41,10 +57,15 @@ namespace FungleAPI.Cosmetics
         }
         public static void Add(ModCosmetics modCosmetics)
         {
-            if (modCosmetics.Colors != null && modCosmetics.Colors.Count > 0)
+            modCosmetics.Initialize();
+            if (modCosmetics.Colors != null && modCosmetics.Colors.Count() > 0)
             {
-                AllColors = AllColors.Concat(modCosmetics.Colors).ToList();
-                SpecialColors = SpecialColors.Concat(modCosmetics.Colors.FindAll(c => c is SpecialColor)).ToList();
+                AllColors.AddRange(modCosmetics.Colors);
+                SpecialColors.AddRange(modCosmetics.Colors.Where(c => c is SpecialColor));
+            }
+            if (modCosmetics.Hats != null)
+            {
+                AllHats.AddRange(modCosmetics.Hats);
             }
         }
         /// <summary>
@@ -76,7 +97,7 @@ namespace FungleAPI.Cosmetics
         }
 
         [EventRegister]
-        internal static void SetPaletta(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
+        internal static void SetCosmetics(FirstSceneLoadEvent firstSceneLoadEvent)
         {
             List<Color32> PlayerColors = new List<Color32>();
             List<Color32> ShadowColors = new List<Color32>();
@@ -94,6 +115,11 @@ namespace FungleAPI.Cosmetics
             Palette.ColorNames = ColorsNames.ToArray();
             Palette.TextColors = PlayerColors.ToArray();
             Palette.TextOutlineColors = ShadowColors.ToArray();
+
+            foreach (CustomHat customHat in AllHats)
+            {
+                customHat.Initialize();
+            }
         }
     }
 }

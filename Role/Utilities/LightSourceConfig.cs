@@ -112,7 +112,7 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public Predicate<PlayerControl> IsFlashlightEnabled;
         /// <summary>
-        /// Updates the light source configuration
+        /// Updates the light source
         /// </summary>
         public Action Update;
         /// <summary>
