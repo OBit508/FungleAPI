@@ -21,7 +21,7 @@ namespace FungleAPI.Role.Utilities
         public PlayerTabConfig(out PlayerTabConfig playerTabConfig)
         {
             playerTabConfig = this;
-            TabName = () => $"{Color.white.ToTextColor()}{PlayerControl.LocalPlayer.Data.PlayerName}</color>";
+            TabName = () => $"{PlayerControl.LocalPlayer.Data.Role.TeamColor.ToTextColor()}{PlayerControl.LocalPlayer.Data.PlayerName}</color>";
             AppendTabText = delegate (Il2CppSystem.Text.StringBuilder stringBuilder) { RoleExtensions.AppendHint(PlayerControl.LocalPlayer.Data.Role, stringBuilder); };
         }
         /// <summary>

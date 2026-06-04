@@ -36,7 +36,12 @@
     <Compile Include="Components\PlayerVoteAreaHelper.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
     <Compile Include="Components\SpecialColorChip.cs" />
-    <Compile Include="Cosmetics\Hats\CustomHat.cs" />
+    <Compile Include="Cosmetics\BaseCosmetic.cs" />
+    <Compile Include="Cosmetics\CustomHat.cs" />
+    <Compile Include="Cosmetics\CustomNamePlate.cs" />
+    <Compile Include="Cosmetics\CustomPet.cs" />
+    <Compile Include="Cosmetics\CustomSkin.cs" />
+    <Compile Include="Cosmetics\CustomVisor.cs" />
     <Compile Include="Cosmetics\Helpers\CosmeticLocator.cs" />
     <Compile Include="Cosmetics\Helpers\CosmeticProvider.cs" />
     <Compile Include="Cosmetics\Patches\AssetReferencePatch.cs" />

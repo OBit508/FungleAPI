@@ -40,8 +40,6 @@ namespace FungleAPI.Components
 
             RoleText.transform.localPosition = new Vector3(0, -0.2f, 0);
 
-            SetRoleText(player.Data.RoleType);
-
             AllPlayers.Add(this);
         }
         public void OnDestroy()
@@ -77,15 +75,15 @@ namespace FungleAPI.Components
         [EventRegister]
         private static void SetRoleText(AfterSetRoleEvent afterSetRoleEvent)
         {
-            afterSetRoleEvent.TargetPlayer?.GetComponent<PlayerHelper>().SetRoleText(afterSetRoleEvent.RoleType);
-
             if (afterSetRoleEvent.TargetPlayer.AmOwner)
             {
                 foreach (PlayerHelper playerHelper in AllPlayers)
                 {
                     playerHelper.SetRoleText(playerHelper.player.Data.RoleType);
                 }
+                return;
             }
+            afterSetRoleEvent.TargetPlayer.GetComponent<PlayerHelper>().SetRoleText(afterSetRoleEvent.RoleType);
         }
     }
 }

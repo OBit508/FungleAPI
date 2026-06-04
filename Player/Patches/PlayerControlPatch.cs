@@ -63,7 +63,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPostfix]
         public static void CompleteTaskPostfix(PlayerControl __instance, uint idx)
         {
-            EventManager.CallEvent(new CompleteTaskEvent(idx));
+            EventManager.CallEvent(new CompleteTaskEvent(__instance, idx));
         }
         [HarmonyPatch("Die")]
         [HarmonyPostfix]

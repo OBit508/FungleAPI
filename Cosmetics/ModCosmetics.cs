@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Attributes;
 using FungleAPI.Cosmetics.Colors;
-using FungleAPI.Cosmetics.Hats;
 
 namespace FungleAPI.Cosmetics
 {
@@ -17,6 +16,10 @@ namespace FungleAPI.Cosmetics
     {
         public virtual CustomColor[] Colors { get; protected set; }
         public virtual CustomHat[] Hats { get; protected set; }
+        public virtual CustomSkin[] Skins { get; protected set; }
+        public virtual CustomVisor[] Visors { get; protected set; }
+        public virtual CustomPet[] Pets { get; protected set; }
+        public virtual CustomNamePlate[] NamePlates { get; protected set; }
         public virtual void Initialize() { }
     }
 }

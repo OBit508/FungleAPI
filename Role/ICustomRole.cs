@@ -53,7 +53,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Role options
         /// </summary>
-        RoleOptionCollection RoleOptions { get { return Save[GetType()]; } }
+        RoleOptionCollection RoleOptions { get { return Save[Role]; } }
         /// <summary>
         /// Create the Sabotage button config for the role
         /// </summary>
@@ -94,6 +94,6 @@ namespace FungleAPI.Role
             NetworkedPlayerInfo networkedPlayerInfo = exileController.initData.networkedPlayer;
             return string.Format(FungleTranslation.ExileText.GetString(), networkedPlayerInfo.PlayerName, networkedPlayerInfo.Role.NiceName);
         }
-        internal static Dictionary<Type, RoleOptionCollection> Save = new();
+        internal static Dictionary<RoleTypes, RoleOptionCollection> Save = new();
     }
 }

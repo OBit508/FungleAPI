@@ -9,9 +9,11 @@ namespace FungleAPI.Event.Vanilla.Player
 {
     public class CompleteTaskEvent : FungleEvent
     {
+        public readonly PlayerControl Source;
         public readonly uint Index;
-        public CompleteTaskEvent(uint index)
+        public CompleteTaskEvent(PlayerControl source, uint index)
         {
+            Source = source;
             Index = index;
         }
     }

@@ -25,6 +25,8 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPostfix]
         public static void StartPostfix(HudManager __instance)
         {
+            HudHelper.Bottom.Clear();
+
             timer = 0;
             if (ShipStatus.Instance != null && LevelImpostorSupport.LevelImpostorAssembly == null)
             {
@@ -36,13 +38,19 @@ namespace FungleAPI.Hud.Patches
                 __instance.StartCoroutine(__instance.CoShowIntro());
             }
             HudHelper.BottomRight = HudManager.Instance.AbilityButton.transform.parent;
-            HudHelper.BottomLeft = GameObject.Instantiate<Transform>(HudManager.Instance.AbilityButton.transform.parent, HudManager.Instance.AbilityButton.transform.parent.parent);
+
+            HudHelper.Bottom.Add(HudHelper.BottomRight.GetComponent<AspectPosition>());
+
+            HudHelper.BottomLeft = GameObject.Instantiate<Transform>(HudHelper.BottomRight, HudHelper.BottomRight.parent);
             for (int i = 0; i < HudHelper.BottomLeft.childCount; i++)
             {
                 GameObject.Destroy(HudHelper.BottomLeft.GetChild(i).gameObject);
             }
             GridArrange gridArrange = HudHelper.BottomLeft.GetComponent<GridArrange>();
             AspectPosition aspectPosition = HudHelper.BottomLeft.GetComponent<AspectPosition>();
+
+            HudHelper.Bottom.Add(aspectPosition);
+
             HudHelper.BottomLeft.name = "BottomLeft";
             gridArrange.Alignment = GridArrange.StartAlign.Right;
             aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
@@ -65,6 +73,7 @@ namespace FungleAPI.Hud.Patches
             __instance.ImpostorVentButton.SetDisabled();
 
             CreatePlayerTab();
+            HudHelper.SetBottomSize(0.8f);
         }
         [HarmonyPatch("SetTouchType")]
         [HarmonyPrefix]

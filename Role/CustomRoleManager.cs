@@ -153,7 +153,7 @@ namespace FungleAPI.Role
             Types.Add(type, roleTypes);
             LastRoleId++;
             ClassInjector.RegisterTypeInIl2Cpp(type);
-            ICustomRole.Save.Add(type, new RoleOptionCollection());
+            ICustomRole.Save.Add(roleTypes, new RoleOptionCollection());
         }
         internal static void CreateRoles()
         {
@@ -168,7 +168,7 @@ namespace FungleAPI.Role
         }
         internal static RoleBehaviour RegisterRole(Type type, ModPlugin plugin, RoleTypes roleType)
         {
-            RoleOptionCollection roleOptions = ICustomRole.Save[type];
+            RoleOptionCollection roleOptions = ICustomRole.Save[roleType];
             RoleBehaviour role = (RoleBehaviour)new GameObject().AddComponent(Il2CppType.From(type)).DontDestroy();
             ICustomRole customRole = role.CustomRole();
             RoleConfiguration roleConfiguration = customRole.Configuration;
@@ -188,7 +188,7 @@ namespace FungleAPI.Role
             role.RoleIconWhite = roleConfiguration.IconWhite;
             role.Role = roleType;
             role.TeamType = (RoleTeamTypes)customRole.Team.TeamId;
-            if (roleConfiguration.IsGhostRole)
+            if (role.IsDead)
             {
                 RoleManager.GhostRoles.Add(roleType);
             }

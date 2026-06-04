@@ -12,7 +12,6 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using FungleAPI.Cosmetics.Hats;
 using FungleAPI.Event.Api;
 
 namespace FungleAPI.Cosmetics
@@ -28,6 +27,12 @@ namespace FungleAPI.Cosmetics
         internal static Dictionary<CosmeticData, StringNames> CosmeticsNames = new Dictionary<CosmeticData, StringNames>();
 
         public static List<CustomHat> AllHats = new List<CustomHat>();
+        public static List<CustomSkin> AllSkins = new List<CustomSkin>();
+        public static List<CustomVisor> AllVisors = new List<CustomVisor>();
+        public static List<CustomPet> AllPets = new List<CustomPet>();
+        public static List<CustomNamePlate> AllNamePlates = new List<CustomNamePlate>();
+
+        public static List<BaseCosmetic> AllCosmetics = new List<BaseCosmetic>();
 
         public static List<CustomColor> AllColors = new List<CustomColor>();
         public static List<CustomColor> SpecialColors = new List<CustomColor>();
@@ -66,6 +71,27 @@ namespace FungleAPI.Cosmetics
             if (modCosmetics.Hats != null)
             {
                 AllHats.AddRange(modCosmetics.Hats);
+                AllCosmetics.AddRange(modCosmetics.Hats);
+            }
+            if (modCosmetics.Skins != null)
+            {
+                AllSkins.AddRange(modCosmetics.Skins);
+                AllCosmetics.AddRange(modCosmetics.Skins);
+            }
+            if (modCosmetics.Visors != null)
+            {
+                AllVisors.AddRange(modCosmetics.Visors);
+                AllCosmetics.AddRange(modCosmetics.Visors);
+            }
+            if (modCosmetics.Pets != null)
+            {
+                AllPets.AddRange(modCosmetics.Pets);
+                AllCosmetics.AddRange(modCosmetics.Pets);
+            }
+            if (modCosmetics.NamePlates != null)
+            {
+                AllNamePlates.AddRange(modCosmetics.NamePlates);
+                AllCosmetics.AddRange(modCosmetics.NamePlates);
             }
         }
         /// <summary>
@@ -116,9 +142,9 @@ namespace FungleAPI.Cosmetics
             Palette.TextColors = PlayerColors.ToArray();
             Palette.TextOutlineColors = ShadowColors.ToArray();
 
-            foreach (CustomHat customHat in AllHats)
+            foreach (BaseCosmetic baseCosmetic in AllCosmetics)
             {
-                customHat.Initialize();
+                baseCosmetic.Initialize();
             }
         }
     }

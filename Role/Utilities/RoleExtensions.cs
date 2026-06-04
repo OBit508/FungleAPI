@@ -56,7 +56,7 @@ namespace FungleAPI.Role.Utilities
             {
                 return role.CustomRole().Configuration.ShowRoleText;
             }
-            return true;
+            return false;
         }
         /// <summary>
         /// Returns the role team

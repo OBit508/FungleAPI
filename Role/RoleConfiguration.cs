@@ -49,10 +49,6 @@ namespace FungleAPI.Role
         /// </summary>
         public bool CompletedTasksCountForProgress;
         /// <summary>
-        /// Indicates whether the role is a ghost role
-        /// </summary>
-        public bool IsGhostRole = false;
-        /// <summary>
         /// Indicates a ghost role that this role will become upon death
         /// </summary>
         public RoleTypes GhostRole;

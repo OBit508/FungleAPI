@@ -1,6 +1,5 @@
 ﻿using FungleAPI.Assets;
 using FungleAPI.Cosmetics.Colors;
-using FungleAPI.Cosmetics.Hats;
 using FungleAPI.Extensions;
 using FungleAPI.Translation;
 using System.Collections.Generic;
