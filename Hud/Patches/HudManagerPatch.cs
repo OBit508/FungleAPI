@@ -167,9 +167,9 @@ namespace FungleAPI.Hud.Patches
                             playerTask.AppendTaskText(__instance.tasksString);
                         }
                     }
-                    if (data.Role != null && data.Role.GetHintType() == RoleHintType.TaskHint)
+                    if (data.Role != null && data.Role.GetHintType().HasFlag(RoleHintType.TaskHint))
                     {
-                        RoleExtensions.AppendHint(data.Role, __instance.tasksString);
+                        RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, __instance.tasksString);
                     }
                     if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek && ShipStatus.Instance.HideCountdown > 0f)
                     {

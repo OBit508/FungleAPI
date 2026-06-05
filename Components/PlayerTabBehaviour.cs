@@ -40,7 +40,7 @@ namespace FungleAPI.Components
                 if (roleBehaviour != null)
                 {
 
-                    SetVisible(roleBehaviour.GetHintType() == RoleHintType.PlayerTab && HudManager.Instance.TaskPanel.gameObject.activeSelf);
+                    SetVisible(roleBehaviour.GetHintType().HasFlag(RoleHintType.PlayerTab) && HudManager.Instance.TaskPanel.gameObject.activeSelf);
                     Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
                     RoleConfigManager.RoleTabConfig.AppendTabText(stringBuilder);
                     TabText.text = stringBuilder.ToString();

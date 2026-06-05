@@ -19,11 +19,11 @@ using UnityEngine;
 
 namespace FungleAPI.Networking.Patches
 {
-    [HarmonyPatch(typeof(InnerNetClient._HandleGameDataInner_d__165), nameof(InnerNetClient._HandleGameDataInner_d__165.MoveNext))]
+    [HarmonyPatch(typeof(InnerNetClient._HandleGameDataInner_d__167), nameof(InnerNetClient._HandleGameDataInner_d__167.MoveNext))]
     [HarmonyPriority(Priority.Last)]
     internal static class HandleGameDataInnerPatch
     {
-        public static bool Prefix(InnerNetClient._HandleGameDataInner_d__165 __instance, ref bool __result)
+        public static bool Prefix(InnerNetClient._HandleGameDataInner_d__167 __instance, ref bool __result)
         {
             MessageReader messageReader = __instance.reader;
 

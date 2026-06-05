@@ -22,7 +22,7 @@ namespace FungleAPI.Role.Utilities
         {
             playerTabConfig = this;
             TabName = () => $"{PlayerControl.LocalPlayer.Data.Role.TeamColor.ToTextColor()}{PlayerControl.LocalPlayer.Data.PlayerName}</color>";
-            AppendTabText = delegate (Il2CppSystem.Text.StringBuilder stringBuilder) { RoleExtensions.AppendHint(PlayerControl.LocalPlayer.Data.Role, stringBuilder); };
+            AppendTabText = delegate (Il2CppSystem.Text.StringBuilder stringBuilder) { RoleExtensions.AppendHint(PlayerControl.LocalPlayer.Data.Role, RoleHintType.PlayerTab, stringBuilder); };
         }
         /// <summary>
         /// Returns the tab name

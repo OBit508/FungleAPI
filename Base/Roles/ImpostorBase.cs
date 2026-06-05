@@ -71,7 +71,7 @@ namespace FungleAPI.Base.Roles
                 return false;
             }
             Console console = usable.SafeCast<Console>();
-            return console == null || console.AllowImpostor || DoTasks;
+            return console != null && (console.AllowImpostor || DoTasks);
         }
         public override bool DidWin(GameOverReason gameOverReason)
         {

@@ -113,12 +113,12 @@ namespace FungleAPI.Role.Utilities
             }
             return roleBehaviour.CanVent;
         }
-        public static void AppendHint(RoleBehaviour roleBehaviour, Il2CppSystem.Text.StringBuilder stringBuilder)
+        public static void AppendHint(RoleBehaviour roleBehaviour, RoleHintType roleHintType, Il2CppSystem.Text.StringBuilder stringBuilder)
         {
             RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();
             if (roleBaseHelper != null)
             {
-                roleBaseHelper.AppendHint(stringBuilder);
+                roleBaseHelper.AppendHint(stringBuilder, roleHintType);
                 return;
             }
             roleBehaviour.AppendTaskHint(stringBuilder);

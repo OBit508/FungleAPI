@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.Patches
 {
-    [HarmonyPatch(typeof(InnerNetClient._CoHandleSpawn_d__166), "MoveNext")]
+    [HarmonyPatch(typeof(InnerNetClient._CoHandleSpawn_d__168), "MoveNext")]
     internal static class CoHandleSpawnPatch
     {
-        public static void Postfix(InnerNetClient._CoHandleSpawn_d__166 __instance, bool __result)
+        public static void Postfix(InnerNetClient._CoHandleSpawn_d__168 __instance, bool __result)
         {
             if (ReactorCompatibility.Instance != null || __result) return;
 

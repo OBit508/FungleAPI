@@ -131,7 +131,6 @@ namespace FungleAPI.GameOptions.Collections
             {
                 moddedOption.SetValue(moddedOption.DefaultValue, true);
             }
-            WriteLocalOptions();
             SyncNonHostWithLocal();
         }
         public TeamOptionCollection(ModdedTeam moddedTeam)

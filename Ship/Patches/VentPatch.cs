@@ -72,6 +72,8 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool CanUsePrefix(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
         {
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
             __result = GameModeManager.GetCurrentGameMode().CanUseVent(__instance, pc, out canUse, out couldUse);
             return false;
         }

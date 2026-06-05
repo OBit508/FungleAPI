@@ -158,7 +158,7 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)
         {
-            if (GameManager.Instance.LogicRoleSelection.Is(out LRoleSelection _))
+            if (!GameManager.Instance.IsHideAndSeek())
             {
                 GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
                 return false;

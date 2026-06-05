@@ -84,15 +84,18 @@ namespace FungleAPI.Base.Roles
         /// <summary>
         /// Method to replace the original AppendTaskHint
         /// </summary>
-        public virtual void AppendHint(Il2CppSystem.Text.StringBuilder taskStringBuilder)
+        public virtual void AppendHint(Il2CppSystem.Text.StringBuilder taskStringBuilder, RoleHintType roleHintType)
         {
-            if (this.GetHintType() == RoleHintType.PlayerTab)
+            if (roleHintType == RoleHintType.PlayerTab)
             {
                 taskStringBuilder.AppendLine(TeamColor.ToTextColor() + string.Format(FungleTranslation.YourRoleIsText.GetString(), $"<b>{NiceName}</b>.</color>"));
                 taskStringBuilder.AppendLine($"<size=70%>{BlurbMed}</size>");
                 return;
             }
-            base.AppendTaskHint(taskStringBuilder);
+            else
+            {
+                base.AppendTaskHint(taskStringBuilder);
+            }
         }
         public override DeadBody FindClosestBody()
         {

@@ -40,6 +40,8 @@ namespace FungleAPI.Components
 
             RoleText.transform.localPosition = new Vector3(0, -0.2f, 0);
 
+            RoleText.gameObject.SetActive(false);
+
             AllPlayers.Add(this);
         }
         public void OnDestroy()

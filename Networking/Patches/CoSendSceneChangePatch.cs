@@ -13,11 +13,11 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking.Patches
 {
-    [HarmonyPatch(typeof(InnerNetClient._CoSendSceneChange_d__156), nameof(InnerNetClient._CoSendSceneChange_d__156.MoveNext))]
+    [HarmonyPatch(typeof(InnerNetClient._CoSendSceneChange_d__158), nameof(InnerNetClient._CoSendSceneChange_d__158.MoveNext))]
     [HarmonyPriority(Priority.Last)]
     internal static class CoSendSceneChangePatch
     {
-        public static bool Prefix(InnerNetClient._CoSendSceneChange_d__156 __instance, ref bool __result)
+        public static bool Prefix(InnerNetClient._CoSendSceneChange_d__158 __instance, ref bool __result)
         {
             if (ReactorCompatibility.Instance != null) return true;
 
