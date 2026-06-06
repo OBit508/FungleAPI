@@ -15,7 +15,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncGamemode : SimpleRpc
     {
-        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
+        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter)
         {
             BaseGameMode baseGameMode = GameModeManager.GameModes[GameModeManager.HostValue.Value];

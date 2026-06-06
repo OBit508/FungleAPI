@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace FungleAPI.Base.Rpc
 {
     /// <summary>
-    /// The rpc base class helper
+    /// The Rpc base class helper
     /// </summary>
     [FungleIgnore]
     public class RpcHelper
@@ -21,7 +21,7 @@ namespace FungleAPI.Base.Rpc
         /// The Rpc identifier.
         /// </summary>
         public uint RpcId;
-        public virtual bool CanAcceptRPCsWithoutInnerNetObject => false;
+        public virtual bool RequiresNetObject => true;
         internal virtual void __handle(InnerNetObject innerNetObject, MessageReader messageReader)
         {
         }
@@ -30,7 +30,7 @@ namespace FungleAPI.Base.Rpc
         }
     }
     /// <summary>
-    /// The rpc base class
+    /// The Rpc base class
     /// </summary>
     /// <typeparam name="TNetObject">The InnerNetObject Type</typeparam>
     [FungleIgnore]

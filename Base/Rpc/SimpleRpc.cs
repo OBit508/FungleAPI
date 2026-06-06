@@ -29,7 +29,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            if (!CanAcceptRPCsWithoutInnerNetObject)
+            if (RequiresNetObject)
             {
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }
@@ -80,7 +80,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            if (!CanAcceptRPCsWithoutInnerNetObject)
+            if (RequiresNetObject)
             {
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }
@@ -94,13 +94,13 @@ namespace FungleAPI.Base.Rpc
             }, sendOption, targetClientId);
         }
         /// <summary>
-        /// Write the Rpc into the message writer
+        /// Write the RPC into the message writer
         /// </summary>
         public virtual void Write(MessageWriter messageWriter)
         {
         }
         /// <summary>
-        /// Write the Rpc with access to the specific InnerNetObject type
+        /// Write the RPC with access to the specific InnerNetObject type
         /// </summary>
         public virtual void Write(TNetObject innerNetObject, MessageWriter messageWriter)
         {

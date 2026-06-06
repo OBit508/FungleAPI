@@ -137,14 +137,16 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
+    <Compile Include="Networking\ModsDisconnectData.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />
     <Compile Include="Networking\HandShakeManager.cs" />
     <Compile Include="Networking\HostGameHelper.cs" />
+    <Compile Include="Networking\Patches\InnerNetClientPatch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
-    <Compile Include="Networking\RpcKickWithReason.cs" />
+    <Compile Include="Networking\RpcSendModsDisconnect.cs" />
     <Compile Include="Player\Networking\CmdCustomMurder.cs" />
     <Compile Include="Player\Networking\Data\MurderData.cs" />
     <Compile Include="Player\Networking\RpcMoveToVent.cs" />
@@ -246,8 +248,8 @@
     <Compile Include="Base\Rpc\RpcHelper.cs" />
     <Compile Include="Networking\MessageExtension.cs" />
     <Compile Include="Translation\Patches\TranslationControllerPatch.cs" />
-    <Compile Include="Assets\GifDecoder.cs" />
-    <Compile Include="Assets\Gif.cs" />
+    <Compile Include="Assets\GIFDecoder.cs" />
+    <Compile Include="Assets\GIF.cs" />
     <Compile Include="Components\Updater.cs" />
     <Compile Include="GlobalPatches\ExileControllerPatch.cs" />
     <Compile Include="GlobalPatches\GameManagerPatch.cs" />
@@ -268,7 +270,7 @@
     <Compile Include="Role\CustomRoleManager.cs" />
     <Compile Include="Role\Patches\IntroCutscenePatch.cs" />
     <Compile Include="Teams\ModdedTeam.cs" />
-    <Compile Include="Networking\CustomRpcManager.cs" />
+    <Compile Include="Networking\CustomRPCManager.cs" />
     <Compile Include="System\Runtime\CompilerServices\RefSafetyRulesAttribute.cs" />
     <Compile Include="Translation\Translator.cs" />
     <Compile Include="Extensions\Il2CppExtensions.cs" />
@@ -298,6 +300,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\FungleAssets\empty.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ModCompatibility\DLLs\SubWithFungle.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
@@ -495,9 +503,6 @@
     <Reference Include="Unity.Addressables">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.Addressables.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.Analytics.DataPrivacy">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.Analytics.DataPrivacy.dll</HintPath>
-    </Reference>
     <Reference Include="Unity.LevelPlay">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.LevelPlay.dll</HintPath>
     </Reference>
@@ -506,9 +511,6 @@
     </Reference>
     <Reference Include="Unity.ResourceManager">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.ResourceManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Services.Analytics">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.Services.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Services.Core">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\Unity.Services.Core.dll</HintPath>
@@ -753,11 +755,5 @@
     <Reference Include="__Generated">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Among Us\BepInEx\interop\__Generated.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ModCompatibility\DLLs\SubWithFungle.dll" />
   </ItemGroup>
 </Project>

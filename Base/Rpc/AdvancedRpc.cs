@@ -30,7 +30,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(DataT data, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            if (!CanAcceptRPCsWithoutInnerNetObject)
+            if (RequiresNetObject)
             {
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }
@@ -83,7 +83,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(DataT data, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            if (!CanAcceptRPCsWithoutInnerNetObject)
+            if (RequiresNetObject)
             {
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }

@@ -10,9 +10,9 @@ using UnityEngine;
 namespace FungleAPI.Assets.Late
 {
     /// <summary>
-    /// An GifFile that is created when called
+    /// An GIF that is created when called
     /// </summary>
-    public class LateGIF : LateAsset<Gif>
+    public class LateGIF : LateAsset<GIF>
     {
         private Assembly __assembly;
         private string __resource;
@@ -27,9 +27,9 @@ namespace FungleAPI.Assets.Late
             __resource = Resource;
             __pixelPerUnit = PixelPerUnit;
         }
-        protected override Gif LoadAsset()
+        protected override GIF LoadAsset()
         {
-            Gif gifFile = null;
+            GIF gifFile = null;
             try
             {
                 FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");

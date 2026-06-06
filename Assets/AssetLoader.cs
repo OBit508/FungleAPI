@@ -100,16 +100,16 @@ namespace FungleAPI.Assets
             }
         }
         /// <summary>
-        /// Loads a GIF file from an embedded resource and converts it into a GifFile
+        /// Loads a GIF file from an embedded resource and converts it into a GIF
         /// </summary>
-        public static Gif LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
+        public static GIF LoadGIF(Assembly assembly, string resource, float PixelPerUnit, bool loop = true)
         {
-            using (GifDecoder gifDecoder = new GifDecoder())
+            using (GIFDecoder gifDecoder = new GIFDecoder())
             {
                 using (Stream stream = assembly.GetManifestResourceStream(resource))
                 {
                     gifDecoder.LoadGif(stream.ToArray());
-                    Gif gif = new Gif()
+                    GIF gif = new GIF()
                     {
                         Loop = loop
                     };

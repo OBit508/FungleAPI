@@ -8,7 +8,7 @@ using static Il2CppSystem.Xml.Schema.FacetsChecker.FacetsCompiler;
 
 namespace FungleAPI.Assets
 {
-    public class Gif
+    public class GIF
     {
         public bool Loop;
         public IEnumerable<float> Delays;

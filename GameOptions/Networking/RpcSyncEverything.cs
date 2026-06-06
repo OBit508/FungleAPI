@@ -17,7 +17,7 @@ namespace FungleAPI.GameOptions.Networking
 {
     internal class RpcSyncEverything : SimpleRpc
     {
-        public override bool CanAcceptRPCsWithoutInnerNetObject => true;
+        public override bool RequiresNetObject => false;
         public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
         {

@@ -73,16 +73,12 @@ namespace FungleAPI.Networking.Patches
 
                     HandShakeManager.GetMods(mods, out List<BepInMod> sameMods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods);
 
-                    bool haxExtraMods = extraMods.Count > 0;
-
-                    if (missingMods.Count > 0 || haxExtraMods)
+                    if (missingMods.Count > 0 || extraMods.Count > 0)
                     {
-                        StringBuilder stringBuilder = new StringBuilder();
-
+                        string missingModsText = null;
+                        string extraModsText = null;
                         if (missingMods.Count > 0)
                         {
-                            string missingModsText = "";
-
                             int i = 0;
                             foreach (KeyValuePair<string, KeyValuePair<string, string>> missingMod in missingMods)
                             {
@@ -98,19 +94,9 @@ namespace FungleAPI.Networking.Patches
                                     missingModsText += ".";
                                 }
                             }
-
-                            stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), missingModsText));
-
-                            if (haxExtraMods)
-                            {
-                                stringBuilder.AppendLine();
-                            }
                         }
-
-                        if (haxExtraMods)
+                        if (extraMods.Count > 0)
                         {
-                            string extraModsText = "";
-
                             int i = 0;
                             foreach (KeyValuePair<string, string> extraMod in extraMods)
                             {
@@ -126,11 +112,10 @@ namespace FungleAPI.Networking.Patches
                                     extraModsText += ".";
                                 }
                             }
-
-                            stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), extraModsText));
                         }
 
-                        HandShakeManager.KickWithReason(clientData.Id, stringBuilder.ToString());
+                        Rpc<RpcSendModsDisconnect>.Instance.Send(new ModsDisconnectData(missingModsText, extraModsText), SendOption.Reliable, clientId);
+                        AmongUsClient.Instance.KickPlayer(clientId, false);
                     }
                 }
                 else 

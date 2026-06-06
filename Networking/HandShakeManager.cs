@@ -15,6 +15,7 @@ namespace FungleAPI.Networking
 {
     public static class HandShakeManager
     {
+        internal static ModsDisconnectData? DisconnectData;
         public static Dictionary<string, BepInMod> RequiredMods = new Dictionary<string, BepInMod>();
         public static void GetMods((string, string, string)[] mods, out List<BepInMod> sameMods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods)
         {
@@ -38,12 +39,7 @@ namespace FungleAPI.Networking
                 extraMods.Add(new KeyValuePair<string, string>(mod.Item3, mod.Item2));
             }
         }
-        public static void KickWithReason(int targetClientId, string reason)
-        {
-            if (!AmongUsClient.Instance.AmHost) return;
 
-            Rpc<RpcKickWithReason>.Instance.Send(reason, SendOption.Reliable, targetClientId);
-        }
         public static void DisconnectWithReason(string reason)
         {
             AmongUsClient.Instance.ExitGame(DisconnectReasons.Custom);
@@ -76,6 +72,12 @@ namespace FungleAPI.Networking
 
             AmongUsClient.Instance?.KickPlayer(clientData.Id, false);
             HudManager.Instance?.Notifier.AddDisconnectMessage(message(playerName));
+        }
+        public enum DisconnectReason
+        {
+            MissingMods,
+            ExtraMods,
+            Custom
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace FungleAPI.Assets
 {
-    internal class GifDecoder : IDisposable // Thanks to null guy
+    internal class GIFDecoder : IDisposable // Thanks to null guy
     {
         public List<Texture2D> Frames = new List<Texture2D>();
         public List<float> FrameDelays = new List<float>();
