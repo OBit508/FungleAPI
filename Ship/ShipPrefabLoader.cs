@@ -127,7 +127,7 @@ namespace FungleAPI.Ship
                     done.Value = true;
                 }
                 Helpers.StartCoroutine(WaitFor());
-                yield return CoAnimateDots(textMeshPro, baseText, done);
+                yield return FungleApiPlugin.CoAnimateDots(textMeshPro, baseText, done);
             }
             else
             {
@@ -139,7 +139,7 @@ namespace FungleAPI.Ship
                     done.Value = true;
                 }
                 Helpers.StartCoroutine(WaitFor());
-                yield return CoAnimateDots(textMeshPro, baseText, done);
+                yield return FungleApiPlugin.CoAnimateDots(textMeshPro, baseText, done);
                 
                 for (int i = 0; i <= 5; i++)
                 {
@@ -171,21 +171,6 @@ namespace FungleAPI.Ship
                 yield break;
             }
         }
-        internal static System.Collections.IEnumerator CoAnimateDots(TextMeshPro textMeshPro, string baseText, ChangeableValue<bool> func)
-        {
-            int dots = 0;
-            float timer = 0f;
-            while (!func.Value)
-            {
-                timer += Time.deltaTime;
-                if (timer >= 0.35f)
-                {
-                    timer = 0f;
-                    dots = (dots % 3) + 1;
-                    textMeshPro.text = baseText + new string('.', dots) + "</font>";
-                }
-                yield return null;
-            }
-        }
+        
     }
 }

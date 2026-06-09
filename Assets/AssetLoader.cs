@@ -1,4 +1,5 @@
-﻿using FungleAPI.Extensions;
+﻿using FungleAPI.Assets.Late;
+using FungleAPI.Extensions;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using System;
@@ -16,6 +17,8 @@ namespace FungleAPI.Assets
     /// </summary>
     public static class AssetLoader
     {
+        internal static List<Func<object>> LateAssets = new List<Func<object>>();
+
         /// <summary>
         /// Reads an embedded text resource from the plugin assembly
         /// </summary>

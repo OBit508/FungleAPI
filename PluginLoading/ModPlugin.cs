@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Assets.Late;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Cosmetics;
 using FungleAPI.Freeplay;
@@ -43,6 +44,8 @@ namespace FungleAPI.PluginLoading
         public ModFolderConfig FolderConfig;
 
         public BepInMod LocalMod;
+
+        internal bool ImplementedCredits;
         internal ModPlugin()
         {
         }

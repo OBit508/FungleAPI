@@ -14,6 +14,7 @@ using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
+using FungleAPI.Ship;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -51,7 +52,6 @@ namespace FungleAPI
         public string ModVersion { get; } = ModV;
 
         internal static FungleHelper Helper;
-        private static GameObject CreditScreen;
         /// <summary>
         /// The API Plugin
         /// </summary>
@@ -149,38 +149,50 @@ namespace FungleAPI
             // Adiciona um MonoBehaviour no BasePlugin para alguns metodos do Helpers
             Helper = AddComponent<FungleHelper>();
         }
-        public void ClickOnModName()
+        public void ShowCreditsScreen()
         {
-            if (CreditScreen == null && AccountManager.InstanceExists)
+            DisconnectPopup.Instance.ShowCustom("Thanks for using Fungle Api!!!");
+            Application.OpenURL("https://github.com/OBit508/FungleAPI");
+        }
+        public System.Collections.IEnumerator CoLoadAssets(TextMeshPro loadingText)
+        {
+            string baseText = $"<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">{FungleTranslation.LoadingShipPrefabsText.GetString()}";
+            yield return ShipPrefabLoader.CoLoadShipPrefabs(loadingText, baseText);
+
+            ChangeableValue<bool> func = new ChangeableValue<bool>(false);
+            System.Collections.IEnumerator CoLoadAssets()
             {
-                CreditScreen = GameObject.Instantiate(AccountManager.Instance.signInScreen.gameObject, AccountManager.Instance.signInScreen.transform.parent);
-                CreditScreen.GetComponent<SignInScreen>().Destroy();
-                CreditScreen.GetComponent<PauseTimeoutTimer>().Destroy();
-                void SetText(TextMeshPro text, string str)
+                foreach (Func<object> obj in AssetLoader.LateAssets)
                 {
-                    text.GetComponent<TextTranslatorTMP>()?.Destroy();
-                    text.GetComponent<PlatformTextTranslationTMP>()?.Destroy();
-                    text.text = str;
+                    try
+                    {
+                        obj?.Invoke();
+                    }
+                    catch { }
+                    yield return null;
                 }
-                SetText(CreditScreen.transform.GetChild(2).GetComponent<TextMeshPro>(), "FungleAPI Credits");
-                SetText(CreditScreen.transform.GetChild(3).GetComponent<TextMeshPro>(), "FungleAPI is a lightweight modding API developed primarily by a single contributor," +
-                    " with support from a small group of collaborators for testing and development." +
-                    "\n\nIts design is influenced by existing community projects such as MiraAPI and Reactor," +
-                    " incorporating selected ideas and approaches that helped shape its architecture.");
-                PassiveButton closeButton = CreditScreen.transform.GetChild(5).GetComponent<PassiveButton>();
-                TransitionOpen transitionOpen = CreditScreen.GetComponent<TransitionOpen>();
-                transitionOpen.OnClose.RemoveAllListeners();
-                transitionOpen.OnClose.AddListener(new Action(() => CreditScreen.gameObject.SetActive(false)));
-                closeButton.SetNewAction(transitionOpen.Close);
-                TextTranslatorTMP textTranslator = closeButton.transform.GetChild(1).GetComponent<TextTranslatorTMP>();
-                textTranslator.TargetText = StringNames.Close;
-                textTranslator.ResetText();
-                PassiveButton github = CreditScreen.transform.GetChild(6).GetComponent<PassiveButton>();
-                github.SetNewAction(() => Application.OpenURL("https://github.com/OBit508/FungleAPI"));
-                SetText(github.transform.GetChild(1).GetComponent<TextMeshPro>(), "GitHub");
-                CreditScreen.transform.GetChild(4).gameObject.Destroy();
+                AssetLoader.LateAssets = null;
+                func.Value = true;
             }
-            CreditScreen?.SetActive(true);
+            Helpers.StartCoroutine(CoLoadAssets());
+
+            yield return CoAnimateDots(loadingText, $"<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">{FungleTranslation.LoadingAssetsText.GetString()}", func);
+        }
+        internal static System.Collections.IEnumerator CoAnimateDots(TextMeshPro textMeshPro, string baseText, ChangeableValue<bool> func)
+        {
+            int dots = 0;
+            float timer = 0f;
+            while (!func.Value)
+            {
+                timer += Time.deltaTime;
+                if (timer >= 0.35f)
+                {
+                    timer = 0f;
+                    dots = (dots % 3) + 1;
+                    textMeshPro.text = baseText + new string('.', dots) + "</font>";
+                }
+                yield return null;
+            }
         }
         internal class FungleHelper : MonoBehaviour { public void OnApplicationQuit() { OptionManager.SaveOptionCollections(); } }
     }

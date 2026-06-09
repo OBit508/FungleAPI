@@ -23,7 +23,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Current role tab configuration
         /// </summary>
-        public static PlayerTabConfig RoleTabConfig { get; private set; } = new PlayerTabConfig();
+        public static PlayerTabConfig PlayerTabConfig { get; private set; } = new PlayerTabConfig();
         /// <summary>
         /// Current report button configuration
         /// </summary>
@@ -45,48 +45,24 @@ namespace FungleAPI.Role
             {
                 return;
             }
-            KillConfig = null;
-            LightConfig = null;
-            RoleTabConfig = null;
-            ReportConfig = null;
-            SabotageConfig = null;
-            VentConfig = null;
+            KillConfig = KillButtonConfig.Default;
+            LightConfig = LightSourceConfig.Default;
+            PlayerTabConfig = PlayerTabConfig.Default;
+            ReportConfig = ReportButtonConfig.Default;
+            SabotageConfig = SabotageButtonConfig.Default;
+            VentConfig = VentButtonConfig.Default;
             if (role != null)
             {
                 ICustomRole customRole = role.CustomRole();
                 if (customRole != null)
                 {
-                    KillConfig = customRole.CreateKillConfig();
-                    LightConfig = customRole.CreateLightConfig();
-                    RoleTabConfig = customRole.CreateRoleTabConfig();
-                    ReportConfig = customRole.CreateReportConfig();
-                    SabotageConfig = customRole.CreateSabotageConfig();
-                    VentConfig = customRole.CreateVentConfig();
+                    KillConfig = customRole.KillConfig;
+                    LightConfig = customRole.LightConfig;
+                    PlayerTabConfig = customRole.PlayerTabConfig;
+                    ReportConfig = customRole.ReportConfig;
+                    SabotageConfig = customRole.SabotageConfig;
+                    VentConfig = customRole.VentConfig;
                 }
-            }
-            if (KillConfig == null)
-            {
-                KillConfig = KillButtonConfig.Default;
-            }
-            if (LightConfig == null)
-            {
-                LightConfig = LightSourceConfig.Default;
-            }
-            if (RoleTabConfig == null)
-            {
-                RoleTabConfig = PlayerTabConfig.Default;
-            }
-            if (ReportConfig == null)
-            {
-                ReportConfig = ReportButtonConfig.Default;
-            }
-            if (SabotageConfig == null)
-            {
-                SabotageConfig = SabotageButtonConfig.Default;
-            }
-            if (VentConfig == null)
-            {
-                VentConfig = VentButtonConfig.Default;
             }
         }
     }

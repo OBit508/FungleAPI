@@ -42,9 +42,9 @@ namespace FungleAPI.Components
 
                     SetVisible(roleBehaviour.GetHintType().HasFlag(RoleHintType.PlayerTab) && HudManager.Instance.TaskPanel.gameObject.activeSelf);
                     Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
-                    RoleConfigManager.RoleTabConfig.AppendTabText(stringBuilder);
+                    RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
                     TabText.text = stringBuilder.ToString();
-                    TabName.text = RoleConfigManager.RoleTabConfig.TabName();
+                    TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
                 }
             }
         }

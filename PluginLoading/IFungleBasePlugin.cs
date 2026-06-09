@@ -24,7 +24,7 @@ namespace FungleAPI.PluginLoading
         string ModName => PluginInfo.Metadata.Name;
         string ModVersion => PluginInfo.Metadata.Version.Clean();
         bool ApperOnCredits => false;
-        void ClickOnModName() { }
+        void ShowCreditsScreen() { }
         void AlmostLoaded() { }
         void FullyLoaded() { }
         void LoadTabs(ModPlugin modPlugin) 
@@ -48,38 +48,7 @@ namespace FungleAPI.PluginLoading
 
             foreach (OptionCollection optionCollection in modPlugin.OptionCollections)
             {
-                foreach (IModdedOption moddedOption in optionCollection.Options.Values)
-                {
-                    moddedOption.SetValue(moddedOption.DefaultValue, amHost);
-                }
-
-                if (optionCollection is TeamOptionCollection teamOptionCollection)
-                {
-                    int count = Mathf.Clamp(teamOptionCollection.Team.DefaultCount, 0, 1000);
-                    int priority = teamOptionCollection.Team.GetType() == typeof(CrewmateTeam) ? -1 : Mathf.Clamp(teamOptionCollection.Team.DefaultPriority, 0, 1000);
-
-                    if (amHost)
-                    {
-                        teamOptionCollection.LocalTeamCount = count;
-                        teamOptionCollection.LocalTeamPriority = priority;
-                    }
-                    else
-                    {
-                        teamOptionCollection.NonHostTeamCount = count;
-                        teamOptionCollection.NonHostTeamPriority = priority;
-                    }
-                }
-
-                if (preset == RulesPresets.Standard && optionCollection is RoleOptionCollection roleOptionCollection)
-                {
-                    if (amHost)
-                    {
-                        roleOptionCollection.SetLocal(0, 0);
-                        continue;
-                    }
-                    roleOptionCollection.NonHostRoleCount = 0;
-                    roleOptionCollection.NonHostRoleChance = 0;
-                }
+                optionCollection.SetAsDefault(amHost);
             }
 
             if (amHost)
@@ -87,7 +56,7 @@ namespace FungleAPI.PluginLoading
                 modPlugin.RulePreset.Value = (byte)preset;
             }
         }
-        System.Collections.IEnumerator CoLoadOnMainScreen(TextMeshPro loadingText)
+        System.Collections.IEnumerator CoLoadAssets(TextMeshPro loadingText)
         {
             yield return null;
         }

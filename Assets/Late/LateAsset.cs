@@ -32,6 +32,12 @@ namespace FungleAPI.Assets.Late
                 return __asset;
             }
         }
+
+        public LateAsset()
+        {
+            AssetLoader.LateAssets.Add(() => Asset);
+        }
+
         protected abstract T LoadAsset();
         public static implicit operator T(LateAsset<T> lateAsset)
         {

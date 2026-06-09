@@ -20,6 +20,7 @@ using FungleAPI.Translation;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
+using Il2CppSystem.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,8 @@ namespace FungleAPI.PluginLoading
             }
 
             plugin.AllPriorityTypes = plugin.AllPriorityTypes.OrderBy(x => x.Key).ToDictionary(x => x.Key, x => x.Value);
+
+            plugin.ImplementedCredits = basePlugin.GetType().GetMethod(nameof(IFungleBasePlugin.ShowCreditsScreen), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly) != null;
 
             EventManager.RegisterEvents(plugin);
         }

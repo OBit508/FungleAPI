@@ -119,19 +119,12 @@ namespace FungleAPI.Patches
             textMeshPro.fontSize = 4;
             textMeshPro.characterSpacing = 4;
             textMeshPro.transform.position = new Vector3(0, 0, -500);
-            if (!ShipsLoaded)
-            {
-                string baseText = "<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">" + FungleTranslation.LoadingPrefabsText.GetString();
-                yield return ShipPrefabLoader.CoLoadShipPrefabs(textMeshPro, baseText);
-                ShipsLoaded = true;
-            }
             foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
-                yield return plugin.FunglePlugin.CoLoadOnMainScreen(textMeshPro);
+                yield return plugin.FunglePlugin.CoLoadAssets(textMeshPro);
             }
             GameObject.Destroy(textMeshPro.gameObject);
             yield return mainMenuManager.RunStartUp();
         }
-        public static bool ShipsLoaded;
     }
 }

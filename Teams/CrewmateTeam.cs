@@ -21,6 +21,7 @@ namespace FungleAPI.Teams
         public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
         public override BaseGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<CrewmatesByTask>();
         public override int DefaultCount => int.MaxValue;
+        public override int DefaultPriority => -1;
         public override bool HideInLobby => true;
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {

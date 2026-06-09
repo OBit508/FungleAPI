@@ -87,6 +87,7 @@ namespace FungleAPI.Role.Utilities
             {
                 Enabled = false;
                 Button.SetDisabled();
+                Button.buttonLabelText.SetOutlineColor(PlayerControl.LocalPlayer.Data.Role.TeamColor);
             };
         }
         /// <summary>

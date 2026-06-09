@@ -21,11 +21,13 @@ namespace FungleAPI.Networking
         }
         public ModsDisconnectData(MessageReader messageReader)
         {
-            if (messageReader.ReadBoolean())
+            byte b = messageReader.ReadByte();
+
+            if (b == 0 || b == 2)
             {
                 MissingMods = messageReader.ReadString();
             }
-            if (messageReader.ReadBoolean())
+            if (b == 1 || b == 2)
             {
                 ExtraMods = messageReader.ReadString();
             }

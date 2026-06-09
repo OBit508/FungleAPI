@@ -44,6 +44,11 @@ namespace FungleAPI.GameOptions.Collections
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }
+
+
+            modPlugin.OptionCollections.Add(this);
+            OptionManager.OptionCollections.Add(this);
+
             ReadLocalOptions();
         }
         public override void WriteLocalOptions()
@@ -73,7 +78,7 @@ namespace FungleAPI.GameOptions.Collections
         {
             if (!File.Exists(FilePath))
             {
-                SetAsDefault();
+                SetAsDefault(true);
                 return;
             }
             try
@@ -86,7 +91,7 @@ namespace FungleAPI.GameOptions.Collections
                         if (teamOptionVersion < TeamOptionVersion)
                         {
                             FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Team Option Collection from {FilePath} founded, loading and saving default.");
-                            SetAsDefault();
+                            SetAsDefault(true);
                             return;
                         }
 
@@ -111,10 +116,10 @@ namespace FungleAPI.GameOptions.Collections
             catch (Exception ex)
             {
                 FungleApiPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
-                SetAsDefault();
+                SetAsDefault(true);
             }
         }
-        public void SyncNonHostWithLocal()
+        public override void SyncNonHostWithLocal()
         {
             NonHostTeamCount = LocalTeamCount;
             NonHostTeamPriority = LocalTeamPriority;
@@ -123,15 +128,28 @@ namespace FungleAPI.GameOptions.Collections
                 moddedOption.SyncNonHostWithLocal();
             }
         }
-        public void SetAsDefault()
+        public override void SetAsDefault(bool amHost)
         {
-            LocalTeamCount = Mathf.Clamp(Team.DefaultCount, 0, 1000);
-            LocalTeamPriority = Team.GetType() == typeof(CrewmateTeam) ? -1 : Mathf.Clamp(Team.DefaultPriority, 0, 1000);
+            if (amHost)
+            {
+                LocalTeamCount = Team.DefaultCount;
+                LocalTeamPriority = Team.DefaultPriority;
+            }
+            else
+            {
+                NonHostTeamCount = Team.DefaultCount;
+                NonHostTeamPriority = Team.DefaultPriority;
+            }
+
             foreach (IModdedOption moddedOption in Options.Values)
             {
-                moddedOption.SetValue(moddedOption.DefaultValue, true);
+                moddedOption.SetValue(moddedOption.DefaultValue, amHost);
             }
-            SyncNonHostWithLocal();
+            
+            if (amHost)
+            {
+                SyncNonHostWithLocal();
+            }
         }
         public TeamOptionCollection(ModdedTeam moddedTeam)
         {

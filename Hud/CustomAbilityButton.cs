@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Attributes;
+using FungleAPI.Components;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -96,6 +97,7 @@ namespace FungleAPI.Hud
                 return;
             }
             Button = GameObject.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
+            Button.gameObject.AddComponent<CustomAbilityButtonHelper>().Button = this;
             Button.name = OverrideText;
             Button.graphic.sprite = ButtonSprite;
             Button.OverrideText(OverrideText);

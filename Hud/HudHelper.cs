@@ -1,5 +1,6 @@
 ﻿using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
+using Newtonsoft.Json.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,19 +18,12 @@ namespace FungleAPI.Hud
     {
         internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
         internal static List<AspectPosition> Bottom = new List<AspectPosition>();
-        internal static HudUpdateFlag UpdateFlag = HudUpdateFlag.OnSetHudActive;
-        internal static float UpdateDelay;
         internal static bool Active;
         public static Transform BottomLeft;
         public static Transform BottomRight;
-        public static bool IsActive => Active;
-        /// <summary>
-        /// Changes when the Hud buttons need to be updated
-        /// </summary>
-        public static void SetUpdateFlag(HudUpdateFlag flag, float delay = 0)
+        public static void UpdateActiveState()
         {
-            UpdateFlag = flag;
-            UpdateDelay = delay;
+            HudManager.Instance?.SetHudActive(Active);
         }
         /// <summary>
         /// Returns the instance of the given type

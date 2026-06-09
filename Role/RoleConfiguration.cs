@@ -83,7 +83,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Role neutral win text
         /// </summary>
-        public string NeutralWinText;
+        public Func<string> NeutralWinText;
         /// <summary>
         /// Role base outline color
         /// </summary>
@@ -92,6 +92,14 @@ namespace FungleAPI.Role
         /// Call game over as neutral
         /// </summary>
         public Action<PlayerControl> CallGameOverAsNeutral;
+        /// <summary>
+        /// The default role count
+        /// </summary>
+        public int DefaultCount = 0;
+        /// <summary>
+        /// The default role chance
+        /// </summary>
+        public int DefaultChance = 0;
         public RoleConfiguration(ICustomRole customRole)
         {
             CanUseVent = customRole.Team == ModdedTeamManager.Impostors;
@@ -100,7 +108,7 @@ namespace FungleAPI.Role
             CanSabotage = customRole.Team == ModdedTeamManager.Impostors;
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
             GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
-            NeutralWinText = $"{FungleTranslation.VictoryText.GetString()} " + customRole.RoleName.GetString();
+            NeutralWinText = () => string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());
             CanKill = UseVanillaKillButton;
             OutlineColor = customRole.RoleColor;
             CallGameOverAsNeutral = delegate (PlayerControl playerControl)

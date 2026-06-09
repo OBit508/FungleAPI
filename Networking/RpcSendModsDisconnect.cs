@@ -14,12 +14,22 @@ namespace FungleAPI.Networking
         public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter, ModsDisconnectData data)
         {
-            messageWriter.Write(data.MissingMods != null);
+            byte b = 2;
+            if (data.MissingMods != null && data.ExtraMods == null)
+            {
+                b = 0;
+            }
+            else if (data.ExtraMods != null && data.MissingMods == null)
+            {
+                b = 1;
+            }
+
+            messageWriter.Write(b);
+
             if (data.MissingMods != null)
             {
                 messageWriter.Write(data.MissingMods);
             }
-            messageWriter.Write(data.ExtraMods != null);
             if (data.ExtraMods != null)
             {
                 messageWriter.Write(data.ExtraMods);

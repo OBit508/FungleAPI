@@ -35,6 +35,11 @@ namespace FungleAPI.GameOptions.Collections
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
                 Options.Add(moddedOption.OptionId, moddedOption);
             }
+
+
+            modPlugin.OptionCollections.Add(this);
+            OptionManager.OptionCollections.Add(this);
+
             ReadLocalOptions();
         }
         public override void WriteLocalOptions()
@@ -61,7 +66,7 @@ namespace FungleAPI.GameOptions.Collections
         {
             if (!File.Exists(FilePath))
             {
-                SetAsDefault();
+                SetAsDefault(true);
                 return;
             }
             try
@@ -74,7 +79,7 @@ namespace FungleAPI.GameOptions.Collections
                         if (gameOptionVersion < GameOptionVersion)
                         {
                             FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Game Option Collection from {FilePath} founded, loading and saving default.");
-                            SetAsDefault();
+                            SetAsDefault(true);
                             return;
                         }
                         int optionCount = binaryReader.ReadInt32();
@@ -95,23 +100,28 @@ namespace FungleAPI.GameOptions.Collections
             catch (Exception ex)
             {
                 FungleApiPlugin.Instance.Log.LogError($"Failed to read Game Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
-                SetAsDefault();
+                SetAsDefault(true);
             }
         }
-        public void SyncNonHostWithLocal()
+        public override void SyncNonHostWithLocal()
         {
             foreach (IModdedOption moddedOption in Options.Values)
             {
                 moddedOption.SyncNonHostWithLocal();
             }
         }
-        public void SetAsDefault()
+        public override void SetAsDefault(bool amHost)
         {
             foreach (IModdedOption moddedOption in Options.Values)
             {
-                moddedOption.SetValue(moddedOption.DefaultValue, true);
+                moddedOption.SetValue(moddedOption.DefaultValue, amHost);
             }
-            SyncNonHostWithLocal();
+
+
+            if (amHost)
+            {
+                SyncNonHostWithLocal();
+            }
         }
         public GameOptionCollection(ModSettings modSettings)
         {

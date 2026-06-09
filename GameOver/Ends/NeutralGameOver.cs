@@ -28,7 +28,7 @@ namespace FungleAPI.GameOver.Ends
             ICustomRole customRole = Winner.Data.Role.CustomRole();
             if (customRole != null)
             {
-                WinText = customRole.Configuration.NeutralWinText;
+                WinText = customRole.Configuration.NeutralWinText();
                 BackgroundColor = customRole.RoleColor;
                 return;
             }

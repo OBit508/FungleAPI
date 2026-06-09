@@ -32,6 +32,7 @@
     <Compile Include="Base\Rpc\SimpleRpc.cs" />
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\PatcherAutoPluginAttribute.cs" />
+    <Compile Include="Components\CustomAbilityButtonHelper.cs" />
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\PlayerVoteAreaHelper.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
@@ -47,6 +48,7 @@
     <Compile Include="Cosmetics\Patches\AssetReferencePatch.cs" />
     <Compile Include="Cosmetics\Patches\CosmeticDataPatch.cs" />
     <Compile Include="Cosmetics\Patches\HatManagerPatch.cs" />
+    <Compile Include="Cosmetics\Patches\RoleEffectAnimationPatch.cs" />
     <Compile Include="Event\Api\FirstSceneLoadEvent.cs" />
     <Compile Include="Event\BepInEx\FinishedPluginLoadingEvent.cs" />
     <Compile Include="Event\Vanilla\AfterIntroBeginEvent.cs" />
@@ -209,7 +211,6 @@
     <Compile Include="GameOver\Ends\ImpostorsByVote.cs" />
     <Compile Include="GameOver\Ends\NeutralGameOver.cs" />
     <Compile Include="Hud\HudHelper.cs" />
-    <Compile Include="Hud\HudUpdateFlag.cs" />
     <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />

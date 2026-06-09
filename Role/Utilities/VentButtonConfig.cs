@@ -73,6 +73,10 @@ namespace FungleAPI.Role.Utilities
                     Button.SetDisabled();
                 }
             };
+            InitializeButton = delegate
+            {
+                Button.buttonLabelText.SetOutlineColor(PlayerControl.LocalPlayer.Data.Role.TeamColor);
+            };
         }
         /// <summary>
         /// Determines whether the vent button can be used

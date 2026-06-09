@@ -90,6 +90,10 @@ namespace FungleAPI.Role.Utilities
             {
                 SetTimer(Timer - Time.deltaTime);
             };
+            InitializeButton = delegate
+            {
+                Button.buttonLabelText.SetOutlineColor(PlayerControl.LocalPlayer.Data.Role.TeamColor);
+            };
         }
         /// <summary>
         /// Gets the sabotage cooldown duration

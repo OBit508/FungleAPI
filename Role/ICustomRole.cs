@@ -55,29 +55,29 @@ namespace FungleAPI.Role
         /// </summary>
         RoleOptionCollection RoleOptions { get { return Save[Role]; } }
         /// <summary>
-        /// Create the Sabotage button config for the role
+        /// Sabotage button config for the role
         /// </summary>
-        SabotageButtonConfig CreateSabotageConfig() => null;
+        SabotageButtonConfig SabotageConfig => SabotageButtonConfig.Default;
         /// <summary>
-        /// Create the Report button config for the role
+        /// Report button config for the role
         /// </summary>
-        ReportButtonConfig CreateReportConfig() => null;
+        ReportButtonConfig ReportConfig => ReportButtonConfig.Default;
         /// <summary>
-        /// Create the Vent button config for the role
+        /// Vent button config for the role
         /// </summary>
-        VentButtonConfig CreateVentConfig() => null;
+        VentButtonConfig VentConfig => VentButtonConfig.Default;
         /// <summary>
-        /// Create the Kill button config for the role
+        /// Kill button config for the role
         /// </summary>
-        KillButtonConfig CreateKillConfig() => null;
+        KillButtonConfig KillConfig => KillButtonConfig.Default;
         /// <summary>
-        /// Create the Light source config for the role
+        /// Light source config for the role
         /// </summary>
-        LightSourceConfig CreateLightConfig() => null;
+        LightSourceConfig LightConfig => LightSourceConfig.Default;
         /// <summary>
-        /// Create the Mira role tab config for the role
+        /// Player tab config for the role
         /// </summary>
-        PlayerTabConfig CreateRoleTabConfig() => null;
+        PlayerTabConfig PlayerTabConfig => PlayerTabConfig.Default;
         /// <summary>
         /// Called when the role dies
         /// </summary>

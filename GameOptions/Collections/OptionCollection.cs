@@ -19,9 +19,7 @@ namespace FungleAPI.GameOptions.Collections
         public abstract void Initialize(Type type, ModPlugin modPlugin);
         public abstract void WriteLocalOptions();
         public abstract void ReadLocalOptions();
-        public OptionCollection()
-        {
-            OptionManager.OptionCollections.Add(this);
-        }
+        public abstract void SyncNonHostWithLocal();
+        public abstract void SetAsDefault(bool amHost);
     }
 }

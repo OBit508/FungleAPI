@@ -27,7 +27,6 @@ namespace FungleAPI.Components
         public int Page;
         public List<List<(string, Action)>> Pages;
         public TextMeshPro[] Texts;
-        public float p;
         public void Awake()
         {
             Pages = new List<List<(string, Action)>>() { new List<(string, Action)>() };
@@ -41,9 +40,14 @@ namespace FungleAPI.Components
             {
                 List<(string, Action)> strings = Pages[Pages.Count - 1];
 
-                Action click = plugin.FunglePlugin.ClickOnModName;
+                Action click = null;
 
-                strings.Add(($"[{plugin.FunglePlugin.ModName} {plugin.FunglePlugin.ModVersion}]", click));
+                if (plugin.ImplementedCredits)
+                {
+                    click = plugin.FunglePlugin.ShowCreditsScreen;
+                }
+
+                strings.Add(($"[{(plugin == FungleApiPlugin.Plugin ? "FungleAPI" : plugin.FunglePlugin.ModName)} {plugin.FunglePlugin.ModVersion}]", click));
                 if (strings.Count >= 10)
                 {
                     Pages.Add(new List<(string, Action)>());

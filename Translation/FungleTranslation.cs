@@ -20,7 +20,8 @@ namespace FungleAPI.Translation
         public static Translator ChanceText { get; } = new Translator("Chance");
         public static Translator PriorityText { get; } = new Translator("Priority");
         public static Translator ChangeToPublicText { get; } = new Translator("Public rooms are disabled for security reasons.");
-        public static Translator LoadingPrefabsText { get; } = new Translator("Loading Prefabs");
+        public static Translator LoadingShipPrefabsText { get; } = new Translator("Loading Ship Prefabs");
+        public static Translator LoadingAssetsText { get; } = new Translator("Loading Mods Assets");
         public static Translator YourRoleIsText { get; } = new Translator("Your role is {0}");
         public static Translator EditText { get; } = new Translator("Edit preset");
         public static Translator CountText { get; } = new Translator("Player Count");
