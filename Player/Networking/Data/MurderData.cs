@@ -12,16 +12,16 @@ namespace FungleAPI.Player.Networking.Data
     internal struct MurderData
     {
         public PlayerControl Target;
-        public MurderResultFlags MurderResult;
+        public bool DidSucceed;
         public bool ResetKillTimer;
         public bool CreateDeadBody; 
         public bool Teleport;
         public bool ShowAnim;
         public bool PlayKillSound;
-        public MurderData(PlayerControl targer, MurderResultFlags murderResult, bool resetKillTimer, bool createDeadBody, bool teleport, bool showAnim, bool playKillSound)
+        public MurderData(PlayerControl targer, bool didSucceed, bool resetKillTimer, bool createDeadBody, bool teleport, bool showAnim, bool playKillSound)
         {
             Target = targer;
-            MurderResult = murderResult;
+            DidSucceed = didSucceed;
             ResetKillTimer = resetKillTimer;
             CreateDeadBody = createDeadBody;
             Teleport = teleport;
@@ -31,7 +31,7 @@ namespace FungleAPI.Player.Networking.Data
         public MurderData(MessageReader messageReader)
         {
             Target = messageReader.ReadNetObject<PlayerControl>();
-            MurderResult = (MurderResultFlags)messageReader.ReadByte();
+            DidSucceed = messageReader.ReadBoolean();
             ResetKillTimer = messageReader.ReadBoolean();
             CreateDeadBody = messageReader.ReadBoolean();
             Teleport = messageReader.ReadBoolean();
@@ -41,7 +41,7 @@ namespace FungleAPI.Player.Networking.Data
         public void Serialize(MessageWriter messageWriter)
         {
             messageWriter.WriteNetObject(Target);
-            messageWriter.Write((byte)MurderResult);
+            messageWriter.Write(DidSucceed);
             messageWriter.Write(ResetKillTimer);
             messageWriter.Write(CreateDeadBody);
             messageWriter.Write(Teleport);

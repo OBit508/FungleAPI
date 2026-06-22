@@ -12,18 +12,10 @@ namespace FungleAPI.Player
     /// </summary>
     public static class BodyUtils
     {
-        private static List<DeadBody> allDeadBodies = new List<DeadBody>();
         /// <summary>
         /// Returns all the dead bodies
         /// </summary>
-        public static List<DeadBody> AllDeadBodies
-        {
-            get
-            {
-                allDeadBodies.RemoveAll(body => body == null || body.IsDestroyedOrNull());
-                return allDeadBodies;
-            }
-        }
+        public static List<DeadBody> AllDeadBodies = new List<DeadBody>();
         /// <summary>
         /// Get a dead body by the Id
         /// </summary>

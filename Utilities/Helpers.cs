@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Attributes;
 using FungleAPI.Components;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
@@ -175,6 +176,27 @@ namespace FungleAPI.Utilities
         public static T[] AsArray<T>(this T obj)
         {
             return new T[] { obj };
+        }
+        public static bool ShouldIgnore(this object obj)
+        {
+            if (obj is Type type && type.GetCustomAttribute<FungleIgnore>() != null)
+            {
+                return true;
+            }
+            if (obj is MethodInfo methodInfo && methodInfo.GetCustomAttribute<FungleIgnore>() != null)
+            {
+                return true;
+            }
+            if (obj is PropertyInfo propertyInfo && propertyInfo.GetCustomAttribute<FungleIgnore>() != null)
+            {
+                return true;
+            }
+            if (obj is FieldInfo fieldInfo && fieldInfo.GetCustomAttribute<FungleIgnore>() != null)
+            {
+                return true;
+            }
+
+            return false;
         }
         public static string GetShortUniqueId(this Type type)
         {

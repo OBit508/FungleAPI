@@ -8,6 +8,7 @@ using AsmResolver.DotNet.Collections;
 using DiscordConnect;
 using FungleAPI.Base.Events;
 using FungleAPI.PluginLoading;
+using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using UnityEngine;
@@ -33,13 +34,21 @@ namespace FungleAPI.Event
         {
             foreach (Type type in modPlugin.AllTypes)
             {
+                if (type.ShouldIgnore()) continue;
+
                 foreach (MethodInfo methodInfo in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
                 {
+                    if (methodInfo.ShouldIgnore()) continue;
+
                     if (methodInfo.GetCustomAttribute<EventRegister>() == null || methodInfo.IsSpecialName || methodInfo.ReturnType != typeof(void)) continue;
+
                     ParameterInfo[] parameters = methodInfo.GetParameters();
+
                     if (parameters.Length != 1 || !typeof(FungleEvent).IsAssignableFrom(parameters[0].ParameterType)) continue;
+
                     Type eventType = parameters[0].ParameterType;
                     Delegate handler = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(eventType), methodInfo);
+
                     if (Events.TryGetValue(eventType, out Delegate @delegate))
                     {
                         Events[eventType] = Delegate.Combine(@delegate, handler);

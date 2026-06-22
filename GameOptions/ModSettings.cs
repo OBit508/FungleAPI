@@ -2,6 +2,7 @@
 using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.PluginLoading;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,8 @@ namespace FungleAPI.GameOptions
                 Type type = GetType();
                 foreach (Type t in type.GetNestedTypes())
                 {
+                    if (t.ShouldIgnore()) continue;
+
                     if (typeof(SettingsGroup).IsAssignableFrom(t))
                     {
                         SettingsGroup group = (SettingsGroup)Activator.CreateInstance(t);

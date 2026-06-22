@@ -1,6 +1,7 @@
 ﻿using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.PluginLoading;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,8 @@ namespace FungleAPI.GModes
                 Type type = GetType();
                 foreach (Type t in type.GetNestedTypes())
                 {
+                    if (t.ShouldIgnore()) continue;
+
                     if (typeof(SettingsGroup).IsAssignableFrom(t))
                     {
                         SettingsGroup group = (SettingsGroup)Activator.CreateInstance(t);

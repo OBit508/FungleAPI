@@ -16,7 +16,7 @@ namespace FungleAPI.Base.Roles
         public override bool IsDead => false;
         public override bool CanUse(IUsable usable)
         {
-            return base.CanUse(usable) || usable.SafeCast<Vent>() != null;
+            return usable.SafeCast<ZiplineConsole>() != null || usable.SafeCast<Ladder>() != null || usable.SafeCast<PlatformConsole>() != null || usable.SafeCast<Console>() != null || usable.SafeCast<DoorConsole>() != null || usable.SafeCast<Vent>() != null;
         }
         public override bool DidWin(GameOverReason gameOverReason)
         {

@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Options;
@@ -41,6 +42,8 @@ namespace FungleAPI.GameOptions
 
             foreach (PropertyInfo propertyInfo in type.GetProperties())
             {
+                if (propertyInfo.ShouldIgnore()) continue;
+
                 try
                 {
                     if (propertyInfo.GetMethod != null && typeof(BaseModdedOption).IsAssignableFrom(propertyInfo.PropertyType) && propertyInfo.GetValue(null) is BaseModdedOption option && option != null)
@@ -72,6 +75,8 @@ namespace FungleAPI.GameOptions
             }
             foreach (FieldInfo fieldInfo in type.GetFields())
             {
+                if (fieldInfo.ShouldIgnore()) continue;
+
                 try
                 {
                     if (typeof(BaseModdedOption).IsAssignableFrom(fieldInfo.FieldType) && fieldInfo.GetValue(null) is BaseModdedOption option && option != null)

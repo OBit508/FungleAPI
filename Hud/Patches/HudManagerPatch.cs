@@ -203,9 +203,12 @@ namespace FungleAPI.Hud.Patches
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
             HudHelper.Active = isActive;
-            __instance.ImpostorVentButton.ToggleVisible(role.CanUseVent() && !localPlayer.Data.IsDead && role.Role != RoleTypes.Engineer && isActive);
-            __instance.KillButton.ToggleVisible(role.UseKillButton() && !localPlayer.Data.IsDead && isActive);
+
+            __instance.ReportButton.ToggleVisible(role.CanReport() && isActive && GameManager.Instance.CanReportBodies() && ShipStatus.Instance != null);
+            __instance.KillButton.ToggleVisible(role.UseKillButton() && isActive);
             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
+            __instance.ImpostorVentButton.ToggleVisible(role.CanUseVent() && role.Role != RoleTypes.Engineer && isActive);
+
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 if (button.Button != null)

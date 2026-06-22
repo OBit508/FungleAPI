@@ -27,5 +27,9 @@ namespace FungleAPI.Components
             }
             BodyUtils.AllDeadBodies.Add(body);
         }
+        public void OnDestroy()
+        {
+            BodyUtils.AllDeadBodies.Remove(GetComponent<DeadBody>());
+        }
     }
 }

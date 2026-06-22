@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Role
+namespace FungleAPI.PluginLoading
 {
-    public enum RoleHintType
+    public struct PluginCredits
     {
-        None,
-        TaskHint,
-        PlayerTab
+        public string Name;
+        public string Version;
     }
 }

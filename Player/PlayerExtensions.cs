@@ -44,13 +44,16 @@ namespace FungleAPI.Player
         /// <summary>
         /// Perform a custom murder
         /// </summary>
-        public static void RpcCustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
+        public static void RpcCustomMurderPlayer(this PlayerControl source, PlayerControl target, bool didSucceed, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
-            if (EventManager.CallEvent(new BeforeMurderEvent(target, resultFlags)).Cancelled)
+            MurderResultFlags murderResultFlags = (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
+            MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
+
+            if (EventManager.CallEvent(new BeforeMurderEvent(target, murderResultFlags2)).Cancelled)
             {
                 return;
             }
-            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, resultFlags, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
         /// <summary>
         /// Perform a custom murder
@@ -63,7 +66,7 @@ namespace FungleAPI.Player
                 source.CheckCustomMurder(target, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
                 return;
             }
-            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, MurderResultFlags.NULL, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
 
 
@@ -188,24 +191,24 @@ namespace FungleAPI.Player
             {
                 int num = target ? ((int)target.PlayerId) : -1;
                 source.logger.Warning(string.Format("Bad kill from {0} to {1}", source.PlayerId, num), null);
-                source.RpcMurderPlayer(target, false);
+                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
             NetworkedPlayerInfo data = target.Data;
             if (data == null || data.IsDead || target.inVent || target.MyPhysics.Animations.IsPlayingEnterVentAnimation() || target.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || target.inMovingPlat)
             {
                 source.logger.Warning("Invalid target data for kill", null);
-                source.RpcMurderPlayer(target, false);
+                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
             if (MeetingHud.Instance)
             {
                 source.logger.Warning("Tried to kill while a meeting was starting", null);
-                source.RpcMurderPlayer(target, false);
+                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
             source.isKilling = true;
-            source.RpcCustomMurderPlayer(target, MurderResultFlags.DecisionByHost | MurderResultFlags.Succeeded, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
+            source.RpcCustomMurderPlayer(target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
         }
         public static void CustomMurderPlayer(this PlayerControl source, PlayerControl target, MurderResultFlags resultFlags, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {

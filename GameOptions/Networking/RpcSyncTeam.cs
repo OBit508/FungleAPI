@@ -1,4 +1,5 @@
-﻿using FungleAPI.Base.Rpc;
+﻿using FungleAPI.AntiCheat;
+using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
 using FungleAPI.Role;
@@ -15,9 +16,8 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncTeam : AdvancedRpc<ModdedTeam>
+    internal class RpcSyncTeam : AdvancedRpc<ModdedTeam, PlayerControl>
     {
-        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter, ModdedTeam data)
         {
             messageWriter.WriteTeam(data);
@@ -36,8 +36,17 @@ namespace FungleAPI.GameOptions.Networking
                 }
             }
         }
-        public override void Handle(MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
+            if (innerNetObject == null) return;
+
+            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            {
+                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+
+                return;
+            }
+
             ModdedTeam moddedTeam = messageReader.ReadTeam();
             moddedTeam.TeamOptions.NonHostTeamCount = messageReader.ReadPackedInt32();
             moddedTeam.TeamOptions.NonHostTeamPriority = messageReader.ReadPackedInt32();

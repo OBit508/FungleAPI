@@ -1,6 +1,8 @@
 {
   "language": "pt-br",
 
+  "CheatingWarnText": "{0} está usando trapaças.",
+  "FungleCreditsText": "Obrigado por usar a Fungle Api!!!\nCuriosidade: Foi feito por um brasileiro ;)",
   "ExileText": "{0} era um {1}.",
   "FailedToSync": "Houve um erro ao sincronizar as configurações com o anfitrião\nErro: {0}",
   "GameModeText": "Modo de jogo",

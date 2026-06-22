@@ -81,6 +81,17 @@ namespace FungleAPI.Role.Utilities
             return roleBehaviour.IsImpostor;
         }
         /// <summary>
+        /// Returns if the role can report bodies
+        /// </summary>
+        public static bool CanReport(this RoleBehaviour roleBehaviour)
+        {
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().Configuration.CanReport;
+            }
+            return !roleBehaviour.IsDead;
+        }
+        /// <summary>
         /// Returns if the role can kill
         /// </summary>
         public static bool CanKill(this RoleBehaviour roleBehaviour)
@@ -100,7 +111,7 @@ namespace FungleAPI.Role.Utilities
             {
                 return roleBehaviour.CustomRole().Configuration.UseVanillaKillButton;
             }
-            return roleBehaviour.CanUseKillButton;
+            return roleBehaviour.CanUseKillButton && !roleBehaviour.IsDead;
         }
         /// <summary>
         /// Returns if the role can vent
@@ -111,7 +122,7 @@ namespace FungleAPI.Role.Utilities
             {
                 return roleBehaviour.CustomRole().Configuration.CanUseVent;
             }
-            return roleBehaviour.CanVent;
+            return roleBehaviour.CanVent && !roleBehaviour.IsDead && !GameManager.Instance.IsHideAndSeek();
         }
         public static void AppendHint(RoleBehaviour roleBehaviour, RoleHintType roleHintType, Il2CppSystem.Text.StringBuilder stringBuilder)
         {

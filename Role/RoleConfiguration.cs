@@ -41,6 +41,10 @@ namespace FungleAPI.Role
         /// </summary>
         public bool CanSabotage;
         /// <summary>
+        /// Indicates whether the role can report bodies
+        /// </summary>
+        public bool CanReport;
+        /// <summary>
         /// Indicates whether the role can kill
         /// </summary>
         public bool CanKill;
@@ -106,6 +110,7 @@ namespace FungleAPI.Role
             IsAffectedByLightOnAirship = customRole.Team == ModdedTeamManager.Impostors;
             UseVanillaKillButton = customRole.Team == ModdedTeamManager.Impostors;
             CanSabotage = customRole.Team == ModdedTeamManager.Impostors;
+            CanReport = !(customRole as RoleBehaviour).IsDead;
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
             GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
             NeutralWinText = () => string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());

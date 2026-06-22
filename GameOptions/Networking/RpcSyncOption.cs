@@ -1,4 +1,5 @@
-﻿using FungleAPI.Base.Rpc;
+﻿using FungleAPI.AntiCheat;
+using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Options;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
@@ -18,9 +19,8 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncOption : AdvancedRpc<(SyncOptionType, IModdedOption, object)>
+    internal class RpcSyncOption : AdvancedRpc<(SyncOptionType, IModdedOption, object), PlayerControl>
     {
-        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter, (SyncOptionType, IModdedOption, object) data)
         {
             messageWriter.WriteOption(data.Item2);
@@ -57,8 +57,17 @@ namespace FungleAPI.GameOptions.Networking
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }
         }
-        public override void Handle(MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
+            if (innerNetObject == null) return;
+
+            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            {
+                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+
+                return;
+            }
+
             IModdedOption moddedOption = messageReader.ReadOption();
             moddedOption.Deserialize(messageReader);
             SyncOptionType syncOptionType = (SyncOptionType)messageReader.ReadPackedInt32();

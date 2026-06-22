@@ -113,9 +113,10 @@ namespace FungleAPI
                         modPlugin.LocalMod = bepInMod;
                         HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
 
-                        if (modPlugin.FunglePlugin.ApperOnCredits)
+                        PluginCredits? pluginCredits = modPlugin.FunglePlugin.Credits;
+                        if (pluginCredits != null)
                         {
-                            ReactorCompatibility.Instance?.Register(modPlugin.FunglePlugin.ModName, modPlugin.FunglePlugin.ModVersion, false, (l) => l == ReactorCreditsLocation.PingTracker);
+                            ReactorCompatibility.Instance?.Register(pluginCredits.Value.Name, pluginCredits.Value.Version, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         }
                     }
                 }
@@ -151,11 +152,13 @@ namespace FungleAPI
         }
         public void ShowCreditsScreen()
         {
-            DisconnectPopup.Instance.ShowCustom("Thanks for using Fungle Api!!!");
+            DisconnectPopup.Instance.ShowCustom(FungleTranslation.FungleCreditsText.GetString());
             Application.OpenURL("https://github.com/OBit508/FungleAPI");
         }
         public System.Collections.IEnumerator CoLoadAssets(TextMeshPro loadingText)
         {
+            if (AssetLoader.LateAssets == null) yield break;
+
             string baseText = $"<font=\"Brook SDF\" material=\"Brook SDF - WhiteOutline\">{FungleTranslation.LoadingShipPrefabsText.GetString()}";
             yield return ShipPrefabLoader.CoLoadShipPrefabs(loadingText, baseText);
 

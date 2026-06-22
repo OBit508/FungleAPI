@@ -1,4 +1,5 @@
-﻿using FungleAPI.Base.Rpc;
+﻿using FungleAPI.AntiCheat;
+using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.GModes;
 using FungleAPI.Translation;
@@ -13,9 +14,8 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncGamemode : SimpleRpc
+    internal class RpcSyncGamemode : SimpleRpc<PlayerControl>
     {
-        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter)
         {
             BaseGameMode baseGameMode = GameModeManager.GameModes[GameModeManager.HostValue.Value];
@@ -35,8 +35,17 @@ namespace FungleAPI.GameOptions.Networking
                 LobbyViewSettingsPanePatch.OnChangeGamemode?.Invoke();
             }
         }
-        public override void Handle(MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
+            if (innerNetObject == null) return;
+
+            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            {
+                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+
+                return;
+            }
+
             uint gameModeId = messageReader.ReadPackedUInt32();
 
             BaseGameMode baseGameMode = GameModeManager.GameModes[gameModeId];

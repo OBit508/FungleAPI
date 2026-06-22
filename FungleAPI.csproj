@@ -15,6 +15,9 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Compile Include="AntiCheat\AntiCheatManager.cs" />
+    <Compile Include="AntiCheat\CheatFlags.cs" />
+    <Compile Include="AntiCheat\RpcWarnFromCheater.cs" />
     <Compile Include="Attributes\RegisterPriority.cs" />
     <Compile Include="Attributes\TranslationHelper.cs" />
     <Compile Include="Attributes\FungleIgnore.cs" />
@@ -158,6 +161,7 @@
     <Compile Include="PluginLoading\BepInMod.cs" />
     <Compile Include="PluginLoading\FileManager.cs" />
     <Compile Include="PluginLoading\FolderType.cs" />
+    <Compile Include="PluginLoading\PluginCredits.cs" />
     <Compile Include="Role\Patches\IntroCoBeginPatch.cs" />
     <Compile Include="Role\Patches\MeetingIntroAnimationPatch.cs" />
     <Compile Include="Role\Utilities\CachedWaitingRole.cs" />

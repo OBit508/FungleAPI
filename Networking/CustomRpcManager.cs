@@ -69,7 +69,7 @@ namespace FungleAPI.Networking
                 messageWriter.WritePacked(targetClientId);
             }
             messageWriter.StartMessage(2);
-            messageWriter.WritePacked(5);
+            messageWriter.WritePacked(PlayerControl.LocalPlayer != null ? PlayerControl.LocalPlayer.NetId : 5);
             messageWriter.Write((byte)241);
             write(messageWriter);
             AmongUsClient.Instance.FinishRpcImmediately(messageWriter);

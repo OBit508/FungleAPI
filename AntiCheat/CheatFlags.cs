@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Role
+namespace FungleAPI.AntiCheat
 {
-    public enum RoleHintType
+    public enum CheatFlags
     {
-        None,
-        TaskHint,
-        PlayerTab
+        Ban,
+        Kick,
+        WarnHost,
+        WarnEveryone
     }
 }

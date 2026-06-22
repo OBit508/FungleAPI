@@ -13,6 +13,8 @@ namespace FungleAPI.Translation
     [TranslationAttribute("FungleAPI.Assets.FungleTranslations")]
     public static class FungleTranslation
     {
+        public static Translator CheatingWarnText { get; } = new Translator("{0} is cheating.");
+        public static Translator FungleCreditsText { get; } = new Translator("Thanks for using Fungle Api!!!");
         public static Translator ExileText { get; } = new Translator("{0} was an {1}.");
         public static Translator FailedToSync { get; } = new Translator("Failed to sync settings with host.\nError: ");
         public static Translator GameModeText { get; } = new Translator("Game mode");

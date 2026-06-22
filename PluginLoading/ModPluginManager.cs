@@ -17,6 +17,7 @@ using FungleAPI.Role;
 using FungleAPI.Ship.Patches;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
+using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
@@ -73,48 +74,53 @@ namespace FungleAPI.PluginLoading
         {
             plugin.BasePlugin.Log.LogInfo($"Registering Types on FungleAPI");
 
-            foreach (Type type in plugin.AllPriorityTypes.Values)
+            IFungleBasePlugin fungleBasePlugin = plugin.FunglePlugin;
+
+            if (fungleBasePlugin.UseAutoRegistration)
             {
-                if (type.GetCustomAttribute<FungleIgnore>() != null) continue;
-                try
+                foreach (Type type in plugin.AllPriorityTypes.Values)
                 {
-                    bool registeredInIl2cpp = false;
-                    ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
-                    if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
+                    if (type.ShouldIgnore()) continue;
+                    try
                     {
-                        ClassInjector.RegisterTypeInIl2Cpp(type);
+                        bool registeredInIl2cpp = false;
+                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
+                        if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
+                        {
+                            ClassInjector.RegisterTypeInIl2Cpp(type);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
                     }
                 }
-                catch (Exception ex)
+
+                foreach (Type type in plugin.AllTypes.FindAll(t => !plugin.AllPriorityTypes.Values.Contains(t)))
                 {
-                    plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
+                    if (type.ShouldIgnore()) continue;
+                    try
+                    {
+                        bool registeredInIl2cpp = false;
+                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
+                        if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
+                        {
+                            ClassInjector.RegisterTypeInIl2Cpp(type);
+                        }
+
+                        TranslationAttribute translationAttribute = type.GetCustomAttribute<TranslationAttribute>();
+                        if (translationAttribute != null)
+                        {
+                            TranslationManager.TranslateFromJsonFolder(plugin.ModAssembly, type, translationAttribute.JsonFolderPath);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
+                    }
                 }
             }
 
-            foreach (Type type in plugin.AllTypes.FindAll(t => !plugin.AllPriorityTypes.Values.Contains(t)))
-            {
-                if (type.GetCustomAttribute<FungleIgnore>() != null) continue;
-                try
-                {
-                    bool registeredInIl2cpp = false;
-                    ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
-                    if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
-                    {
-                        ClassInjector.RegisterTypeInIl2Cpp(type);
-                    }
-
-                    TranslationAttribute translationAttribute = type.GetCustomAttribute<TranslationAttribute>();
-                    if (translationAttribute != null)
-                    {
-                        TranslationManager.TranslateFromJsonFolder(plugin.ModAssembly, type, translationAttribute.JsonFolderPath);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    plugin.BasePlugin.Log.LogError($"Failed to register type {type.FullName}: {ex}");
-                }
-            }
-            IFungleBasePlugin fungleBasePlugin = plugin.BasePlugin as IFungleBasePlugin;
             if (plugin != FungleApiPlugin.Plugin)
             {
                 fungleBasePlugin?.LoadTabs(plugin);

@@ -1,4 +1,5 @@
-﻿using FungleAPI.Base.Rpc;
+﻿using FungleAPI.AntiCheat;
+using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Networking;
 using FungleAPI.Role;
@@ -15,9 +16,8 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncRole : AdvancedRpc<ICustomRole>
+    internal class RpcSyncRole : AdvancedRpc<ICustomRole, PlayerControl>
     {
-        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter, ICustomRole data)
         {
             messageWriter.WriteRole(data as RoleBehaviour);
@@ -36,8 +36,17 @@ namespace FungleAPI.GameOptions.Networking
                 }
             }
         }
-        public override void Handle(MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
+            if (innerNetObject == null) return;
+
+            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            {
+                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+
+                return;
+            }
+
             ICustomRole customRole = messageReader.ReadRole().CustomRole();
             customRole.RoleOptions.NonHostRoleCount = messageReader.ReadPackedInt32();
             customRole.RoleOptions.NonHostRoleChance = messageReader.ReadPackedInt32();
