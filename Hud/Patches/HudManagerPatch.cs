@@ -73,7 +73,6 @@ namespace FungleAPI.Hud.Patches
             __instance.ImpostorVentButton.SetDisabled();
 
             CreatePlayerTab();
-            HudHelper.SetBottomSize(0.8f);
         }
         [HarmonyPatch("SetTouchType")]
         [HarmonyPrefix]
@@ -204,7 +203,6 @@ namespace FungleAPI.Hud.Patches
         {
             HudHelper.Active = isActive;
 
-            __instance.ReportButton.ToggleVisible(role.CanReport() && isActive && GameManager.Instance.CanReportBodies() && ShipStatus.Instance != null);
             __instance.KillButton.ToggleVisible(role.UseKillButton() && isActive);
             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
             __instance.ImpostorVentButton.ToggleVisible(role.CanUseVent() && role.Role != RoleTypes.Engineer && isActive);

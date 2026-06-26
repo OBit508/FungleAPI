@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices.RTC;
+using FungleAPI.Assets.Late;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Patches;
@@ -30,7 +31,18 @@ namespace FungleAPI.GameOptions.Options
             bool changed = false;
             int realValue = amHost ? LocalValue : NonHostValue;
 
-            if (value is int intValue) { changed = realValue != intValue; realValue = intValue; }
+            object convertedValue;
+
+            if (value is TEnum @enum)
+            {
+                convertedValue = Values.Values.GetIndex(@enum);
+            }
+            else
+            {
+                convertedValue = value;
+            }
+
+            if (convertedValue is int intValue) { changed = realValue != intValue; realValue = intValue; }
 
             if (amHost)
             {
@@ -97,6 +109,10 @@ namespace FungleAPI.GameOptions.Options
             {
                 Values.Add(i, valuesNames.Keys.ElementAt(i));
             }
+        }
+        public static implicit operator TEnum(ModdedEnumOption<TEnum> moddedEnumOption)
+        {
+            return moddedEnumOption.EnumValue;
         }
     }
 }

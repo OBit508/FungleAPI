@@ -17,7 +17,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(DataT data, InnerNetObject innerNetObject, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            CustomRpcManager.SendRpc(innerNetObject, delegate (MessageWriter writer)
+            CustomRpcManager.SendRpc(innerNetObject, CustomRpcManager.DefaultRpc, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
                 writer.StartMessage(0);
@@ -35,7 +35,7 @@ namespace FungleAPI.Base.Rpc
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }
 
-            CustomRpcManager.SendRpc(delegate (MessageWriter writer)
+            CustomRpcManager.SendRpc(CustomRpcManager.CustomRpc, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
                 writer.StartMessage(0);
@@ -70,7 +70,7 @@ namespace FungleAPI.Base.Rpc
         /// </summary>
         public void Send(DataT data, TNetObject innerNetObject, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            CustomRpcManager.SendRpc(innerNetObject, delegate (MessageWriter writer)
+            CustomRpcManager.SendRpc(innerNetObject, CustomRpcManager.DefaultRpc, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
                 writer.StartMessage(0);
@@ -88,7 +88,7 @@ namespace FungleAPI.Base.Rpc
                 throw new System.Exception("Trying to send an Rpc that requires an InnerNetObject without providing one.");
             }
 
-            CustomRpcManager.SendRpc(delegate (MessageWriter writer)
+            CustomRpcManager.SendRpc(CustomRpcManager.CustomRpc, delegate (MessageWriter writer)
             {
                 writer.WriteRPC(this);
                 writer.StartMessage(0);

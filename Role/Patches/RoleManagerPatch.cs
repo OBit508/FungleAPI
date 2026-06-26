@@ -8,6 +8,7 @@ using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GModes;
 using FungleAPI.GModes.Logics;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -28,21 +29,9 @@ namespace FungleAPI.Role.Patches
     {
         public static bool waitingRegister = true;
         [HarmonyPatch("Awake")]
-        [HarmonyPrefix]
-        public static bool AwakePrefix(RoleManager __instance)
+        [HarmonyPostfix]
+        public static void AwakePostfix(RoleManager __instance)
         {
-            if (!RoleManager._instance)
-            {
-                RoleManager._instance = __instance;
-                if (__instance.DontDestroy)
-                {
-                    UnityEngine.Object.DontDestroyOnLoad(__instance.gameObject);
-                }
-            }
-            else if (RoleManager._instance != __instance)
-            {
-                UnityEngine.Object.Destroy(__instance.gameObject);
-            }
             if (waitingRegister)
             {
                 FungleApiPlugin.Plugin.Roles.AddRange(__instance.AllRoles.ToArray());
@@ -51,7 +40,6 @@ namespace FungleAPI.Role.Patches
                 __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
                 waitingRegister = false;
             }
-            return false;
         }
         [HarmonyPatch("SetRole")]
         [HarmonyPrefix]

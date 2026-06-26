@@ -23,7 +23,7 @@ namespace FungleAPI.Patches
             {
                 modsText = $"FungleAPI {FungleApiPlugin.ModV}";
 
-                List<ModPlugin> plugins = ModPluginManager.AllPlugins.FindAll(p => p.FunglePlugin.Credits != null);
+                List<ModPlugin> plugins = ModPluginManager.AllPlugins.FindAll(p => p.FunglePlugin.Credits != null && p != FungleApiPlugin.Plugin);
 
                 if (plugins.Count > 0)
                 {

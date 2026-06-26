@@ -28,7 +28,8 @@ namespace FungleAPI.Networking
     [HarmonyPatch]
     public static class CustomRpcManager
     {
-        internal const string RpcIdentifier = "FungleAPINonInnerNetObjectRPC";
+        public const byte DefaultRpc = 240;
+        public const byte CustomRpc = 241;
         internal static uint LastRpcId = uint.MinValue;
         internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
         /// <summary>
@@ -48,13 +49,13 @@ namespace FungleAPI.Networking
         /// <summary>
         /// Send a rpc
         /// </summary>
-        public static void SendRpc(InnerNetObject innerNetObject, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        public static void SendRpc(InnerNetObject innerNetObject, byte callId, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, 240, sendOption, targetClientId);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(innerNetObject.NetId, callId, sendOption, targetClientId);
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void SendRpc(Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
+        public static void SendRpc(byte callId, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
         {
             MessageWriter messageWriter = MessageWriter.Get(sendOption);
             if (targetClientId < 0)
@@ -70,7 +71,7 @@ namespace FungleAPI.Networking
             }
             messageWriter.StartMessage(2);
             messageWriter.WritePacked(PlayerControl.LocalPlayer != null ? PlayerControl.LocalPlayer.NetId : 5);
-            messageWriter.Write((byte)241);
+            messageWriter.Write(callId);
             write(messageWriter);
             AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
         }
@@ -84,10 +85,10 @@ namespace FungleAPI.Networking
         }
         internal static void PatchInnerNetObjects()
         {
-            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().ToList().FindAll(t => typeof(InnerNetObject).IsAssignableFrom(t)))
+            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().Where(t => typeof(InnerNetObject).IsAssignableFrom(t)))
             {
-                MethodInfo methodInfo = type.GetMethod("HandleRpc", BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-                if (methodInfo != null && !methodInfo.IsVirtual)
+                MethodInfo methodInfo = type.GetMethod("HandleRpc", AccessTools.all);
+                if (methodInfo != null)
                 {
                     FungleApiPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
                 }
@@ -100,10 +101,23 @@ namespace FungleAPI.Networking
         }
         private static bool HandleRpcPrefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
         {
-            if (callId == 240)
+            if (callId == DefaultRpc)
             {
-                RpcHelper rpc = messageReader.ReadRPC();
-                rpc.__handle(__instance, messageReader.ReadMessage());
+                try
+                {
+                    RpcHelper rpc = messageReader.ReadRPC();
+
+                    if (rpc == null)
+                    {
+                        FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc came null");
+                    }
+
+                    rpc.__handle(__instance, messageReader.ReadMessage());
+                }
+                catch (Exception ex)
+                {
+                    FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Failed to read rpc, Exception: {ex.Message}");
+                }
                 return false;
             }
             return true;

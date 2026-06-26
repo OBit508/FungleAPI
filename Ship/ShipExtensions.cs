@@ -53,7 +53,7 @@ namespace FungleAPI.Ship
         /// <summary>
         /// Create a vent
         /// </summary>
-        public static Vent CreateVent(this ShipStatus shipStatus, VentType type, Vector2 position, List<Vent> nearbyVents = null, bool connectBoth = true)
+        public static Vent CreateVent(this ShipStatus shipStatus, VentType type, Vector2 position, int ventId, List<Vent> nearbyVents = null)
         {
             if (type == VentType.Polus && ShipPrefabLoader.PolusPrefab == null)
             {
@@ -80,14 +80,19 @@ namespace FungleAPI.Ship
             }
             Vent vent = GameObject.Instantiate<Vent>(prefab, shipStatus.transform);
             vent.gameObject.SetActive(true);
-            vent.Id = shipStatus.AllVents.Count;
+            vent.Id = ventId;
             shipStatus.AllVents = shipStatus.AllVents.Concat(new Vent[] { vent }).ToArray();
             vent.Right = null;
             vent.Center = null;
             vent.Left = null;
             vent.transform.position = new Vector3(position.x, position.y, position.y / 1000 + 0.001f);
             VentPatch.DoStart(vent);
-            vent.TryGetHelper().Vents.AddRange(nearbyVents);
+            
+            if (nearbyVents != null)
+            {
+                vent.TryGetHelper().Vents.AddRange(nearbyVents);
+            }
+
             return vent;
         }
     }

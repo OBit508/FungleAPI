@@ -31,15 +31,6 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool SetOutlinePrefix(Vent __instance, bool on, bool mainTarget)
         {
-            if (!RoleConfigManager.VentConfig.ShowOutline())
-            {
-                if (!on && !mainTarget)
-                {
-                    return true;
-                }
-                __instance.SetOutline(false, false);
-                return false;
-            }
             ICustomRole role = PlayerControl.LocalPlayer.Data.Role.CustomRole();
             if (role != null)
             {

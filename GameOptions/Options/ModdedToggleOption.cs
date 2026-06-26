@@ -18,7 +18,7 @@ namespace FungleAPI.GameOptions.Options
         public bool LocalValue;
         public bool NonHostValue;
 
-        public bool BoolValue => AmongUsClient.Instance.AmHost ? LocalValue : NonHostValue;
+        public bool BooleanValue => AmongUsClient.Instance.AmHost ? LocalValue : NonHostValue;
 
         public override void SetValue(object value, bool amHost)
         {
@@ -82,6 +82,10 @@ namespace FungleAPI.GameOptions.Options
             CheckboxGameSetting checkboxGameSetting = (CheckboxGameSetting)Data;
             checkboxGameSetting.Title = optionName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
+        }
+        public static implicit operator bool(ModdedToggleOption moddedToggleOption)
+        {
+            return moddedToggleOption.BooleanValue;
         }
     }
 }

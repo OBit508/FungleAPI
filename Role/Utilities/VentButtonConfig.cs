@@ -23,7 +23,6 @@ namespace FungleAPI.Role.Utilities
             ventButtonConfig = this;
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.IsOnCooldown && !PlayerControl.LocalPlayer.Data.IsDead;
             Cooldown = () => 0;
-            ShowOutline = () => Button.isActiveAndEnabled && !Button.IsOnCooldown && !PlayerControl.LocalPlayer.Data.IsDead;
             SetTarget = delegate (Vent target)
             {
                 Button.currentTarget = target;
@@ -86,10 +85,6 @@ namespace FungleAPI.Role.Utilities
         /// Returns the vent cooldown value
         /// </summary>
         public Func<float> Cooldown;
-        /// <summary>
-        /// Determines whether the vent outline should be shown
-        /// </summary>
-        public Func<bool> ShowOutline;
         /// <summary>
         /// Sets the current vent target
         /// </summary>

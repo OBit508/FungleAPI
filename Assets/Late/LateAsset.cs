@@ -35,7 +35,7 @@ namespace FungleAPI.Assets.Late
 
         public LateAsset()
         {
-            AssetLoader.LateAssets.Add(() => Asset);
+            AssetLoader.LateAssets?.Add(() => Asset);
         }
 
         protected abstract T LoadAsset();

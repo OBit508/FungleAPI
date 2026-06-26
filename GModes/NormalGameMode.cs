@@ -3,6 +3,7 @@ using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.Player;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -161,7 +162,7 @@ namespace FungleAPI.GModes
         }
         public override void SelectRoles(RoleManager roleManager)
         {
-            if (Manager.LogicRoleSelection is LogicRoleSelectionNormal logicRoleSelectionNormal)
+            if (Manager.LogicRoleSelection.Is(out LogicRoleSelectionNormal logicRoleSelectionNormal))
             {
                 IGameOptions currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
                 Il2CppSystem.Collections.Generic.List<ClientData> list = new Il2CppSystem.Collections.Generic.List<ClientData>();
@@ -177,10 +178,12 @@ namespace FungleAPI.GModes
                 List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList();
                 teams.Sort((a, b) => b.TeamOptions.TeamCount.CompareTo(a.TeamOptions.TeamCount));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
+
                 foreach (ModdedTeam team in teams)
                 {
                     AssignRolesForTeam(logicRoleSelectionNormal, players, team);
                 }
+                return;
             }
         }
         public void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)

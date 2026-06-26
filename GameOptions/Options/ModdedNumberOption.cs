@@ -88,5 +88,13 @@ namespace FungleAPI.GameOptions.Options
             floatGameSetting.SuffixType = suffixType;
             floatGameSetting.OptionName = FloatOptionNames.Invalid;
         }
+        public static implicit operator float(ModdedNumberOption moddedNumberOption)
+        {
+            return moddedNumberOption.FloatValue;
+        }
+        public static implicit operator int(ModdedNumberOption moddedNumberOption)
+        {
+            return moddedNumberOption.IntValue;
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Unity.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.GameOptions;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Net.Http.Headers.Parser;
 
 namespace FungleAPI.Networking.Patches
 {
@@ -29,20 +31,69 @@ namespace FungleAPI.Networking.Patches
 
             if (messageReader.Tag == (byte)GameDataTypes.RpcFlag)
             {
-                MessageReader clone = MessageReader.Get(messageReader.Buffer);
-                clone.Position = messageReader.Position;
+                InnerNetClient innerNetClient = __instance.__4__this;
 
-                clone.ReadPackedUInt32();
-                byte callId = clone.ReadByte();
-
-                if (callId == 241)
+                System.Collections.IEnumerator CoHandleMessage()
                 {
-                    messageReader.ReadPackedUInt32();
-                    messageReader.ReadByte();
+                    int cnt = 0;
+                    try
+                    {
+                        InnerNetObjectCollection innerNetObjectCollection;
+                        for (;;)
+                        {
+                            uint num3;
+                            try
+                            {
+                                num3 = messageReader.ReadPackedUInt32();
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.LogError(string.Format("Error in {0} try {1}, Pos:{2}/{3}: {4}", new object[] { __instance.msgNum, cnt, messageReader.Position, messageReader.Length, ex }));
+                                Debug.LogError(ex.Message);
+                                throw;
+                            }
+                            byte b = messageReader.ReadByte();
 
-                    CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
-                    return false;
+                            if (b == CustomRpcManager.CustomRpc)
+                            {
+                                CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
+
+                                yield break;
+                            }
+
+                            innerNetObjectCollection = innerNetClient.allObjects;
+                            lock (innerNetObjectCollection)
+                            {
+                                InnerNetObject innerNetObject2;
+                                if (innerNetClient.allObjects.AllObjectsFast.TryGetValue(num3, out innerNetObject2))
+                                {
+                                    innerNetObject2.HandleRpc(b, messageReader);
+                                }
+                                else if (num3 != 4294967295U && !innerNetClient.DestroyedObjects.Contains(num3))
+                                {
+                                    Debug.LogWarning(string.Format("Stored Msg {0} RPC {1} for ", __instance.msgNum, (RpcCalls)b) + num3.ToString());
+                                    int num2 = cnt;
+                                    cnt = num2 + 1;
+                                    if (num2 > 10)
+                                    {
+                                        yield break;
+                                    }
+                                    messageReader.Position = 0;
+                                    yield return Effects.Wait(0.1f);
+                                    continue;
+                                }
+                            }
+                            break;
+                        }
+                        innerNetObjectCollection = null;
+                    }
+                    finally
+                    {
+                        messageReader.Recycle();
+                    }
                 }
+
+                innerNetClient.StartCoroutine(CoHandleMessage().WrapToIl2Cpp());
             }
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)
