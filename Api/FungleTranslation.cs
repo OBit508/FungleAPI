@@ -37,6 +37,8 @@ namespace FungleAPI.Api
         public static Translator NeutralText { get; } = new Translator("Neutral");
         public static Translator NeutralsText { get; } = new Translator("Neutrals");
         public static Translator TeamsRemainText { get; } = new Translator("Remaining Teams: {0}");
+        public static Translator TeamsAmongUs { get; } = new Translator("There are {0} among us");
+        public static Translator AndText { get; } = new Translator(" and ");
         public static Translator NeutralGameOver { get; } = new Translator("Victory of the Neutrals");
         public static Translator ImpostorGameOver { get; } = new Translator("Victory of the Impostors");
         public static Translator CrewmateGameOver { get; } = new Translator("Crew Victory");

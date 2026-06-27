@@ -1,5 +1,6 @@
 ﻿using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
+using Cpp2IL.Core.OutputFormats;
 using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Event;
@@ -72,23 +73,31 @@ namespace FungleAPI.Role.Patches
             }
             __instance.ImpostorText.gameObject.SetActive(true);
 
+            __instance.ImpostorText.text = customRole.Team == ModdedTeamManager.Crewmates ? GetTeamsTextAsCrewmate() : GetDefaultTeamsText();
+
+            EventManager.CallEvent(new AfterIntroBeginEvent(__instance));
+        }
+        public static string GetDefaultTeamsText()
+        {
             string teamsText = "";
 
             Dictionary<ModdedTeam, int> teams = new Dictionary<ModdedTeam, int>();
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                if (!player.Data.IsDead)
+                ModdedTeam team = player.Data.Role.GetTeam();
+                if (teams.TryGetValue(team, out int value))
                 {
-                    ModdedTeam team = player.Data.Role.GetTeam();
-                    if (teams.TryGetValue(team, out int value))
-                    {
-                        teams[team] = value + 1;
-                    }
-                    else
-                    {
-                        teams[team] = 0;
-                    }
+                    teams[team] = value + 1;
                 }
+                else
+                {
+                    teams[team] = 0;
+                }
+            }
+
+            if (teams.Count <= 0)
+            {
+                return "No impostors among us";
             }
 
             ModdedTeam last = teams.Last().Key;
@@ -114,9 +123,58 @@ namespace FungleAPI.Role.Patches
                 }
             }
 
-            __instance.ImpostorText.text = string.Format(FungleTranslation.TeamsRemainText.GetString(), teamsText);
+            return string.Format(FungleTranslation.TeamsRemainText.GetString(), teamsText);
+        }
+        public static string GetTeamsTextAsCrewmate()
+        {
+            string teamsText = "";
 
-            EventManager.CallEvent(new AfterIntroBeginEvent(__instance));
+            Dictionary<ModdedTeam, int> teams = new Dictionary<ModdedTeam, int>();
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+            {
+                ModdedTeam team = player.Data.Role.GetTeam();
+
+                if (team == ModdedTeamManager.Crewmates) continue;
+
+                if (teams.TryGetValue(team, out int value))
+                {
+                    teams[team] = value + 1;
+                }
+                else
+                {
+                    teams[team] = 0;
+                }
+            }
+
+            ModdedTeam last = teams.Last().Key;
+
+            for (int i = 0; i < teams.Count; i++)
+            {
+                KeyValuePair<ModdedTeam, int> pair = teams.ElementAt(i);
+
+                if (pair.Value > 1)
+                {
+                    teamsText += $"{pair.Key.TeamColor.ToTextColor()}{pair.Value} {pair.Key.PluralName.GetString()}</color>";
+                }
+                else
+                {
+                    teamsText += $"{pair.Key.TeamColor.ToTextColor()}1 {pair.Key.TeamName.GetString()}</color>";
+                }
+
+                if (pair.Key != last)
+                {
+                    if (teams.Count > 1 && i == teams.Count - 2)
+                    {
+                        teamsText += FungleTranslation.AndText.GetString();
+
+                        continue;
+                    }
+
+                    teamsText += ", ";
+                }
+            }
+
+            return string.Format(FungleTranslation.TeamsAmongUs.GetString(), teamsText);
         }
     }
 }

@@ -21,6 +21,8 @@ namespace FungleAPI.GameOptions.Networking
         public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
         {
+            UnSynced = true;
+
             messageWriter.WritePacked(OptionManager.AllOptions.Count);
             foreach (IModdedOption moddedOption in OptionManager.AllOptions.Values)
             {
@@ -43,6 +45,8 @@ namespace FungleAPI.GameOptions.Networking
             {
                 rpcSyncTeam.Write(messageWriter, moddedTeam);
             }
+
+            UnSynced = false;
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {

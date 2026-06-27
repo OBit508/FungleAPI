@@ -1,7 +1,11 @@
-﻿using FungleAPI.Components;
+﻿using FungleAPI.Api;
+using FungleAPI.Chat;
+using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.Networking;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using HarmonyLib;

@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP;
 using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.Base.Rpc;
+using FungleAPI.Chat;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics;
 using FungleAPI.Event;
@@ -160,6 +161,11 @@ namespace FungleAPI.PluginLoading
             else if (typeof(CustomAbilityButton).IsAssignableFrom(type))
             {
                 HudHelper.RegisterButton(type, plugin);
+                return;
+            }
+            else if (typeof(BaseChatCommand).IsAssignableFrom(type))
+            {
+                ChatCommandManager.RegisterCommand(type, plugin);
                 return;
             }
             else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))

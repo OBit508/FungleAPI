@@ -24,6 +24,7 @@ namespace FungleAPI.PluginLoading
         string ModName => PluginInfo.Metadata.Name;
         string ModVersion => PluginInfo.Metadata.Version.Clean();
         bool UseAutoRegistration => true;
+        bool RequiredOnAllClients => true;
         PluginCredits? Credits => new PluginCredits()
         {
             Name = ModName,

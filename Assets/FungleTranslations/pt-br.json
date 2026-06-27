@@ -24,6 +24,8 @@
   "NeutralText": "Neutro",
   "NeutralsText": "Neutros",
   "TeamsRemainText": "Times Restantes: {0}",
+  "TeamsAmongUs": "Há {0} entre nós",
+  "AndText": " e ",
   "NeutralGameOver": "Vitória dos Neutros",
   "ImpostorGameOver": "Vitória dos Impostores",
   "CrewmateGameOver": "Vitória dos Tripulantes",

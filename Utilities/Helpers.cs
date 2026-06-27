@@ -199,6 +199,12 @@ namespace FungleAPI.Utilities
 
             return false;
         }
+        public static MessageReader CloneReader(this MessageReader messageReader)
+        {
+            MessageReader reader = MessageReader.Get(messageReader.Buffer);
+            reader.Position = messageReader.Position;
+            return reader;
+        }
         public static string GetShortUniqueId(this Type type)
         {
             string key = type.AssemblyQualifiedName ?? type.FullName ?? type.Name;

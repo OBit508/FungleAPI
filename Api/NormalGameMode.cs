@@ -176,7 +176,7 @@ namespace FungleAPI.Api
                         list2.Add(networkedPlayerInfo);
                     }
                 }
-                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList();
+                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount > 0);
                 teams.Sort((a, b) => b.TeamOptions.TeamCount.CompareTo(a.TeamOptions.TeamCount));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
 
@@ -206,7 +206,7 @@ namespace FungleAPI.Api
                 }
             }
 
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
 
             List<RoleManager.RoleAssignmentData> randomRoles = availableRoles.Select(role => new { Role = role, Chance = roleOptions.GetChancePerGame(role.Role) }).Where(x => x.Chance > 0 && x.Chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.Role, roleOptions.GetNumPerGame(x.Role.Role), x.Chance)).ToList();
 

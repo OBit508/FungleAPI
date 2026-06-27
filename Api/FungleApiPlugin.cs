@@ -110,7 +110,11 @@ namespace FungleAPI.Api
                     if (modPlugin != null)
                     {
                         modPlugin.LocalMod = bepInMod;
-                        HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
+
+                        if (modPlugin.FunglePlugin.RequiredOnAllClients)
+                        {
+                            HandShakeManager.RequiredMods.Add(pluginInfo.Metadata.GUID, bepInMod);
+                        }
 
                         PluginCredits? pluginCredits = modPlugin.FunglePlugin.Credits;
                         if (pluginCredits != null)

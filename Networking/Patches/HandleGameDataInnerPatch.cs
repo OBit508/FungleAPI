@@ -33,67 +33,22 @@ namespace FungleAPI.Networking.Patches
             {
                 InnerNetClient innerNetClient = __instance.__4__this;
 
-                System.Collections.IEnumerator CoHandleMessage()
+                MessageReader clone = messageReader.CloneReader();
+
+                clone.ReadPackedUInt32();
+                byte b = clone.ReadByte();
+
+                if (b == 241)
                 {
-                    int cnt = 0;
-                    try
-                    {
-                        InnerNetObjectCollection innerNetObjectCollection;
-                        for (;;)
-                        {
-                            uint num3;
-                            try
-                            {
-                                num3 = messageReader.ReadPackedUInt32();
-                            }
-                            catch (Exception ex)
-                            {
-                                Debug.LogError(string.Format("Error in {0} try {1}, Pos:{2}/{3}: {4}", new object[] { __instance.msgNum, cnt, messageReader.Position, messageReader.Length, ex }));
-                                Debug.LogError(ex.Message);
-                                throw;
-                            }
-                            byte b = messageReader.ReadByte();
+                    clone.Recycle();
 
-                            if (b == CustomRpcManager.CustomRpc)
-                            {
-                                CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
+                    messageReader.ReadPackedUInt32();
+                    messageReader.ReadByte();
 
-                                yield break;
-                            }
+                    CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
 
-                            innerNetObjectCollection = innerNetClient.allObjects;
-                            lock (innerNetObjectCollection)
-                            {
-                                InnerNetObject innerNetObject2;
-                                if (innerNetClient.allObjects.AllObjectsFast.TryGetValue(num3, out innerNetObject2))
-                                {
-                                    innerNetObject2.HandleRpc(b, messageReader);
-                                }
-                                else if (num3 != 4294967295U && !innerNetClient.DestroyedObjects.Contains(num3))
-                                {
-                                    Debug.LogWarning(string.Format("Stored Msg {0} RPC {1} for ", __instance.msgNum, (RpcCalls)b) + num3.ToString());
-                                    int num2 = cnt;
-                                    cnt = num2 + 1;
-                                    if (num2 > 10)
-                                    {
-                                        yield break;
-                                    }
-                                    messageReader.Position = 0;
-                                    yield return Effects.Wait(0.1f);
-                                    continue;
-                                }
-                            }
-                            break;
-                        }
-                        innerNetObjectCollection = null;
-                    }
-                    finally
-                    {
-                        messageReader.Recycle();
-                    }
+                    return false;
                 }
-
-                innerNetClient.StartCoroutine(CoHandleMessage().WrapToIl2Cpp());
             }
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)

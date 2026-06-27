@@ -18,6 +18,9 @@
     <Compile Include="AntiCheat\AntiCheatManager.cs" />
     <Compile Include="AntiCheat\CheatFlags.cs" />
     <Compile Include="AntiCheat\RpcWarnFromCheater.cs" />
+    <Compile Include="Chat\BaseChatCommand.cs" />
+    <Compile Include="Chat\ChatCommandManager.cs" />
+    <Compile Include="Chat\Patches\ChatControllerPatch.cs" />
     <Compile Include="GameOptions\Lobby\GamemodeSettingsTab.cs" />
     <Compile Include="Attributes\RegisterPriority.cs" />
     <Compile Include="Attributes\TranslationHelper.cs" />
@@ -307,10 +310,10 @@
     <EmbeddedResource Include="Assets\FungleAssets\empty.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
+    <EmbeddedResource Include="ModCompatibility\DLLs\SubWithFungle.dll" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ModCompatibility\DLLs\SubWithFungle.dll" />
+    <EmbeddedResource Include="ModCompatibility\DLLs\ReactorWithFungle.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
