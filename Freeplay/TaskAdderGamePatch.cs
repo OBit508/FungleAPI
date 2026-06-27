@@ -1,7 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.Assets;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.Freeplay.Helpers;

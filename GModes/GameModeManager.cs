@@ -1,11 +1,11 @@
 ﻿using BepInEx.Configuration;
+using FungleAPI.Api;
 using FungleAPI.Event;
 using FungleAPI.Event.BelpInEx;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Options;
 using FungleAPI.PluginLoading;
-using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;

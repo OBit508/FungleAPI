@@ -1,4 +1,5 @@
-﻿using FungleAPI.Freeplay.Helpers;
+﻿using FungleAPI.Freeplay;
+using FungleAPI.Freeplay.Helpers;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using System;
@@ -8,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Freeplay
+namespace FungleAPI.Api
 {
     public class VanillaFolder : ModFolderConfig
     {

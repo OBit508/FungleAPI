@@ -1,5 +1,5 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.Assets;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;

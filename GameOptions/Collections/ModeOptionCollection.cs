@@ -1,4 +1,5 @@
-﻿using FungleAPI.GameOptions;
+﻿using FungleAPI.Api;
+using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.GModes;
 using FungleAPI.PluginLoading;

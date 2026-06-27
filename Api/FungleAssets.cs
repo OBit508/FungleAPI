@@ -14,7 +14,7 @@ using UnityEngine.ProBuilder;
 using UnityEngine.UI;
 using xCloud;
 
-namespace FungleAPI.Assets
+namespace FungleAPI.Api
 {
     /// <summary>
     /// FungleAPI assets

@@ -1,4 +1,4 @@
-﻿using FungleAPI;
+﻿using FungleAPI.Api;
 using System;
 using System.Diagnostics;
 using System.Reflection;

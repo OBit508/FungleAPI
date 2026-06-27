@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using FungleAPI.Event.Api;
+using FungleAPI.Api;
 
 namespace FungleAPI.Cosmetics
 {

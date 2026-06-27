@@ -15,7 +15,6 @@ using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Ship;
-using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
@@ -32,7 +31,7 @@ using static BepInEx.BepInDependency;
 
 [assembly: AssemblyMetadata("Reactor.ModFlags", "RequireOnAllClients, DisableServerAuthority")]
 
-namespace FungleAPI
+namespace FungleAPI.Api
 {
     /// <summary>
     /// The API BasePlugin class

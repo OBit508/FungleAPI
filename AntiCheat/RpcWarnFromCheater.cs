@@ -1,5 +1,5 @@
-﻿using FungleAPI.Base.Rpc;
-using FungleAPI.Translation;
+﻿using FungleAPI.Api;
+using FungleAPI.Base.Rpc;
 using Hazel;
 using InnerNet;
 using System;

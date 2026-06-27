@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using AsmResolver.PE.DotNet.ReadyToRun;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;

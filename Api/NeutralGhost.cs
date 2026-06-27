@@ -1,7 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.Patches;
-using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,8 +14,9 @@ using FungleAPI.Base.Roles;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Extensions;
+using FungleAPI.Role;
 
-namespace FungleAPI.Role
+namespace FungleAPI.Api
 {
     public class NeutralGhost : CrewmateGhostRole, ICustomRole
     {

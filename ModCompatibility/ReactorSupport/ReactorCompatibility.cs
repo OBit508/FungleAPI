@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FungleAPI.Assets;
 using FungleAPI.PluginLoading;
 using Iced.Intel;
+using FungleAPI.Api;
 
 namespace FungleAPI.ModCompatibility.ReactorSupportTemp
 {

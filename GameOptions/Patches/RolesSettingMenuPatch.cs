@@ -6,6 +6,7 @@ using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
 using FungleAPI.GameOptions.Lobby;
+using FungleAPI.Api;
 
 namespace FungleAPI.GameOptions.Patches
 {

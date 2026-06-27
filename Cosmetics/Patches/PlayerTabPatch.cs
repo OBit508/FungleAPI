@@ -1,5 +1,5 @@
 ﻿using AmongUs.Data;
-using FungleAPI.Assets;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Cosmetics.Colors;
 using FungleAPI.Extensions;

@@ -1,12 +1,12 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Api;
 using FungleAPI.GameOptions;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Player.Networking;
 using FungleAPI.PluginLoading;
-using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;

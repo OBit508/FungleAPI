@@ -1,11 +1,12 @@
-﻿using Il2CppSystem.Runtime.Remoting.Messaging;
+﻿using FungleAPI.Translation;
+using Il2CppSystem.Runtime.Remoting.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Translation
+namespace FungleAPI.Api
 {
     /// <summary>
     /// FungleAPI translations

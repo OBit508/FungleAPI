@@ -1,4 +1,5 @@
-﻿using FungleAPI.Extensions;
+﻿using FungleAPI.Api;
+using FungleAPI.Extensions;
 using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;

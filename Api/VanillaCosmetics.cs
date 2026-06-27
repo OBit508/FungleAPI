@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Assets;
+using FungleAPI.Cosmetics;
 using FungleAPI.Cosmetics.Colors;
 using FungleAPI.Extensions;
 using FungleAPI.Translation;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace FungleAPI.Cosmetics
+namespace FungleAPI.Api
 {
     public class VanillaCosmetics : ModCosmetics
     {

@@ -1,7 +1,7 @@
 ﻿using BepInEx.Core.Logging.Interpolation;
+using FungleAPI.Api;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
-using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Hazel;

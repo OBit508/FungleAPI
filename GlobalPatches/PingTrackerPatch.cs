@@ -1,4 +1,5 @@
-﻿using FungleAPI.ModCompatibility;
+﻿using FungleAPI.Api;
+using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.PluginLoading;
 using HarmonyLib;

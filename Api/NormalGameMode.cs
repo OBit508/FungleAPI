@@ -2,6 +2,7 @@
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.GModes;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -16,7 +17,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.GModes
+namespace FungleAPI.Api
 {
     public class NormalGameMode : BaseGameMode
     {

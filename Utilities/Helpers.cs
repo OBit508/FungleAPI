@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.Components;
 using FungleAPI.Networking;
