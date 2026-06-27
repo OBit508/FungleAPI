@@ -1,6 +1,8 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.Extensions;
+using FungleAPI.GameOptions;
 using FungleAPI.GModes;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +12,11 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class VanillaSettingsTab : GameSettingsTab
+    public class GamemodeSettingsTab : LobbyTab
     {
+        public override string ViewTabButtonText => GameModeManager.GetCurrentGameMode().GameModeName.GetString();
+        public override string EditTabButtonText => FungleTranslation.PluralGameModeText.GetString();
+        public override string TabDescriptionText => StringNames.GameSettingsDescription.GetString();
         public void ClearTab(GameOptionsMenu gameOptionsMenu)
         {
             foreach (CategoryHeaderMasked categoryHeaderMasked in gameOptionsMenu.settingsContainer.GetComponentsInChildren<CategoryHeaderMasked>())

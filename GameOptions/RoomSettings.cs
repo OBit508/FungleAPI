@@ -14,10 +14,10 @@ using System.Threading.Tasks;
 namespace FungleAPI.GameOptions
 {
     /// <summary>
-    /// Class used to create the mod tab settings
+    /// Class used to create the room tab settings
     /// </summary>
     [FungleIgnore]
-    public class ModSettings
+    public class RoomSettings
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
         public GameOptionCollection OptionCollection;

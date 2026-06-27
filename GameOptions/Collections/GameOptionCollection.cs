@@ -16,7 +16,7 @@ namespace FungleAPI.GameOptions.Collections
     {
         public const int GameOptionVersion = 2;
 
-        public ModSettings Settings;
+        public RoomSettings Settings;
 
         public override void Initialize(Type type, ModPlugin modPlugin)
         {
@@ -124,7 +124,7 @@ namespace FungleAPI.GameOptions.Collections
                 SyncNonHostWithLocal();
             }
         }
-        public GameOptionCollection(ModSettings modSettings)
+        public GameOptionCollection(RoomSettings modSettings)
         {
             Settings = modSettings;
         }

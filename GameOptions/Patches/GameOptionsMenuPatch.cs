@@ -82,7 +82,7 @@ namespace FungleAPI.GameOptions.Patches
                     catch (Exception ex) { Debug.LogError(ex.Message); }
                     Update = false;
                 }
-                __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GameSettingsTab gameSettingsTab && gameSettingsTab.Plugin == FungleApiPlugin.Plugin);
+                __instance.MapPicker.gameObject.SetActive(GameSettingMenuPatch.CurrentTab is GamemodeSettingsTab);
                 return false;
             }
             catch { return true; }

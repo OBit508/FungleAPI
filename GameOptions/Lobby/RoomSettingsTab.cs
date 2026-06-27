@@ -1,4 +1,5 @@
 ﻿using Epic.OnlineServices.RTC;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.GModes;
@@ -12,11 +13,11 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class GameSettingsTab : LobbyTab
+    public class RoomSettingsTab : LobbyTab
     {
-        public override string ViewTabButtonText => StringNames.OverviewCategory.GetString();
-        public override string EditTabButtonText => StringNames.GameSettingsLabel.GetString();
-        public override string TabDescriptionText => StringNames.GameSettingsDescription.GetString();
+        public override string ViewTabButtonText => FungleTranslation.RoomText.GetString();
+        public override string EditTabButtonText => FungleTranslation.RoomSettings.GetString();
+        public override string TabDescriptionText => FungleTranslation.RoomTabDescription.GetString();
         public override void BuildViewTab(LobbyViewSettingsPane lobbyViewSettingsPane)
         {
             float num = 1.44f;

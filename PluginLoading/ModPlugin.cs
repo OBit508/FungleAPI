@@ -40,7 +40,7 @@ namespace FungleAPI.PluginLoading
 
 
         public ModCosmetics Cosmetics;
-        public ModSettings Settings;
+        public RoomSettings Settings;
         public ModFolderConfig FolderConfig;
 
         public BepInMod LocalMod;

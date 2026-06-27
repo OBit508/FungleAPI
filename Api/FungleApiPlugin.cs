@@ -43,7 +43,7 @@ namespace FungleAPI.Api
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.8";
+        public const string ModV = "0.2.9";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
@@ -61,7 +61,7 @@ namespace FungleAPI.Api
             ModPluginManager.Register(plugin, Assembly.GetExecutingAssembly(), this);
             plugin.FunglePlugin = this;
             plugin.RulePreset = Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
-            plugin.LobbyTabs = new List<LobbyTab>() { new VanillaSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
+            plugin.LobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
             ModPluginManager.AllPlugins.Add(plugin);
             ModPluginManager.AllAssemblies.Add(plugin.ModAssembly, plugin);
 

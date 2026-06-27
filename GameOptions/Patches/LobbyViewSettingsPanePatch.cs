@@ -43,9 +43,7 @@ namespace FungleAPI.GameOptions.Patches
         {
             if (GameManager.Instance.IsHideAndSeek()) return;
 
-            __instance.gameModeText.transform.localPosition = new Vector3(-0.2586f, 2.4241f, -1.9999f);
-            __instance.gameModeText.text = GameModeManager.GetCurrentGameMode().GameModeName.GetString();
-            __instance.gameModeText.alignment = TextAlignmentOptions.Center;
+            __instance.gameModeText.gameObject.SetActive(false);
 
             OnChangeGamemode = delegate { try { __instance.gameModeText.text = GameModeManager.GetCurrentGameMode().GameModeName.GetString(); } catch { } };
 

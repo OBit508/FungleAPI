@@ -128,7 +128,7 @@ namespace FungleAPI.PluginLoading
             }
             if (plugin.Settings == null)
             {
-                plugin.Settings = new ModSettings();
+                plugin.Settings = new RoomSettings();
             }
             if (plugin.FolderConfig == null)
             {
@@ -142,9 +142,9 @@ namespace FungleAPI.PluginLoading
         }
         private static void ProcessType(Type type, ModPlugin plugin, ref bool registeredInIl2cpp, bool hasSettings, bool hasFolderConfig, bool hasCosmetics)
         {
-            if (!hasSettings && typeof(ModSettings).IsAssignableFrom(type))
+            if (!hasSettings && typeof(RoomSettings).IsAssignableFrom(type))
             {
-                plugin.Settings = (ModSettings)Activator.CreateInstance(type);
+                plugin.Settings = (RoomSettings)Activator.CreateInstance(type);
                 return;
             }
             else if (!hasFolderConfig && typeof(ModFolderConfig).IsAssignableFrom(type))

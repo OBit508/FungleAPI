@@ -14,11 +14,15 @@ namespace FungleAPI.Api
     [TranslationAttribute("FungleAPI.Assets.FungleTranslations")]
     public static class FungleTranslation
     {
+        public static Translator RoomText { get; } = new Translator("Room");
+        public static Translator RoomSettings { get; } = new Translator("Room Settings");
+        public static Translator RoomTabDescription { get; } = new Translator("Edit the Room settings for your lobby.");
+        public static Translator PluralGameModeText { get; } = new Translator("Game Modes");
         public static Translator CheatingWarnText { get; } = new Translator("{0} is cheating.");
         public static Translator FungleCreditsText { get; } = new Translator("Thanks for using Fungle Api!!!");
         public static Translator ExileText { get; } = new Translator("{0} was an {1}.");
         public static Translator FailedToSync { get; } = new Translator("Failed to sync settings with host.\nError: ");
-        public static Translator GameModeText { get; } = new Translator("Game mode");
+        public static Translator GameModeText { get; } = new Translator("Game Mode");
         public static Translator VictoryText { get; } = new Translator("Victory of the {0}");
         public static Translator ChanceText { get; } = new Translator("Chance");
         public static Translator PriorityText { get; } = new Translator("Priority");

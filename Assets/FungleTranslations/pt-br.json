@@ -1,6 +1,10 @@
 {
   "language": "pt-br",
 
+  "RoomText": "Jogo",
+  "RoomSettings": "Configurações do Jogo",
+  "RoomTabDescription": "Edite as configurações do Jogo para sua sala.",
+  "PluralGameModeText": "Modos de Jogo",
   "CheatingWarnText": "{0} está usando trapaças.",
   "FungleCreditsText": "Obrigado por usar a Fungle Api!!!\nCuriosidade: Foi feito por um brasileiro ;)",
   "ExileText": "{0} era um {1}.",
