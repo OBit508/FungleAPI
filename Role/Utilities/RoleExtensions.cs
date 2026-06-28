@@ -67,7 +67,7 @@ namespace FungleAPI.Role.Utilities
             {
                 return role.CustomRole().Team;
             }
-            return RoleManager.IsImpostorRole(role.Role) ? ModdedTeamManager.Impostors : ModdedTeamManager.Crewmates;
+            return role.TeamType == RoleTeamTypes.Impostor ? ModdedTeamManager.Impostors : ModdedTeamManager.Crewmates;
         }
         /// <summary>
         /// Returns if the role can sabotage

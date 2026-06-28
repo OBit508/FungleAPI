@@ -57,9 +57,10 @@ namespace FungleAPI.Role.Patches
         [HarmonyPostfix]
         public static void BeginCustom(IntroCutscene __instance)
         {
-            if (EventManager.CallEvent(new BeforeIntroBeginEvent(__instance)).Cancelled) return; 
+            if (EventManager.CallEvent(new BeforeIntroBeginEvent(__instance)).Cancelled) return;
 
             ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
+
             if (customRole != null && customRole.Team != ModdedTeamManager.Crewmates)
             {
                 Transform transform = __instance.BackgroundBar.transform;
@@ -71,9 +72,10 @@ namespace FungleAPI.Role.Patches
                 __instance.impostorScale = 1f;
                 __instance.TeamTitle.color = customRole.Team.TeamColor;
             }
+
             __instance.ImpostorText.gameObject.SetActive(true);
 
-            __instance.ImpostorText.text = customRole.Team == ModdedTeamManager.Crewmates ? GetTeamsTextAsCrewmate() : GetDefaultTeamsText();
+            __instance.ImpostorText.text = PlayerControl.LocalPlayer.Data.Role.GetTeam() == ModdedTeamManager.Crewmates ? GetTeamsTextAsCrewmate() : GetDefaultTeamsText();
 
             EventManager.CallEvent(new AfterIntroBeginEvent(__instance));
         }
@@ -91,13 +93,8 @@ namespace FungleAPI.Role.Patches
                 }
                 else
                 {
-                    teams[team] = 0;
+                    teams[team] = 1;
                 }
-            }
-
-            if (teams.Count <= 0)
-            {
-                return "No impostors among us";
             }
 
             ModdedTeam last = teams.Last().Key;
@@ -142,8 +139,13 @@ namespace FungleAPI.Role.Patches
                 }
                 else
                 {
-                    teams[team] = 0;
+                    teams[team] = 1;
                 }
+            }
+
+            if (teams.Count <= 0)
+            {
+                return "No impostors among us";
             }
 
             ModdedTeam last = teams.Last().Key;

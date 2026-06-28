@@ -118,7 +118,7 @@ namespace FungleAPI.Patches
                     }
                     else
                     {
-                        teams[team] = 0;
+                        teams[team] = 1;
                     }
                 }
             }
