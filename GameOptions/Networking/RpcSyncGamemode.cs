@@ -2,7 +2,7 @@
 using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Patches;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Utilities;
 using Hazel;
 using System;

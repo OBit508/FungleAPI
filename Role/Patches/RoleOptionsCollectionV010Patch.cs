@@ -41,7 +41,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)
             {
-                __result = role.RoleOptions.RoleChance;
+                __result = role.GetChance();
                 return false;
             }
             return true;
@@ -53,7 +53,7 @@ namespace FungleAPI.Role.Patches
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)
             {
-                __result = role.RoleOptions.RoleCount;
+                __result = role.GetCount();
                 return false;
             }
             return true;

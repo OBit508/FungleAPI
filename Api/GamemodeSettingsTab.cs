@@ -1,7 +1,6 @@
-﻿using FungleAPI.Api;
-using FungleAPI.Extensions;
+﻿using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -9,10 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.GameOptions.Lobby;
 
-namespace FungleAPI.GameOptions.Lobby
+namespace FungleAPI.Api
 {
-    public class GamemodeSettingsTab : LobbyTab
+    internal class GamemodeSettingsTab : LobbyTab
     {
         public override string ViewTabButtonText => GameModeManager.GetCurrentGameMode().GameModeName.GetString();
         public override string EditTabButtonText => FungleTranslation.PluralGameModeText.GetString();

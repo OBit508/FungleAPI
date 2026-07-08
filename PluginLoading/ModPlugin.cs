@@ -1,5 +1,6 @@
 ﻿using BepInEx.Configuration;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Api;
 using FungleAPI.Assets.Late;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Cosmetics;
@@ -31,9 +32,7 @@ namespace FungleAPI.PluginLoading
 
         public Dictionary<int, Type> AllPriorityTypes = new Dictionary<int, Type>();
         public List<Type> AllTypes = new List<Type>();
-        public List<LobbyTab> LobbyTabs = new List<LobbyTab>();
-        public List<BaseGameOver> GameOvers = new List<BaseGameOver>();
-        public List<RpcHelper> RPCs = new List<RpcHelper>();
+        public List<LobbyTab> LobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() };
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
         public List<OptionCollection> OptionCollections = new List<OptionCollection>();

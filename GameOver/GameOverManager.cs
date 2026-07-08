@@ -142,7 +142,6 @@ namespace FungleAPI.GameOver
                 gameOver.Reason = (GameOverReason)GameOverId;
                 GameOverId++;
             }
-            modPlugin.GameOvers.Add(gameOver);
             modPlugin.BasePlugin.Log.LogInfo("Registered GameOver " + type.Name + " Id: " + ((int)gameOver.Reason).ToString());
             CustomGameOvers.Add(type, gameOver);
         }

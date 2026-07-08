@@ -57,10 +57,6 @@ namespace FungleAPI.GameOptions.Attributes
         {
             LocalValue = binaryReader.ReadBoolean();
         }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostValue = LocalValue;
-        }
         public override OptionBehaviour CreateOption(Transform transform)
         {
             ToggleOption toggleOption = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);

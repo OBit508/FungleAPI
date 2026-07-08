@@ -4,7 +4,7 @@ using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;

@@ -30,9 +30,9 @@ namespace FungleAPI.PluginLoading
             }
             return path;
         }
-        public static string GetFolder(ModPlugin modPlugin, FolderType folderType)
+        public static string GetFolder(ModPlugin modPlugin, string folderName)
         {
-            string path = Path.Combine(GetPlugin_Folder(modPlugin), folderType.ToString());
+            string path = Path.Combine(GetPlugin_Folder(modPlugin), folderName);
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);

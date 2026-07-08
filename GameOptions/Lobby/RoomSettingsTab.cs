@@ -2,7 +2,7 @@
 using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.GameOptions.Patches;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;

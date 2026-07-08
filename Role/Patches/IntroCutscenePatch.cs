@@ -1,5 +1,6 @@
 ﻿using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using Cpp2IL.Core.OutputFormats;
 using FungleAPI.Api;
 using FungleAPI.Components;
@@ -12,6 +13,7 @@ using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime.InteropTypes;
 using LibCpp2IL.Elf;
+using PowerTools;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -177,6 +179,47 @@ namespace FungleAPI.Role.Patches
             }
 
             return string.Format(FungleTranslation.TeamsAmongUs.GetString(), teamsText);
+        }
+        public static System.Collections.IEnumerator CoBegin(IntroCutscene introCutscene)
+        {
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Starting custom intro cutscene", null);
+            SoundManager.Instance.PlaySound(introCutscene.IntroStinger, false, 1f, null);
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Game Mode: Normal", null);
+            introCutscene.LogPlayerRoleData();
+            introCutscene.HideAndSeekPanels.SetActive(false);
+            introCutscene.CrewmateRules.SetActive(false);
+            introCutscene.ImpostorRules.SetActive(false);
+            introCutscene.ImpostorName.gameObject.SetActive(false);
+            introCutscene.ImpostorTitle.gameObject.SetActive(false);
+            Il2CppSystem.Collections.Generic.List<PlayerControl> list = IntroCutscene.SelectTeamToShow(new Func<NetworkedPlayerInfo, bool>((NetworkedPlayerInfo pcd) => !PlayerControl.LocalPlayer.Data.Role.IsImpostor || pcd.Role.TeamType == PlayerControl.LocalPlayer.Data.Role.TeamType));
+            if (list == null || list.Count < 1)
+            {
+                Logger.GlobalInstance.Error("IntroCutscene :: CoBegin() :: teamToShow is EMPTY or NULL", null);
+            }
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+            {
+                introCutscene.ImpostorText.gameObject.SetActive(false);
+            }
+            else
+            {
+                int adjustedNumImpostors = GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount);
+                if (adjustedNumImpostors == 1)
+                {
+                    introCutscene.ImpostorText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NumImpostorsS);
+                }
+                else
+                {
+                    introCutscene.ImpostorText.text = string.Format(StringNames.NumImpostorsP.GetString(), new object[] { adjustedNumImpostors });
+                }
+                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[FF1919FF]", "<color=#FF1919FF>");
+                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[]", "</color>");
+            }
+            yield return introCutscene.ShowTeam(list, 3f);
+            yield return introCutscene.ShowRole();
+            ShipStatus.Instance.StartSFX();
+            EventManager.CallEvent(new IntroEndEvent());
+            GameObject.Destroy(introCutscene.gameObject);
+            yield break;
         }
     }
 }

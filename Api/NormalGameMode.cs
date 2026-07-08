@@ -2,7 +2,7 @@
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -177,7 +177,7 @@ namespace FungleAPI.Api
                     }
                 }
                 List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount > 0);
-                teams.Sort((a, b) => b.TeamOptions.TeamCount.CompareTo(a.TeamOptions.TeamCount));
+                teams.Sort((a, b) => b.GetPriority().CompareTo(a.GetPriority()));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
 
                 foreach (ModdedTeam team in teams)

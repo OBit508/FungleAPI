@@ -2,7 +2,7 @@
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;

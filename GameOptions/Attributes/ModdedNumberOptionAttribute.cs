@@ -67,10 +67,6 @@ namespace FungleAPI.GameOptions.Attributes
         {
             LocalValue = binaryReader.ReadSingle();
         }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostValue = LocalValue;
-        }
         public override OptionBehaviour CreateOption(Transform parent)
         {
             FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();

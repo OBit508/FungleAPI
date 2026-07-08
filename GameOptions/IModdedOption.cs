@@ -25,7 +25,6 @@ namespace FungleAPI.GameOptions
         void WriteLocalValue(BinaryWriter binaryWriter);
         void ReadLocalValue(BinaryReader binaryReader);
         void SetOnValueChance(Action<bool> action);
-        void SyncNonHostWithLocal();
         OptionBehaviour CreateOption(Transform parent);
     }
 }

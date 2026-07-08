@@ -1,15 +1,16 @@
 ﻿using AmongUs.GameOptions;
-using FungleAPI.GModes;
-using FungleAPI.Player;
-using FungleAPI.Role.Utilities;
+using FungleAPI.GameModes;
+using FungleAPI.Utilities;
 using HarmonyLib;
+using Il2CppInterop.Runtime;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GameModes.Patches
 {
     [HarmonyPatch(typeof(NormalGameManager))]
     internal static class NormalGameManagerPatch

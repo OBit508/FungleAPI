@@ -32,7 +32,6 @@ namespace FungleAPI.GameOptions.Attributes
         public abstract void Deserialize(MessageReader messageReader);
         public abstract void WriteLocalValue(BinaryWriter binaryWriter);
         public abstract void ReadLocalValue(BinaryReader binaryReader);
-        public abstract void SyncNonHostWithLocal();
         public abstract OptionBehaviour CreateOption(Transform parent);
         public virtual void Initialize(PropertyInfo propertyInfo)
         {

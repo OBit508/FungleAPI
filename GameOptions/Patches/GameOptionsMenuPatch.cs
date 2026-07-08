@@ -2,9 +2,8 @@
 using Epic.OnlineServices;
 using Epic.OnlineServices.RTC;
 using FungleAPI.Api;
-using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOptions.Networking;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;

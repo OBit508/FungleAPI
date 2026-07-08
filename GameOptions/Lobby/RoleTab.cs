@@ -220,7 +220,7 @@ namespace FungleAPI.GameOptions.Lobby
             rolesSettingsMenu.roleHeaderSprite.color = customRole.RoleColor;
             rolesSettingsMenu.roleHeaderText.color = customRole.RoleColor.Darken(0.3f);
             rolesSettingsMenu.roleHeaderText.text = customRole.RoleName.GetString();
-            foreach (IModdedOption config in customRole.RoleOptions.Options.Values)
+            foreach (IModdedOption config in customRole.RoleOptions.Options)
             {
                 OptionBehaviour op = config.CreateOption(rolesSettingsMenu.AdvancedRolesSettings.transform);
                 op.SetClickMask(rolesSettingsMenu.ButtonClickMask);
@@ -249,7 +249,7 @@ namespace FungleAPI.GameOptions.Lobby
             float num2 = 1.08f;
             for (int i = 0; i < role.RoleOptions.Options.Count; i++)
             {
-                IModdedOption baseGameSetting = role.RoleOptions.Options.Values.ElementAt(i);
+                IModdedOption baseGameSetting = role.RoleOptions.Options[i];
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;

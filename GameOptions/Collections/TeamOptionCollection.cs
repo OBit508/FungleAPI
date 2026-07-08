@@ -16,7 +16,7 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class TeamOptionCollection : OptionCollection
     {
-        public const int TeamOptionVersion = 2;
+        public const int TeamOptionVersion = 3;
 
         public int LocalTeamCount;
         public int NonHostTeamCount;
@@ -26,107 +26,41 @@ namespace FungleAPI.GameOptions.Collections
 
         public ModdedTeam Team;
 
-        public int TeamCount => AmongUsClient.Instance.AmHost ? LocalTeamCount : NonHostTeamCount;
-        public int TeamPriority => AmongUsClient.Instance.AmHost ? LocalTeamPriority : NonHostTeamPriority;
-
         public void SetLocal(int count, int priority)
         {
             if (LocalTeamCount != count) { LocalTeamCount = count; Dirty = true; }
             if (LocalTeamPriority != priority) { LocalTeamPriority = priority; Dirty = true; }
         }
-        public override void Initialize(Type type, ModPlugin modPlugin)
+        public override void WriteLocalOptions(BinaryWriter binaryWriter)
         {
-            Plugin = modPlugin;
-            CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
-            FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderType.Teams), $"{CollectionId}.funglecfg");
-            foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type, modPlugin))
-            {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
-                OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
-                Options.Add(moddedOption.OptionId, moddedOption);
-            }
+            binaryWriter.Write(TeamOptionVersion);
 
+            binaryWriter.Write(LocalTeamCount);
+            binaryWriter.Write(LocalTeamPriority);
 
-            modPlugin.OptionCollections.Add(this);
-            OptionManager.OptionCollections.Add(this);
-
-            ReadLocalOptions();
+            base.WriteLocalOptions(binaryWriter);
         }
-        public override void WriteLocalOptions()
+        public override void ReadLocalOptions(BinaryReader binaryReader)
         {
-            using (FileStream fileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-            {
-                using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
-                {
-                    binaryWriter.Write(TeamOptionVersion);
-
-                    binaryWriter.Write(LocalTeamCount);
-                    binaryWriter.Write(LocalTeamPriority);
-
-                    binaryWriter.Write(Options.Count);
-                    foreach (IModdedOption moddedOption in Options.Values)
-                    {
-                        binaryWriter.Write(moddedOption.StringOptionId);
-                        moddedOption.WriteLocalValue(binaryWriter);
-                    }
-
-                    binaryWriter.Flush();
-                    fileStream.Flush(true);
-                }
-            }
-        }
-        public override void ReadLocalOptions()
-        {
-            if (!File.Exists(FilePath))
-            {
-                SetAsDefault(true);
-                return;
-            }
             try
             {
-                using (MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(FilePath)))
+                int teamOptionVersion = binaryReader.ReadInt32();
+                if (teamOptionVersion < TeamOptionVersion)
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(memoryStream))
-                    {
-                        int teamOptionVersion = binaryReader.ReadInt32();
-                        if (teamOptionVersion < TeamOptionVersion)
-                        {
-                            FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Team Option Collection from {FilePath} founded, loading and saving default.");
-                            SetAsDefault(true);
-                            return;
-                        }
-
-                        LocalTeamCount = binaryReader.ReadInt32();
-                        LocalTeamPriority = binaryReader.ReadInt32();
-
-                        int optionCount = binaryReader.ReadInt32();
-                        for (int i = 0; i < optionCount; i++)
-                        {
-                            string optionId = binaryReader.ReadString();
-                            IModdedOption moddedOption = Options.Values.FirstOrDefault(m => m.StringOptionId == optionId);
-                            if (moddedOption != null)
-                            {
-                                moddedOption.ReadLocalValue(binaryReader);
-                            }
-                        }
-
-                        SyncNonHostWithLocal();
-                    }
+                    FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Team Option Collection from {FilePath} founded, loading default.");
+                    SetAsDefault(true);
+                    return;
                 }
+
+                LocalTeamCount = binaryReader.ReadInt32();
+                LocalTeamPriority = binaryReader.ReadInt32();
+
+                base.ReadLocalOptions(binaryReader);
             }
             catch (Exception ex)
             {
-                FungleApiPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading default.\nMessage: {ex.Message}");
                 SetAsDefault(true);
-            }
-        }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostTeamCount = LocalTeamCount;
-            NonHostTeamPriority = LocalTeamPriority;
-            foreach (IModdedOption moddedOption in Options.Values)
-            {
-                moddedOption.SyncNonHostWithLocal();
             }
         }
         public override void SetAsDefault(bool amHost)
@@ -142,19 +76,12 @@ namespace FungleAPI.GameOptions.Collections
                 NonHostTeamPriority = Team.DefaultPriority;
             }
 
-            foreach (IModdedOption moddedOption in Options.Values)
-            {
-                moddedOption.SetValue(moddedOption.DefaultValue, amHost);
-            }
-            
-            if (amHost)
-            {
-                SyncNonHostWithLocal();
-            }
+            base.SetAsDefault(amHost);
         }
         public TeamOptionCollection(ModdedTeam moddedTeam)
         {
             Team = moddedTeam;
+            FolderName = "Teams";
         }
     }
 }

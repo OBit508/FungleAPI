@@ -41,8 +41,8 @@ namespace FungleAPI.Base.Roles
             ImportantTextTask orCreateTask = PlayerTask.GetOrCreateTask<ImportantTextTask>(playerControl, 0);
             switch (GameOptionsManager.Instance.CurrentGameOptions.GameMode)
             {
-                case GameModes.Normal:
-                case GameModes.NormalFools:
+                case AmongUs.GameOptions.GameModes.Normal:
+                case AmongUs.GameOptions.GameModes.NormalFools:
                     orCreateTask.Text = string.Concat(new string[]
                     {
                 StringNames.ImpostorTask.GetString(),
@@ -52,8 +52,8 @@ namespace FungleAPI.Base.Roles
                 "</color>"
                     });
                     return;
-                case GameModes.HideNSeek:
-                case GameModes.SeekFools:
+                case AmongUs.GameOptions.GameModes.HideNSeek:
+                case AmongUs.GameOptions.GameModes.SeekFools:
                     StringNames.RuleOneImpostor.GetString();
                     return;
                 default:

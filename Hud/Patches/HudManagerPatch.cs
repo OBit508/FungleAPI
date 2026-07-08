@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using FungleAPI.Components;
+using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -170,7 +171,7 @@ namespace FungleAPI.Hud.Patches
                     {
                         RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, __instance.tasksString);
                     }
-                    if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.HideNSeek && ShipStatus.Instance.HideCountdown > 0f)
+                    if (GameManager.Instance.IsHideAndSeek() && ShipStatus.Instance.HideCountdown > 0f)
                     {
                         ShipStatus.Instance.HideCountdown -= num;
                         __instance.tasksString.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
@@ -202,6 +203,11 @@ namespace FungleAPI.Hud.Patches
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
             HudHelper.Active = isActive;
+
+            if (!GameManager.Instance.IsHideAndSeek())
+            {
+                __instance.ReportButton.ToggleVisible(isActive && !role.IsDead && GameModeManager.GetCurrentGameMode().CanReportBodies() && ShipStatus.Instance != null);
+            }
 
             __instance.KillButton.ToggleVisible(role.UseKillButton() && isActive);
             __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);

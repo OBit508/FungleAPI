@@ -82,10 +82,6 @@ namespace FungleAPI.GameOptions.Options
                 LocalValue = Values.Count - 1;
             }
         }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostValue = LocalValue;
-        }
         public override OptionBehaviour CreateOption(Transform parent)
         {
             StringGameSetting stringGameSetting = Data.SafeCast<StringGameSetting>();
@@ -105,9 +101,28 @@ namespace FungleAPI.GameOptions.Options
             stringGameSetting.Type = OptionTypes.String;
             stringGameSetting.Title = optionName;
             stringGameSetting.Values = valuesNames.Values.ToArray();
-            for (int i = 0; i < valuesNames.Keys.Count; i++)
+
+            int i = 0;
+            foreach (TEnum @enum in valuesNames.Keys)
             {
-                Values.Add(i, valuesNames.Keys.ElementAt(i));
+                Values.Add(i, @enum);
+                i++;
+            }
+        }
+        public ModdedEnumOption(string optionName, TEnum defaultValue, Dictionary<TEnum, string> valuesNames)
+            :this(TranslationManager.GetStringName(optionName), defaultValue, new Dictionary<TEnum, StringNames>())
+        {
+            Values.Clear();
+
+            StringGameSetting stringGameSetting = (StringGameSetting)Data;
+
+            stringGameSetting.Values = new StringNames[valuesNames.Count];
+
+            int i = 0;
+            foreach (KeyValuePair<TEnum, string> pair in valuesNames)
+            {
+                Values.Add(i, pair.Key);
+                stringGameSetting.Values[i] = TranslationManager.GetStringName(pair.Value);
             }
         }
         public static implicit operator TEnum(ModdedEnumOption<TEnum> moddedEnumOption)

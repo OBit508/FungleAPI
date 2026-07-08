@@ -28,7 +28,27 @@ namespace FungleAPI.Role.Utilities
                 if (airship)
                 {
                     AirshipStatus airshipStatus = Ship.SafeCast<AirshipStatus>();
-                    float num = airshipStatus.CalculateLightRadius(player);
+                    
+                    float Base()
+                    {
+                        if (player == null || player.IsDead)
+                        {
+                            return Ship.MaxLightRadius;
+                        }
+                        if (player.Role.IsImpostor)
+                        {
+                            return Ship.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
+                        }
+                        float t = 1f;
+                        ISystemType systemType;
+                        if (Ship.Systems.TryGetValue(SystemTypes.Electrical, out systemType))
+                        {
+                            t = systemType.SafeCast<SwitchSystem>().Value / 255f;
+                        }
+                        return Mathf.Lerp(Ship.MinLightRadius, Ship.MaxLightRadius, t) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
+                    }
+
+                    float num = Base();
                     if (player.Role.AffectedByLightAffectors)
                     {
                         foreach (LightAffector lightAffector in airshipStatus.LightAffectors)
@@ -91,7 +111,7 @@ namespace FungleAPI.Role.Utilities
                 {
                     return false;
                 }
-                if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != GameModes.HideNSeek)
+                if (!GameManager.Instance.IsHideAndSeek())
                 {
                     return false;
                 }

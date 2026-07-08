@@ -94,6 +94,18 @@ namespace FungleAPI.Role
             NetworkedPlayerInfo networkedPlayerInfo = exileController.initData.networkedPlayer;
             return string.Format(FungleTranslation.ExileText.GetString(), networkedPlayerInfo.PlayerName, networkedPlayerInfo.Role.NiceName);
         }
+        int GetCount()
+        {
+            RoleOptionCollection roleOptionCollection = RoleOptions;
+
+            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleCount : roleOptionCollection.NonHostRoleCount;
+        }
+        int GetChance()
+        {
+            RoleOptionCollection roleOptionCollection = RoleOptions;
+
+            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleChance : roleOptionCollection.NonHostRoleChance;
+        }
         internal static Dictionary<RoleTypes, RoleOptionCollection> Save = new();
     }
 }

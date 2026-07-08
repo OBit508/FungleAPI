@@ -17,7 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.GModes
+namespace FungleAPI.GameModes
 {
     [FungleIgnore]
     public abstract class BaseGameMode
@@ -27,6 +27,9 @@ namespace FungleAPI.GModes
         public GameManager Manager => GameManager.Instance;
         public IGameOptions GameOptions => Manager.LogicOptions.currentGameOptions;
         public virtual GameModeOptions ModeOptions { get; }
+        public virtual void OnGameStart() { }
+        public virtual void OnGameEnd() { }
+        public virtual bool CanReportBodies() => true;
         public virtual bool CanUse(IUsable usable, PlayerControl player) => true;
         public virtual void OnPlayerDeath(PlayerControl player, bool assignGhostRole) { }
         public virtual int GetVotingTime() => 0;
@@ -44,14 +47,11 @@ namespace FungleAPI.GModes
         public virtual float GetKillDistance() => 0;
         public virtual float GetKillCooldown() => 0;
         public virtual bool GetGhostsDoTasks() => false;
-        public virtual void OnMinigameOpen() { }
-        public virtual void OnMinigameClose() { }
         public virtual float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse) { canUse = false; couldUse = false; return default; }
         public virtual MapOptions GetMapOptions() => null;
         public virtual DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole) => null;
         public virtual void SelectRoles(RoleManager roleManager) { }
         public virtual void AssignTasks(ShipStatus shipStatus) { }
         public virtual void CheckEndCriteria() { }
-        public virtual void Initialize(ModPlugin modPlugin) { }
     }
 }

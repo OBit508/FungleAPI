@@ -16,7 +16,7 @@ using UnityEngine;
 using static Il2CppSystem.Globalization.CultureInfo;
 using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
-namespace FungleAPI.GModes
+namespace FungleAPI.GameModes
 {
     public static class GameModeManager
     {
@@ -30,6 +30,8 @@ namespace FungleAPI.GModes
 
         public static BaseGameMode GetCurrentGameMode() 
         {
+            if (AmongUsClient.Instance == null) return Default;
+
             if (GameModes.TryGetValue(AmongUsClient.Instance.AmHost ? HostValue.Value : NonHostValue, out BaseGameMode baseGameMode))
             {
                 return baseGameMode;
@@ -46,7 +48,8 @@ namespace FungleAPI.GModes
             {
                 Data.Values = Values.ToArray();
             }
-            gameMode.Initialize(modPlugin);
+            gameMode.ModeOptions?.Initialize(modPlugin);
+
             GameModes.Add(gameMode.GameModeId, gameMode);
             modPlugin.BasePlugin.Log.LogInfo("Registered GameMode " + type.Name + " Id: " + gameMode.GameModeId.ToString());
         }

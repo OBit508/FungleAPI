@@ -1,7 +1,7 @@
 ﻿using FungleAPI.AntiCheat;
 using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Networking;
 using FungleAPI.Role;
 using FungleAPI.Teams;
@@ -73,16 +73,16 @@ namespace FungleAPI.GameOptions.Networking
                 RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
                 RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
 
-                rpcSyncGamemode.Handle(messageReader);
+                rpcSyncGamemode.Handle(innerNetObject, messageReader);
                 int roleCount = messageReader.ReadPackedInt32();
                 for (int i = 0; i < roleCount; i++)
                 {
-                    rpcSyncRole.Handle(messageReader);
+                    rpcSyncRole.Handle(innerNetObject, messageReader);
                 }
                 int teamCount = messageReader.ReadPackedInt32();
                 for (int i = 0; i < teamCount; i++)
                 {
-                    rpcSyncTeam.Handle(messageReader);
+                    rpcSyncTeam.Handle(innerNetObject, messageReader);
                 }
                 UnSynced = false;
             }

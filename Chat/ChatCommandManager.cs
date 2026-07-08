@@ -50,10 +50,14 @@ namespace FungleAPI.Chat
             {
                 string command = $"/{baseChatCommand.CommandName}";
 
-                for (int i = 0; i < baseChatCommand.Arguments.Length; i++)
+                string[] typedArgs = parts.Skip(1).Where(p => p.Length > 0).ToArray();
+                foreach (string typedArg in typedArgs)
                 {
-                    if (args > i) continue;
+                    command += " " + typedArg;
+                }
 
+                for (int i = args; i < baseChatCommand.Arguments.Length; i++)
+                {
                     command += " {" + baseChatCommand.Arguments[i] + "}";
                 }
 

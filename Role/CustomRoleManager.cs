@@ -3,6 +3,7 @@ using FungleAPI.Api;
 using FungleAPI.Base.Roles;
 using FungleAPI.Event;
 using FungleAPI.Extensions;
+using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
@@ -174,7 +175,7 @@ namespace FungleAPI.Role
 
             RoleOptionCollection roleOptions = new RoleOptionCollection(customRole);
             ICustomRole.Save[roleType] = roleOptions;
-            roleOptions.Initialize(type, plugin);
+            roleOptions.Initialize(plugin, OptionManager.GetAndInitializeModdedOptions(type, plugin));
 
             RoleConfiguration roleConfiguration = customRole.Configuration;
             role.name = type.Name;

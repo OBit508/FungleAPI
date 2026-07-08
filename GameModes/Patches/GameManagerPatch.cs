@@ -15,7 +15,7 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.GameOver;
 using Il2CppSystem.Net.NetworkInformation;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GameModes.Patches
 {
     [HarmonyPatch(typeof(GameManager))]
     internal static class GameManagerPatch
@@ -31,10 +31,22 @@ namespace FungleAPI.Patches
         }
         [HarmonyPatch("RpcEndGame")]
         [HarmonyPrefix]
-        public static bool RpcEndGamePrefix(GameManager __instance, [HarmonyArgument(0)] GameOverReason endReason)
+        public static bool RpcEndGamePrefix(GameManager __instance, GameOverReason endReason)
         {
             __instance.RpcEndGame(endReason.GetGameOver());
             return false;
+        }
+        [HarmonyPatch(nameof(GameManager.StartGame))]
+        [HarmonyPrefix]
+        public static void StartGamePrefix(GameManager __instance)
+        {
+            GameModeManager.GetCurrentGameMode().OnGameStart();
+        }
+        [HarmonyPatch(nameof(GameManager.EndGame))]
+        [HarmonyPrefix]
+        public static void EndGamePrefix(GameManager __instance)
+        {
+            GameModeManager.GetCurrentGameMode().OnGameEnd();
         }
     }
 }

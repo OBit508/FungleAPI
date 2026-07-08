@@ -93,7 +93,7 @@ namespace FungleAPI.Teams
             if (!Initialized)
             {
                 TeamOptions = new TeamOptionCollection(this);
-                TeamOptions.Initialize(GetType(), plugin);
+                TeamOptions.Initialize(plugin, OptionManager.GetAndInitializeModdedOptions(GetType(), plugin));
                 Initialized = true;
             }
         }
@@ -160,6 +160,18 @@ namespace FungleAPI.Teams
             PriorityData.Value = TeamOptions.LocalTeamPriority;
             option.Value = TeamOptions.LocalTeamPriority;
             return option;
+        }
+        public virtual int GetCount()
+        {
+            TeamOptionCollection teamOptionCollection = TeamOptions;
+
+            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamCount : teamOptionCollection.NonHostTeamCount;
+        }
+        public virtual int GetPriority()
+        {
+            TeamOptionCollection teamOptionCollection = TeamOptions;
+
+            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamPriority : teamOptionCollection.NonHostTeamPriority;
         }
     }
 }

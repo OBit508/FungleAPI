@@ -20,12 +20,14 @@ namespace FungleAPI.GameOptions
     public class RoomSettings
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
-        public GameOptionCollection OptionCollection;
+        public DefaultOptionCollection OptionCollection;
         public bool initialized;
         public virtual void Initialize(ModPlugin modPlugin)
         {
             if (!initialized)
             {
+                List<IModdedOption> moddedOptions = new List<IModdedOption>();
+
                 Type type = GetType();
                 foreach (Type t in type.GetNestedTypes())
                 {
@@ -35,11 +37,14 @@ namespace FungleAPI.GameOptions
                     {
                         SettingsGroup group = (SettingsGroup)Activator.CreateInstance(t);
                         group.Initialize(modPlugin);
+
+                        moddedOptions.AddRange(group.Options);
+
                         Groups.Add(group);
                     }
                 }
-                OptionCollection = new GameOptionCollection(this);
-                OptionCollection.Initialize(type, modPlugin);
+                OptionCollection = new DefaultOptionCollection("Room");
+                OptionCollection.Initialize(modPlugin, moddedOptions);
                 initialized = true;
             }
         }

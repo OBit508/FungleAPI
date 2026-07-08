@@ -11,7 +11,7 @@ using FungleAPI.Event;
 using FungleAPI.Freeplay;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
-using FungleAPI.GModes;
+using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
 using FungleAPI.Player.Patches;

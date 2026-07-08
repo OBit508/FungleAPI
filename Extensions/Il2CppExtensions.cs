@@ -27,6 +27,10 @@ namespace FungleAPI.Extensions
         {
             return list.Find(ToIl2CppPredicate(match));
         }
+        public static List<T> FindAll<T>(this List<T> list, Predicate<T> match)
+        {
+            return list.FindAll(ToIl2CppPredicate(match));
+        }
         public static int FindIndex<T>(this List<T> list, Predicate<T> match)
         {
             return list.FindIndex(ToIl2CppPredicate(match));

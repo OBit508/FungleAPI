@@ -15,108 +15,35 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class DefaultOptionCollection : OptionCollection
     {
-        public const int DefaultOptionVersion = 2;
+        public const int DefaultOptionVersion = 3;
 
-        public FolderType Folder;
-
-        public override void Initialize(Type type, ModPlugin modPlugin)
+        public override void WriteLocalOptions(BinaryWriter binaryWriter)
         {
-            Plugin = modPlugin;
-            CollectionId = $"{type.Name}.{type.GetShortUniqueId()}";
-            FilePath = Path.Combine(FileManager.GetFolder(modPlugin, Folder), $"{CollectionId}.funglecfg");
-            foreach (IModdedOption moddedOption in OptionManager.GetAndInitializeModdedOptions(type, modPlugin))
-            {
-                moddedOption.SetOnValueChance((bool changed) => { if (changed) { Dirty = true; } });
-                OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
-                Options.Add(moddedOption.OptionId, moddedOption);
-            }
-
-
-            modPlugin.OptionCollections.Add(this);
-            OptionManager.OptionCollections.Add(this);
-
-            ReadLocalOptions();
+            binaryWriter.Write(DefaultOptionVersion);
+            base.WriteLocalOptions(binaryWriter);
         }
-        public override void WriteLocalOptions()
+        public override void ReadLocalOptions(BinaryReader binaryReader)
         {
-            using (FileStream fileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-            {
-                using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
-                {
-                    binaryWriter.Write(DefaultOptionVersion);
-
-                    binaryWriter.Write(Options.Count);
-                    foreach (IModdedOption moddedOption in Options.Values)
-                    {
-                        binaryWriter.Write(moddedOption.StringOptionId);
-                        moddedOption.WriteLocalValue(binaryWriter);
-                    }
-
-                    binaryWriter.Flush();
-                    fileStream.Flush(true);
-                }
-            }
-        }
-        public override void ReadLocalOptions()
-        {
-            if (!File.Exists(FilePath))
-            {
-                SetAsDefault(true);
-                return;
-            }
             try
             {
-                using (MemoryStream memoryStream = new MemoryStream(File.ReadAllBytes(FilePath)))
+                int defaultOptionVersion = binaryReader.ReadInt32();
+                if (defaultOptionVersion != DefaultOptionVersion)
                 {
-                    using (BinaryReader binaryReader = new BinaryReader(memoryStream))
-                    {
-                        int defaultOptionVersion = binaryReader.ReadInt32();
-                        if (defaultOptionVersion < DefaultOptionVersion)
-                        {
-                            FungleApiPlugin.Instance.Log.LogWarning($"Newer version of the Default Option Collection from {FilePath} founded, loading and saving default.");
-                            SetAsDefault(true);
-                            return;
-                        }
-
-                        int optionCount = binaryReader.ReadInt32();
-                        for (int i = 0; i < optionCount; i++)
-                        {
-                            string optionId = binaryReader.ReadString();
-                            IModdedOption moddedOption = Options.Values.FirstOrDefault(m => m.StringOptionId == optionId);
-                            if (moddedOption != null)
-                            {
-                                moddedOption.ReadLocalValue(binaryReader);
-                            }
-                        }
-
-                        SyncNonHostWithLocal();
-                    }
+                    FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Default Option Collection from {FilePath} founded, loading default.");
+                    SetAsDefault(true);
+                    return;
                 }
+                base.ReadLocalOptions(binaryReader);
             }
             catch (Exception ex)
             {
-                FungleApiPlugin.Instance.Log.LogError($"Failed to read Default Option Collection from {FilePath}, loading and saving default.\nMessage: {ex.Message}");
+                FungleApiPlugin.Instance.Log.LogError($"Failed to read Default Option Collection from {FilePath}, loading default.\nMessage: {ex.Message}");
                 SetAsDefault(true);
             }
         }
-        public override void SyncNonHostWithLocal()
+        public DefaultOptionCollection(string folderName)
         {
-            foreach (IModdedOption moddedOption in Options.Values)
-            {
-                moddedOption.SyncNonHostWithLocal();
-            }
-        }
-        public override void SetAsDefault(bool amHost)
-        {
-            foreach (IModdedOption moddedOption in Options.Values)
-            {
-                moddedOption.SetValue(moddedOption.DefaultValue, amHost);
-            }
-            
-            if (amHost)
-            {
-                SyncNonHostWithLocal();
-            }
+            FolderName = folderName;
         }
     }
 }

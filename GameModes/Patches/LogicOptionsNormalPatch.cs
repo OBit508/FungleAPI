@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.GModes.Patches
+namespace FungleAPI.GameModes.Patches
 {
     [HarmonyPatch(typeof(LogicOptionsNormal))]
     internal static class LogicOptionsNormalPatch

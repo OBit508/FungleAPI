@@ -30,10 +30,7 @@ namespace FungleAPI.GameOptions
         {
             foreach (OptionCollection optionCollection in OptionCollections)
             {
-                if (optionCollection.FilePath == null || !optionCollection.Dirty) continue;
-
-                optionCollection.WriteLocalOptions();
-                optionCollection.Dirty = false;
+                optionCollection.Save();
             }
         }
 

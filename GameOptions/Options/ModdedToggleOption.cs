@@ -1,6 +1,7 @@
 ﻿using Epic.OnlineServices.RTC;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
 using System;
@@ -56,10 +57,6 @@ namespace FungleAPI.GameOptions.Options
         {
             LocalValue = binaryReader.ReadBoolean();
         }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostValue = LocalValue;
-        }
         public override OptionBehaviour CreateOption(Transform transform)
         {
             ToggleOption toggleOption = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<ToggleOption>(), Vector3.zero, Quaternion.identity, transform);
@@ -83,6 +80,8 @@ namespace FungleAPI.GameOptions.Options
             checkboxGameSetting.Title = optionName;
             checkboxGameSetting.Type = OptionTypes.Checkbox;
         }
+        public ModdedToggleOption(string optionName, bool defaultValue)
+            :this(TranslationManager.GetStringName(optionName), defaultValue) { }
         public static implicit operator bool(ModdedToggleOption moddedToggleOption)
         {
             return moddedToggleOption.BooleanValue;

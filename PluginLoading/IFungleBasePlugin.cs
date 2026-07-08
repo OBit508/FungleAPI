@@ -36,7 +36,6 @@ namespace FungleAPI.PluginLoading
         void FullyLoaded() { }
         void LoadTabs(ModPlugin modPlugin) 
         {
-            modPlugin.LobbyTabs.Add(new GamemodeSettingsTab());
             if (modPlugin.Settings != null)
             {
                 modPlugin.LobbyTabs.Add(new RoomSettingsTab() { Plugin = modPlugin });

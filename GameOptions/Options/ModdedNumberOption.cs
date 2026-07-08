@@ -58,10 +58,6 @@ namespace FungleAPI.GameOptions.Options
         {
             LocalValue = binaryReader.ReadSingle();
         }
-        public override void SyncNonHostWithLocal()
-        {
-            NonHostValue = LocalValue;
-        }
         public override OptionBehaviour CreateOption(Transform parent)
         {
             FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();
@@ -88,6 +84,8 @@ namespace FungleAPI.GameOptions.Options
             floatGameSetting.SuffixType = suffixType;
             floatGameSetting.OptionName = FloatOptionNames.Invalid;
         }
+        public ModdedNumberOption(string optionName, float defaultValue, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
+            :this(TranslationManager.GetStringName(optionName), defaultValue, minValue, maxValue, increment, formatString, zeroIsInfinity, suffixType) { }
         public static implicit operator float(ModdedNumberOption moddedNumberOption)
         {
             return moddedNumberOption.FloatValue;

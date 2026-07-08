@@ -53,7 +53,7 @@ namespace FungleAPI.GameOptions.Lobby
                         viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
                         if (i > 1)
                         {
-                            IModdedOption moddedOption = group.TeamOptions.Options.Values.ElementAt(i - 2);
+                            IModdedOption moddedOption = group.TeamOptions.Options[i - 2];
                             if (moddedOption.Data.Type == OptionTypes.Checkbox)
                             {
                                 viewSettingsInfoPanel.SetInfoCheckbox(moddedOption.Data.Title, 61, bool.Parse(moddedOption.GetStringValue(AmongUsClient.Instance.AmHost)));
@@ -65,11 +65,11 @@ namespace FungleAPI.GameOptions.Lobby
                         }
                         else if (i == 0)
                         {
-                            viewSettingsInfoPanel.SetInfo(group.CountData.Title, group.TeamOptions.TeamCount.ToString(), 61);
+                            viewSettingsInfoPanel.SetInfo(group.CountData.Title, group.GetCount().ToString(), 61);
                         }
                         else if (i == 1)
                         {
-                            viewSettingsInfoPanel.SetInfo(group.PriorityData.Title, group.TeamOptions.TeamPriority.ToString(), 61);
+                            viewSettingsInfoPanel.SetInfo(group.PriorityData.Title, group.GetPriority().ToString(), 61);
                         }
                         lobbyViewSettingsPane.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
                     }
@@ -110,7 +110,7 @@ namespace FungleAPI.GameOptions.Lobby
                     });
                     gameOptionsMenu.Children.Add(priority);
                     num -= 0.45f;
-                    foreach (IModdedOption option in team.TeamOptions.Options.Values)
+                    foreach (IModdedOption option in team.TeamOptions.Options)
                     {
                         OptionBehaviour op = option.CreateOption(gameOptionsMenu.settingsContainer);
                         op.LabelBackground.enabled = true;
