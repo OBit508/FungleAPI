@@ -40,6 +40,7 @@ namespace FungleAPI.GameModes
         public virtual TaskBarMode GetTaskBarMode() => default;
         public virtual bool GetAnonymousVotes() => false;
         public virtual bool GetVisualTasks() => true;
+        public virtual bool GetChatInGame() => false;
         public virtual int GetNumEmergencyMeetings() => 1;
         public virtual int GetEmergencyCooldown() => 0;
         public virtual bool GetConfirmImpostor() => true;

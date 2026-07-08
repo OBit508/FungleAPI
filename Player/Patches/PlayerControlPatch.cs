@@ -4,6 +4,7 @@ using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.GameModes;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -94,6 +95,15 @@ namespace FungleAPI.Player.Patches
         {
             __result = RoleConfigManager.LightConfig.IsFlashlightEnabled(__instance);
             return false;
+        }
+        [HarmonyPatch(nameof(PlayerControl.Revive))]
+        [HarmonyPostfix]
+        public static void RevivePostfix(PlayerControl __instance)
+        {
+            if (__instance.AmOwner && !GameManager.Instance.IsHideAndSeek() && GameModeManager.GetCurrentGameMode().GetChatInGame())
+            {
+                HudManager.Instance.Chat.SetVisible(true);
+            }
         }
         public static void DoStart(PlayerControl player)
         {

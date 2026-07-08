@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
+using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Player;
 using HarmonyLib;
@@ -30,8 +31,17 @@ namespace FungleAPI.Patches
             EventManager.CallEvent(new StartMeetingEvent(__instance));
         }
         [HarmonyPostfix]
+        [HarmonyPatch("Close")]
+        public static void ClosePostfix(MeetingHud __instance)
+        {
+            if (GameModeManager.GetCurrentGameMode().GetChatInGame())
+            {
+                HudManager.Instance.Chat.SetVisible(true);
+            }
+        }
+        [HarmonyPostfix]
         [HarmonyPatch("OnDestroy")]
-        public static void OnDestroyPatch(MeetingHud __instance)
+        public static void OnDestroyPostfix(MeetingHud __instance)
         {
             EventManager.CallEvent(new EndMeetingEvent(__instance));
         }

@@ -30,12 +30,21 @@ namespace FungleAPI.Ship.Patches
                 }
             }
         }
+        [HarmonyPatch("Start")]
+        [HarmonyPostfix]
+        public static void StartPostfix(ShipStatus __instance)
+        {
+            EventManager.CallEvent(new ShipStartEvent());
+
+            if (HudManager.InstanceExists && !GameManager.Instance.IsHideAndSeek() && GameModeManager.GetCurrentGameMode().GetChatInGame())
+            {
+                HudManager.Instance.Chat.SetVisible(true);
+            }
+        }
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
         public static bool BeginPrefix(ShipStatus __instance)
         {
-            EventManager.CallEvent(new ShipStartEvent());
-
             if (GameManager.Instance.LogicRoleSelection.Is(out LogicRoleSelectionNormal _))
             {
                 GameModeManager.GetCurrentGameMode().AssignTasks(__instance);
