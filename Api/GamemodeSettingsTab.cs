@@ -39,9 +39,9 @@ namespace FungleAPI.Api
 
             BaseGameMode baseGameMode = GameModeManager.GetCurrentGameMode();
 
-            if (baseGameMode.GetType() != typeof(NormalGameMode) && baseGameMode.ModeOptions != null)
+            if (baseGameMode.GameModeId != GameMode<NormalGameMode>.Instance.GameModeId && baseGameMode.ModeOptions != null)
             {
-                foreach (SettingsGroup group in Plugin.Settings.Groups)
+                foreach (SettingsGroup group in baseGameMode.ModeOptions.Groups)
                 {
                     CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(lobbyViewSettingsPane.categoryHeaderOrigin);
                     categoryHeaderMasked.SetHeader(group.GroupName, 61);
@@ -152,7 +152,7 @@ namespace FungleAPI.Api
 
             BaseGameMode baseGameMode = GameModeManager.GetCurrentGameMode();
 
-            if (baseGameMode.GetType() != typeof(NormalGameMode) && baseGameMode.ModeOptions != null)
+            if (baseGameMode.GameModeId != GameMode<NormalGameMode>.Instance.GameModeId && baseGameMode.ModeOptions != null)
             {
                 foreach (SettingsGroup group in baseGameMode.ModeOptions.Groups)
                 {

@@ -31,8 +31,6 @@ namespace FungleAPI.GameOptions.Networking
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }
-
-                LobbyViewSettingsPanePatch.OnChangeGamemode?.Invoke();
             }
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
@@ -61,8 +59,6 @@ namespace FungleAPI.GameOptions.Networking
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }
-
-                LobbyViewSettingsPanePatch.OnChangeGamemode?.Invoke();
             }
         }
     }

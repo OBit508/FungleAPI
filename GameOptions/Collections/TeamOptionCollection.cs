@@ -42,13 +42,13 @@ namespace FungleAPI.GameOptions.Collections
         }
         public override void ReadLocalOptions(BinaryReader binaryReader)
         {
+            SetAsDefault(true);
             try
             {
                 int teamOptionVersion = binaryReader.ReadInt32();
                 if (teamOptionVersion < TeamOptionVersion)
                 {
                     FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Team Option Collection from {FilePath} founded, loading default.");
-                    SetAsDefault(true);
                     return;
                 }
 

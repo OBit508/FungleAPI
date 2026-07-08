@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Attributes;
 using FungleAPI.Extensions;
+using FungleAPI.GameModes;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -62,7 +63,7 @@ namespace FungleAPI.Base.Roles
         }
         public override bool CanUse(IUsable usable)
         {
-            if (!GameManager.Instance.LogicUsables.CanUse(usable, Player))
+            if (!GameModeManager.GetCurrentGameMode().CanUse(usable, Player) && !GameManager.Instance.IsHideAndSeek())
             {
                 return false;
             }

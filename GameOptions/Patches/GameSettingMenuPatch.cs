@@ -34,106 +34,103 @@ namespace FungleAPI.GameOptions.Patches
 
             RolesSettingMenuPatch.chanceTabPlugin = null;
 
-            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.HideNSeek && GameOptionsManager.Instance.CurrentGameOptions.GameMode != AmongUs.GameOptions.GameModes.SeekFools)
+            UiElement presetTab = __instance.ControllerSelectable[0];
+
+            foreach (SpriteRenderer spriteRenderer in presetTab.GetComponentsInChildren<SpriteRenderer>(true))
             {
-                UiElement presetTab = __instance.ControllerSelectable[0];
+                spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+            }
 
-                foreach (SpriteRenderer spriteRenderer in presetTab.GetComponentsInChildren<SpriteRenderer>(true))
+            foreach (TextMeshPro textMeshPro in presetTab.GetComponentsInChildren<TextMeshPro>(true))
+            {
+                textMeshPro.fontMaterial.SetFloat("_Stencil", 1f);
+                textMeshPro.fontMaterial.SetFloat("_StencilComp", 4f);
+            }
+
+            pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.ControllerSelectable[0].transform.parent);
+            pluginChanger.transform.localPosition = new Vector3(-3.36f, 1.67f, -2);
+            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0);
+            pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
+            {
+                foreach (UiElement uiElement in __instance.ControllerSelectable)
                 {
-                    spriteRenderer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                    if (uiElement == presetTab) continue;
+                    uiElement.gameObject.Destroy();
+                }
+                __instance.ControllerSelectable.Clear();
+                __instance.ControllerSelectable.Add(presetTab);
+
+
+                for (int i = 0; i < plugin.LobbyTabs.Count; i++)
+                {
+                    int id = i + 1;
+                    LobbyTab lobbyTab = plugin.LobbyTabs[i];
+                    lobbyTab.EditSettingsButton = CreateButton(__instance, presetTab, lobbyTab.EditTabButtonText, delegate
+                    {
+                        __instance.ChangeTab(id, false);
+                    });
                 }
 
-                foreach (TextMeshPro textMeshPro in presetTab.GetComponentsInChildren<TextMeshPro>(true))
+                RolesSettingMenuPatch.chanceTabPlugin = null;
+                __instance.GameSettingsTab.RefreshChildren();
+
+                float num = 0;
+                for (int i = 0; i < __instance.ControllerSelectable.Count; i++)
                 {
-                    textMeshPro.fontMaterial.SetFloat("_Stencil", 1f);
-                    textMeshPro.fontMaterial.SetFloat("_StencilComp", 4f);
+                    UiElement uiElement = __instance.ControllerSelectable[i];
+                    uiElement.transform.localPosition = new Vector3(-2.96f, -0.02f - (0.6f * i), -2);
+                    num += 0.243f;
                 }
+                scroller.ContentYBounds = new FloatRange(0, num);
+            });
+            __instance.transform.GetChild(2).gameObject.SetActive(false);
+            __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0, 0.3f, -1);
 
-                pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.ControllerSelectable[0].transform.parent);
-                pluginChanger.transform.localPosition = new Vector3(-3.36f, 1.67f, -2);
-                pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.GetType() != typeof(GamemodeSettingsTab) && p.LobbyTabs.Count > 0);
-                pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
-                {
-                    foreach (UiElement uiElement in __instance.ControllerSelectable)
-                    {
-                        if (uiElement == presetTab) continue;
-                        uiElement.gameObject.Destroy();
-                    }
-                    __instance.ControllerSelectable.Clear();
-                    __instance.ControllerSelectable.Add(presetTab);
-
-
-                    for (int i = 0; i < plugin.LobbyTabs.Count; i++)
-                    {
-                        int id = i + 1;
-                        LobbyTab lobbyTab = plugin.LobbyTabs[i];
-                        lobbyTab.EditSettingsButton = CreateButton(__instance, presetTab, lobbyTab.EditTabButtonText, delegate
-                        {
-                            __instance.ChangeTab(id, false);
-                        });
-                    }
-
-                    RolesSettingMenuPatch.chanceTabPlugin = null;
-                    __instance.GameSettingsTab.RefreshChildren();
-
-                    float num = 0;
-                    for (int i = 0; i < __instance.ControllerSelectable.Count; i++)
-                    {
-                        UiElement uiElement = __instance.ControllerSelectable[i];
-                        uiElement.transform.localPosition = new Vector3(-2.96f, -0.02f - (0.6f * i), -2);
-                        num += 0.243f;
-                    }
-                    scroller.ContentYBounds = new FloatRange(0, num);
-                });
-                __instance.transform.GetChild(2).gameObject.SetActive(false);
-                __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0, 0.3f, -1);
-
-                GameObject gameObject = new GameObject("Hitbox")
-                {
-                    layer = 5,
-                    transform =
+            GameObject gameObject = new GameObject("Hitbox")
+            {
+                layer = 5,
+                transform =
                     {
                         parent = __instance.transform,
                         localScale = new Vector3(0.28f, 0.235f, 1),
                         localPosition = new Vector3(-3.355f, -1.03f, 0f)
                     }
-                };
+            };
 
-                scroller = gameObject.AddComponent<Scroller>();
-                scroller.allowX = false;
-                scroller.allowY = true;
-                scroller.Inner = new GameObject()
-                {
-                    name = "Inner",
-                    transform =
+            scroller = gameObject.AddComponent<Scroller>();
+            scroller.allowX = false;
+            scroller.allowY = true;
+            scroller.Inner = new GameObject()
+            {
+                name = "Inner",
+                transform =
                     {
                         parent = __instance.ControllerSelectable[0].transform.parent,
                         localPosition = Vector3.zero
                     }
-                }.transform;
+            }.transform;
 
-                ManualScrollHelper manualScrollHelper = gameObject.AddComponent<ManualScrollHelper>();
-                manualScrollHelper.scroller = scroller;
-                manualScrollHelper.verticalAxis = RewiredConstsEnum.Action.TaskRVertical;
-                manualScrollHelper.scrollSpeed = 10f;
+            ManualScrollHelper manualScrollHelper = gameObject.AddComponent<ManualScrollHelper>();
+            manualScrollHelper.scroller = scroller;
+            manualScrollHelper.verticalAxis = RewiredConstsEnum.Action.TaskRVertical;
+            manualScrollHelper.scrollSpeed = 10f;
 
-                SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
-                spriteMask.sprite = FungleAssets.Empty;
-                spriteMask.alphaCutoff = 0f;
+            SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
+            spriteMask.sprite = FungleAssets.Empty;
+            spriteMask.alphaCutoff = 0f;
 
-                scroller.ClickMask = gameObject.AddComponent<BoxCollider2D>();
+            scroller.ClickMask = gameObject.AddComponent<BoxCollider2D>();
 
-                gameObject.AddComponent<Updater>().update = () =>
-                {
-                    scroller.enabled = scroller.ClickMask.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                    __instance.GameSettingsTab.scrollBar.enabled = !scroller.enabled;
-                    __instance.RoleSettingsTab.scrollBar.enabled = !scroller.enabled;
-                };
+            gameObject.AddComponent<Updater>().update = () =>
+            {
+                scroller.enabled = scroller.ClickMask.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                __instance.GameSettingsTab.scrollBar.enabled = !scroller.enabled;
+                __instance.RoleSettingsTab.scrollBar.enabled = !scroller.enabled;
+            };
 
-                presetTab.transform.parent = scroller.Inner;
+            presetTab.transform.parent = scroller.Inner;
 
-                pluginChanger.OnChange(FungleApiPlugin.Plugin);
-            }
+            pluginChanger.OnChange(FungleApiPlugin.Plugin);
         }
 
         public static PassiveButton CreateButton(GameSettingMenu gameSettingMenu, UiElement prefab, string name, Action onClick)

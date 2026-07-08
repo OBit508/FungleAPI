@@ -24,13 +24,13 @@ namespace FungleAPI.GameOptions.Collections
         }
         public override void ReadLocalOptions(BinaryReader binaryReader)
         {
+            SetAsDefault(true);
             try
             {
                 int defaultOptionVersion = binaryReader.ReadInt32();
                 if (defaultOptionVersion != DefaultOptionVersion)
                 {
                     FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Default Option Collection from {FilePath} founded, loading default.");
-                    SetAsDefault(true);
                     return;
                 }
                 base.ReadLocalOptions(binaryReader);

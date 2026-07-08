@@ -22,6 +22,7 @@ using UnityEngine;
 using xCloud;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
+using Sentry.Internal.Extensions;
 
 namespace FungleAPI.GameOptions.Patches
 {
@@ -35,8 +36,6 @@ namespace FungleAPI.GameOptions.Patches
 
         public static PluginChanger pluginChanger;
 
-        public static Action OnChangeGamemode;
-
         [HarmonyPatch(nameof(LobbyViewSettingsPane.Awake))]
         [HarmonyPostfix]
         public static void AwakePostfix(LobbyViewSettingsPane __instance)
@@ -45,13 +44,11 @@ namespace FungleAPI.GameOptions.Patches
 
             __instance.gameModeText.gameObject.SetActive(false);
 
-            OnChangeGamemode = delegate { try { __instance.gameModeText.text = GameModeManager.GetCurrentGameMode().GameModeName.GetString(); } catch { } };
-
             pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.rolesTabButton.transform.parent);
             pluginChanger.transform.localPosition = new Vector3(-4.2586f, 2.4241f, -1.9999f);
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
-            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.Count > 0);
+            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0);
 
             UiElement buttonPrefab = GameObject.Instantiate(__instance.ControllerSelectable[3], __instance.transform);
 
@@ -165,6 +162,7 @@ namespace FungleAPI.GameOptions.Patches
             foreach (LobbyTab lobbyTab in Tabs)
             {
                 lobbyTab.ViewSettingsButton?.SelectButton(false);
+                lobbyTab.ViewSettingsButton.buttonText.text = lobbyTab.ViewTabButtonText;
             }
             Tab.ViewSettingsButton?.SelectButton(true);
             Tab.BuildViewTab(__instance);

@@ -141,7 +141,7 @@ namespace FungleAPI.Api
             float num = float.MaxValue;
             PlayerControl @object = pc.Object;
             IUsable usable = vent.SafeCast<IUsable>();
-            couldUse = pc.Role.CanUseVent() && GameManager.Instance.LogicUsables.CanUse(usable, @object) && pc.Role.CanUse(usable) && (!@object.MustCleanVent(vent.Id) || (@object.inVent && Vent.currentVent == vent)) && !pc.IsDead && (@object.CanMove || @object.inVent);
+            couldUse = pc.Role.CanUseVent() && CanUse(usable, @object) && pc.Role.CanUse(usable) && (!@object.MustCleanVent(vent.Id) || (@object.inVent && Vent.currentVent == vent)) && !pc.IsDead && (@object.CanMove || @object.inVent);
             ISystemType systemType;
             if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out systemType))
             {

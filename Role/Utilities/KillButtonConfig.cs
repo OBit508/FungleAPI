@@ -18,7 +18,7 @@ namespace FungleAPI.Role.Utilities
         {
             killButtonConfig = this;
             CanUse = () => Button.isActiveAndEnabled && Button.currentTarget != null && !Button.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove;
-            Cooldown = () => GameOptionsManager.Instance.CurrentGameOptions.GetFloat(AmongUs.GameOptions.FloatOptionNames.KillCooldown);
+            Cooldown = () => GameManager.Instance.LogicOptions.GetKillCooldown();
             CheckClick = delegate (PlayerControl target)
             {
                 if (Button.currentTarget && Button.currentTarget == target)

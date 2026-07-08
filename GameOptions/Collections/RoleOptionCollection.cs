@@ -42,13 +42,13 @@ namespace FungleAPI.GameOptions.Collections
         }
         public override void ReadLocalOptions(BinaryReader binaryReader)
         {
+            SetAsDefault(true);
             try
             {
                 int roleOptionVersion = binaryReader.ReadInt32();
                 if (roleOptionVersion < RoleOptionVersion)
                 {
                     FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Role Option Collection from {FilePath} founded, loading default.");
-                    SetAsDefault(true);
                     return;
                 }
 
