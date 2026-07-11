@@ -160,5 +160,21 @@ namespace FungleAPI.Role.Patches
             }
             return true;
         }
+
+        [HarmonyPatch("SelectRoles")]
+        [HarmonyPostfix]
+        [HarmonyAfter("mira.api")]
+        public static void SelectRolesPostfix(RoleManager __instance)
+        {
+            if (!MiraCompatibility.IsLoaded || GameManager.Instance.IsHideAndSeek())
+            {
+                return;
+            }
+
+            if (GameModeManager.GetCurrentGameMode() is NormalGameMode normalGameMode)
+            {
+                normalGameMode.SelectFungleRolesAfterExternalSelection(__instance);
+            }
+        }
     }
 }

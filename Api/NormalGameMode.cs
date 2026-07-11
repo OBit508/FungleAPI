@@ -187,10 +187,50 @@ namespace FungleAPI.Api
                 return;
             }
         }
+
+        public void SelectFungleRolesAfterExternalSelection(RoleManager roleManager)
+        {
+            if (!Manager.LogicRoleSelection.Is(out LogicRoleSelectionNormal logicRoleSelectionNormal))
+            {
+                return;
+            }
+
+            List<NetworkedPlayerInfo> players = GameData.Instance.AllPlayers.ToSystemList()
+                .Where(player => player?.Object != null && !player.Disconnected && !player.IsDead)
+                .Where(player => player.Role == null || player.Role.CustomRole() == null)
+                .ToList();
+
+            List<ModdedTeam> teams = CustomRoleManager.AllRoles
+                .Where(role => role?.CustomRole() != null && !RoleManager.IsGhostRole(role.Role))
+                .Select(role => role.GetTeam())
+                .Where(team => team != null && team.TeamOptions.LocalTeamCount > 0)
+                .Distinct()
+                .OrderByDescending(team => team.GetPriority())
+                .ToList();
+
+            foreach (ModdedTeam team in teams)
+            {
+                Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> teamPlayers = players
+                    .Where(player => player.Role == null || player.Role.GetTeam() == team)
+                    .ToList()
+                    .ToIl2CppList();
+                AssignRolesForTeam(logicRoleSelectionNormal, teamPlayers, team, true);
+            }
+        }
+
         public void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)
+        {
+            AssignRolesForTeam(logicRoleSelectionNormal, players, team, false);
+        }
+
+        private void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team, bool fungleRolesOnly)
         {
             int rolesAssigned = 0;
             IEnumerable<RoleBehaviour> availableRoles = RoleManager.Instance.AllRoles.ToSystemList().Where(role => role.GetTeam() == team && !RoleManager.IsGhostRole(role.Role));
+            if (fungleRolesOnly)
+            {
+                availableRoles = availableRoles.Where(role => role.CustomRole() != null);
+            }
 
             IRoleOptionsCollection roleOptions = GameOptionsManager.Instance.CurrentGameOptions.RoleOptions;
 
@@ -225,7 +265,7 @@ namespace FungleAPI.Api
 
             logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
 
-            while (roleList.Count < players.Count && roleList.Count + rolesAssigned < team.MaxCount)
+            while (!fungleRolesOnly && roleList.Count < players.Count && roleList.Count + rolesAssigned < team.MaxCount)
             {
                 roleList.Add(team.DefaultRole);
             }
