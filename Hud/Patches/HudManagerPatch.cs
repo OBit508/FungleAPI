@@ -8,6 +8,7 @@ using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
+using FungleAPI.Modifiers;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -136,6 +137,7 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
+            ModifierManager.Update();
             if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {

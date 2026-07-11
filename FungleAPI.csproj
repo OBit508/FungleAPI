@@ -223,6 +223,9 @@
     <Compile Include="Hud\HudHelper.cs" />
     <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
     <Compile Include="ModCompatibility\MiraCompatibility.cs" />
+    <Compile Include="Modifiers\BaseModifier.cs" />
+    <Compile Include="Modifiers\ModifierManager.cs" />
+    <Compile Include="Modifiers\ModifierRpc.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
     <Compile Include="Components\VentComponent.cs" />

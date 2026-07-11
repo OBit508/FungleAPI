@@ -2,6 +2,7 @@
 using FungleAPI.Attributes;
 using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
+using FungleAPI.Modifiers;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -71,6 +72,42 @@ namespace FungleAPI.Freeplay
                         });
                     }
                     SubFolders.Add(teamFolder);
+                }
+            }
+            if (modPlugin.Modifiers.Count > 0)
+            {
+                Folder modifierFolder = new Folder { FolderName = "Modifiers", FolderColor = Color.gray };
+                foreach (Type type in modPlugin.Modifiers)
+                {
+                    if (!ModifierManager.TryGetModifierId(type, out uint modifierId))
+                    {
+                        continue;
+                    }
+                    BaseModifier modifier = (BaseModifier)Activator.CreateInstance(type);
+                    modifierFolder.Items.Add(new FolderItem
+                    {
+                        Name = modifier.ModifierName,
+                        Color = Color.gray,
+                        OnClick = () =>
+                        {
+                            PlayerControl player = PlayerControl.LocalPlayer;
+                            if (player == null)
+                            {
+                                return;
+                            }
+                            if (ModifierManager.HasModifier(player, modifierId))
+                            {
+                                ModifierManager.RpcRemoveModifier(player, modifierId);
+                                return;
+                            }
+                            ModifierManager.RpcAddModifier(player, modifierId);
+                        },
+                        Overlay = () => PlayerControl.LocalPlayer != null && ModifierManager.HasModifier(PlayerControl.LocalPlayer, modifierId),
+                    });
+                }
+                if (modifierFolder.Items.Count > 0)
+                {
+                    SubFolders.Add(modifierFolder);
                 }
             }
             Initialized = true;
