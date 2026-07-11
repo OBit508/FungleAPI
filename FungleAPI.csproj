@@ -269,6 +269,7 @@
     <Compile Include="GlobalPatches\ExileControllerPatch.cs" />
     <Compile Include="GameModes\Patches\GameManagerPatch.cs" />
     <Compile Include="Hud\CustomAbilityButton.cs" />
+    <Compile Include="Hud\TargetActionMenu.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
     <Compile Include="Player\Patches\PlayerControlPatch.cs" />
     <Compile Include="Assets\AssetLoader.cs" />
