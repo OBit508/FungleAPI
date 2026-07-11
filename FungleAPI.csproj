@@ -22,6 +22,7 @@
     <Compile Include="Chat\ChatCommandManager.cs" />
     <Compile Include="Chat\Patches\ChatControllerPatch.cs" />
     <Compile Include="Api\GamemodeSettingsTab.cs" />
+    <Compile Include="Api\FungleDiagnostics.cs" />
     <Compile Include="Attributes\RegisterPriority.cs" />
     <Compile Include="Attributes\TranslationHelper.cs" />
     <Compile Include="Attributes\FungleIgnore.cs" />
@@ -222,6 +223,10 @@
     <Compile Include="GameOver\Ends\NeutralGameOver.cs" />
     <Compile Include="Hud\HudHelper.cs" />
     <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
+    <Compile Include="ModCompatibility\MiraCompatibility.cs" />
+    <Compile Include="Modifiers\BaseModifier.cs" />
+    <Compile Include="Modifiers\ModifierManager.cs" />
+    <Compile Include="Modifiers\ModifierRpc.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
     <Compile Include="Components\VentComponent.cs" />
@@ -265,6 +270,7 @@
     <Compile Include="GlobalPatches\ExileControllerPatch.cs" />
     <Compile Include="GameModes\Patches\GameManagerPatch.cs" />
     <Compile Include="Hud\CustomAbilityButton.cs" />
+    <Compile Include="Hud\TargetActionMenu.cs" />
     <Compile Include="Hud\Patches\HudManagerPatch.cs" />
     <Compile Include="Player\Patches\PlayerControlPatch.cs" />
     <Compile Include="Assets\AssetLoader.cs" />

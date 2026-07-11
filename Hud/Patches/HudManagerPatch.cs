@@ -8,6 +8,7 @@ using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
+using FungleAPI.Modifiers;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -27,6 +28,22 @@ namespace FungleAPI.Hud.Patches
         public static void StartPostfix(HudManager __instance)
         {
             HudHelper.Bottom.Clear();
+
+            if (MiraCompatibility.IsLoaded)
+            {
+                timer = 0;
+                HudHelper.BottomRight = __instance.AbilityButton.transform.parent;
+                HudHelper.Bottom.Add(HudHelper.BottomRight.GetComponent<AspectPosition>());
+                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+                {
+                    button.CreateButton();
+                    button.Button.ToggleVisible(false);
+                }
+                ReportButtonConfig.DefaultSprite = __instance.ReportButton.graphic.sprite;
+                SabotageButtonConfig.DefaultSprite = __instance.SabotageButton.graphic.sprite;
+                VentButtonConfig.DefaultSprite = __instance.ImpostorVentButton.graphic.sprite;
+                return;
+            }
 
             timer = 0;
             if (ShipStatus.Instance != null && LevelImpostorSupport.LevelImpostorAssembly == null)
@@ -120,6 +137,8 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
+            ModifierManager.Update();
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
                 Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;
@@ -206,6 +225,7 @@ namespace FungleAPI.Hud.Patches
         })]
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(role)) return;
             HudHelper.Active = isActive;
 
             if (!GameManager.Instance.IsHideAndSeek())

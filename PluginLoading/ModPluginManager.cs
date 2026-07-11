@@ -14,6 +14,7 @@ using FungleAPI.GameOver;
 using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
+using FungleAPI.Modifiers;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Ship.Patches;
@@ -192,6 +193,11 @@ namespace FungleAPI.PluginLoading
             else if (typeof(RpcHelper).IsAssignableFrom(type))
             {
                 CustomRpcManager.RegisterRpc(type, plugin);
+                return;
+            }
+            else if (typeof(BaseModifier).IsAssignableFrom(type))
+            {
+                ModifierManager.RegisterModifier(type, plugin);
                 return;
             }
             else if (typeof(PlayerComponent).IsAssignableFrom(type))

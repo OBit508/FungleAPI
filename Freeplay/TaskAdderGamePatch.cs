@@ -9,6 +9,7 @@ using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
+using FungleAPI.ModCompatibility;
 using HarmonyLib;
 using Il2CppSystem.Threading.Tasks;
 using MS.Internal.Xml.XPath;
@@ -30,11 +31,17 @@ namespace FungleAPI.Freeplay
     {
         public static Scroller scroller;
         public static Dictionary<TaskFolder, List<FolderItem>> Items = new Dictionary<TaskFolder, List<FolderItem>>();
+        private static readonly HashSet<TaskFolder> FungleFolders = new HashSet<TaskFolder>();
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]
         public static bool BeginPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] PlayerTask t)
         {
+            if (MiraCompatibility.IsLoaded)
+            {
+                return true;
+            }
             Items.Clear();
+            FungleFolders.Clear();
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_Stencil", 1f);
             __instance.RootFolderPrefab.Text.fontMaterial.SetFloat("_StencilComp", 4f);
             __instance.RootFolderPrefab.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
@@ -122,10 +129,77 @@ namespace FungleAPI.Freeplay
             __instance.GoToRoot();
             return false;
         }
+
+        [HarmonyPatch("Begin")]
+        [HarmonyPostfix]
+        [HarmonyAfter("mira.api")]
+        public static void BeginPostfix(TaskAdderGame __instance)
+        {
+            if (!MiraCompatibility.IsLoaded)
+            {
+                return;
+            }
+
+            Items.Clear();
+            FungleFolders.Clear();
+
+            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
+            {
+                ModFolderConfig folderConfig = plugin.FolderConfig;
+                folderConfig.Initialize(plugin);
+                if (folderConfig.Items.Count == 0 && folderConfig.SubFolders.Count == 0)
+                {
+                    continue;
+                }
+
+                TaskFolder folder = CreateFolder(__instance, folderConfig.FolderName, folderConfig.FolderColor, folderConfig.Items);
+                __instance.Root.SubFolders.Add(folder);
+
+                foreach (Folder subFolder in folderConfig.SubFolders)
+                {
+                    PopulateFolder(__instance, folder, subFolder);
+                }
+            }
+
+            __instance.GoToRoot();
+        }
+
+        private static void PopulateFolder(TaskAdderGame instance, TaskFolder parent, Folder folder)
+        {
+            TaskFolder taskFolder = CreateFolder(instance, folder.FolderName, folder.FolderColor, folder.Items);
+            parent.SubFolders.Add(taskFolder);
+
+            foreach (Folder subFolder in folder.SubFolders)
+            {
+                PopulateFolder(instance, taskFolder, subFolder);
+            }
+        }
+
+        private static TaskFolder CreateFolder(TaskAdderGame instance, string name, Color color, List<FolderItem> items)
+        {
+            TaskFolder folder = UnityEngine.Object.Instantiate(instance.RootFolderPrefab, instance.transform);
+            folder.gameObject.SetActive(false);
+            folder.FolderName = name;
+            folder.SetFolderColor(color);
+            Items[folder] = items;
+            FungleFolders.Add(folder);
+            return folder;
+        }
         [HarmonyPatch("ShowFolder")]
         [HarmonyPrefix]
+        [HarmonyBefore("mira.api")]
         public static bool ShowFolderPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] TaskFolder taskFolder)
         {
+            if (MiraCompatibility.IsLoaded)
+            {
+                TaskFolder sourceFolder = FungleFolders.FirstOrDefault(folder => folder == taskFolder || folder.FolderName == taskFolder.FolderName);
+                if (sourceFolder == null)
+                {
+                    return true;
+                }
+
+                taskFolder = sourceFolder;
+            }
             StringBuilder stringBuilder = new StringBuilder(64);
             __instance.Hierarchy.Add(taskFolder);
             for (int i = 0; i < __instance.Hierarchy.Count; i++)

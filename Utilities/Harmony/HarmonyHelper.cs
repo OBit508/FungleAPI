@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.Base.Roles;
+using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,19 @@ namespace FungleAPI.Utilities.Harmony
         {
             __result = Patches[__originalMethod]();
             return false;
+        }
+        public static bool IsPluginLoaded(string pluginId)
+        {
+            return IL2CPPChainloader.Instance?.Plugins.ContainsKey(pluginId) == true;
+        }
+        public static bool PatchIfPluginLoaded(string pluginId, MethodBase original, HarmonyMethod prefix = null, HarmonyMethod postfix = null)
+        {
+            if (!IsPluginLoaded(pluginId))
+            {
+                return false;
+            }
+            FungleApiPlugin.Harmony.Patch(original, prefix, postfix);
+            return true;
         }
     }
 }

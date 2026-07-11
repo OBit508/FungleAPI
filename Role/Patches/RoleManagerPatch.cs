@@ -8,6 +8,7 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameModes;
+using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -25,6 +26,7 @@ using UnityEngine;
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RoleManager))]
+    [HarmonyBefore("mira.api")]
     internal static class RoleManagerPatch
     {
         public static bool waitingRegister = true;
@@ -45,6 +47,7 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SetRolePrefix(RoleManager __instance, PlayerControl targetPlayer, RoleTypes roleType)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(roleType)) return true;
             if (EventManager.CallEvent(new BeforeSetRoleEvent(targetPlayer, roleType)).Cancelled) return false;
 
             if (!targetPlayer)
@@ -146,12 +149,32 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)
         {
+            if (MiraCompatibility.IsLoaded)
+            {
+                return true;
+            }
             if (!GameManager.Instance.IsHideAndSeek())
             {
                 GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
                 return false;
             }
             return true;
+        }
+
+        [HarmonyPatch("SelectRoles")]
+        [HarmonyPostfix]
+        [HarmonyAfter("mira.api")]
+        public static void SelectRolesPostfix(RoleManager __instance)
+        {
+            if (!MiraCompatibility.IsLoaded || GameManager.Instance.IsHideAndSeek())
+            {
+                return;
+            }
+
+            if (GameModeManager.GetCurrentGameMode() is NormalGameMode normalGameMode)
+            {
+                normalGameMode.SelectFungleRolesAfterExternalSelection(__instance);
+            }
         }
     }
 }
