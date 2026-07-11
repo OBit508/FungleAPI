@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Utilities;
+using AmongUs.GameOptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,8 +29,8 @@ namespace FungleAPI.Hud
             }
 
             ShapeshifterRole role = RoleManager.Instance.GetRole(RoleTypes.Shapeshifter).SafeCast<ShapeshifterRole>();
-            ShapeshifterMenu source = role.ShapeshifterMenu;
-            ShapeshifterMenu clone = UnityEngine.Object.Instantiate(source);
+            ShapeshifterMinigame source = role.ShapeshifterMenu;
+            ShapeshifterMinigame clone = UnityEngine.Object.Instantiate(source);
             TargetActionMenu menu = clone.gameObject.AddComponent<TargetActionMenu>();
             menu._panelPrefab = clone.PanelPrefab;
             menu._cancelButton = clone.BackButton.GetComponent<PassiveButton>();

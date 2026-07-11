@@ -15,7 +15,7 @@ namespace FungleAPI.Api
         public static int RegisteredRoleCount => CustomRoleManager.AllRoles.Count;
         public static int RegisteredRpcCount => CustomRpcManager.AllRpc.Count;
         public static IReadOnlyList<string> RegisteredMods => ModPluginManager.AllPlugins
-            .Select(plugin => plugin.LocalMod?.GUID ?? plugin.ModAssembly?.GetName().Name ?? "Unknown")
+            .Select(plugin => plugin.LocalMod.GUID ?? plugin.ModAssembly?.GetName().Name ?? "Unknown")
             .ToList();
         public static IReadOnlyList<RoleTypes> RegisteredRoleIds => CustomRoleManager.AllRoles
             .Where(role => role != null)

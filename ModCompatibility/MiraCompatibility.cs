@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 
 namespace FungleAPI.ModCompatibility
 {
