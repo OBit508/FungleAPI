@@ -71,6 +71,7 @@
     <Compile Include="GameModes\Logics\LRoleSelection.cs" />
     <Compile Include="GameModes\Patches\DeadBodyPatch.cs" />
     <Compile Include="GameModes\Patches\ImpostorRolePatch.cs" />
+    <Compile Include="GameModes\Patches\MapConsolePatch.cs" />
     <Compile Include="GameModes\Patches\PhantomRolePatch.cs" />
     <Compile Include="GameModes\Patches\ReportButtonPatch.cs" />
     <Compile Include="GameModes\Patches\SpawnInMinigamePatch.cs" />

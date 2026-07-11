@@ -38,7 +38,6 @@ namespace FungleAPI.GameModes
             }
             return Default;
         }
-
         public static void RegisterGameMode(Type type, ModPlugin modPlugin)
         {
             BaseGameMode gameMode = (BaseGameMode)Activator.CreateInstance(type);
@@ -53,7 +52,6 @@ namespace FungleAPI.GameModes
             GameModes.Add(gameMode.GameModeId, gameMode);
             modPlugin.BasePlugin.Log.LogInfo("Registered GameMode " + type.Name + " Id: " + gameMode.GameModeId.ToString());
         }
-
         public static OptionBehaviour CreateGameModeOption(Transform parent)
         {
             StringGameSetting stringGameSetting = Data.SafeCast<StringGameSetting>();

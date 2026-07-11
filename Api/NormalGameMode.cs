@@ -1,8 +1,8 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Extensions;
+using FungleAPI.GameModes;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
-using FungleAPI.GameModes;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Api
 {
@@ -136,6 +137,28 @@ namespace FungleAPI.Api
         {
             return gameManager.deadBodyPrefab[impostorRole.GetCreatedDeadBody() == DeadBodyType.Viper ? 1 : 0];
         }
+        public override void SetTaskPanelText(HudManager hudManager)
+        {
+            NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
+            for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+            {
+                PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
+                if (playerTask)
+                {
+                    if (playerTask.TaskType == TaskTypes.FixComms && !(data.Role != null && data.Role.IsImpostor))
+                    {
+                        hudManager.tasksString.Clear();
+                        playerTask.AppendTaskText(hudManager.tasksString);
+                        break;
+                    }
+                    playerTask.AppendTaskText(hudManager.tasksString);
+                }
+            }
+            if (data.Role != null && data.Role.GetHintType().HasFlag(RoleHintType.TaskHint))
+            {
+                RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, hudManager.tasksString);
+            }
+        }
         public override float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
             float num = float.MaxValue;
@@ -158,6 +181,19 @@ namespace FungleAPI.Api
                 Vector3 position = vent.transform.position;
                 num = Vector2.Distance(center, position);
                 canUse &= (num <= vent.UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false));
+            }
+            return num;
+        }
+        public override float CanUseMapConsole(MapConsole mapConsole, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
+        {
+            float num = float.MaxValue;
+            PlayerControl @object = pc.Object;
+            couldUse = pc.Object.CanMove;
+            canUse = couldUse;
+            if (canUse)
+            {
+                num = Vector2.Distance(@object.GetTruePosition(), mapConsole.transform.position);
+                canUse &= num <= mapConsole.UsableDistance;
             }
             return num;
         }

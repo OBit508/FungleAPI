@@ -43,7 +43,7 @@ namespace FungleAPI.Api
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.2.9";
+        public const string ModV = "0.3.0";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
@@ -117,7 +117,7 @@ namespace FungleAPI.Api
                         }
 
                         PluginCredits? pluginCredits = modPlugin.FunglePlugin.Credits;
-                        if (pluginCredits != null)
+                        if (pluginCredits != null && modPlugin != Plugin)
                         {
                             ReactorCompatibility.Instance?.Register(pluginCredits.Value.Name, pluginCredits.Value.Version, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         }

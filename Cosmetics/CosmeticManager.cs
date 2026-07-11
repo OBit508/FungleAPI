@@ -27,7 +27,7 @@ namespace FungleAPI.Cosmetics
         internal static Dictionary<string, UnityEngine.Object> Assets = new Dictionary<string, UnityEngine.Object>();
         internal static Dictionary<CosmeticData, StringNames> CosmeticsNames = new Dictionary<CosmeticData, StringNames>();
 
-        public static bool UnlockAll;
+        public static bool UnlockAll = true;
 
         public static List<CustomHat> AllHats = new List<CustomHat>();
         public static List<CustomSkin> AllSkins = new List<CustomSkin>();

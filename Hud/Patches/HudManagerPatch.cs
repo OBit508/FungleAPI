@@ -153,28 +153,32 @@ namespace FungleAPI.Hud.Patches
                 }
                 else
                 {
-                    for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+                    GameModeManager.GetCurrentGameMode().SetTaskPanelText(__instance);
+                    if (GameManager.Instance.IsHideAndSeek())
                     {
-                        PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
-                        if (playerTask)
+                        for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
                         {
-                            if (playerTask.TaskType == TaskTypes.FixComms && !flag)
+                            PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
+                            if (playerTask)
                             {
-                                __instance.tasksString.Clear();
+                                if (playerTask.TaskType == TaskTypes.FixComms && !flag)
+                                {
+                                    __instance.tasksString.Clear();
+                                    playerTask.AppendTaskText(__instance.tasksString);
+                                    break;
+                                }
                                 playerTask.AppendTaskText(__instance.tasksString);
-                                break;
                             }
-                            playerTask.AppendTaskText(__instance.tasksString);
                         }
-                    }
-                    if (data.Role != null && data.Role.GetHintType().HasFlag(RoleHintType.TaskHint))
-                    {
-                        RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, __instance.tasksString);
-                    }
-                    if (GameManager.Instance.IsHideAndSeek() && ShipStatus.Instance.HideCountdown > 0f)
-                    {
-                        ShipStatus.Instance.HideCountdown -= num;
-                        __instance.tasksString.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
+                        if (data.Role != null && data.Role.GetHintType().HasFlag(RoleHintType.TaskHint))
+                        {
+                            RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, __instance.tasksString);
+                        }
+                        if (ShipStatus.Instance.HideCountdown > 0f)
+                        {
+                            ShipStatus.Instance.HideCountdown -= num;
+                            __instance.tasksString.Append("\n\n" + ((int)ShipStatus.Instance.HideCountdown).ToString());
+                        }
                     }
                     __instance.tasksString.TrimEnd();
                 }

@@ -48,7 +48,9 @@ namespace FungleAPI.GameModes
         public virtual float GetKillDistance() => 0;
         public virtual float GetKillCooldown() => 0;
         public virtual bool GetGhostsDoTasks() => false;
+        public virtual void SetTaskPanelText(HudManager hudManager) { }
         public virtual float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse) { canUse = false; couldUse = false; return default; }
+        public virtual float CanUseMapConsole(MapConsole mapConsole, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse) { canUse = false; couldUse = false; return default; }
         public virtual MapOptions GetMapOptions() => null;
         public virtual DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole) => null;
         public virtual void SelectRoles(RoleManager roleManager) { }
