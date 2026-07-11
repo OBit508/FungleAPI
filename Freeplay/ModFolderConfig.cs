@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.Api;
 
 namespace FungleAPI.Freeplay
 {
@@ -76,18 +77,18 @@ namespace FungleAPI.Freeplay
             }
             if (modPlugin.Modifiers.Count > 0)
             {
-                Folder modifierFolder = new Folder { FolderName = "Modifiers", FolderColor = Color.gray };
+                Folder modifierFolder = new Folder { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.gray };
                 foreach (Type type in modPlugin.Modifiers)
                 {
-                    if (!ModifierManager.TryGetModifierId(type, out uint modifierId))
+                    if (!ModifierManager.TryGetCachedModifier(type, out CachedModifier cachedModifier))
                     {
                         continue;
                     }
-                    BaseModifier modifier = (BaseModifier)Activator.CreateInstance(type);
+
                     modifierFolder.Items.Add(new FolderItem
                     {
-                        Name = modifier.ModifierName,
-                        Color = Color.gray,
+                        Name = cachedModifier.ModifierName.GetString(),
+                        Color = cachedModifier.ModifierColor,
                         OnClick = () =>
                         {
                             PlayerControl player = PlayerControl.LocalPlayer;
@@ -95,14 +96,14 @@ namespace FungleAPI.Freeplay
                             {
                                 return;
                             }
-                            if (ModifierManager.HasModifier(player, modifierId))
+                            if (ModifierManager.HasModifier(player, cachedModifier.ModifierId))
                             {
-                                ModifierManager.RpcRemoveModifier(player, modifierId);
+                                ModifierManager.RpcRemoveModifier(player, cachedModifier.ModifierId);
                                 return;
                             }
-                            ModifierManager.RpcAddModifier(player, modifierId);
+                            ModifierManager.RpcAddModifier(player, cachedModifier.ModifierId);
                         },
-                        Overlay = () => PlayerControl.LocalPlayer != null && ModifierManager.HasModifier(PlayerControl.LocalPlayer, modifierId),
+                        Overlay = () => PlayerControl.LocalPlayer != null && ModifierManager.HasModifier(PlayerControl.LocalPlayer, cachedModifier.ModifierId),
                     });
                 }
                 if (modifierFolder.Items.Count > 0)

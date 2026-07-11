@@ -1,4 +1,5 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Role.Patches;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -16,7 +17,7 @@ namespace FungleAPI.Hud.Patches
     {
         public static bool Prefix(HudManager._CoShowIntro_d__89 __instance, ref bool __result)
         {
-            if (!GameManager.Instance.IsHideAndSeek())
+            if (!GameManager.Instance.IsHideAndSeek() && !MiraCompatibility.IsLoaded)
             {
                 __instance.__4__this.StartCoroutine(CoShowIntro(__instance.__4__this).WrapToIl2Cpp());
                 __result = false;

@@ -151,6 +151,7 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
+    <Compile Include="Modifiers\CachedModifier.cs" />
     <Compile Include="Networking\ModsDisconnectData.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />

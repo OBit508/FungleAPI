@@ -11,6 +11,7 @@ namespace FungleAPI.Modifiers
     {
         private static readonly Dictionary<uint, Type> ModifierTypes = new Dictionary<uint, Type>();
         private static readonly Dictionary<Type, uint> ModifierIds = new Dictionary<Type, uint>();
+        private static readonly Dictionary<Type, CachedModifier> CachedModifiers = new Dictionary<Type, CachedModifier>();
         private static readonly Dictionary<byte, List<BaseModifier>> PlayerModifiers = new Dictionary<byte, List<BaseModifier>>();
         private static uint _nextModifierId;
 
@@ -23,15 +24,23 @@ namespace FungleAPI.Modifiers
                 return;
             }
 
+            BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(type);
+
             uint id = ++_nextModifierId;
             ModifierTypes[id] = type;
             ModifierIds[type] = id;
+            CachedModifiers[type] = new CachedModifier() { ModifierName = baseModifier.ModifierName, ModifierColor = baseModifier.ModifierColor, ModifierId = id };
             plugin.Modifiers.Add(type);
         }
 
         public static bool TryGetModifierId(Type type, out uint id)
         {
             return ModifierIds.TryGetValue(type, out id);
+        }
+
+        public static bool TryGetCachedModifier(Type type, out CachedModifier cachedModifier)
+        {
+            return CachedModifiers.TryGetValue(type, out cachedModifier);
         }
 
         public static bool HasModifier(PlayerControl player, uint modifierId)
