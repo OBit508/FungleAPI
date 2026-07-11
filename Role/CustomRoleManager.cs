@@ -124,6 +124,14 @@ namespace FungleAPI.Role
         {
             return GetRoleType(typeof(T));
         }
+        public static bool TryGetRoleType(Type type, out RoleTypes roleType)
+        {
+            return Types.TryGetValue(type, out roleType);
+        }
+        public static bool IsFungleRole(RoleTypes roleType)
+        {
+            return AllRoles.Any(role => role != null && role.Role == roleType && role.CustomRole() != null);
+        }
         /// <summary>
         /// Returns the plugin that registered this role
         /// </summary>
@@ -150,6 +158,14 @@ namespace FungleAPI.Role
             if (WaitingToRegister == null)
             {
                 throw new Exception("You can't register a Role when the RoleManager already loadded");
+            }
+            if (Types.ContainsKey(type))
+            {
+                return;
+            }
+            while (Types.Values.Contains((RoleTypes)LastRoleId) || AllRoles.Any(role => role != null && role.Role == (RoleTypes)LastRoleId))
+            {
+                LastRoleId++;
             }
             RoleTypes roleTypes = (RoleTypes)LastRoleId;
             WaitingToRegister.Add(new CachedWaitingRole(roleTypes, type, modPlugin));

@@ -22,6 +22,7 @@
     <Compile Include="Chat\ChatCommandManager.cs" />
     <Compile Include="Chat\Patches\ChatControllerPatch.cs" />
     <Compile Include="Api\GamemodeSettingsTab.cs" />
+    <Compile Include="Api\FungleDiagnostics.cs" />
     <Compile Include="Attributes\RegisterPriority.cs" />
     <Compile Include="Attributes\TranslationHelper.cs" />
     <Compile Include="Attributes\FungleIgnore.cs" />

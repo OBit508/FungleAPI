@@ -47,6 +47,11 @@ namespace FungleAPI.Networking
             }
             return null;
         }
+        public static bool TryGetRpcInstance<T>(out T rpc) where T : RpcHelper
+        {
+            rpc = GetRpcInstance<T>();
+            return rpc != null;
+        }
         /// <summary>
         /// Send a rpc
         /// </summary>
@@ -78,6 +83,10 @@ namespace FungleAPI.Networking
         }
         public static void RegisterRpc(Type type, ModPlugin plugin)
         {
+            if (AllRpc.Any(rpc => rpc.GetType() == type))
+            {
+                return;
+            }
             LastRpcId++;
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
             rpc.RpcId = LastRpcId;

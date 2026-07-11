@@ -21,12 +21,16 @@ namespace FungleAPI.Event
     /// </summary>
     public static class EventManager
     {
-        private static Dictionary<Type, Delegate> Events = new Dictionary<Type, Delegate>();
+        private static readonly Dictionary<Type, List<RegisteredEvent>> Events = new Dictionary<Type, List<RegisteredEvent>>();
+        private static long _registrationOrder;
         public static T CallEvent<T>(T fungleEvent) where T : FungleEvent
         {
-            if (Events.TryGetValue(typeof(T), out Delegate @delegate))
+            if (Events.TryGetValue(typeof(T), out List<RegisteredEvent> handlers))
             {
-                ((Action<T>)@delegate)?.Invoke(fungleEvent);
+                foreach (RegisteredEvent handler in handlers)
+                {
+                    handler.Handler.DynamicInvoke(fungleEvent);
+                }
             }
             return fungleEvent;
         }
@@ -49,17 +53,43 @@ namespace FungleAPI.Event
                     Type eventType = parameters[0].ParameterType;
                     Delegate handler = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(eventType), methodInfo);
 
-                    if (Events.TryGetValue(eventType, out Delegate @delegate))
+                    if (!Events.TryGetValue(eventType, out List<RegisteredEvent> handlers))
                     {
-                        Events[eventType] = Delegate.Combine(@delegate, handler);
+                        handlers = new List<RegisteredEvent>();
+                        Events[eventType] = handlers;
                     }
-                    else
+
+                    handlers.Add(new RegisteredEvent(handler, methodInfo.GetCustomAttribute<EventRegister>().Priority, _registrationOrder++));
+                    handlers.Sort((left, right) =>
                     {
-                        Events[eventType] = handler;
-                    }
+                        int priority = right.Priority.CompareTo(left.Priority);
+                        return priority != 0 ? priority : left.Order.CompareTo(right.Order);
+                    });
                 }
             }
         }
+
+        private sealed class RegisteredEvent
+        {
+            public RegisteredEvent(Delegate handler, int priority, long order)
+            {
+                Handler = handler;
+                Priority = priority;
+                Order = order;
+            }
+
+            public Delegate Handler { get; }
+            public int Priority { get; }
+            public long Order { get; }
+        }
     }
-    public class EventRegister : Attribute { }
+    public class EventRegister : Attribute
+    {
+        public EventRegister(int priority = 0)
+        {
+            Priority = priority;
+        }
+
+        public int Priority { get; }
+    }
 }
