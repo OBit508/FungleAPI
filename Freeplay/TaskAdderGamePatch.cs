@@ -190,9 +190,15 @@ namespace FungleAPI.Freeplay
         [HarmonyBefore("mira.api")]
         public static bool ShowFolderPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] TaskFolder taskFolder)
         {
-            if (MiraCompatibility.IsLoaded && !FungleFolders.Contains(taskFolder))
+            if (MiraCompatibility.IsLoaded)
             {
-                return true;
+                TaskFolder sourceFolder = FungleFolders.FirstOrDefault(folder => folder == taskFolder || folder.FolderName == taskFolder.FolderName);
+                if (sourceFolder == null)
+                {
+                    return true;
+                }
+
+                taskFolder = sourceFolder;
             }
             StringBuilder stringBuilder = new StringBuilder(64);
             __instance.Hierarchy.Add(taskFolder);
