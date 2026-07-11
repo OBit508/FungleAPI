@@ -221,6 +221,7 @@
     <Compile Include="GameOver\Ends\NeutralGameOver.cs" />
     <Compile Include="Hud\HudHelper.cs" />
     <Compile Include="ModCompatibility\LevelImpostorSupport.cs" />
+    <Compile Include="ModCompatibility\MiraCompatibility.cs" />
     <Compile Include="Components\DeadBodyComponent.cs" />
     <Compile Include="Components\DeadBodyHelper.cs" />
     <Compile Include="Components\VentComponent.cs" />

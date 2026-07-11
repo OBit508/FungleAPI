@@ -39,6 +39,7 @@ namespace FungleAPI.Api
 	[BepInProcess("Among Us.exe")]
 	[BepInPlugin(ModId, "FungleAPI", ModV)]
     [BepInDependency("gg.reactor.api", DependencyFlags.SoftDependency)]
+    [BepInDependency("mira.api", DependencyFlags.SoftDependency)]
     [BepInDependency("Submerged", DependencyFlags.SoftDependency)]
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
