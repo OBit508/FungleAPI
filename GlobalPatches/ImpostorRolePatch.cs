@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Role.Utilities;
 using HarmonyLib;
+using FungleAPI.ModCompatibility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,7 @@ namespace FungleAPI.Patches
     {
         public static bool Prefix(ImpostorRole __instance, NetworkedPlayerInfo target, ref bool __result)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance)) return true;
             __result = !(target == null) && !target.Disconnected && !target.IsDead && target.PlayerId != __instance.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible && (target.Role.GetTeam() != __instance.GetTeam() || __instance.GetTeam().FriendlyFire);
             return false;
         }

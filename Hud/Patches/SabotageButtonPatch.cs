@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Role;
 using HarmonyLib;
+using FungleAPI.ModCompatibility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool DoClickPrefix()
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.SabotageConfig.DoClick?.Invoke();
             return false;
         }
@@ -22,6 +24,7 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPatch("Refresh")]
         public static bool RefreshPrefix(SabotageButton __instance)
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.SabotageConfig.Refresh?.Invoke();
             return false;
         }

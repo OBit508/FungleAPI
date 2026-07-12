@@ -8,6 +8,7 @@ using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using FungleAPI.ModCompatibility;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using PowerTools;
 using Rewired.Utils.Classes.Data;
@@ -64,6 +65,7 @@ namespace FungleAPI.Ship.Patches
         public static bool CanUsePrefix(Vent __instance, NetworkedPlayerInfo pc, ref bool canUse, ref bool couldUse, ref float __result)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(pc?.Role)) return true;
 
             __result = GameModeManager.GetCurrentGameMode().CanUseVent(__instance, pc, out canUse, out couldUse);
             return false;
@@ -72,6 +74,7 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool NearbyVentsPrefix(Vent __instance, ref Il2CppReferenceArray<Vent> __result)
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             try
             {
                 __result = (Vent[])__instance.TryGetHelper().Vents.ToArray();
@@ -119,6 +122,7 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool SetButtonsPrefix(Vent __instance, bool enabled)
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             if (enabled)
             {
                 List<(Vent vent, ButtonBehavior button, GameObject clean)> entries = new List<(Vent vent, ButtonBehavior button, GameObject clean)>();

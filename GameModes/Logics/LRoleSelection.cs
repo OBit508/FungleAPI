@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Attributes;
 using HarmonyLib;
+using FungleAPI.ModCompatibility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace FungleAPI.GameModes.Logics
         [HarmonyPrefix]
         public static bool OnPlayerDeath(PlayerControl player, bool assignGhostRole)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(player?.Data?.Role)) return true;
             GameModeManager.GetCurrentGameMode().OnPlayerDeath(player, assignGhostRole);
             return false;
         }

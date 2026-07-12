@@ -23,6 +23,7 @@ using xCloud;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
 using Sentry.Internal.Extensions;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.GameOptions.Patches
 {
@@ -35,12 +36,19 @@ namespace FungleAPI.GameOptions.Patches
         public static Scroller scroller;
 
         public static PluginChanger pluginChanger;
+        public static bool FungleViewActive;
 
         [HarmonyPatch(nameof(LobbyViewSettingsPane.Awake))]
         [HarmonyPostfix]
         public static void AwakePostfix(LobbyViewSettingsPane __instance)
         {
             if (GameManager.Instance.IsHideAndSeek()) return;
+
+            if (MiraCompatibility.IsLoaded)
+            {
+                AwakeWithMira(__instance);
+                return;
+            }
 
             __instance.gameModeText.gameObject.SetActive(false);
 
@@ -138,11 +146,60 @@ namespace FungleAPI.GameOptions.Patches
 
             pluginChanger.OnChange(FungleApiPlugin.Plugin);
         }
+        private static void AwakeWithMira(LobbyViewSettingsPane pane)
+        {
+            FungleViewActive = false;
+            pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, pane.rolesTabButton.transform.parent);
+            pluginChanger.transform.localPosition = new Vector3(-4.2586f, 2.4241f, -1.9999f);
+            pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.Any(t => t.GetType() != typeof(GamemodeSettingsTab)));
+            UiElement prefab = GameObject.Instantiate(pane.ControllerSelectable[3], pane.transform);
+            prefab.gameObject.SetActive(false);
+            pluginChanger.OnChange = plugin =>
+            {
+                foreach (UiElement element in pane.ControllerSelectable.ToArray())
+                {
+                    if (element != null && element.name.StartsWith("FungleView:"))
+                    {
+                        pane.ControllerSelectable.Remove(element);
+                        element.gameObject.Destroy();
+                    }
+                }
+                Tabs = plugin.LobbyTabs.Where(t => t.GetType() != typeof(GamemodeSettingsTab)).ToList();
+                Tab = Tabs.FirstOrDefault();
+                int index = 0;
+                foreach (LobbyTab lobbyTab in Tabs)
+                {
+                    PassiveButton button = GameObject.Instantiate<PassiveButton>(prefab.SafeCast<PassiveButton>(), prefab.transform.parent);
+                    button.name = $"FungleView:{index}";
+                    button.gameObject.SetActive(true);
+                    button.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
+                    button.buttonText.text = lobbyTab.ViewTabButtonText;
+                    button.transform.localPosition = new Vector3(-4.871f + (1.5f * index), 0.9f, 0f);
+                    button.SetNewAction(() =>
+                    {
+                        Tab = lobbyTab;
+                        FungleViewActive = true;
+                        pane.ChangeTab(StringNames.None);
+                    });
+                    pane.ControllerSelectable.Add(button);
+                    lobbyTab.ViewSettingsButton = button;
+                    lobbyTab.RefreshViewTab = pane.RefreshTab;
+                    index++;
+                }
+            };
+            pluginChanger.OnChange(FungleApiPlugin.Plugin);
+        }
         [HarmonyPatch(nameof(LobbyViewSettingsPane.ChangeTab))]
         [HarmonyPrefix]
-        public static bool Change(LobbyViewSettingsPane __instance)
+        public static bool Change(LobbyViewSettingsPane __instance, StringNames tab)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+            if (MiraCompatibility.IsLoaded && (!FungleViewActive || tab != StringNames.None))
+            {
+                FungleViewActive = false;
+                return true;
+            }
 
             __instance.RefreshTab();
             __instance.scrollBar.ScrollToTop();
@@ -153,6 +210,7 @@ namespace FungleAPI.GameOptions.Patches
         public static bool Refresh(LobbyViewSettingsPane __instance)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+            if (MiraCompatibility.IsLoaded && !FungleViewActive) return true;
 
             foreach (GameObject gameObject in __instance.settingsInfo)
             {

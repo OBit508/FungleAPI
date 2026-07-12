@@ -4,6 +4,7 @@ using BepInEx.Unity.IL2CPP;
 using FungleAPI.Base.Roles;
 using FungleAPI.Components;
 using FungleAPI.Networking;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Patches;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -27,7 +28,11 @@ namespace FungleAPI.Role.Patches
         [HarmonyPatch("TeamColor", MethodType.Getter)]
         [HarmonyPrefix]
         public static bool TeamColorPrefix(RoleBehaviour __instance, ref Color __result)
-        { 
+        {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance))
+            {
+                return true;
+            }
             ICustomRole role = __instance.CustomRole();
             if (role != null)
             {
@@ -41,6 +46,10 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool InitializePrefix(RoleBehaviour __instance, [HarmonyArgument(0)] PlayerControl player)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance))
+            {
+                return true;
+            }
             __instance.Player = player;
             if (!player.AmOwner)
             {

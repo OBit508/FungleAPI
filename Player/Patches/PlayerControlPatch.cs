@@ -10,6 +10,7 @@ using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
+using FungleAPI.ModCompatibility;
 using HarmonyLib;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool SetKillTimerPrefix(PlayerControl __instance, float time)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             if (__instance.Data.Role.CanUseKillButton)
             {
                 float @float = RoleConfigManager.KillConfig.Cooldown();
@@ -49,12 +51,14 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool RpcMurderPlayerPrefix(PlayerControl __instance, PlayerControl target, bool didSucceed)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             return !EventManager.CallEvent(new BeforeMurderEvent(target, (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError) | MurderResultFlags.DecisionByHost)).Cancelled;
         }
         [HarmonyPatch("CheckMurder")]
         [HarmonyPrefix]
         public static bool CheckMurderPrefix(PlayerControl __instance, PlayerControl target)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             __instance.CheckCustomMurder(target);
             return false;
         }
@@ -62,6 +66,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool MurderPlayerPrefix(PlayerControl __instance, PlayerControl target, MurderResultFlags resultFlags)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             __instance.CustomMurderPlayer(target, resultFlags);
             return false;
         }
@@ -88,6 +93,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool AdjustLightingPrefix(PlayerControl __instance)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             RoleConfigManager.LightConfig?.AdjustLighting(__instance);
             return false;
         }
@@ -95,6 +101,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool IsFlashlightEnabledPrefix(PlayerControl __instance, ref bool __result)
         {
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(__instance?.Data?.Role)) return true;
             __result = RoleConfigManager.LightConfig.IsFlashlightEnabled(__instance);
             return false;
         }

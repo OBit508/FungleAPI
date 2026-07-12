@@ -25,6 +25,7 @@ namespace FungleAPI.Role.Patches
         [HarmonyPatch("AnyRolesEnabled")]
         public static bool AnyRolesEnabledPrefix(RoleOptionsCollectionV09 __instance, ref bool __result)
         {
+            if (MiraCompatibility.IsLoaded) return true;
             foreach (Il2CppSystem.Collections.Generic.KeyValuePair<RoleTypes, RoleDataV09> keyValuePair in __instance.roles)
             {
                 if (__instance.GetNumPerGame(keyValuePair.Key) > 0)

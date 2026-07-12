@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.Role.Patches
 {
@@ -16,6 +17,7 @@ namespace FungleAPI.Role.Patches
         public static bool Prefix(RoleBehaviour otherPlayerRole, ref Color __result)
         {
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
+            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(role) && !MiraCompatibility.IsFungleRole(otherPlayerRole)) return true;
 
             ModdedTeam team = role.GetTeam();
 

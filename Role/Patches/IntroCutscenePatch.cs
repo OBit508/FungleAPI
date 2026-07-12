@@ -11,6 +11,7 @@ using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using FungleAPI.ModCompatibility;
 using Il2CppInterop.Runtime.InteropTypes;
 using LibCpp2IL.Elf;
 using PowerTools;
@@ -34,6 +35,7 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool BeginCrewmatePatch(IntroCutscene __instance)
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             ModdedTeam team = PlayerControl.LocalPlayer.Data.Role.GetTeam();
             if (team != ModdedTeamManager.Crewmates)
             {
@@ -59,6 +61,7 @@ namespace FungleAPI.Role.Patches
         [HarmonyPostfix]
         public static void BeginCustom(IntroCutscene __instance)
         {
+            if (!MiraCompatibility.ShouldHandleLocalRole()) return;
             if (EventManager.CallEvent(new BeforeIntroBeginEvent(__instance)).Cancelled) return;
 
             ICustomRole customRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
