@@ -7,6 +7,7 @@ using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.Api;
+using FungleAPI.ModCompatibility;
 
 namespace FungleAPI.GameOptions.Patches
 {
@@ -19,6 +20,7 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static void UpdatePrefix(RolesSettingsMenu __instance)
         {
+            if (MiraCompatibility.IsLoaded && GameSettingMenuPatch.CurrentTab == null) return;
             if (GameSettingMenuPatch.pluginChanger.CurrentPlugin != chanceTabPlugin)
             {
                 __instance.SetQuotaTab();
@@ -48,6 +50,7 @@ namespace FungleAPI.GameOptions.Patches
         [HarmonyPrefix]
         public static bool SetQuotaTabPrefix(RolesSettingsMenu __instance)
         {
+            if (MiraCompatibility.IsLoaded && GameSettingMenuPatch.CurrentTab == null) return true;
             for (int i = 0; i < __instance.RoleChancesSettings.transform.GetChildCount(); i++)
             {
                 if (__instance.RoleChancesSettings.transform.GetChild(i) != __instance.quotaHeader.transform)

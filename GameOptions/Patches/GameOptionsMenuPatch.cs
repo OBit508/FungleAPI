@@ -5,6 +5,7 @@ using FungleAPI.Api;
 using FungleAPI.GameOptions.Networking;
 using FungleAPI.GameModes;
 using FungleAPI.Networking;
+using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -27,6 +28,7 @@ namespace FungleAPI.GameOptions.Patches
         public static bool RefreshChildrenPrefix(GameOptionsMenu __instance)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+            if (MiraCompatibility.IsLoaded && GameSettingMenuPatch.CurrentTab == null) return true;
 
             Update = true;
             __instance.Initialize();
@@ -39,6 +41,7 @@ namespace FungleAPI.GameOptions.Patches
             try
             {
                 if (GameManager.Instance.IsHideAndSeek()) return true;
+                if (MiraCompatibility.IsLoaded && GameSettingMenuPatch.CurrentTab == null) return true;
 
                 if (__instance.gameObject.active && __instance.Children == null || __instance.Children.Count == 0)
                 {
@@ -91,6 +94,7 @@ namespace FungleAPI.GameOptions.Patches
         public static bool ClickPresetPrefix(GameOptionsMenu __instance, RulesPresets preset)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+            if (MiraCompatibility.IsLoaded && GameSettingMenuPatch.CurrentTab == null) return true;
 
             IFungleBasePlugin fungleBasePlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin.BasePlugin as IFungleBasePlugin;
             if (fungleBasePlugin != null)

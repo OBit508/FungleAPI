@@ -143,6 +143,21 @@ namespace FungleAPI.Freeplay
             Items.Clear();
             FungleFolders.Clear();
 
+            // MiraAPI does not recognize FungleAPI's ICustomRole implementation. During
+            // PopulateRoot it consequently treats Fungle roles as vanilla roles and puts
+            // them in the Crewmates/Impostors folders. They are exposed through the
+            // owning mod folder below, so remove only those duplicate vanilla entries.
+            foreach (TaskFolder rootFolder in __instance.Root.SubFolders.ToArray())
+            {
+                foreach (RoleBehaviour role in rootFolder.RoleChildren.ToArray())
+                {
+                    if (MiraCompatibility.IsFungleRole(role))
+                    {
+                        rootFolder.RoleChildren.Remove(role);
+                    }
+                }
+            }
+
             foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
             {
                 ModFolderConfig folderConfig = plugin.FolderConfig;
@@ -294,7 +309,7 @@ namespace FungleAPI.Freeplay
                     taskAddButton2.enabled = false;
                     taskAddButton2.Overlay.gameObject.SetActive(true);
                     taskAddButton2.gameObject.AddComponent<Updater>().update = delegate { taskAddButton2.Overlay.enabled = folderItem.Overlay(); };
-                    __instance.AddFileAsChild(__instance.Root, taskAddButton2, ref num, ref num2, ref num3);
+                    __instance.AddFileAsChild(taskFolder, taskAddButton2, ref num, ref num2, ref num3);
                     if (taskAddButton2 != null && taskAddButton2.Button != null)
                     {
                         ControllerManager.Instance.AddSelectableUiElement(taskAddButton2.Button, false);

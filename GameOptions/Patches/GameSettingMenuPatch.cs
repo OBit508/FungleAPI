@@ -3,6 +3,7 @@ using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.PluginLoading;
+using FungleAPI.ModCompatibility;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
@@ -26,11 +27,19 @@ namespace FungleAPI.GameOptions.Patches
 
         public static LobbyTab CurrentTab;
 
+        public const int MiraCompatibleTabOffset = 100;
+
         [HarmonyPatch(nameof(GameSettingMenu.Start))]
         [HarmonyPostfix]
         public static void StartPostfix(GameSettingMenu __instance)
         {
             if (GameManager.Instance.IsHideAndSeek()) return;
+
+            if (MiraCompatibility.IsLoaded)
+            {
+                StartWithMira(__instance);
+                return;
+            }
 
             RolesSettingMenuPatch.chanceTabPlugin = null;
 
@@ -133,6 +142,49 @@ namespace FungleAPI.GameOptions.Patches
             pluginChanger.OnChange(FungleApiPlugin.Plugin);
         }
 
+        private static void StartWithMira(GameSettingMenu menu)
+        {
+            RolesSettingMenuPatch.chanceTabPlugin = null;
+            CurrentTab = null;
+
+            UiElement buttonPrefab = menu.ControllerSelectable[0];
+            pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, buttonPrefab.transform.parent);
+            pluginChanger.transform.localPosition = new Vector3(-3.36f, 2.25f, -2f);
+            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p =>
+                p.LobbyTabs.Any(t => t.GetType() != typeof(GamemodeSettingsTab)));
+
+            pluginChanger.OnChange = plugin =>
+            {
+                // Remove only controls created by FungleAPI. MiraAPI owns every other
+                // selectable and keeps references to them in its tab patches.
+                foreach (UiElement element in menu.ControllerSelectable.ToArray())
+                {
+                    if (element != null && element.name.StartsWith("FungleTab:"))
+                    {
+                        menu.ControllerSelectable.Remove(element);
+                        element.gameObject.Destroy();
+                    }
+                }
+
+                int visibleIndex = 0;
+                foreach (LobbyTab tab in plugin.LobbyTabs.Where(t => t.GetType() != typeof(GamemodeSettingsTab)))
+                {
+                    int tabId = MiraCompatibleTabOffset + visibleIndex;
+                    PassiveButton button = GameObject.Instantiate<PassiveButton>(buttonPrefab.SafeCast<PassiveButton>(), buttonPrefab.transform.parent);
+                    button.name = $"FungleTab:{tabId}";
+                    button.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
+                    button.buttonText.text = tab.EditTabButtonText;
+                    button.transform.localPosition = new Vector3(-2.96f, -2.45f - (0.55f * visibleIndex), -2f);
+                    button.SetNewAction(() => menu.ChangeTab(tabId, false));
+                    menu.ControllerSelectable.Add(button);
+                    tab.EditSettingsButton = button;
+                    visibleIndex++;
+                }
+            };
+
+            pluginChanger.OnChange(FungleApiPlugin.Plugin);
+        }
+
         public static PassiveButton CreateButton(GameSettingMenu gameSettingMenu, UiElement prefab, string name, Action onClick)
         {
             PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(prefab.SafeCast<PassiveButton>(), scroller.Inner);
@@ -147,6 +199,12 @@ namespace FungleAPI.GameOptions.Patches
         public static bool ChangeTabPrefix(GameSettingMenu __instance, int tabNum, bool previewOnly)
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            if (MiraCompatibility.IsLoaded && tabNum < MiraCompatibleTabOffset)
+            {
+                CurrentTab = null;
+                return true;
+            }
 
             if (previewOnly) return false;
 
@@ -172,7 +230,10 @@ namespace FungleAPI.GameOptions.Patches
             }
             else
             {
-                CurrentTab = pluginChanger.CurrentPlugin.LobbyTabs[tabNum - 1];
+                int tabIndex = MiraCompatibility.IsLoaded ? tabNum - MiraCompatibleTabOffset : tabNum - 1;
+                CurrentTab = pluginChanger.CurrentPlugin.LobbyTabs
+                    .Where(t => !MiraCompatibility.IsLoaded || t.GetType() != typeof(GamemodeSettingsTab))
+                    .ElementAt(tabIndex);
 
                 CurrentTab.EditSettingsButton.SelectButton(true);
 
