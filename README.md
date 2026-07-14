@@ -59,6 +59,16 @@ Although Fungle API is heavily inspired by Mira API and Reactor, it does not req
 
 For developers who wish to take advantage of both frameworks, Fungle API includes Reactor compatibility support, allowing them to be used together seamlessly. Combining both APIs is recommended when you want access to a broader set of features and development tools.
 
+## Mira API Compatibility
+
+Fungle API includes a compatibility layer that enables many Mira API mods to run alongside Fungle API. While this allows existing Mira API mods to function without requiring modifications in many cases, compatibility cannot be guaranteed in every situation.
+
+Some limitations apply:
+
+- Developers cannot target both Fungle API and Mira API simultaneously within the same mod.
+- Mods that heavily modify the game or rely on implementation-specific behavior may not be compatible with the compatibility layer.
+- Compatibility may be affected by future updates to either framework.
+
 ## Credits
 
 - Cosmetic system based on [CorsacCosmetics](https://github.com/XtraCube/CorsacCosmetics)
