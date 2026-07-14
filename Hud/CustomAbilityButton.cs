@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Components;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -111,6 +112,11 @@ namespace FungleAPI.Hud
                 Button.usesRemainingSprite.gameObject.SetActive(false);
             }
             Button.GetComponent<PassiveButton>().SetNewAction(ClickHandler);
+
+            if (MiraCompatibility.Instance != null)
+            {
+                Button.transform.Find("KeybindIcon")?.gameObject.SetActive(false);
+            }
         }
         public virtual bool CanUse()
         {

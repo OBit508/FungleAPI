@@ -8,6 +8,7 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using System.Collections.Generic;
+using FungleAPI.ModCompatibility.MiraSupport;
 
 namespace FungleAPI.Components
 {
@@ -29,6 +30,8 @@ namespace FungleAPI.Components
         public TextMeshPro RoleText;
         public void Start()
         {
+            if (RoleText != null) return;
+
             TextMeshPro original = player.cosmetics.nameText;
 
             RoleText = GameObject.Instantiate(original, original.transform);
@@ -46,14 +49,16 @@ namespace FungleAPI.Components
         }
         public void SetRoleText(RoleTypes roleTypes)
         {
+            if (RoleText == null) Start();
+
             RoleBehaviour roleBehaviour = RoleManager.Instance.GetRole(roleTypes);
 
-            if (roleBehaviour != null)
+            if (roleBehaviour != null && roleBehaviour.ShowRoleText())
             {
                 ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
                 ModdedTeam team = roleBehaviour.GetTeam();
 
-                if (roleBehaviour.ShowRoleText() && (localTeam == team && localTeam.KnowMembers || player.AmOwner))
+                if (localTeam == team && localTeam.KnowMembers || player.AmOwner)
                 {
                     RoleText.gameObject.SetActive(true);
                     RoleText.text = roleBehaviour.NiceName;
@@ -73,6 +78,8 @@ namespace FungleAPI.Components
         [EventRegister]
         private static void SetRoleText(AfterSetRoleEvent afterSetRoleEvent)
         {
+            if (afterSetRoleEvent.TargetPlayer == null) return;
+
             if (afterSetRoleEvent.TargetPlayer.AmOwner)
             {
                 foreach (PlayerHelper playerHelper in AllPlayers)

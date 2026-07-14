@@ -37,6 +37,7 @@ namespace FungleAPI.Patches
         [HarmonyPrefix]
         public static void StartPrefix(MainMenuManager __instance)
         {
+            ModManager.Instance.ShowModStamp();
             ChatLanguageSet.Instance.Load();
             __instance.StartCoroutine(RunStartUp(__instance));
             QualitySettings.vSyncCount = (DataManager.Settings.Video.VSync ? 1 : 0);

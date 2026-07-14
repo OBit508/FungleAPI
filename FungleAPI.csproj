@@ -240,7 +240,6 @@
     <Compile Include="Hud\Patches\KillButtonPatch.cs" />
     <Compile Include="GlobalPatches\MainMenuManager.cs" />
     <Compile Include="GlobalPatches\MeetingPatch.cs" />
-    <Compile Include="GlobalPatches\ModManagerPatch.cs" />
     <Compile Include="GlobalPatches\PingTrackerPatch.cs" />
     <Compile Include="Ship\Patches\ShipStatusPatch.cs" />
     <Compile Include="PluginLoading\FunglePlugin.cs" />
