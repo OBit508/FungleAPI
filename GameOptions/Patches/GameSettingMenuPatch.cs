@@ -6,6 +6,7 @@ using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Rewired.Utils.Classes.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,7 +76,6 @@ namespace FungleAPI.GameOptions.Patches
                 }
 
                 RolesSettingMenuPatch.chanceTabPlugin = null;
-                __instance.GameSettingsTab.RefreshChildren();
 
                 float num = 0;
                 for (int i = 0; i < __instance.ControllerSelectable.Count; i++)
@@ -85,6 +85,8 @@ namespace FungleAPI.GameOptions.Patches
                     num += 0.243f;
                 }
                 scroller.ContentYBounds = new FloatRange(0, num);
+
+                __instance.ChangeTab(0, false);
 
                 __instance.PresetsTab.OnDisable();
                 __instance.PresetsTab.OnEnable();
