@@ -85,6 +85,9 @@ namespace FungleAPI.GameOptions.Patches
                     num += 0.243f;
                 }
                 scroller.ContentYBounds = new FloatRange(0, num);
+
+                __instance.PresetsTab.OnDisable();
+                __instance.PresetsTab.OnEnable();
             });
             __instance.transform.GetChild(2).gameObject.SetActive(false);
             __instance.MenuDescriptionText.transform.parent.localPosition = new Vector3(0, 0.3f, -1);

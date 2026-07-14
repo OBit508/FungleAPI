@@ -1,5 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Api;
+using FungleAPI.Extensions;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.PluginLoading;
 using HarmonyLib;
 using System;
@@ -7,19 +9,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FungleAPI.GameOptions.Patches
 {
     [HarmonyPatch(typeof(GamePresetsTab), nameof(GamePresetsTab.OnEnable))]
+    [HarmonyPriority(Priority.Last)]
     internal static class GamePresetsTabPatch
     {
         public static bool Prefix(GamePresetsTab __instance)
         {
+            if (!GameSettingMenu.Instance) return true;
+
             if (GameManager.Instance.IsHideAndSeek() || GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly) return true;
 
-            ModPlugin modPlugin = ModPluginManager.GetModPlugin(GameSettingMenuPatch.pluginChanger.CurrentPlugin);
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.IsMiraAssembly(GameSettingMenuPatch.pluginChanger.CurrentPlugin)) return true;
 
-            if (modPlugin == null) return true;
+            ModPlugin modPlugin = ModPluginManager.GetModPlugin(GameSettingMenuPatch.pluginChanger.CurrentPlugin);
 
             RulesPresets rulesPresets = (RulesPresets)modPlugin.RulePreset.Value;
 

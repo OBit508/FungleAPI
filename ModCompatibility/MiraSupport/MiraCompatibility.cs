@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FungleAPI.ModCompatibility.MiraSupport
 {
@@ -23,6 +24,7 @@ namespace FungleAPI.ModCompatibility.MiraSupport
         public virtual IEnumerable<RoleBehaviour> CompleteRoleRegistration() => null;
         public virtual void PopulateMiraLobbyTabs() { }
         public virtual bool MiraGameOverActive() => false;
+        public virtual bool IsMiraAssembly(Assembly assembly) => false;
         public virtual void CreateMiraFolders(TaskAdderGame taskAdderGame, Dictionary<TaskFolder, List<FolderItem>> folders) { }
 
         public static void CheckMira()

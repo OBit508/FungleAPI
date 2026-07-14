@@ -68,11 +68,11 @@ namespace FungleAPI.Ship
             switch (type)
             {
                 case VentType.Skeld:
-                    prefab = ShipPrefabLoader.SkeldPrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.SkeldPrefab.GetComponentsInChildren<Vent>()[0]; break;
                 case VentType.Polus:
-                    prefab = ShipPrefabLoader.PolusPrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.PolusPrefab.GetComponentsInChildren<Vent>()[0]; break;
                 case VentType.Fungle:
-                    prefab = ShipPrefabLoader.FunglePrefab.AllVents[0]; break;
+                    prefab = ShipPrefabLoader.FunglePrefab.GetComponentsInChildren<Vent>()[0]; break;
             }
             if (prefab == null && !VentExtensions.VentPrefabs.TryGetValue(type, out prefab))
             {

@@ -33,7 +33,13 @@ namespace FungleAPI.GameOptions.Patches
         public static List<LobbyTab> Tabs = new List<LobbyTab>();
         public static LobbyTab Tab;
 
-        public static Scroller scroller;
+        public static float min;
+        public static Transform Inner;
+        public static BoxCollider2D scroller;
+
+        public static bool Dragging;
+        public static float StartMouseX;
+        public static float StartContentX;
 
         public static PluginChanger pluginChanger;
 
@@ -90,7 +96,7 @@ namespace FungleAPI.GameOptions.Patches
                     num += 1.1f;
                 }
 
-                scroller.ContentXBounds.min = -num;
+                min = -num;
                 scroller.transform.localPosition = new Vector3(-0.7f, 1.35f, 0);
             });
 
@@ -105,11 +111,7 @@ namespace FungleAPI.GameOptions.Patches
                     }
             };
 
-            scroller = gameObject.AddComponent<Scroller>();
-            scroller.allowX = true;
-            scroller.allowY = false;
-            scroller.ContentXBounds.max = 0;
-            scroller.Inner = new GameObject()
+            Inner = new GameObject()
             {
                 name = "Inner",
                 transform =
@@ -120,21 +122,42 @@ namespace FungleAPI.GameOptions.Patches
                     }
             }.transform;
 
-            ManualScrollHelper manualScrollHelper = gameObject.AddComponent<ManualScrollHelper>();
-            manualScrollHelper.scroller = scroller;
-            manualScrollHelper.verticalAxis = RewiredConstsEnum.Action.TaskLHorizontal;
-            manualScrollHelper.scrollSpeed = 10f;
-
             SpriteMask spriteMask = gameObject.AddComponent<SpriteMask>();
             spriteMask.sprite = FungleAssets.Empty;
             spriteMask.alphaCutoff = 0f;
 
-            scroller.ClickMask = gameObject.AddComponent<BoxCollider2D>();
+            scroller = gameObject.AddComponent<BoxCollider2D>();
 
             gameObject.AddComponent<Updater>().update = () =>
             {
-                scroller.enabled = scroller.ClickMask.OverlapPoint(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-                __instance.scrollBar.enabled = !scroller.enabled;
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 mouseLocal = Inner.parent.InverseTransformPoint(mouseWorld);
+
+                bool mouseHover = scroller.OverlapPoint(mouseWorld);
+                __instance.scrollBar.enabled = !Dragging;
+
+                if (mouseHover && Input.GetMouseButtonDown(0))
+                {
+                    Dragging = true;
+
+                    StartMouseX = mouseLocal.x;
+                    StartContentX = Inner.localPosition.x;
+                }
+
+                if (Dragging && Input.GetMouseButton(0))
+                {
+                    float delta = mouseLocal.x - StartMouseX;
+
+                    Vector3 pos = Inner.localPosition;
+                    pos.x = Mathf.Clamp(StartContentX + delta, min, 0f);
+
+                    Inner.localPosition = pos;
+                }
+
+                if (Input.GetMouseButtonUp(0))
+                {
+                    Dragging = false;
+                }
             };
 
             pluginChanger.OnChange(FungleApiPlugin.Plugin.ModAssembly);
@@ -171,11 +194,11 @@ namespace FungleAPI.GameOptions.Patches
         }
         public static PassiveButton CreateButton(LobbyViewSettingsPane lobbyViewSettingsPane, UiElement prefab, string name, Action onClick)
         {
-            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(prefab.SafeCast<PassiveButton>(), scroller.Inner);
+            PassiveButton passiveButton = GameObject.Instantiate<PassiveButton>(prefab.SafeCast<PassiveButton>(), Inner);
             passiveButton.gameObject.SetActive(true);
             passiveButton.buttonText.GetComponent<TextTranslatorTMP>().enabled = false;
             passiveButton.buttonText.text = name;
-            passiveButton.ClickMask = scroller.ClickMask;
+            passiveButton.ClickMask = scroller;
 
             foreach (SpriteRenderer spriteRenderer in passiveButton.GetComponentsInChildren<SpriteRenderer>(true))
             {

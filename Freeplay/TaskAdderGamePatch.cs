@@ -218,7 +218,10 @@ namespace FungleAPI.Freeplay
                     taskAddButton2.SafePositionWorld = __instance.SafePositionWorld;
                     taskAddButton2.Text.enableAutoSizing = true;
                     taskAddButton2.Text.text = folderItem.Name;
+                    taskAddButton2.Text.fontMaterial.SetFloat("_Stencil", 1f);
+                    taskAddButton2.Text.fontMaterial.SetFloat("_StencilComp", 4f);
                     taskAddButton2.GetComponent<SpriteRenderer>().color = folderItem.Color;
+                    taskAddButton2.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
                     taskAddButton2.RolloverHandler.OutColor = folderItem.Color;
                     taskAddButton2.Button?.SetNewAction(folderItem.OnClick.Invoke);
                     taskAddButton2.enabled = false;
