@@ -14,7 +14,6 @@ namespace FungleAPI.Api
     [TranslationAttribute("FungleAPI.Assets.FungleTranslations")]
     public static class FungleTranslation
     {
-        public static Translator ModifiersText { get; } = new Translator("Modifiers");
         public static Translator RoomText { get; } = new Translator("Room");
         public static Translator RoomSettings { get; } = new Translator("Room Settings");
         public static Translator RoomTabDescription { get; } = new Translator("Edit the Room settings for your lobby.");

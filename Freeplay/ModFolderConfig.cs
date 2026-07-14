@@ -2,7 +2,6 @@
 using FungleAPI.Attributes;
 using FungleAPI.Freeplay.Helpers;
 using FungleAPI.PluginLoading;
-using FungleAPI.Modifiers;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -14,7 +13,6 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.Api;
 
 namespace FungleAPI.Freeplay
 {
@@ -29,24 +27,6 @@ namespace FungleAPI.Freeplay
         public virtual Color FolderColor { get; set; } = new Color(0.937f, 0.811f, 0.592f);
         public List<Folder> SubFolders = new List<Folder>();
         public List<FolderItem> Items = new List<FolderItem>();
-        public Folder AddFolder(string folderName, Color folderColor)
-        {
-            Folder folder = new Folder { FolderName = folderName, FolderColor = folderColor };
-            SubFolders.Add(folder);
-            return folder;
-        }
-        public FolderItem AddItem(string name, Action onClick, Color color, Func<bool> overlay = null)
-        {
-            FolderItem item = new FolderItem
-            {
-                Name = name,
-                OnClick = onClick,
-                Color = color,
-                Overlay = overlay ?? (() => false),
-            };
-            Items.Add(item);
-            return item;
-        }
         public virtual void Initialize(ModPlugin modPlugin)
         {
             if (Initialized)
@@ -73,42 +53,6 @@ namespace FungleAPI.Freeplay
                         });
                     }
                     SubFolders.Add(teamFolder);
-                }
-            }
-            if (modPlugin.Modifiers.Count > 0)
-            {
-                Folder modifierFolder = new Folder { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.gray };
-                foreach (Type type in modPlugin.Modifiers)
-                {
-                    if (!ModifierManager.TryGetCachedModifier(type, out CachedModifier cachedModifier))
-                    {
-                        continue;
-                    }
-
-                    modifierFolder.Items.Add(new FolderItem
-                    {
-                        Name = cachedModifier.ModifierName.GetString(),
-                        Color = cachedModifier.ModifierColor,
-                        OnClick = () =>
-                        {
-                            PlayerControl player = PlayerControl.LocalPlayer;
-                            if (player == null)
-                            {
-                                return;
-                            }
-                            if (ModifierManager.HasModifier(player, cachedModifier.ModifierId))
-                            {
-                                ModifierManager.RpcRemoveModifier(player, cachedModifier.ModifierId);
-                                return;
-                            }
-                            ModifierManager.RpcAddModifier(player, cachedModifier.ModifierId);
-                        },
-                        Overlay = () => PlayerControl.LocalPlayer != null && ModifierManager.HasModifier(PlayerControl.LocalPlayer, cachedModifier.ModifierId),
-                    });
-                }
-                if (modifierFolder.Items.Count > 0)
-                {
-                    SubFolders.Add(modifierFolder);
                 }
             }
             Initialized = true;

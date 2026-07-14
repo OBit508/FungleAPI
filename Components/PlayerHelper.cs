@@ -18,10 +18,6 @@ namespace FungleAPI.Components
     {
         public static List<PlayerHelper> AllPlayers = new List<PlayerHelper>();
         /// <summary>
-        /// Returns to the last role the player had when alive
-        /// </summary>
-        public RoleTypes LastAliveRole = RoleTypes.Crewmate;
-        /// <summary>
         /// Returns to the last role the player had when dead
         /// </summary>
         public RoleTypes LastDeadRole = RoleTypes.CrewmateGhost;

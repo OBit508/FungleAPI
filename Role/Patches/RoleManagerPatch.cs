@@ -8,7 +8,6 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameModes;
-using FungleAPI.ModCompatibility;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -22,11 +21,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using FungleAPI.ModCompatibility.MiraSupport;
 
 namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(RoleManager))]
-    [HarmonyBefore("mira.api")]
     internal static class RoleManagerPatch
     {
         public static bool waitingRegister = true;
@@ -36,10 +35,16 @@ namespace FungleAPI.Role.Patches
         {
             if (waitingRegister)
             {
-                FungleApiPlugin.Plugin.Roles.AddRange(__instance.AllRoles.ToArray());
+                FungleApiPlugin.Plugin.Roles.AddRange(RoleManager.Instance.AllRoles.ToArray());
                 CustomRoleManager.AllRoles.AddRange(FungleApiPlugin.Plugin.Roles);
                 CustomRoleManager.CreateRoles();
-                __instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
+
+                if (MiraCompatibility.Instance != null)
+                {
+                    CustomRoleManager.AllRoles.AddRange(MiraCompatibility.Instance.CompleteRoleRegistration());
+                }
+
+                RoleManager.Instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
                 waitingRegister = false;
             }
         }
@@ -47,7 +52,6 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SetRolePrefix(RoleManager __instance, PlayerControl targetPlayer, RoleTypes roleType)
         {
-            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(roleType)) return true;
             if (EventManager.CallEvent(new BeforeSetRoleEvent(targetPlayer, roleType)).Cancelled) return false;
 
             if (!targetPlayer)
@@ -67,10 +71,6 @@ namespace FungleAPI.Role.Patches
                 if (RoleManager.IsGhostRole(role.Role))
                 {
                     targetPlayer.GetComponent<PlayerHelper>().LastDeadRole = role.Role;
-                }
-                else
-                {
-                    targetPlayer.GetComponent<PlayerHelper>().LastAliveRole = role.Role;
                 }
 
                 if (role != null)
@@ -96,7 +96,7 @@ namespace FungleAPI.Role.Patches
             targetPlayer.Data.Role = roleBehaviour;
             targetPlayer.Data.RoleType = roleType;
             roleBehaviour.Initialize(targetPlayer);
-            if (roleType != RoleTypes.ImpostorGhost && roleType != RoleTypes.CrewmateGhost)
+            if (!RoleManager.IsGhostRole(roleType))
             {
                 targetPlayer.Data.RoleWhenAlive = new Il2CppSystem.Nullable<RoleTypes>(roleType);
             }
@@ -149,32 +149,12 @@ namespace FungleAPI.Role.Patches
         [HarmonyPrefix]
         public static bool SelectRolesPrefix(RoleManager __instance)
         {
-            if (MiraCompatibility.IsLoaded)
-            {
-                return true;
-            }
             if (!GameManager.Instance.IsHideAndSeek())
             {
                 GameModeManager.GetCurrentGameMode().SelectRoles(__instance);
                 return false;
             }
             return true;
-        }
-
-        [HarmonyPatch("SelectRoles")]
-        [HarmonyPostfix]
-        [HarmonyAfter("mira.api")]
-        public static void SelectRolesPostfix(RoleManager __instance)
-        {
-            if (!MiraCompatibility.IsLoaded || GameManager.Instance.IsHideAndSeek())
-            {
-                return;
-            }
-
-            if (GameModeManager.GetCurrentGameMode() is NormalGameMode normalGameMode)
-            {
-                normalGameMode.SelectFungleRolesAfterExternalSelection(__instance);
-            }
         }
     }
 }

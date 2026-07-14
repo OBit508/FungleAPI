@@ -2,6 +2,7 @@
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.Player;
 using FungleAPI.Role;
@@ -35,26 +36,9 @@ namespace FungleAPI.Ship.Patches
             if (role != null)
             {
                 RoleConfiguration roleConfiguration = role.Configuration;
-                if (on)
-                {
-                    __instance.myRend.material.SetFloat("_Outline", 1f);
-                    __instance.myRend.material.SetColor("_OutlineColor", roleConfiguration.OutlineColor);
-                }
-                else
-                {
-                    __instance.myRend.material.SetFloat("_Outline", 0f);
-                }
-                if (mainTarget)
-                {
-                    float num = Mathf.Clamp01(roleConfiguration.OutlineColor.r * 0.5f);
-                    float num2 = Mathf.Clamp01(roleConfiguration.OutlineColor.g * 0.5f);
-                    float num3 = Mathf.Clamp01(roleConfiguration.OutlineColor.b * 0.5f);
-                    __instance.myRend.material.SetColor("_AddColor", new Color(num, num2, num3, 1f));
-                }
-                else
-                {
-                    __instance.myRend.material.SetColor("_AddColor", new Color(0f, 0f, 0f, 0f));
-                }
+                __instance.myRend.material.SetFloat("_Outline", on ? 1 : 0);
+                __instance.myRend.material.SetColor("_OutlineColor", roleConfiguration.OutlineColor);
+                __instance.myRend.material.SetColor("_AddColor", mainTarget ? roleConfiguration.OutlineColor.Lighten() : Color.clear);
                 return false;
             }
             return true;
@@ -170,7 +154,7 @@ namespace FungleAPI.Ship.Patches
             VentHelper helper = vent.GetComponent<VentHelper>();
             if (VentHelper.ArrowPrefab == null)
             {
-                VentHelper.ArrowPrefab = ShipPrefabLoader.SkeldPrefab.AllVents[0].Buttons[0];
+                VentHelper.ArrowPrefab = ShipPrefabLoader.SkeldPrefab.GetComponentsInChildren<Vent>(true)[0].Buttons[0];
             }
             VentHelper.ShipVents.Add(vent, helper);
             if (vent.Right != null)

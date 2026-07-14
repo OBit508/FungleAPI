@@ -1,7 +1,6 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
-using FungleAPI.Modifiers;
 using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Player;
@@ -30,7 +29,6 @@ namespace FungleAPI.Patches
                 }
             }
             EventManager.CallEvent(new StartMeetingEvent(__instance));
-            ModifierManager.NotifyMeetingStarted();
         }
         [HarmonyPostfix]
         [HarmonyPatch("Close")]

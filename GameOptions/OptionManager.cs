@@ -3,6 +3,7 @@ using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
+using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOptions.Options;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
@@ -25,6 +26,21 @@ namespace FungleAPI.GameOptions
         private static uint __optionId = uint.MinValue;
         public static Dictionary<uint, IModdedOption> AllOptions = new Dictionary<uint, IModdedOption>();
         public static List<OptionCollection> OptionCollections = new List<OptionCollection>();
+
+        public static Dictionary<Assembly, List<LobbyTab>> LobbyTabs = new Dictionary<Assembly, List<LobbyTab>>();
+
+        public static List<Assembly> GetAllAssembliesWithTabs()
+        {
+            List<Assembly> assemblies = new List<Assembly>();
+            foreach (KeyValuePair<Assembly, List<LobbyTab>> pair in LobbyTabs)
+            {
+                if (pair.Value.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0)
+                {
+                    assemblies.Add(pair.Key);
+                }
+            }
+            return assemblies;
+        }
 
         public static void SaveOptionCollections()
         {

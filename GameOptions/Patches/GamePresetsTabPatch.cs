@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Api;
+using FungleAPI.PluginLoading;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,13 @@ namespace FungleAPI.GameOptions.Patches
     {
         public static bool Prefix(GamePresetsTab __instance)
         {
-            if (GameManager.Instance.IsHideAndSeek() || GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin) return true;
+            if (GameManager.Instance.IsHideAndSeek() || GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly) return true;
 
-            RulesPresets rulesPresets = (RulesPresets)GameSettingMenuPatch.pluginChanger.CurrentPlugin.RulePreset.Value;
+            ModPlugin modPlugin = ModPluginManager.GetModPlugin(GameSettingMenuPatch.pluginChanger.CurrentPlugin);
+
+            if (modPlugin == null) return true;
+
+            RulesPresets rulesPresets = (RulesPresets)modPlugin.RulePreset.Value;
 
             if (rulesPresets == RulesPresets.Standard)
             {

@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class TeamTab : LobbyTab
+    public class TeamTab : FungleTab
     {
         public override string ViewTabButtonText => FungleTranslation.TeamsText.GetString();
         public override string EditTabButtonText => FungleTranslation.TeamConfigButtonText.GetString();

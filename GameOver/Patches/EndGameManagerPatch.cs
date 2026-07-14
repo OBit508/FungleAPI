@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Audio;
 using FungleAPI.Extensions;
+using FungleAPI.ModCompatibility.MiraSupport;
 
 namespace FungleAPI.GameOver.Patches
 {
@@ -18,6 +19,8 @@ namespace FungleAPI.GameOver.Patches
     {
         public static bool Prefix(EndGameManager __instance)
         {
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.MiraGameOverActive()) return true;
+
             BaseGameOver.CachedGameOver.OnSetEverythingUp(__instance);
             return false;
         }

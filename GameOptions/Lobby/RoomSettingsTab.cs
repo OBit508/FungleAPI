@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class RoomSettingsTab : LobbyTab
+    public class RoomSettingsTab : FungleTab
     {
         public override string ViewTabButtonText => FungleTranslation.RoomText.GetString();
         public override string EditTabButtonText => FungleTranslation.RoomSettings.GetString();

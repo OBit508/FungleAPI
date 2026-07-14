@@ -68,7 +68,7 @@ namespace FungleAPI.GameOptions.Collections
                     {
                         Dirty = true;
                     }
-                    if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == modPlugin) 
+                    if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == modPlugin.ModAssembly) 
                     {
                         LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                     }

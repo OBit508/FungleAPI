@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
+using FungleAPI.ModCompatibility.MiraSupport;
 
 namespace FungleAPI.Role.Patches
 {
@@ -16,6 +17,12 @@ namespace FungleAPI.Role.Patches
         public static bool Prefix(RoleBehaviour otherPlayerRole, ref Color __result)
         {
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
+
+            if (role.IsMiraRole() && MiraCompatibility.Instance.RoleExtensions.CanLocalPlayerSeeRole(role, otherPlayerRole.Player))
+            {
+                __result = role.TeamColor;
+                return false;
+            }
 
             ModdedTeam team = role.GetTeam();
 

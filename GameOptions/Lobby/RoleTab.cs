@@ -4,6 +4,7 @@ using FungleAPI.Assets;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -17,7 +18,7 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class RoleTab : LobbyTab
+    public class RoleTab : FungleTab
     {
         public override string ViewTabButtonText => StringNames.RolesCategory.GetString();
         public override string EditTabButtonText => StringNames.RolesSettings.GetString();
@@ -27,7 +28,7 @@ namespace FungleAPI.GameOptions.Lobby
             float num = 0.662f;
             rolesSettingsMenu.roleTabs = new Il2CppSystem.Collections.Generic.List<PassiveButton>();
             rolesSettingsMenu.roleTabs.Add(rolesSettingsMenu.AllButton);
-            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = GameSettingMenuPatch.pluginChanger.CurrentPlugin.GetTeamsAndRoles();
+            Dictionary<ModdedTeam, List<RoleBehaviour>> teams = ModPluginManager.GetModPlugin(GameSettingMenuPatch.pluginChanger.CurrentPlugin).GetTeamsAndRoles();
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> pair in teams)
             {
                 List<RoleBehaviour> validRoles = pair.Value;

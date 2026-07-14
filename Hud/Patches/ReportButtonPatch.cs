@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FungleAPI.Role;
-using FungleAPI.ModCompatibility;
 using HarmonyLib;
 
 namespace FungleAPI.Hud.Patches
@@ -16,7 +15,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool SetActivePrefix(ReportButton __instance, bool isActive)
         {
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.ReportConfig.SetActive?.Invoke(isActive);
             return false;
         }
@@ -24,7 +22,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool DoClickPrefix(ReportButton __instance)
         {
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.ReportConfig.DoClick?.Invoke();
             return false;
         }

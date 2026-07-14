@@ -1,4 +1,5 @@
-﻿using FungleAPI.Role.Utilities;
+﻿using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Role.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,16 @@ namespace FungleAPI.Role
             VentConfig = VentButtonConfig.Default;
             if (role != null)
             {
+                if (role.IsMiraRole())
+                {
+                    KillConfig = MiraCompatibility.Instance.RoleConfigs.KillConfig;
+                    PlayerTabConfig = MiraCompatibility.Instance.RoleConfigs.TabConfig;
+                    ReportConfig = MiraCompatibility.Instance.RoleConfigs.ReportConfig;
+                    SabotageConfig = MiraCompatibility.Instance.RoleConfigs.SabotageConfig;
+                    VentConfig = MiraCompatibility.Instance.RoleConfigs.VentConfig;
+                    return;
+                }
+
                 ICustomRole customRole = role.CustomRole();
                 if (customRole != null)
                 {

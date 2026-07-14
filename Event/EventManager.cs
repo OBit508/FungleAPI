@@ -21,22 +21,18 @@ namespace FungleAPI.Event
     /// </summary>
     public static class EventManager
     {
-        private static readonly Dictionary<Type, List<RegisteredEvent>> Events = new Dictionary<Type, List<RegisteredEvent>>();
-        private static long _registrationOrder;
+        private static Dictionary<Type, Delegate> Events = new Dictionary<Type, Delegate>();
         public static T CallEvent<T>(T fungleEvent) where T : FungleEvent
         {
-            if (Events.TryGetValue(typeof(T), out List<RegisteredEvent> handlers))
+            if (Events.TryGetValue(typeof(T), out Delegate @delegate))
             {
-                foreach (RegisteredEvent handler in handlers)
-                {
-                    handler.Handler.DynamicInvoke(fungleEvent);
-                }
+                ((Action<T>)@delegate)?.Invoke(fungleEvent);
             }
             return fungleEvent;
         }
-        public static void RegisterEvents(ModPlugin modPlugin)
+        public static void RegisterEvents(IEnumerable<Type> types)
         {
-            foreach (Type type in modPlugin.AllTypes)
+            foreach (Type type in types)
             {
                 if (type.ShouldIgnore()) continue;
 
@@ -53,43 +49,17 @@ namespace FungleAPI.Event
                     Type eventType = parameters[0].ParameterType;
                     Delegate handler = Delegate.CreateDelegate(typeof(Action<>).MakeGenericType(eventType), methodInfo);
 
-                    if (!Events.TryGetValue(eventType, out List<RegisteredEvent> handlers))
+                    if (Events.TryGetValue(eventType, out Delegate @delegate))
                     {
-                        handlers = new List<RegisteredEvent>();
-                        Events[eventType] = handlers;
+                        Events[eventType] = Delegate.Combine(@delegate, handler);
                     }
-
-                    handlers.Add(new RegisteredEvent(handler, methodInfo.GetCustomAttribute<EventRegister>().Priority, _registrationOrder++));
-                    handlers.Sort((left, right) =>
+                    else
                     {
-                        int priority = right.Priority.CompareTo(left.Priority);
-                        return priority != 0 ? priority : left.Order.CompareTo(right.Order);
-                    });
+                        Events[eventType] = handler;
+                    }
                 }
             }
         }
-
-        private sealed class RegisteredEvent
-        {
-            public RegisteredEvent(Delegate handler, int priority, long order)
-            {
-                Handler = handler;
-                Priority = priority;
-                Order = order;
-            }
-
-            public Delegate Handler { get; }
-            public int Priority { get; }
-            public long Order { get; }
-        }
     }
-    public class EventRegister : Attribute
-    {
-        public EventRegister(int priority = 0)
-        {
-            Priority = priority;
-        }
-
-        public int Priority { get; }
-    }
+    public class EventRegister : Attribute { }
 }

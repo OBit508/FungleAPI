@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Base.Roles;
 using FungleAPI.Components;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Networking;
 using FungleAPI.Patches;
 using FungleAPI.Role.Utilities;
@@ -27,7 +28,9 @@ namespace FungleAPI.Role.Patches
         [HarmonyPatch("TeamColor", MethodType.Getter)]
         [HarmonyPrefix]
         public static bool TeamColorPrefix(RoleBehaviour __instance, ref Color __result)
-        { 
+        {
+            if (__instance.IsMiraRole()) return true;
+
             ICustomRole role = __instance.CustomRole();
             if (role != null)
             {

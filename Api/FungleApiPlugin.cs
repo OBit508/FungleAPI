@@ -11,6 +11,7 @@ using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -62,9 +63,9 @@ namespace FungleAPI.Api
             ModPluginManager.Register(plugin, Assembly.GetExecutingAssembly(), this);
             plugin.FunglePlugin = this;
             plugin.RulePreset = Config.Bind("Essential", "RulePreset", (byte)RulesPresets.Standard);
-            plugin.LobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() { Plugin = plugin }, new TeamTab() { Plugin = plugin }, new RoleTab() { Plugin = plugin } };
             ModPluginManager.AllPlugins.Add(plugin);
             ModPluginManager.AllAssemblies.Add(plugin.ModAssembly, plugin);
+            OptionManager.LobbyTabs[plugin.ModAssembly] = new List<LobbyTab>() { new GamemodeSettingsTab() { TabAssembly = plugin.ModAssembly }, new TeamTab() { TabAssembly = plugin.ModAssembly }, new RoleTab() { TabAssembly = plugin.ModAssembly } };
 
             Instance = this;
 
@@ -83,6 +84,7 @@ namespace FungleAPI.Api
             CustomRpcManager.PatchInnerNetObjects();
 
             ReactorCompatibility.CheckReactor();
+            MiraCompatibility.CheckMira();
             SubmergedCompatibility.CheckSubmerged();
 
             IL2CPPChainloader.Instance.PluginLoad += (pluginInfo, assembly, basePlugin) => // Chamado quando um mod é carregado

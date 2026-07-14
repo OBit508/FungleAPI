@@ -26,59 +26,25 @@ namespace FungleAPI.Ship
         /// <summary>
         /// Cached Skeld ship prefab
         /// </summary>
-        public static SkeldShipStatus SkeldPrefab { get; internal set; }
+        public static SkeldShipStatus SkeldPrefab => AmongUsClient.Instance.ShipPrefabs[SkeldID].Asset?.Cast<GameObject>().GetComponent<SkeldShipStatus>();
         /// <summary>
         /// Cached Mira ship prefab
         /// </summary>
-        public static MiraShipStatus MiraPrefab { get; internal set; }
+        public static MiraShipStatus MiraPrefab => AmongUsClient.Instance.ShipPrefabs[MiraID].Asset?.Cast<GameObject>().GetComponent<MiraShipStatus>();
         /// <summary>
         /// Cached Polus ship prefab
         /// </summary>
-        public static PolusShipStatus PolusPrefab { get; internal set; }
+        public static PolusShipStatus PolusPrefab => AmongUsClient.Instance.ShipPrefabs[PolusID].Asset?.Cast<GameObject>().GetComponent<PolusShipStatus>();
         /// <summary>
         /// Cached Airship prefab
         /// </summary>
-        public static AirshipStatus AirshipPrefab { get; internal set; }
+        public static AirshipStatus AirshipPrefab => AmongUsClient.Instance.ShipPrefabs[AirshipID].Asset?.Cast<GameObject>().GetComponent<AirshipStatus>();
         /// <summary>
         /// Cached Fungle ship prefab
         /// </summary>
-        public static FungleShipStatus FunglePrefab { get; internal set; }
+        public static FungleShipStatus FunglePrefab => AmongUsClient.Instance.ShipPrefabs[FungleID].Asset?.Cast<GameObject>().GetComponent<FungleShipStatus>();
 
         public static ShipType ShipLoadFlag = ShipType.Skeld;
-
-        internal static void ChangePrefab(AssetReference shipRef)
-        {
-            if (shipRef.Asset.Is(out GameObject shipObj))
-            {
-                ShipStatus ship = shipObj.GetComponent<ShipStatus>();
-                if (ship.Is(out SkeldShipStatus skeldShipStatus))
-                {
-                    FungleApiPlugin.Instance.Log.LogInfo("Loaded Skeld prefab");
-                    SkeldPrefab = skeldShipStatus;
-                }
-                if (ship.Is(out MiraShipStatus miraShipStatus))
-                {
-                    FungleApiPlugin.Instance.Log.LogInfo("Loaded Mira prefab");
-                    MiraPrefab = miraShipStatus;
-                }
-                if (ship.Is(out PolusShipStatus polusShipStatus))
-                {
-                    FungleApiPlugin.Instance.Log.LogInfo("Loaded Polus prefab");
-                    PolusPrefab = polusShipStatus;
-                }
-                if (ship.Is(out AirshipStatus airshipStatus))
-                {
-                    FungleApiPlugin.Instance.Log.LogInfo("Loaded Airship prefab");
-                    AirshipPrefab = airshipStatus;
-                }
-                if (ship.Is(out FungleShipStatus fungleShipStatus))
-                {
-                    FungleApiPlugin.Instance.Log.LogInfo("Loaded Fungle prefab");
-                    FunglePrefab = fungleShipStatus;
-                }
-                StartShip(ship);
-            }
-        }
         internal static void StartShip(ShipStatus shipStatus)
         {
             shipStatus.AllStepWatchers = Enumerable.ToArray<IStepWatcher>(Enumerable.OrderByDescending<IStepWatcher, int>(shipStatus.GetComponentsInChildren<IStepWatcher>(), (IStepWatcher s) => s.Priority));
@@ -141,19 +107,11 @@ namespace FungleAPI.Ship
                 }
                 Helpers.StartCoroutine(WaitFor());
                 yield return FungleApiPlugin.CoAnimateDots(textMeshPro, baseText, done);
-                
-                for (int i = 0; i <= 5; i++)
-                {
-                    if (i == 3) continue;
-
-                    ChangePrefab(AmongUsClient.Instance.ShipPrefabs[i]);
-                }
             }
         }
         internal static System.Collections.IEnumerator CoLoadAndChange(AssetReference assetReference)
         {
             if (assetReference.Asset == null) yield return CoLoad(assetReference);
-            ChangePrefab(assetReference);
         }
         internal static System.Collections.IEnumerator CoLoad(AssetReference assetReference)
         {

@@ -8,7 +8,7 @@ using AmongUs.GameOptions;
 using FungleAPI.Components;
 using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
-using FungleAPI.Modifiers;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -25,25 +25,10 @@ namespace FungleAPI.Hud.Patches
         public static float timer;
         [HarmonyPatch("Start")]
         [HarmonyPostfix]
+        [HarmonyPriority(Priority.Last)]
         public static void StartPostfix(HudManager __instance)
         {
             HudHelper.Bottom.Clear();
-
-            if (MiraCompatibility.IsLoaded)
-            {
-                timer = 0;
-                HudHelper.BottomRight = __instance.AbilityButton.transform.parent;
-                HudHelper.Bottom.Add(HudHelper.BottomRight.GetComponent<AspectPosition>());
-                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
-                {
-                    button.CreateButton();
-                    button.Button.ToggleVisible(false);
-                }
-                ReportButtonConfig.DefaultSprite = __instance.ReportButton.graphic.sprite;
-                SabotageButtonConfig.DefaultSprite = __instance.SabotageButton.graphic.sprite;
-                VentButtonConfig.DefaultSprite = __instance.ImpostorVentButton.graphic.sprite;
-                return;
-            }
 
             timer = 0;
             if (ShipStatus.Instance != null && LevelImpostorSupport.LevelImpostorAssembly == null)
@@ -55,31 +40,54 @@ namespace FungleAPI.Hud.Patches
             {
                 __instance.StartCoroutine(__instance.CoShowIntro());
             }
-            HudHelper.BottomRight = HudManager.Instance.AbilityButton.transform.parent;
-
-            HudHelper.Bottom.Add(HudHelper.BottomRight.GetComponent<AspectPosition>());
-
-            HudHelper.BottomLeft = GameObject.Instantiate<Transform>(HudHelper.BottomRight, HudHelper.BottomRight.parent);
-            for (int i = 0; i < HudHelper.BottomLeft.childCount; i++)
+            
+            if (MiraCompatibility.Instance == null)
             {
-                GameObject.Destroy(HudHelper.BottomLeft.GetChild(i).gameObject);
+                HudHelper.BottomRight = HudManager.Instance.AbilityButton.transform.parent;
+
+                HudHelper.Bottom.Add(HudHelper.BottomRight.GetComponent<AspectPosition>());
+
+                HudHelper.BottomLeft = GameObject.Instantiate<Transform>(HudHelper.BottomRight, HudHelper.BottomRight.parent);
+                for (int i = 0; i < HudHelper.BottomLeft.childCount; i++)
+                {
+                    GameObject.Destroy(HudHelper.BottomLeft.GetChild(i).gameObject);
+                }
+                GridArrange gridArrange = HudHelper.BottomLeft.GetComponent<GridArrange>();
+                AspectPosition aspectPosition = HudHelper.BottomLeft.GetComponent<AspectPosition>();
+
+                HudHelper.Bottom.Add(aspectPosition);
+
+                HudHelper.BottomLeft.name = "BottomLeft";
+                gridArrange.Alignment = GridArrange.StartAlign.Right;
+                aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
+                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+                {
+                    button.CreateButton();
+                    button.Button.ToggleVisible(false);
+                }
+                gridArrange.Start();
+                gridArrange.ArrangeChilds();
+                aspectPosition.AdjustPosition();
             }
-            GridArrange gridArrange = HudHelper.BottomLeft.GetComponent<GridArrange>();
-            AspectPosition aspectPosition = HudHelper.BottomLeft.GetComponent<AspectPosition>();
-
-            HudHelper.Bottom.Add(aspectPosition);
-
-            HudHelper.BottomLeft.name = "BottomLeft";
-            gridArrange.Alignment = GridArrange.StartAlign.Right;
-            aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
-            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+            else
             {
-                button.CreateButton();
-                button.Button.ToggleVisible(false);
+                Transform Buttons = __instance.transform.Find("Buttons");
+                HudHelper.BottomRight = Buttons.Find("BottomRight");
+                HudHelper.BottomLeft = Buttons.Find("BottomLeft");
+
+                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+                {
+                    button.CreateButton();
+                    button.Button.ToggleVisible(false);
+                }
+
+                GridArrange gridArrange = HudHelper.BottomLeft.GetComponent<GridArrange>();
+
+                gridArrange.Start();
+                gridArrange.ArrangeChilds();
+                HudHelper.BottomLeft.GetComponent<AspectPosition>().AdjustPosition();
             }
-            gridArrange.Start();
-            gridArrange.ArrangeChilds();
-            aspectPosition.AdjustPosition();
+
             __instance.ImpostorVentButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.ImpostorVentButton.transform);
             __instance.ImpostorVentButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
             __instance.SabotageButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.SabotageButton.transform);
@@ -137,8 +145,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
-            ModifierManager.Update();
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
                 Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;
@@ -225,7 +231,6 @@ namespace FungleAPI.Hud.Patches
         })]
         public static void SetHudActivePostfix(HudManager __instance, PlayerControl localPlayer, RoleBehaviour role, bool isActive)
         {
-            if (MiraCompatibility.IsLoaded && !MiraCompatibility.IsFungleRole(role)) return;
             HudHelper.Active = isActive;
 
             if (!GameManager.Instance.IsHideAndSeek())

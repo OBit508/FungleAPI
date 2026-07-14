@@ -30,7 +30,7 @@ namespace FungleAPI.GameOptions.Networking
                 $"{SyncManager.MainFont}{data.TeamOptions.LocalTeamCount}</font>, " +
                 $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{data.TeamOptions.LocalTeamPriority}</font>.", false);
 
-                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.TeamOptions.Plugin)
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == data.TeamOptions.Plugin.ModAssembly)
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }
@@ -55,7 +55,7 @@ namespace FungleAPI.GameOptions.Networking
                 $"{SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamCount}</font>, " +
                 $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", !RpcSyncEverything.UnSynced);
 
-            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == moddedTeam.TeamOptions.Plugin)
+            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == moddedTeam.TeamOptions.Plugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }

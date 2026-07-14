@@ -15,5 +15,9 @@ namespace FungleAPI.Components
     public class VentComponent : MonoBehaviour
     {
         public Vent vent;
+        private void Awake()
+        {
+            vent = GetComponent<Vent>();
+        }
     }
 }

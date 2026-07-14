@@ -7,13 +7,14 @@ using FungleAPI.Teams;
 using FungleAPI.Role.Utilities;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.Api;
+using System.Reflection;
 
 namespace FungleAPI.GameOptions.Patches
 {
     [HarmonyPatch(typeof(RolesSettingsMenu))]
     internal static class RolesSettingMenuPatch
     {
-        public static ModPlugin chanceTabPlugin;
+        public static Assembly chanceTabPlugin;
         public static List<CategoryHeaderEditRole> Headers = new List<CategoryHeaderEditRole>();
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
@@ -23,25 +24,25 @@ namespace FungleAPI.GameOptions.Patches
             {
                 __instance.SetQuotaTab();
                 chanceTabPlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin;
-                __instance.scrollBar.CalculateAndSetYBounds(__instance.RoleChancesSettings.transform.GetChildCount() + (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin ? 3 : 0), 1f, 6f, 0.43f);
+                __instance.scrollBar.CalculateAndSetYBounds(__instance.RoleChancesSettings.transform.GetChildCount() + (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly ? 3 : 0), 1f, 6f, 0.43f);
                 __instance.scrollBar.ScrollToTop();
             }
             Transform mask = __instance.scrollBar.transform.GetChild(1);
             Vector3 localPosition = mask.localPosition;
-            localPosition.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin ? -0.5734f : -0.1734f;
+            localPosition.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly ? -0.5734f : -0.1734f;
             Vector3 localScale = mask.localScale;
-            localScale.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin ? 3.5563f : 4.3563f;
+            localScale.y = GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly ? 3.5563f : 4.3563f;
             mask.localPosition = localPosition;
             mask.localScale = localScale;
-            __instance.AllButton.transform.parent.parent.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin);
-            __instance.RoleChancesSettings.transform.localPosition = new Vector3(0, GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin ? 0 : 0.9f, -5);
+            __instance.AllButton.transform.parent.parent.gameObject.SetActive(GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly);
+            __instance.RoleChancesSettings.transform.localPosition = new Vector3(0, GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin.ModAssembly ? 0 : 0.9f, -5);
             __instance.AdvancedRolesSettings.transform.localPosition = __instance.RoleChancesSettings.transform.localPosition;
         }
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
         public static void AwakePostfix(RolesSettingsMenu __instance)
         {
-            chanceTabPlugin = FungleApiPlugin.Plugin;
+            chanceTabPlugin = FungleApiPlugin.Plugin.ModAssembly;
             Headers.Clear();
         }
         [HarmonyPatch("SetQuotaTab")]
@@ -65,7 +66,7 @@ namespace FungleAPI.GameOptions.Patches
                     }
                 }
             }
-            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin != FungleApiPlugin.Plugin && GameSettingMenuPatch.CurrentTab is RoleTab roleTab)
+            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin != FungleApiPlugin.Plugin.ModAssembly && GameSettingMenuPatch.CurrentTab is RoleTab roleTab)
             {
                 roleTab.SetQuotaTab(__instance, Headers);
             }

@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Base.Roles;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
@@ -41,10 +42,10 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static RoleHintType GetHintType(this RoleBehaviour role)
         {
-            if (role.CustomRole() != null)
-            {
-                return role.CustomRole().Configuration.HintType;
-            }
+            if (MiraExtensions.GetHint(role, out RoleHintType result)) return result;
+
+            if (role.CustomRole() != null) return role.CustomRole().Configuration.HintType;
+
             return RoleHintType.TaskHint;
         }
         /// <summary>
@@ -52,6 +53,8 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static bool ShowRoleText(this RoleBehaviour role)
         {
+            if (role.IsMiraRole()) return false;
+
             if (role.CustomRole() != null)
             {
                 return role.CustomRole().Configuration.ShowRoleText;
@@ -63,6 +66,8 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static ModdedTeam GetTeam(this RoleBehaviour role)
         {
+            if (MiraExtensions.GetTeam(role, out ModdedTeam result)) return result;
+
             if (role.CustomRole() != null)
             {
                 return role.CustomRole().Team;
@@ -74,6 +79,8 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static bool CanSabotage(this RoleBehaviour roleBehaviour)
         {
+            if (MiraExtensions.CanSabotage(roleBehaviour, out bool result)) return result;
+
             if (roleBehaviour.CustomRole() != null)
             {
                 return roleBehaviour.CustomRole().Configuration.CanSabotage;
@@ -81,21 +88,21 @@ namespace FungleAPI.Role.Utilities
             return roleBehaviour.IsImpostor;
         }
         /// <summary>
-        /// Returns if the role can kill
+        /// Returns if the role keep game running
         /// </summary>
-        public static bool CanKill(this RoleBehaviour roleBehaviour)
+        public static bool KeepGameRunning(this RoleBehaviour roleBehaviour)
         {
-            if (roleBehaviour.CustomRole() != null)
-            {
-                return roleBehaviour.CustomRole().Configuration.CanKill;
-            }
-            return roleBehaviour.CanUseKillButton;
+            if (roleBehaviour.CustomRole() != null) return roleBehaviour.CustomRole().Configuration.KeepGameRunning;
+
+            return roleBehaviour.GetTeam() == ModdedTeamManager.Impostors;
         }
         /// <summary>
         /// Returns if the role can use the vanilla kill button
         /// </summary>
         public static bool UseKillButton(this RoleBehaviour roleBehaviour)
         {
+            if (MiraExtensions.UseKillButton(roleBehaviour, out bool result)) return result;
+
             if (roleBehaviour.CustomRole() != null)
             {
                 return roleBehaviour.CustomRole().Configuration.UseVanillaKillButton;
@@ -107,6 +114,8 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static bool CanUseVent(this RoleBehaviour roleBehaviour)
         {
+            if (MiraExtensions.CanUseVent(roleBehaviour, out bool result)) return result;
+
             if (roleBehaviour.CustomRole() != null)
             {
                 return roleBehaviour.CustomRole().Configuration.CanUseVent;
@@ -115,6 +124,12 @@ namespace FungleAPI.Role.Utilities
         }
         public static void AppendHint(RoleBehaviour roleBehaviour, RoleHintType roleHintType, Il2CppSystem.Text.StringBuilder stringBuilder)
         {
+            if (roleHintType == RoleHintType.PlayerTab && roleBehaviour.IsMiraRole())
+            {
+                MiraCompatibility.Instance.RoleExtensions.AppendHint(roleBehaviour, stringBuilder);
+                return;
+            }
+
             RoleBaseHelper roleBaseHelper = roleBehaviour.SafeCast<RoleBaseHelper>();
             if (roleBaseHelper != null)
             {

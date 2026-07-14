@@ -5,6 +5,7 @@ using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
@@ -19,9 +20,9 @@ namespace FungleAPI.Components
     public class PluginChanger : MonoBehaviour
     {
         public int CurrentIndex;
-        public ModPlugin CurrentPlugin;
-        public List<ModPlugin> Plugins;
-        public Action<ModPlugin> OnChange;
+        public Assembly CurrentPlugin;
+        public IEnumerable<Assembly> Plugins;
+        public Action<Assembly> OnChange;
         public TextMeshPro Text;
         public PassiveButton RightButton;
         public PassiveButton LeftButton;
@@ -30,11 +31,20 @@ namespace FungleAPI.Components
             Text = GetComponentInChildren<TextMeshPro>();
             RightButton = GetComponentsInChildren<PassiveButton>()[0];
             LeftButton = GetComponentsInChildren<PassiveButton>()[1];
-            CurrentPlugin = FungleApiPlugin.Plugin;
-            Text.text = CurrentPlugin.FunglePlugin.ModName;
+            CurrentPlugin = FungleApiPlugin.Plugin.ModAssembly;
+
+            void up()
+            {
+                if (Plugins.Count() <= 0) return;
+
+                CurrentPlugin = Plugins.ElementAt(CurrentIndex);
+                Text.text = GetCurrentName() + GetSubText();
+                OnChange?.Invoke(CurrentPlugin);
+            }
+
             RightButton.SetNewAction(new Action(delegate
             {
-                if ((CurrentIndex + 1) >= Plugins.Count)
+                if ((CurrentIndex + 1) >= Plugins.Count())
                 {
                     CurrentIndex = 0;
                 }
@@ -42,25 +52,37 @@ namespace FungleAPI.Components
                 {
                     CurrentIndex++;
                 }
-                CurrentPlugin = Plugins[CurrentIndex];
-                Text.text = CurrentPlugin.FunglePlugin.ModName;
-                OnChange?.Invoke(CurrentPlugin);
+                up();
             }));
             LeftButton.SetNewAction(new Action(delegate
             {
                 if ((CurrentIndex - 1) <= -1)
                 {
-                    CurrentIndex = Plugins.Count - 1;
+                    CurrentIndex = Plugins.Count() - 1;
                 }
                 else
                 {
                     CurrentIndex--;
                 }
-                CurrentPlugin = ModPluginManager.AllPlugins[CurrentIndex];
-                Text.text = CurrentPlugin.FunglePlugin.ModName;
-                OnChange?.Invoke(CurrentPlugin);
+                up();
             }));
-            Plugins = ModPluginManager.AllPlugins;
+        }
+        public void Start()
+        {
+            Text.text = "Vanilla" + GetSubText();
+        }
+        public string GetCurrentName()
+        {
+            ModPlugin modPlugin = ModPluginManager.GetModPlugin(CurrentPlugin);
+            if (modPlugin != null)
+            {
+                return modPlugin.FunglePlugin.ModName;
+            }
+            return BepInMod.GetMod(CurrentPlugin).Name;
+        }
+        public string GetSubText()
+        {
+            return $"\n<size=40%>{Color.yellow.ToTextColor()}({CurrentIndex + 1}/{Plugins.Count()})</color></size>";
         }
     }
 }

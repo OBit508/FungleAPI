@@ -128,6 +128,14 @@ namespace FungleAPI.Cosmetics
         [EventRegister]
         internal static void SetCosmetics(FirstSceneLoadEvent firstSceneLoadEvent)
         {
+            CustomColor[] modColors = AllColors.ToArray();
+            AllColors.Clear();
+            for (int i = 0; i < Palette.PlayerColors.Count; i++)
+            {
+                AllColors.Add(new CustomColor(Palette.PlayerColors[i], Palette.ShadowColors[i], Palette.ColorNames[i]));
+            }
+            AllColors.AddRange(modColors);
+
             List<Color32> PlayerColors = new List<Color32>();
             List<Color32> ShadowColors = new List<Color32>();
             List<StringNames> ColorsNames = new List<StringNames>();

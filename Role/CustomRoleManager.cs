@@ -31,7 +31,7 @@ namespace FungleAPI.Role
     /// </summary>
     public static class CustomRoleManager
     {
-        internal static uint LastRoleId = 19;
+        internal static uint LastRoleId = 100;
         internal static List<CachedWaitingRole> WaitingToRegister = new List<CachedWaitingRole>();
         internal static Dictionary<Type, RoleTypes> Types = new Dictionary<Type, RoleTypes>() 
         {
@@ -124,14 +124,6 @@ namespace FungleAPI.Role
         {
             return GetRoleType(typeof(T));
         }
-        public static bool TryGetRoleType(Type type, out RoleTypes roleType)
-        {
-            return Types.TryGetValue(type, out roleType);
-        }
-        public static bool IsFungleRole(RoleTypes roleType)
-        {
-            return AllRoles.Any(role => role != null && role.Role == roleType && role.CustomRole() != null);
-        }
         /// <summary>
         /// Returns the plugin that registered this role
         /// </summary>
@@ -159,19 +151,16 @@ namespace FungleAPI.Role
             {
                 throw new Exception("You can't register a Role when the RoleManager already loadded");
             }
-            if (Types.ContainsKey(type))
-            {
-                return;
-            }
-            while (Types.Values.Contains((RoleTypes)LastRoleId) || AllRoles.Any(role => role != null && role.Role == (RoleTypes)LastRoleId))
-            {
-                LastRoleId++;
-            }
-            RoleTypes roleTypes = (RoleTypes)LastRoleId;
+            RoleTypes roleTypes = GetNextRoleId();
             WaitingToRegister.Add(new CachedWaitingRole(roleTypes, type, modPlugin));
             Types.Add(type, roleTypes);
-            LastRoleId++;
             ClassInjector.RegisterTypeInIl2Cpp(type);
+        }
+        public static RoleTypes GetNextRoleId()
+        {
+            RoleTypes roleTypes = (RoleTypes)LastRoleId;
+            LastRoleId++;
+            return roleTypes;
         }
         internal static void CreateRoles()
         {

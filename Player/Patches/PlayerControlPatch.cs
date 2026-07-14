@@ -4,7 +4,6 @@ using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
-using FungleAPI.Modifiers;
 using FungleAPI.GameModes;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -76,7 +75,6 @@ namespace FungleAPI.Player.Patches
         public static void DiePostfix(PlayerControl __instance, DeathReason reason)
         {
             EventManager.CallEvent(new PlayerDieEvent(__instance, reason));
-            ModifierManager.NotifyPlayerDied(__instance, reason);
         }
         [HarmonyPatch("ReportDeadBody")]
         [HarmonyPostfix]

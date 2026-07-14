@@ -92,14 +92,18 @@ namespace FungleAPI.GameOptions.Patches
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
 
-            IFungleBasePlugin fungleBasePlugin = GameSettingMenuPatch.pluginChanger.CurrentPlugin.BasePlugin as IFungleBasePlugin;
+            ModPlugin modPlugin = ModPluginManager.GetModPlugin(GameSettingMenuPatch.pluginChanger.CurrentPlugin);
+
+            if (modPlugin == null) return true;
+
+            IFungleBasePlugin fungleBasePlugin = modPlugin.BasePlugin as IFungleBasePlugin;
             if (fungleBasePlugin != null)
             {
-                fungleBasePlugin.SetPreset(preset, GameSettingMenuPatch.pluginChanger.CurrentPlugin);
-                SyncManager.RpcUpdatePreset(preset, GameSettingMenuPatch.pluginChanger.CurrentPlugin);
+                fungleBasePlugin.SetPreset(preset, modPlugin);
+                SyncManager.RpcUpdatePreset(preset, modPlugin);
             }
 
-            if (GameSettingMenuPatch.pluginChanger.CurrentPlugin == FungleApiPlugin.Plugin) return true;
+            if (modPlugin == FungleApiPlugin.Plugin) return true;
 
             __instance.RefreshChildren();
             __instance.RolesMenu.RefreshChildren();

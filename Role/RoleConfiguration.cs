@@ -41,9 +41,9 @@ namespace FungleAPI.Role
         /// </summary>
         public bool CanSabotage;
         /// <summary>
-        /// Indicates whether the role can kill
+        /// Indicates whether the role keep the game running
         /// </summary>
-        public bool CanKill;
+        public bool KeepGameRunning;
         /// <summary>
         /// Indicates whether the role tasks count for the crew win
         /// </summary>
@@ -109,7 +109,7 @@ namespace FungleAPI.Role
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
             GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
             NeutralWinText = () => string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());
-            CanKill = UseVanillaKillButton;
+            KeepGameRunning = customRole.Team == ModdedTeamManager.Impostors;
             OutlineColor = customRole.RoleColor;
             CallGameOverAsNeutral = delegate (PlayerControl playerControl)
             {

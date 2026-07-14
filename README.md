@@ -13,7 +13,6 @@ Fungle API is a modding framework for Among Us, heavily inspired by both [Mira A
 - Custom game modes
 - Custom game over screens
 - Custom buttons
-- Custom target action menus
 - Custom RPCs
 - Custom cosmetics
 - Simplified localization using StringNames
@@ -64,4 +63,3 @@ For developers who wish to take advantage of both frameworks, Fungle API include
 
 - Cosmetic system based on [CorsacCosmetics](https://github.com/XtraCube/CorsacCosmetics)
 - Role tab [Mira API](https://github.com/All-Of-Us-Mods/MiraAPI)
-- MiraSupport compatibility patterns, Freeplay interoperability, and selected framework design ideas are inspired by [Mira API](https://github.com/All-Of-Us-Mods/MiraAPI)

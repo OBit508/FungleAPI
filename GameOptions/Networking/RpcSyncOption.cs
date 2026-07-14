@@ -52,7 +52,7 @@ namespace FungleAPI.GameOptions.Networking
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{str}{data.Item2.Data.Title.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.Item2.GetStringValue(true)}</font>", false);
 
-            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.Item2.OwnerPlugin)
+            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == data.Item2.OwnerPlugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }
@@ -92,7 +92,7 @@ namespace FungleAPI.GameOptions.Networking
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{str}{moddedOption.Data.Title.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedOption.GetStringValue(false)}</font>", true);
 
-            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == moddedOption.OwnerPlugin)
+            if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == moddedOption.OwnerPlugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }

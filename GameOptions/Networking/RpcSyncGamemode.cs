@@ -27,7 +27,7 @@ namespace FungleAPI.GameOptions.Networking
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{FungleTranslation.GameModeText.GetString()}</font>: " +
                 $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", false);
 
-                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == FungleApiPlugin.Plugin)
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == FungleApiPlugin.Plugin.ModAssembly)
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }
@@ -55,7 +55,7 @@ namespace FungleAPI.GameOptions.Networking
 
             if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null)
             {
-                if (LobbyViewSettingsPanePatch.Tab.Plugin == FungleApiPlugin.Plugin)
+                if (LobbyViewSettingsPanePatch.Tab.TabAssembly == FungleApiPlugin.Plugin.ModAssembly)
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }

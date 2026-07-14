@@ -112,7 +112,7 @@ namespace FungleAPI.Api
             CompletedTasksCountForProgress = false,
             GhostRole = RoleTypes.CrewmateGhost,
             NeutralWinText = OldRole.CustomRole() != null ? OldRole.CustomRole().Configuration.NeutralWinText : () => string.Format(FungleTranslation.VictoryText.GetString(), OldRole.NiceName),
-            CanKill = false,
+            KeepGameRunning = false,
             OutlineColor = OldRole != null ? OldRole.TeamColor : Color.gray
         };
         public void Start()
@@ -128,7 +128,7 @@ namespace FungleAPI.Api
             }
             if (Player != null)
             {
-                OldRole = RoleManager.Instance.GetRole(Player.GetComponent<PlayerHelper>().LastAliveRole);
+                OldRole = RoleManager.Instance.GetRole(Player.Data.RoleWhenAlive.value);
             }
         }
         public override bool DidWin(GameOverReason gameOverReason)

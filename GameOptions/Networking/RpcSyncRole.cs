@@ -30,7 +30,7 @@ namespace FungleAPI.GameOptions.Networking
                 $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount}</font>, " +
                 $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{data.RoleOptions.LocalRoleChance}%</font>.", false);
 
-                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == data.RoleOptions.Plugin)
+                if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == data.RoleOptions.Plugin.ModAssembly)
                 {
                     LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
                 }
@@ -55,7 +55,7 @@ namespace FungleAPI.GameOptions.Networking
                 $"{SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleCount}</font>, " +
                 $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", !RpcSyncEverything.UnSynced);
 
-            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.Plugin == customRole.RoleOptions.Plugin)
+            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == customRole.RoleOptions.Plugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }

@@ -12,7 +12,7 @@ using FungleAPI.GameOptions.Lobby;
 
 namespace FungleAPI.Api
 {
-    internal class GamemodeSettingsTab : LobbyTab
+    public class GamemodeSettingsTab : FungleTab
     {
         public override string ViewTabButtonText => GameModeManager.GetCurrentGameMode().GameModeName.GetString();
         public override string EditTabButtonText => FungleTranslation.PluralGameModeText.GetString();

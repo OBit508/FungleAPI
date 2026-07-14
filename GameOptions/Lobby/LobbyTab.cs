@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace FungleAPI.GameOptions.Lobby
 {
     public abstract class LobbyTab
     {
-        public ModPlugin Plugin;
+        public Assembly TabAssembly;
 
         public PassiveButton ViewSettingsButton;
         public PassiveButton EditSettingsButton;

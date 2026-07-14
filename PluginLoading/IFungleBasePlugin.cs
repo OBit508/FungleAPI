@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
+using FungleAPI.Api;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
@@ -34,20 +35,22 @@ namespace FungleAPI.PluginLoading
         void ShowCreditsScreen() { }
         void AlmostLoaded() { }
         void FullyLoaded() { }
-        void LoadTabs(ModPlugin modPlugin) 
+        List<LobbyTab> LoadTabs(ModPlugin modPlugin) 
         {
+            List<LobbyTab> lobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() { TabAssembly = modPlugin.ModAssembly } };
             if (modPlugin.Settings != null)
             {
-                modPlugin.LobbyTabs.Add(new RoomSettingsTab() { Plugin = modPlugin });
+                lobbyTabs.Add(new RoomSettingsTab() { TabAssembly = modPlugin.ModAssembly });
             }
             if (modPlugin.Teams.Count > 0)
             {
-                modPlugin.LobbyTabs.Add(new TeamTab() { Plugin = modPlugin });
+                lobbyTabs.Add(new TeamTab() { TabAssembly = modPlugin.ModAssembly });
             }
             if (modPlugin.HasRoles)
             {
-                modPlugin.LobbyTabs.Add(new RoleTab() { Plugin = modPlugin });
+                lobbyTabs.Add(new RoleTab() { TabAssembly = modPlugin.ModAssembly });
             }
+            return lobbyTabs;
         }
         void SetPreset(RulesPresets preset, ModPlugin modPlugin)
         {

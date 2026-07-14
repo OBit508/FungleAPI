@@ -78,7 +78,7 @@ namespace FungleAPI.Base.Roles
         }
         public override bool DidWin(GameOverReason gameOverReason)
         {
-            if (!Player.Data.IsDead && this.CanKill())
+            if (!Player.Data.IsDead && this.KeepGameRunning())
             {
                 return true;
             }

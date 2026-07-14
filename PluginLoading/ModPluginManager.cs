@@ -14,7 +14,6 @@ using FungleAPI.GameOver;
 using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
-using FungleAPI.Modifiers;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Ship.Patches;
@@ -54,7 +53,7 @@ namespace FungleAPI.PluginLoading
 
             plugin.ImplementedCredits = basePlugin.GetType().GetMethod(nameof(IFungleBasePlugin.ShowCreditsScreen), BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly) != null;
 
-            EventManager.RegisterEvents(plugin);
+            EventManager.RegisterEvents(plugin.AllTypes);
         }
         private static void AddTypeRecursively(Type type, ModPlugin plugin, HashSet<Type> visited)
         {
@@ -124,9 +123,9 @@ namespace FungleAPI.PluginLoading
                 }
             }
 
-            if (plugin != FungleApiPlugin.Plugin)
+            if (plugin != FungleApiPlugin.Plugin && fungleBasePlugin != null)
             {
-                fungleBasePlugin?.LoadTabs(plugin);
+                OptionManager.LobbyTabs[plugin.ModAssembly] = fungleBasePlugin.LoadTabs(plugin);
             }
             if (plugin.Settings == null)
             {
@@ -193,11 +192,6 @@ namespace FungleAPI.PluginLoading
             else if (typeof(RpcHelper).IsAssignableFrom(type))
             {
                 CustomRpcManager.RegisterRpc(type, plugin);
-                return;
-            }
-            else if (typeof(BaseModifier).IsAssignableFrom(type))
-            {
-                ModifierManager.RegisterModifier(type, plugin);
                 return;
             }
             else if (typeof(PlayerComponent).IsAssignableFrom(type))

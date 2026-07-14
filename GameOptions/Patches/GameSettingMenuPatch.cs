@@ -9,6 +9,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
@@ -49,8 +50,9 @@ namespace FungleAPI.GameOptions.Patches
 
             pluginChanger = GameObject.Instantiate(FungleAssets.PluginChangerPrefab, __instance.ControllerSelectable[0].transform.parent);
             pluginChanger.transform.localPosition = new Vector3(-3.36f, 1.67f, -2);
-            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0);
-            pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
+
+            pluginChanger.Plugins = OptionManager.GetAllAssembliesWithTabs();
+            pluginChanger.OnChange = new Action<Assembly>(delegate (Assembly plugin)
             {
                 foreach (UiElement uiElement in __instance.ControllerSelectable)
                 {
@@ -60,11 +62,12 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.ControllerSelectable.Clear();
                 __instance.ControllerSelectable.Add(presetTab);
 
+                List<LobbyTab> lobbyTabs = OptionManager.LobbyTabs[plugin];
 
-                for (int i = 0; i < plugin.LobbyTabs.Count; i++)
+                for (int i = 0; i < lobbyTabs.Count; i++)
                 {
                     int id = i + 1;
-                    LobbyTab lobbyTab = plugin.LobbyTabs[i];
+                    LobbyTab lobbyTab = lobbyTabs[i];
                     lobbyTab.EditSettingsButton = CreateButton(__instance, presetTab, lobbyTab.EditTabButtonText, delegate
                     {
                         __instance.ChangeTab(id, false);
@@ -130,7 +133,7 @@ namespace FungleAPI.GameOptions.Patches
 
             presetTab.transform.parent = scroller.Inner;
 
-            pluginChanger.OnChange(FungleApiPlugin.Plugin);
+            pluginChanger.OnChange(FungleApiPlugin.Plugin.ModAssembly);
         }
 
         public static PassiveButton CreateButton(GameSettingMenu gameSettingMenu, UiElement prefab, string name, Action onClick)
@@ -172,7 +175,7 @@ namespace FungleAPI.GameOptions.Patches
             }
             else
             {
-                CurrentTab = pluginChanger.CurrentPlugin.LobbyTabs[tabNum - 1];
+                CurrentTab = OptionManager.LobbyTabs[pluginChanger.CurrentPlugin][tabNum - 1];
 
                 CurrentTab.EditSettingsButton.SelectButton(true);
 

@@ -23,6 +23,7 @@ using xCloud;
 using static Il2CppMono.Security.X509.X520;
 using static UnityEngine.GraphicsBuffer;
 using Sentry.Internal.Extensions;
+using System.Reflection;
 
 namespace FungleAPI.GameOptions.Patches
 {
@@ -48,13 +49,13 @@ namespace FungleAPI.GameOptions.Patches
             pluginChanger.transform.localPosition = new Vector3(-4.2586f, 2.4241f, -1.9999f);
             pluginChanger.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
-            pluginChanger.Plugins = pluginChanger.Plugins.FindAll(p => p.LobbyTabs.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0);
+            pluginChanger.Plugins = OptionManager.GetAllAssembliesWithTabs();
 
             UiElement buttonPrefab = GameObject.Instantiate(__instance.ControllerSelectable[3], __instance.transform);
 
             buttonPrefab.gameObject.SetActive(false);
 
-            pluginChanger.OnChange = new Action<ModPlugin>(delegate (ModPlugin plugin)
+            pluginChanger.OnChange = new Action<Assembly>(delegate (Assembly plugin)
             {
                 foreach (UiElement uiElement in __instance.ControllerSelectable)
                 {
@@ -62,7 +63,7 @@ namespace FungleAPI.GameOptions.Patches
                 }
                 __instance.ControllerSelectable.Clear();
 
-                Tabs = plugin.LobbyTabs;
+                Tabs = OptionManager.LobbyTabs[plugin];
 
                 Tab = null;
                 if (Tabs.Count > 0)
@@ -136,7 +137,7 @@ namespace FungleAPI.GameOptions.Patches
                 __instance.scrollBar.enabled = !scroller.enabled;
             };
 
-            pluginChanger.OnChange(FungleApiPlugin.Plugin);
+            pluginChanger.OnChange(FungleApiPlugin.Plugin.ModAssembly);
         }
         [HarmonyPatch(nameof(LobbyViewSettingsPane.ChangeTab))]
         [HarmonyPrefix]

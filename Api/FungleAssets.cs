@@ -25,7 +25,6 @@ namespace FungleAPI.Api
         public static LateSprite Cog = new LateSprite("FungleAPI.Assets.FungleAssets.cog.png", 90);
         public static LateSprite Empty = new LateSprite("FungleAPI.Assets.FungleAssets.empty.png", 100);
         public static LateSprite NextButton = new LateSprite("FungleAPI.Assets.FungleAssets.nextButton.png", 100);
-        public static LateSprite PluginChangerBackground =  new LateSprite("FungleAPI.Assets.FungleAssets.pluginChangerBackground.png", 100);
         public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Hover.wav");
         public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Select.wav");
         public static PluginChanger PluginChangerPrefab;
@@ -99,7 +98,6 @@ namespace FungleAPI.Api
             PluginChangerPrefab = new GameObject("PluginChanger") { transform = { parent = Parent } }.AddComponent<PluginChanger>();
             PluginChangerPrefab.gameObject.layer = 5;
             PluginChangerPrefab.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-            PluginChangerPrefab.gameObject.AddComponent<SpriteRenderer>().sprite = PluginChangerBackground;
             TextMeshPro text = new GameObject("Text").AddComponent<TextMeshPro>();
             text.alignment = TextAlignmentOptions.Center;
             text.horizontalAlignment = HorizontalAlignmentOptions.Center;

@@ -1,6 +1,5 @@
 ﻿using FungleAPI.Components;
 using FungleAPI.Role;
-using FungleAPI.ModCompatibility;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -18,7 +17,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool SetTargetPrefix(KillButton __instance, PlayerControl target)
         {
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.KillConfig.SetTarget(target);
             return false;
         }
@@ -26,7 +24,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool CheckClickPrefix(KillButton __instance, PlayerControl target)
         {
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.KillConfig.CheckClick(target);
             return false;
         }
@@ -34,7 +31,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool DoClickPrefix(KillButton __instance)
         {
-            if (!MiraCompatibility.ShouldHandleLocalRole()) return true;
             RoleConfigManager.KillConfig.DoClick();
             return false;
         }
