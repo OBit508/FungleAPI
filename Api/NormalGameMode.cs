@@ -3,6 +3,7 @@ using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -220,7 +221,8 @@ namespace FungleAPI.Api
                 {
                     AssignRolesForTeam(logicRoleSelectionNormal, players, team);
                 }
-                return;
+
+                MiraCompatibility.Instance?.AssignModifiers();
             }
         }
         public void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)
@@ -259,13 +261,13 @@ namespace FungleAPI.Api
                 }
             }
 
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
 
-            while (roleList.Count < players.Count && roleList.Count + rolesAssigned < team.MaxCount)
+            while (roleList.Count < players.Count && roleList.Count + rolesAssigned < team.TeamOptions.LocalTeamCount)
             {
                 roleList.Add(team.DefaultRole);
             }
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.MaxCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
         }
         public override void AssignTasks(ShipStatus shipStatus)
         {

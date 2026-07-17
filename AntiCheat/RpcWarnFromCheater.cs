@@ -10,19 +10,19 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.AntiCheat
 {
-    internal class RpcWarnFromCheater : AdvancedRpc<string, PlayerControl>
+    internal class RpcWarnFromCheater : AdvancedRpc<string, NetworkedPlayerInfo>
     {
         public override void Write(MessageWriter messageWriter, string data)
         {
             messageWriter.Write(data);
         }
-        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
+        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
         {
             if (innerNetObject == null) return;
 
-            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            if (AntiCheatManager.Active && !innerNetObject.IsHost())
             {
-                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
 
                 return;
             }

@@ -22,7 +22,6 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText { get; set; }
         public override Color BackgroundColor { get; set; }
         public override Color NameColor => BackgroundColor;
-        public override bool HasExtraByte => true;
         public override void SetData()
         {
             ICustomRole customRole = Winner.Data.Role.CustomRole();

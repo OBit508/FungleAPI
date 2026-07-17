@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FungleAPI.Player;
+using System;
 using UnityEngine;
 
 namespace FungleAPI.Role.Utilities
@@ -58,7 +59,7 @@ namespace FungleAPI.Role.Utilities
             {
                 if (CanUse())
                 {
-                    PlayerControl.LocalPlayer.CmdCheckMurder(Button.currentTarget);
+                    PlayerControl.LocalPlayer.CmdCheckCustomMurder(Button.currentTarget);
                     SetTarget(null);
                 }
             };

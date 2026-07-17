@@ -11,7 +11,6 @@ namespace FungleAPI.Networking
 {
     internal class RpcSendModsDisconnect : AdvancedRpc<ModsDisconnectData>
     {
-        public override bool RequiresNetObject => false;
         public override void Write(MessageWriter messageWriter, ModsDisconnectData data)
         {
             byte b = 2;

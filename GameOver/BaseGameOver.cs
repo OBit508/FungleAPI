@@ -27,7 +27,6 @@ namespace FungleAPI.GameOver
         public virtual Color BackgroundColor { get; set; }
         public virtual Color NameColor { get; set; }
         public virtual AudioClip Clip { get; set; }
-        public virtual bool HasExtraByte { get; }
         public GameOverReason Reason { get; internal set; }
         public virtual void SetData()
         {
@@ -41,7 +40,7 @@ namespace FungleAPI.GameOver
                 
             }
         }
-        public virtual byte GetExtraByte() { return default; }
+        public virtual byte GetExtraByte() { return 0; }
         public virtual void InterpretExtraByte(byte b) { }
         public virtual void OnSetEverythingUp(EndGameManager endGameManager) 
         {

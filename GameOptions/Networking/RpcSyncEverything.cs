@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncEverything : SimpleRpc<PlayerControl>
+    internal class RpcSyncEverything : SimpleRpc<NetworkedPlayerInfo>
     {
         public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
@@ -48,13 +48,13 @@ namespace FungleAPI.GameOptions.Networking
 
             UnSynced = false;
         }
-        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
+        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
         {
             if (innerNetObject == null) return;
 
-            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            if (AntiCheatManager.Active && !innerNetObject.IsHost())
             {
-                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
 
                 return;
             }

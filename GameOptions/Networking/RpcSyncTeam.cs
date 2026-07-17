@@ -16,7 +16,7 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncTeam : AdvancedRpc<ModdedTeam, PlayerControl>
+    internal class RpcSyncTeam : AdvancedRpc<ModdedTeam, NetworkedPlayerInfo>
     {
         public override void Write(MessageWriter messageWriter, ModdedTeam data)
         {
@@ -36,13 +36,13 @@ namespace FungleAPI.GameOptions.Networking
                 }
             }
         }
-        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
+        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
         {
             if (innerNetObject == null) return;
 
-            if (AntiCheatManager.Active && !innerNetObject.AmOwner)
+            if (AntiCheatManager.Active && !innerNetObject.IsHost())
             {
-                AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
 
                 return;
             }

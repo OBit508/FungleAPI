@@ -31,20 +31,19 @@ namespace FungleAPI.Ship
             {
                 return ShipType.Submerged;
             }
-            Type type = shipStatus.GetType();
-            if (type == typeof(SkeldShipStatus))
+            if (shipStatus.SafeCast<SkeldShipStatus>() != null)
             {
                 return ShipType.Skeld;
             }
-            else if (type == typeof(MiraShipStatus))
+            else if (shipStatus.SafeCast<MiraShipStatus>() != null)
             {
                 return ShipType.MiraHQ;
             }
-            else if (type == typeof(PolusShipStatus))
+            else if (shipStatus.SafeCast<PolusShipStatus>() != null)
             {
                 return ShipType.Polus;
             }
-            else if (type == typeof(AirshipStatus))
+            else if (shipStatus.SafeCast<AirshipStatus>() != null)
             {
                 return ShipType.Airship;
             }

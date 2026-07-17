@@ -16,6 +16,10 @@ namespace FungleAPI.AntiCheat
 
         public static bool Active => AmongUsClient.Instance.AmHost && Enabled;
 
+        public static bool IsHost(this NetworkedPlayerInfo networkedPlayerInfo)
+        {
+            return networkedPlayerInfo.ClientId == AmongUsClient.Instance.HostId;
+        }
         public static void CheaterFinded(int clientId)
         {
             AmongUsClient amongUsClient = AmongUsClient.Instance;
@@ -30,7 +34,7 @@ namespace FungleAPI.AntiCheat
 
                 if (warnEveryone)
                 {
-                    Rpc<RpcWarnFromCheater>.Instance.Send(clientData.PlayerName);
+                    Rpc<RpcWarnFromCheater>.Instance.Send(clientData.PlayerName, PlayerControl.LocalPlayer.Data);
                 }
             }
 

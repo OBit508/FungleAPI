@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Assets;
@@ -19,6 +20,7 @@ using FungleAPI.Ship;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppInterop.Runtime.Injection;
+using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +47,7 @@ namespace FungleAPI.Api
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.3.0";
+        public const string ModV = "0.3.1";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
@@ -77,11 +79,12 @@ namespace FungleAPI.Api
             {
                 Interfaces = new Il2CppInterfaceCollection([typeof(IResourceProvider)])
             });
+            ClassInjector.RegisterTypeInIl2Cpp<CustomRpcMessage>(new RegisterTypeOptions
+            {
+                Interfaces = new Il2CppInterfaceCollection([typeof(IGameDataMessage)])
+            });
 
             Harmony.PatchAll();
-
-            // Da patch nos InnerNetObjects para o sistema de Rpc
-            CustomRpcManager.PatchInnerNetObjects();
 
             ReactorCompatibility.CheckReactor();
             MiraCompatibility.CheckMira();
@@ -126,6 +129,7 @@ namespace FungleAPI.Api
                         }
                     }
                 }
+                ReactorCompatibility.Instance?.Register("FungleAPI", ModV, false, (p) => p == ReactorCreditsLocation.PingTracker);
 
                 // Organiza os mods registrados por GUID
 
@@ -203,6 +207,12 @@ namespace FungleAPI.Api
                 yield return null;
             }
         }
-        internal class FungleHelper : MonoBehaviour { public void OnApplicationQuit() { OptionManager.SaveOptionCollections(); } }
+        internal class FungleHelper : MonoBehaviour 
+        {
+            public void OnApplicationQuit() 
+            { 
+                OptionManager.SaveOptionCollections(); 
+            } 
+        }
     }
 }

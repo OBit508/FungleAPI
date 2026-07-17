@@ -1,4 +1,5 @@
-﻿using FungleAPI.Api;
+﻿using AmongUs.GameOptions;
+using FungleAPI.Api;
 using FungleAPI.Chat;
 using FungleAPI.Components;
 using FungleAPI.Event;
@@ -48,7 +49,15 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool RpcMurderPlayerPrefix(PlayerControl __instance, PlayerControl target, bool didSucceed)
         {
-            return !EventManager.CallEvent(new BeforeMurderEvent(target, (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError) | MurderResultFlags.DecisionByHost)).Cancelled;
+            __instance.RpcCustomMurderPlayer(target, didSucceed);
+            return false;
+        }
+        [HarmonyPatch(nameof(PlayerControl.RpcSetRole))]
+        [HarmonyPrefix]
+        public static bool RpcSetRolePrefix(PlayerControl __instance, RoleTypes roleType)
+        {
+            __instance.RpcCustomSetRole(roleType, !__instance.roleAssigned && !TutorialManager.InstanceExists);
+            return false;
         }
         [HarmonyPatch("CheckMurder")]
         [HarmonyPrefix]

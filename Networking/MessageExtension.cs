@@ -80,7 +80,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteGameOver(this MessageWriter messageWriter, BaseGameOver customGameOver)
         {
-            messageWriter.WritePacked((byte)customGameOver.Reason);
+            messageWriter.Write((byte)customGameOver.Reason);
         }
         /// <summary>
         /// Write a role
@@ -196,7 +196,7 @@ namespace FungleAPI.Networking
         public static RpcHelper ReadRPC(this MessageReader messageReader)
         {
             uint id = messageReader.ReadPackedUInt32();
-            return CustomRpcManager.AllRpc.FirstOrDefault(r => r.RpcId == id);
+            return CustomRpcManager.AllRpc[id];
         }
         /// <summary>
         /// Read a plugin

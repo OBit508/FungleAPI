@@ -13,7 +13,7 @@ namespace FungleAPI.Player.Networking
 {
     internal class CmdCustomMurder : AdvancedRpc<MurderData, PlayerControl>
     {
-        public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, MurderData value)
+        public override void Write(MessageWriter messageWriter, MurderData value)
         {
             value.Serialize(messageWriter);
         }

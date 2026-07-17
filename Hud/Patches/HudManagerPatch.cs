@@ -11,11 +11,13 @@ using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
+using FungleAPI.Extensions;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using InnerNet;
 using TMPro;
 using UnityEngine;
+
 
 namespace FungleAPI.Hud.Patches
 {
@@ -36,11 +38,10 @@ namespace FungleAPI.Hud.Patches
                 MapBehaviour.Instance = UnityEngine.Object.Instantiate(ShipStatus.Instance.MapPrefab, __instance.transform);
                 MapBehaviour.Instance.gameObject.SetActive(false);
             }
-            if (AmongUsClient.Instance.IsGameStarted && AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
-            {
-                __instance.StartCoroutine(__instance.CoShowIntro());
-            }
-            
+
+            __instance.IntroPrefab.gameObject.GetOrAddComponent<IntroHelper>();
+
+
             if (MiraCompatibility.Instance == null)
             {
                 HudHelper.BottomRight = HudManager.Instance.AbilityButton.transform.parent;

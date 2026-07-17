@@ -12,15 +12,18 @@ using FungleAPI.Assets;
 using FungleAPI.PluginLoading;
 using Iced.Intel;
 using FungleAPI.Api;
+using InnerNet;
+using Hazel;
 
 namespace FungleAPI.ModCompatibility.ReactorSupportTemp
 {
-    public abstract class ReactorCompatibility
+    public class ReactorCompatibility
     {
         public static ReactorCompatibility Instance;
         public virtual void Initialize() { }
-        public abstract StringNames CreateStringName();
-        public abstract void Register(string name, string version, bool isPreRelease, Func<ReactorCreditsLocation, bool> shouldShow);
+        public virtual StringNames CreateStringName() => StringNames.None;
+        public virtual void HandleReactorRpc(InnerNetObject innerNetObject, MessageReader messageReader) { }
+        public virtual void Register(string name, string version, bool isPreRelease, Func<ReactorCreditsLocation, bool> shouldShow) { }
 
         public static void CheckReactor()
         {
@@ -33,8 +36,6 @@ namespace FungleAPI.ModCompatibility.ReactorSupportTemp
                     Instance = (ReactorCompatibility)Activator.CreateInstance(assembly.GetType("ReactorWithFungle.RFCompatibility"));
 
                     Instance.Initialize();
-
-                    Instance.Register("FungleAPI", FungleApiPlugin.ModV, false, (p) => p == ReactorCreditsLocation.PingTracker);
                 }
             }
         }

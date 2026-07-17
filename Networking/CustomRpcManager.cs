@@ -30,15 +30,14 @@ namespace FungleAPI.Networking
     public static class CustomRpcManager
     {
         public const byte DefaultRpc = 240;
-        public const byte CustomRpc = 241;
         internal static uint LastRpcId = uint.MinValue;
-        internal static List<RpcHelper> AllRpc = new List<RpcHelper>();
+        internal static Dictionary<uint, RpcHelper> AllRpc = new Dictionary<uint, RpcHelper>();
         /// <summary>
         /// Returns the instance of the given type
         /// </summary>
         public static T GetRpcInstance<T>() where T : RpcHelper
         {
-            foreach (RpcHelper rpc in AllRpc)
+            foreach (RpcHelper rpc in AllRpc.Values)
             {
                 if (typeof(T) == rpc.GetType())
                 {
@@ -81,47 +80,28 @@ namespace FungleAPI.Networking
             LastRpcId++;
             RpcHelper rpc = (RpcHelper)Activator.CreateInstance(type);
             rpc.RpcId = LastRpcId;
-            CustomRpcManager.AllRpc.Add(rpc);
+            CustomRpcManager.AllRpc.Add(LastRpcId, rpc);
             plugin.BasePlugin.Log.LogInfo("Registered RPC " + type.Name);
         }
-        internal static void PatchInnerNetObjects()
+        public static void HandleRpc(InnerNetObject innerNetObject, MessageReader messageReader)
         {
-            foreach (Type type in typeof(InnerNetObject).Assembly.GetTypes().Where(t => typeof(InnerNetObject).IsAssignableFrom(t)))
+            try
             {
-                MethodInfo methodInfo = type.GetMethod("HandleRpc", AccessTools.all);
-                if (methodInfo != null)
+                RpcHelper rpc = messageReader.ReadRPC();
+
+                FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc Id: {rpc.RpcId}");
+
+                if (rpc == null)
                 {
-                    FungleApiPlugin.Harmony.Patch(methodInfo, new HarmonyMethod(typeof(CustomRpcManager).GetMethod("HandleRpcPrefix", AccessTools.all)));
+                    FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc came null");
                 }
+
+                rpc.__handle(innerNetObject, messageReader.ReadMessage());
             }
-        }
-        internal static void HandleNonInnerNetObjectRpc(MessageReader messageReader)
-        {
-            RpcHelper rpc = messageReader.ReadRPC();
-            rpc.__handle(messageReader.ReadMessage());
-        }
-        private static bool HandleRpcPrefix(InnerNetObject __instance, [HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader messageReader)
-        {
-            if (callId == DefaultRpc)
+            catch (Exception ex)
             {
-                try
-                {
-                    RpcHelper rpc = messageReader.ReadRPC();
-
-                    if (rpc == null)
-                    {
-                        FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc came null");
-                    }
-
-                    rpc.__handle(__instance, messageReader.ReadMessage());
-                }
-                catch (Exception ex)
-                {
-                    FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Failed to read rpc, Exception: {ex.Message}");
-                }
-                return false;
+                FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Failed to read rpc, Exception: {ex.Message}");
             }
-            return true;
         }
         [HarmonyPatch(typeof(Constants))]
         internal static class ConstantsPatch

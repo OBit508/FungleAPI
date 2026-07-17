@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using static Il2CppSystem.Net.Http.Headers.Parser;
+using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Networking.Patches
 {
@@ -25,6 +26,31 @@ namespace FungleAPI.Networking.Patches
     [HarmonyPriority(Priority.Last)]
     internal static class HandleGameDataInnerPatch
     {
+        public static System.Collections.IEnumerator CoStoreMessage(InnerNetClient innerNetClient, MessageReader messageReader, uint netId, byte callId, int msgNum)
+        {
+            FunglePlugin<FungleApiPlugin>.Logger.LogWarning(string.Format("Stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString());
+            for (int i = 0; i < 10; i++)
+            {
+                if (innerNetClient.allObjects.AllObjectsFast.TryGetValue(netId, out InnerNetObject innerNetObject))
+                {
+                    if (callId == byte.MaxValue)
+                    {
+                        ReactorCompatibility.Instance?.HandleReactorRpc(innerNetObject, messageReader);
+                        yield break;
+                    }
+                    else if (callId == CustomRpcManager.DefaultRpc)
+                    {
+                        CustomRpcManager.HandleRpc(innerNetObject, messageReader);
+                        yield break;
+                    }
+                    innerNetObject.HandleRpc(callId, messageReader);
+                    yield break;
+                }
+                yield return new WaitForSeconds(0.1f);
+                FunglePlugin<FungleApiPlugin>.Logger.LogWarning(string.Format("Failed to read stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString() + " try: " + (i + 1));
+            }
+            FunglePlugin<FungleApiPlugin>.Logger.LogError(string.Format("Failed to read stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString());
+        }
         public static bool Prefix(InnerNetClient._HandleGameDataInner_d__167 __instance, ref bool __result)
         {
             MessageReader messageReader = __instance.reader;
@@ -33,22 +59,29 @@ namespace FungleAPI.Networking.Patches
             {
                 InnerNetClient innerNetClient = __instance.__4__this;
 
-                MessageReader clone = messageReader.CloneReader();
-
-                clone.ReadPackedUInt32();
-                byte b = clone.ReadByte();
-
-                if (b == 241)
+                uint netId = messageReader.ReadPackedUInt32();
+                byte callId = messageReader.ReadByte();
+                
+                if (innerNetClient.allObjects.AllObjectsFast.TryGetValue(netId, out InnerNetObject innerNetObject))
                 {
-                    clone.Recycle();
-
-                    messageReader.ReadPackedUInt32();
-                    messageReader.ReadByte();
-
-                    CustomRpcManager.HandleNonInnerNetObjectRpc(messageReader);
-
-                    return false;
+                    if (callId == byte.MaxValue)
+                    {
+                        ReactorCompatibility.Instance?.HandleReactorRpc(innerNetObject, messageReader);
+                        return false;
+                    }
+                    else if (callId == CustomRpcManager.DefaultRpc)
+                    {
+                        CustomRpcManager.HandleRpc(innerNetObject, messageReader);
+                        return false;
+                    }
+                    innerNetObject.HandleRpc(callId, messageReader);
                 }
+                else if (netId != uint.MaxValue && !innerNetClient.DestroyedObjects.Contains(netId))
+                {
+                    innerNetClient.StartCoroutine(CoStoreMessage(innerNetClient, messageReader, netId, callId, __instance.msgNum).WrapToIl2Cpp());
+                }
+
+                return false;
             }
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)
@@ -120,7 +153,7 @@ namespace FungleAPI.Networking.Patches
                             }
                         }
 
-                        Rpc<RpcSendModsDisconnect>.Instance.Send(new ModsDisconnectData(missingModsText, extraModsText), SendOption.Reliable, clientId);
+                        Rpc<RpcSendModsDisconnect>.Instance.Send(new ModsDisconnectData(missingModsText, extraModsText), PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
                         AmongUsClient.Instance.KickPlayer(clientId, false);
                     }
                 }

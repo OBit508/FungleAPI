@@ -44,8 +44,18 @@ namespace FungleAPI.Player
         /// <summary>
         /// Perform a custom murder
         /// </summary>
+        public static void RpcCustomSetRole(this PlayerControl source, RoleTypes roleTypes, bool showIntro = false)
+        {
+            if (!AmongUsClient.Instance.AmHost) return;
+            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { Target = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer.Data);
+        }
+        /// <summary>
+        /// Perform a custom murder
+        /// </summary>
         public static void RpcCustomMurderPlayer(this PlayerControl source, PlayerControl target, bool didSucceed, bool resetKillTimer = true, bool createDeadBody = true, bool teleportMurderer = true, bool showKillAnim = true, bool playKillSound = true)
         {
+            if (!AmongUsClient.Instance.AmHost) return;
+
             MurderResultFlags murderResultFlags = (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
             MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
 
@@ -53,7 +63,7 @@ namespace FungleAPI.Player
             {
                 return;
             }
-            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(source, target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), PlayerControl.LocalPlayer.Data);
         }
         /// <summary>
         /// Perform a custom murder
@@ -66,7 +76,7 @@ namespace FungleAPI.Player
                 source.CheckCustomMurder(target, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
                 return;
             }
-            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(source, target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
 
 

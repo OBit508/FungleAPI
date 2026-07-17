@@ -29,7 +29,7 @@ namespace FungleAPI.GameOver
     public static class GameOverManager
     {
         public static Dictionary<Type ,BaseGameOver> CustomGameOvers = new Dictionary<Type, BaseGameOver>();
-        internal static byte GameOverId = 9;
+        internal static byte GameOverId = 10;
         internal static Dictionary<Type, GameOverReason> VanillaGameOvers = new Dictionary<Type, GameOverReason>()
         {
             { typeof(CrewmateDisconnect), GameOverReason.CrewmateDisconnect },
@@ -71,6 +71,10 @@ namespace FungleAPI.GameOver
         {
             RpcEndGame(gameManager, GetGameOverInstance<T>());
         }
+        public static void RpcEndGame<T, DataT>(this GameManager gameManager, DataT data) where T : BaseGameOver<DataT>
+        {
+            RpcEndGame(gameManager, GetGameOverInstance<T>(), data);
+        }
         public static void RpcEndGame(this GameManager gameManager, BaseGameOver gameOver)
         {
             AmongUsClient amongUsClient = AmongUsClient.Instance;
@@ -86,15 +90,8 @@ namespace FungleAPI.GameOver
             gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);
-            if (gameOver.HasExtraByte)
-            {
-                messageWriter.Write(gameOver.GetExtraByte());
-            }
+            messageWriter.Write(gameOver.GetExtraByte());
             amongUsClient.FinishEndGame(messageWriter);
-        }
-        public static void RpcEndGame<T, DataT>(this GameManager gameManager, DataT data) where T : BaseGameOver<DataT>
-        {
-            RpcEndGame(gameManager, GetGameOverInstance<T>(), data);
         }
         public static void RpcEndGame<DataT>(this GameManager gameManager, BaseGameOver<DataT> gameOver, DataT data)
         {
@@ -114,10 +111,7 @@ namespace FungleAPI.GameOver
             gameManager.logger.Info(string.Format("Endgame for {0}", gameOver.Reason), null);
             MessageWriter messageWriter = amongUsClient.StartEndGame();
             messageWriter.WriteGameOver(gameOver);
-            if (gameOver.HasExtraByte)
-            {
-                messageWriter.Write(gameOver.GetExtraByte());
-            }
+            messageWriter.Write(gameOver.GetExtraByte());
             amongUsClient.FinishEndGame(messageWriter);
         }
         public static void RegisterGameOver(Type type, ModPlugin modPlugin)
@@ -150,12 +144,8 @@ namespace FungleAPI.GameOver
         private static bool CreatePrefix([HarmonyArgument(0)] MessageReader reader, ref EndGameResult __result)
         {
             BaseGameOver.CachedGameOver = reader.ReadGameOver();
-            if (BaseGameOver.CachedGameOver.HasExtraByte)
-            {
-                BaseGameOver.CachedGameOver.InterpretExtraByte(reader.ReadByte());
-            }
+            BaseGameOver.CachedGameOver.InterpretExtraByte(reader.ReadByte());
             BaseGameOver.CachedGameOver.SetData();
-
 
             EventManager.CallEvent(new AfterGameOver(BaseGameOver.CachedGameOver));
             if (reader.Position < reader.Length)

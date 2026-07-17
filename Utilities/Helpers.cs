@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.Arm;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using BepInEx.Core.Logging.Interpolation;
+﻿using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
@@ -24,8 +14,19 @@ using Hazel;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using Il2CppSystem.Threading.Tasks;
 using InnerNet;
 using Steamworks;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
+using System.Text;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -37,9 +38,54 @@ namespace FungleAPI.Utilities
     /// </summary>
     public static class Helpers
     {
+        internal static ShapeshifterMinigame ShapPrefab;
         internal static GenericPopup Popup;
         internal static EditName Screen;
         public static bool GameIsRunning { get; internal set; }
+        /// <summary>
+        /// Show the shapeshifter minigame
+        /// </summary>
+        public static void ShowShapMenu(List<PlayerControl> players)
+        {
+            if (ShapPrefab == null)
+            {
+                ShapPrefab = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Shapeshifter).SafeCast<ShapeshifterRole>().ShapeshifterMenu;
+            }
+            ShapeshifterMinigame shapeshifterMinigame = GameObject.Instantiate(ShapPrefab, Camera.main.transform);
+            shapeshifterMinigame.transform.localPosition = new Vector3(0, 0, -50);
+
+            Minigame.Instance = shapeshifterMinigame;
+            shapeshifterMinigame.timeOpened = Time.realtimeSinceStartup;
+            if (PlayerControl.LocalPlayer)
+            {
+                if (MapBehaviour.Instance)
+                {
+                    MapBehaviour.Instance.Close();
+                }
+                PlayerControl.LocalPlayer.MyPhysics.SetNormalizedVelocity(Vector2.zero);
+            }
+            shapeshifterMinigame.logger.Info("Opening minigame " + shapeshifterMinigame.GetType().Name, null);
+            shapeshifterMinigame.StartCoroutine(shapeshifterMinigame.CoAnimateOpen());
+
+            shapeshifterMinigame.potentialVictims = new Il2CppSystem.Collections.Generic.List<ShapeshifterPanel>();
+            List<UiElement> list2 = new List<UiElement>();
+            for (int i = 0; i < players.Count; i++)
+            {
+                PlayerControl player = players[i];
+                int num = i % 3;
+                int num2 = i / 3;
+                bool flag = PlayerControl.LocalPlayer.Data.Role.NameColor == player.Data.Role.NameColor;
+                ShapeshifterPanel shapeshifterPanel = GameObject.Instantiate<ShapeshifterPanel>(shapeshifterMinigame.PanelPrefab, shapeshifterMinigame.transform);
+                shapeshifterPanel.transform.localPosition = new Vector3(shapeshifterMinigame.XStart + (float)num * shapeshifterMinigame.XOffset, shapeshifterMinigame.YStart + (float)num2 * shapeshifterMinigame.YOffset, -1f);
+                shapeshifterPanel.SetPlayer(i, player.Data, new Action(delegate
+                {
+                    shapeshifterMinigame.Shapeshift(player);
+                }));
+                shapeshifterPanel.NameText.color = (flag ? player.Data.Role.NameColor : Color.white);
+                shapeshifterMinigame.potentialVictims.Add(shapeshifterPanel);
+                list2.Add(shapeshifterPanel.Button);
+            }
+        }
         /// <summary>
         /// Show a popup on the screen
         /// </summary>
@@ -101,11 +147,10 @@ namespace FungleAPI.Utilities
         {
             try
             {
-                if (obj == null || obj.TryCast<T>() == null)
-                {
-                    return null;
-                }
-                return obj.Cast<T>();
+                if (obj == null) return null;
+                T o = obj.TryCast<T>();
+                if (o == null) return null;
+                return o;
             }
             catch
             {

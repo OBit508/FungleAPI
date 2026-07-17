@@ -158,7 +158,7 @@ namespace FungleAPI.Patches
         {
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
-                button.Reset(CustomAbilityButton.ResetType.EndMeeting);
+                button.Reset();
             }
         }
     }

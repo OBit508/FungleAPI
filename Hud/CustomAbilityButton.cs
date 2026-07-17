@@ -92,7 +92,7 @@ namespace FungleAPI.Hud
         public abstract void OnClick();
         public virtual void CreateButton()
         {
-            Reset(ResetType.Create);
+
             if (Button)
             {
                 return;
@@ -103,11 +103,8 @@ namespace FungleAPI.Hud
             Button.graphic.sprite = ButtonSprite;
             Button.OverrideText(OverrideText);
             Button.buttonLabelText.SetOutlineColor(TextOutlineColor);
-            if (LimitedUses)
-            {
-                Button.SetUsesRemaining(MaxUses);
-            }
-            else
+            SetCooldown(InitialCooldown);
+            if (!LimitedUses)
             {
                 Button.usesRemainingSprite.gameObject.SetActive(false);
             }
@@ -120,7 +117,7 @@ namespace FungleAPI.Hud
         }
         public virtual bool CanUse()
         {
-            return !Minigame.Instance && !MeetingHud.Instance && Vent.currentVent == null && (Transformed && CanDetransform || !Transformed);
+            return Minigame.Instance == null && MeetingHud.Instance == null && Vent.currentVent == null && (Transformed && CanDetransform || !Transformed);
         }
         public virtual void MeetingStart(MeetingHud meetingHud)
         {
@@ -130,10 +127,13 @@ namespace FungleAPI.Hud
             }
         }
         public virtual void Enable() { }
-        public virtual void Reset(ResetType resetType)
+        public virtual void Reset(bool changeRole = false)
         {
-            Timer = resetType == ResetType.Create ? InitialCooldown : Cooldown;
-            UsesLeft = resetType != ResetType.EndMeeting ? MaxUses : UsesLeft;
+            if (changeRole && LimitedUses)
+            {
+                SetNumUses(MaxUses);
+            }
+            SetCooldown(changeRole ? InitialCooldown : Cooldown);
             Transformed = false;
             TransformTimer = TransformDuration;
         }
@@ -232,15 +232,6 @@ namespace FungleAPI.Hud
             }
             GameObject.Destroy(Button.gameObject);
             Button = null;
-        }
-        /// <summary>
-        /// Reset types used to control reset behavior
-        /// </summary>
-        public enum ResetType
-        {
-            EndMeeting,
-            Default,
-            Create
         }
     }
 }

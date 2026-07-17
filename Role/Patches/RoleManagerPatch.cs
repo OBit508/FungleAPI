@@ -22,6 +22,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Hud;
 
 namespace FungleAPI.Role.Patches
 {
@@ -73,7 +74,7 @@ namespace FungleAPI.Role.Patches
                     targetPlayer.GetComponent<PlayerHelper>().LastDeadRole = role.Role;
                 }
 
-                if (role != null)
+                if (role != null && targetPlayer.AmOwner)
                 {
                     if (role.CanUseKillButton)
                     {
@@ -111,19 +112,27 @@ namespace FungleAPI.Role.Patches
                 targetPlayer.Revive();
             }
             CustomRoleManager.UpdateRole(roleBehaviour);
-            if (roleBehaviour.CanUseKillButton)
+            if (targetPlayer.AmOwner)
             {
-                RoleConfigManager.KillConfig.InitializeButton();
+                if (roleBehaviour.CanUseKillButton)
+                {
+                    RoleConfigManager.KillConfig.InitializeButton();
+                }
+                if (roleBehaviour.CanSabotage())
+                {
+                    RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
+                }
+                if (roleBehaviour.CanVent)
+                {
+                    RoleConfigManager.VentConfig.InitializeButton?.Invoke();
+                }
+                RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
+
+                foreach (CustomAbilityButton customAbilityButton in HudHelper.Buttons.Values)
+                {
+                    customAbilityButton.Reset(true);
+                }
             }
-            if (roleBehaviour.CanSabotage())
-            {
-                RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
-            }
-            if (roleBehaviour.CanVent)
-            {
-                RoleConfigManager.VentConfig.InitializeButton?.Invoke();
-            }
-            RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
 
             EventManager.CallEvent(new AfterSetRoleEvent(targetPlayer, roleType));
             return false;

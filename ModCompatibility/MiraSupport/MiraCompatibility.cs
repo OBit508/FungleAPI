@@ -24,6 +24,7 @@ namespace FungleAPI.ModCompatibility.MiraSupport
         public virtual IEnumerable<RoleBehaviour> CompleteRoleRegistration() => null;
         public virtual void PopulateMiraLobbyTabs() { }
         public virtual bool MiraGameOverActive() => false;
+        public virtual void AssignModifiers() { }
         public virtual bool IsMiraAssembly(Assembly assembly) => false;
         public virtual void CreateMiraFolders(TaskAdderGame taskAdderGame, Dictionary<TaskFolder, List<FolderItem>> folders) { }
 

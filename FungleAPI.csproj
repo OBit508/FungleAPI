@@ -40,6 +40,7 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\CustomAbilityButtonHelper.cs" />
+    <Compile Include="Components\IntroHelper.cs" />
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\PlayerVoteAreaHelper.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
@@ -61,6 +62,7 @@
     <Compile Include="Event\Vanilla\AfterIntroBeginEvent.cs" />
     <Compile Include="Event\Vanilla\BeforeIntroBeginEvent.cs" />
     <Compile Include="Event\Vanilla\IntroEndEvent.cs" />
+    <Compile Include="Event\Vanilla\IntroStartEvent.cs" />
     <Compile Include="Event\Vanilla\Player\AfterSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\Player\BeforeSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
@@ -142,6 +144,7 @@
     <Compile Include="GameOptions\Lobby\LobbyTab.cs" />
     <Compile Include="GameOptions\Patches\LobbyViewSettingsPanePatch.cs" />
     <Compile Include="GameOptions\Patches\RolesSettingMenuPatch.cs" />
+    <Compile Include="GlobalPatches\PlayerBanDataPatch.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\CoShowIntroPatch.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
@@ -154,6 +157,7 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
+    <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\ModsDisconnectData.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
@@ -166,14 +170,15 @@
     <Compile Include="Networking\RpcSendModsDisconnect.cs" />
     <Compile Include="Player\Networking\CmdCustomMurder.cs" />
     <Compile Include="Player\Networking\Data\MurderData.cs" />
+    <Compile Include="Player\Networking\Data\SetRoleData.cs" />
     <Compile Include="Player\Networking\RpcMoveToVent.cs" />
     <Compile Include="Player\BodyUtils.cs" />
+    <Compile Include="Player\Networking\RpcSetRole.cs" />
     <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
     <Compile Include="Player\PlayerExtensions.cs" />
     <Compile Include="PluginLoading\BepInMod.cs" />
     <Compile Include="PluginLoading\FileManager.cs" />
     <Compile Include="PluginLoading\PluginCredits.cs" />
-    <Compile Include="Role\Patches\IntroCoBeginPatch.cs" />
     <Compile Include="Role\Patches\MeetingIntroAnimationPatch.cs" />
     <Compile Include="Role\Utilities\CachedWaitingRole.cs" />
     <Compile Include="Role\RoleConfiguration.cs" />
