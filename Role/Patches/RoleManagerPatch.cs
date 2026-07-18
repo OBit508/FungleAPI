@@ -6,8 +6,12 @@ using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
-using FungleAPI.GameOver;
 using FungleAPI.GameModes;
+using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Lobby;
+using FungleAPI.GameOver;
+using FungleAPI.Hud;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -21,8 +25,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using FungleAPI.ModCompatibility.MiraSupport;
-using FungleAPI.Hud;
+using xCloud;
 
 namespace FungleAPI.Role.Patches
 {
@@ -46,6 +49,24 @@ namespace FungleAPI.Role.Patches
                 }
 
                 RoleManager.Instance.AllRoles = CustomRoleManager.AllRoles.ToIl2CppList();
+
+                foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
+                {
+                    plugin.Settings.Initialize(plugin);
+                    foreach (ModdedTeam moddedTeam in plugin.Teams)
+                    {
+                        moddedTeam.Initialize(plugin);
+                    }
+
+                    if (plugin == FungleApiPlugin.Plugin) continue;
+
+                    List<LobbyTab> tabs = plugin.FunglePlugin.LoadTabs(plugin);
+
+                    if (tabs.FindAll(t => t.GetType() != typeof(GamemodeSettingsTab)).Count > 0)
+
+                    OptionManager.LobbyTabs[plugin.ModAssembly] = tabs;
+                }
+
                 waitingRegister = false;
             }
         }

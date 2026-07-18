@@ -14,7 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.UIElements;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(ExileController))]
     internal static class ExileControllerPatch

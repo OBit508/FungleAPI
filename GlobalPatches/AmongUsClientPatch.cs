@@ -6,11 +6,13 @@ using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Lobby;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
+using FungleAPI.Role.Patches;
 using FungleAPI.Teams;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -24,25 +26,11 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(AmongUsClient))]
     internal static class AmongUsClientPatch
     {
-        [HarmonyPatch("Awake")]
-        [HarmonyPostfix]
-        public static void AwakePostfix(AmongUsClient __instance)
-        {
-            foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
-            {
-                plugin.Settings.Initialize(plugin);
-                foreach (ModdedTeam moddedTeam in plugin.Teams)
-                {
-                    moddedTeam.Initialize(plugin);
-                }
-            }
-            MiraCompatibility.Instance?.PopulateMiraLobbyTabs();
-        }
         [HarmonyPatch(nameof(AmongUsClient.CreatePlayer))]
         [HarmonyPostfix]
         public static void SyncEverything(AmongUsClient __instance, ClientData clientData)

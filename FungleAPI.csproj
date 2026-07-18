@@ -146,7 +146,6 @@
     <Compile Include="GameOptions\Patches\RolesSettingMenuPatch.cs" />
     <Compile Include="GlobalPatches\PlayerBanDataPatch.cs" />
     <Compile Include="Hud\CustomButton.cs" />
-    <Compile Include="Hud\Patches\CoShowIntroPatch.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
@@ -163,7 +162,6 @@
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />
     <Compile Include="Networking\HandShakeManager.cs" />
-    <Compile Include="Networking\HostGameHelper.cs" />
     <Compile Include="Networking\Patches\InnerNetClientPatch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />

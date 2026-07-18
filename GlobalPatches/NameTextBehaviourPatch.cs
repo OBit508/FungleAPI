@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(NameTextBehaviour), "Start")]
     internal static class NameTextBehaviourPatch

@@ -21,7 +21,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(MainMenuManager))]
     internal static class MainMenuManagerPatch

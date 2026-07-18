@@ -28,7 +28,6 @@ namespace FungleAPI.PluginLoading
         public IFungleBasePlugin FunglePlugin;
 
         public ConfigEntry<byte> RulePreset;
-        public bool HasRoles;
 
         public Dictionary<int, Type> AllPriorityTypes = new Dictionary<int, Type>();
         public List<Type> AllTypes = new List<Type>();

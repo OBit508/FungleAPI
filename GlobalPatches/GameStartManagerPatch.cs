@@ -10,7 +10,7 @@ using HarmonyLib;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(GameStartManager))]
     internal static class GameStartManagerPatch

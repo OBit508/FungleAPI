@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(DetectiveNotesMinigame))]
     internal static class DetectiveNotesMinigamePatch

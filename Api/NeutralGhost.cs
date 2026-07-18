@@ -1,6 +1,5 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Components;
-using FungleAPI.Patches;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -113,7 +112,9 @@ namespace FungleAPI.Api
             GhostRole = RoleTypes.CrewmateGhost,
             NeutralWinText = OldRole.CustomRole() != null ? OldRole.CustomRole().Configuration.NeutralWinText : () => string.Format(FungleTranslation.VictoryText.GetString(), OldRole.NiceName),
             KeepGameRunning = false,
-            OutlineColor = OldRole != null ? OldRole.TeamColor : Color.gray
+            OutlineColor = OldRole != null ? OldRole.TeamColor : Color.gray,
+            HideInLobby = true,
+            HideInFreeplay = true
         };
         public void Start()
         {

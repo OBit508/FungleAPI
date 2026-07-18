@@ -123,10 +123,6 @@ namespace FungleAPI.PluginLoading
                 }
             }
 
-            if (plugin != FungleApiPlugin.Plugin && fungleBasePlugin != null)
-            {
-                OptionManager.LobbyTabs[plugin.ModAssembly] = fungleBasePlugin.LoadTabs(plugin);
-            }
             if (plugin.Settings == null)
             {
                 plugin.Settings = new RoomSettings();
@@ -170,7 +166,6 @@ namespace FungleAPI.PluginLoading
             }
             else if (typeof(RoleBehaviour).IsAssignableFrom(type) && typeof(ICustomRole).IsAssignableFrom(type))
             {
-                plugin.HasRoles = true;
                 CustomRoleManager.RegisterRole(type, plugin);
                 return;
             }

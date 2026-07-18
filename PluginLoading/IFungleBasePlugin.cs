@@ -5,6 +5,7 @@ using FungleAPI.Api;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using Hazel;
@@ -38,7 +39,7 @@ namespace FungleAPI.PluginLoading
         List<LobbyTab> LoadTabs(ModPlugin modPlugin) 
         {
             List<LobbyTab> lobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() { TabAssembly = modPlugin.ModAssembly } };
-            if (modPlugin.Settings != null)
+            if (modPlugin.Settings.Groups.Count > 0)
             {
                 lobbyTabs.Add(new RoomSettingsTab() { TabAssembly = modPlugin.ModAssembly });
             }
@@ -46,7 +47,7 @@ namespace FungleAPI.PluginLoading
             {
                 lobbyTabs.Add(new TeamTab() { TabAssembly = modPlugin.ModAssembly });
             }
-            if (modPlugin.HasRoles)
+            if (modPlugin.Roles.FindAll(r => !r.CustomRole().Configuration.HideInLobby).Count > 0)
             {
                 lobbyTabs.Add(new RoleTab() { TabAssembly = modPlugin.ModAssembly });
             }

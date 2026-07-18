@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using AmongUs.InnerNet.GameDataMessages;
 using BepInEx;
+using BepInEx.Logging;
 using BepInEx.Unity.IL2CPP;
 using FungleAPI.Assets;
 using FungleAPI.Cosmetics;
@@ -23,8 +24,10 @@ using Il2CppInterop.Runtime.Injection;
 using InnerNet;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AddressableAssets.ResourceLocators;
@@ -211,7 +214,7 @@ namespace FungleAPI.Api
         {
             public void OnApplicationQuit() 
             { 
-                OptionManager.SaveOptionCollections(); 
+                OptionManager.SaveOptionCollections();
             } 
         }
     }

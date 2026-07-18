@@ -7,7 +7,7 @@ using HarmonyLib;
 using FungleAPI.ModCompatibility;
 using FungleAPI.Api;
 
-namespace FungleAPI.Patches
+namespace FungleAPI.GlobalPatches
 {
     [HarmonyPatch(typeof(VersionShower), "Start")]
     internal static class VersionShowerPatch
