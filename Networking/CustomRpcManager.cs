@@ -89,8 +89,6 @@ namespace FungleAPI.Networking
             {
                 RpcHelper rpc = messageReader.ReadRPC();
 
-                FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc Id: {rpc.RpcId}");
-
                 if (rpc == null)
                 {
                     FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Rpc came null");
