@@ -67,6 +67,8 @@ namespace FungleAPI.Role.Patches
                     OptionManager.LobbyTabs[plugin.ModAssembly] = tabs;
                 }
 
+                MiraCompatibility.Instance?.PopulateMiraLobbyTabs();
+
                 waitingRegister = false;
             }
         }
