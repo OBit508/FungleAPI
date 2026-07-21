@@ -55,26 +55,6 @@ namespace FungleAPI.Networking
             write(writer);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
-        public static void SendRpc(byte callId, Action<MessageWriter> write, SendOption sendOption = SendOption.Reliable, int targetClientId = -1)
-        {
-            MessageWriter messageWriter = MessageWriter.Get(sendOption);
-            if (targetClientId < 0)
-            {
-                messageWriter.StartMessage(5);
-                messageWriter.Write(AmongUsClient.Instance.GameId);
-            }
-            else
-            {
-                messageWriter.StartMessage(6);
-                messageWriter.Write(AmongUsClient.Instance.GameId);
-                messageWriter.WritePacked(targetClientId);
-            }
-            messageWriter.StartMessage(2);
-            messageWriter.WritePacked(PlayerControl.LocalPlayer != null ? PlayerControl.LocalPlayer.NetId : 5);
-            messageWriter.Write(callId);
-            write(messageWriter);
-            AmongUsClient.Instance.FinishRpcImmediately(messageWriter);
-        }
         public static void RegisterRpc(Type type, ModPlugin plugin)
         {
             LastRpcId++;

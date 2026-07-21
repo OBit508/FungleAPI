@@ -1,6 +1,6 @@
-﻿using FungleAPI.Base.Rpc;
+﻿using FungleAPI.AntiCheat;
+using FungleAPI.Base.Rpc;
 using Hazel;
-using InnerNet;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,34 +9,26 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking
 {
-    internal class RpcSendModsDisconnect : AdvancedRpc<ModsDisconnectData>
+    internal class RpcSendModsDisconnect : AdvancedRpc<KeyValuePair<string, string>, NetworkedPlayerInfo>
     {
-        public override void Write(MessageWriter messageWriter, ModsDisconnectData data)
+        public override void Write(MessageWriter messageWriter, KeyValuePair<string, string> data)
         {
-            byte b = 2;
-            if (data.MissingMods != null && data.ExtraMods == null)
-            {
-                b = 0;
-            }
-            else if (data.ExtraMods != null && data.MissingMods == null)
-            {
-                b = 1;
-            }
-
-            messageWriter.Write(b);
-
-            if (data.MissingMods != null)
-            {
-                messageWriter.Write(data.MissingMods);
-            }
-            if (data.ExtraMods != null)
-            {
-                messageWriter.Write(data.ExtraMods);
-            }
+            messageWriter.Write(data.Key);
+            messageWriter.Write(data.Value);
         }
-        public override void Handle(MessageReader messageReader)
+        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
         {
-            HandShakeManager.DisconnectData = new ModsDisconnectData(messageReader);
+            if (innerNetObject == null) return;
+
+            if (AntiCheatManager.Active && !innerNetObject.IsHost())
+            {
+                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
+
+                return;
+            }
+
+            HandShakeManager.MissingMods = messageReader.ReadString();
+            HandShakeManager.ExtraMods = messageReader.ReadString();
         }
     }
 }

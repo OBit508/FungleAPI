@@ -47,9 +47,11 @@ namespace FungleAPI.Api
         public static Translator TeamConfigDescText { get; } = new Translator("Edit the Teams settings for your lobby.");
         public static Translator TypeHereText { get; } = new Translator("Type here who was the killer");
 
-        public static Translator HandShakeFail_MissingAPIDisconnect { get; } = new Translator("{0} does not have the FungleAPI.");
-        public static Translator HandShakeFail_MissingMods { get; } = new Translator("The following mods are missing from the local client: {0}");
-        public static Translator HandShakeFail_ExtraMods { get; } = new Translator("The following mods are missing from the host client: {0}");
-        public static Translator HandShakeFail_HostNotModded { get; } = new Translator("Host is not modded");
+        public static Translator HandShakeFail_MissingAPIDisconnect { get; } = new Translator("Unmodded player disconnected.");
+        public static Translator HandShakeFail_ModdedPlayerDisconnect { get; } = new Translator("Modded player disconnected.");
+        public static Translator HandShakeFail_MissingMods { get; } = new Translator("The following mods are missing from the local client: {0};");
+        public static Translator HandShakeFail_ExtraMods { get; } = new Translator("The following mods are missing from the host client: {0};");
+        public static Translator HandShakeFail_HostNotModded { get; } = new Translator("Host is not modded.");
+        public static Translator HandShakeFail_HostUsingReactor { get; } = new Translator("Host is using Reactor. Please use Reactor to join this lobby.");
     }
 }

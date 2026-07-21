@@ -3,6 +3,7 @@ using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
 using FungleAPI.GameOptions;
+using FungleAPI.GlobalPatches;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Player.Networking;
@@ -67,11 +68,15 @@ namespace FungleAPI.Networking.Patches
                     if (callId == byte.MaxValue)
                     {
                         ReactorCompatibility.Instance?.HandleReactorRpc(innerNetObject, messageReader);
+
+                        __result = false;
                         return false;
                     }
                     else if (callId == CustomRpcManager.DefaultRpc)
                     {
                         CustomRpcManager.HandleRpc(innerNetObject, messageReader);
+
+                        __result = false;
                         return false;
                     }
                     innerNetObject.HandleRpc(callId, messageReader);
@@ -81,6 +86,19 @@ namespace FungleAPI.Networking.Patches
                     innerNetClient.StartCoroutine(CoStoreMessage(innerNetClient, messageReader, netId, callId, __instance.msgNum).WrapToIl2Cpp());
                 }
 
+                __result = false;
+                return false;
+            }
+
+            if (messageReader.Tag == byte.MaxValue)
+            {
+                try
+                {
+                    HandShakeManager.MissingMods = messageReader.ReadString();
+                    HandShakeManager.ExtraMods = messageReader.ReadString();
+                }
+                catch { }
+                __result = false;
                 return false;
             }
 
@@ -98,7 +116,7 @@ namespace FungleAPI.Networking.Patches
 
                 if (messageReader.BytesRemaining > 0)
                 {
-                    int modsCount = messageReader.ReadPackedInt32();
+                    ushort modsCount = messageReader.ReadUInt16();
 
                     (string, string, string)[] mods = new (string, string, string)[modsCount];
 
@@ -110,12 +128,12 @@ namespace FungleAPI.Networking.Patches
                         mods[i] = (GUID, version, name);
                     }
 
-                    HandShakeManager.GetMods(mods, out List<BepInMod> sameMods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods);
+                    HandShakeManager.GetMods(mods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods);
 
                     if (missingMods.Count > 0 || extraMods.Count > 0)
                     {
-                        string missingModsText = null;
-                        string extraModsText = null;
+                        string missingModsText = "";
+                        string extraModsText = "";
                         if (missingMods.Count > 0)
                         {
                             int i = 0;
@@ -153,16 +171,17 @@ namespace FungleAPI.Networking.Patches
                             }
                         }
 
-                        Rpc<RpcSendModsDisconnect>.Instance.Send(new ModsDisconnectData(missingModsText, extraModsText), PlayerControl.LocalPlayer, SendOption.Reliable, clientId);
-                        AmongUsClient.Instance.KickPlayer(clientId, false);
+                        AmongUsClientPatch.WrongModdeds.Add(clientId, new KeyValuePair<string, string>(missingModsText, extraModsText));
                     }
                 }
                 else 
                 {
-                    innerNetClient.StartCoroutine(HandShakeManager.CoKick(clientData, (string playerName) => string.Format(FungleTranslation.HandShakeFail_MissingAPIDisconnect.GetString(), playerName)));
+                    innerNetClient.KickPlayer(clientId, false);
+                    HudManager.Instance?.Notifier.AddDisconnectMessage(FungleTranslation.HandShakeFail_MissingAPIDisconnect.GetString());
                 }
 
                 innerNetClient.StartCoroutine(innerNetClient.CoOnPlayerChangedScene(clientData, sceneName));
+                __result = false;
                 return false;
             }
             return true;

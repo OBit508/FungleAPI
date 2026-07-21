@@ -14,29 +14,30 @@ namespace FungleAPI.Networking.Patches
     {
         public static void Prefix(InnerNetClient __instance, ref DisconnectReasons reason)
         {
-            if (reason == DisconnectReasons.Kicked && HandShakeManager.DisconnectData != null)
+            if (reason == DisconnectReasons.Kicked && (!string.IsNullOrEmpty(HandShakeManager.MissingMods) || !string.IsNullOrEmpty(HandShakeManager.ExtraMods)))
             {
-                reason = DisconnectReasons.Custom;
                 StringBuilder stringBuilder = new StringBuilder();
 
-                ModsDisconnectData modsDisconnectData = HandShakeManager.DisconnectData.Value;
-
-                if (modsDisconnectData.MissingMods != null)
+                if (!string.IsNullOrEmpty(HandShakeManager.MissingMods))
                 {
-                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), modsDisconnectData.MissingMods));
-                    if (modsDisconnectData.ExtraMods != null)
+                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), HandShakeManager.MissingMods));
+
+                    if (!string.IsNullOrEmpty(HandShakeManager.ExtraMods))
                     {
                         stringBuilder.AppendLine();
                     }
                 }
-                if (modsDisconnectData.ExtraMods != null)
+
+                if (!string.IsNullOrEmpty(HandShakeManager.ExtraMods))
                 {
-                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), modsDisconnectData.ExtraMods));
+                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), HandShakeManager.ExtraMods));
                 }
 
+                reason = DisconnectReasons.Custom;
                 __instance.LastCustomDisconnect = stringBuilder.ToString();
 
-                HandShakeManager.DisconnectData = null;
+                HandShakeManager.MissingMods = null;
+                HandShakeManager.ExtraMods = null;
             }
         }
     }

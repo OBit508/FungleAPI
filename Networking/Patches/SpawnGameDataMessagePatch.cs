@@ -1,6 +1,7 @@
 ﻿using AmongUs.InnerNet.GameDataMessages;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
+using FungleAPI.PluginLoading;
 using HarmonyLib;
 using Hazel;
 using Il2CppInterop.Runtime;

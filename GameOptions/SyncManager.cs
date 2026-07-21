@@ -27,7 +27,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer.Data, SendOption.Reliable, targetId);
+            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, targetId);
         }
         public static void RpcSyncTeam(ModdedTeam moddedTeam)
         {

@@ -15,11 +15,11 @@ namespace FungleAPI.Networking
 {
     public static class HandShakeManager
     {
-        internal static ModsDisconnectData? DisconnectData;
+        internal static string MissingMods = null;
+        internal static string ExtraMods = null;
         public static Dictionary<string, BepInMod> RequiredMods = new Dictionary<string, BepInMod>();
-        public static void GetMods((string, string, string)[] mods, out List<BepInMod> sameMods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods)
+        public static void GetMods((string GUID, string version, string name)[] mods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods)
         {
-            sameMods = new List<BepInMod>();
             missingMods = new Dictionary<string, KeyValuePair<string, string>>();
             extraMods = new List<KeyValuePair<string, string>>();
 
@@ -28,56 +28,20 @@ namespace FungleAPI.Networking
                 missingMods.Add(bepInMod.GUID, new KeyValuePair<string, string>(bepInMod.Name, bepInMod.Version));
             }
             
-            foreach ((string, string, string) mod in mods)
+            foreach ((string GUID, string version, string name) mod in mods)
             {
-                if (RequiredMods.TryGetValue(mod.Item1, out BepInMod bepInMod))
+                if (RequiredMods.TryGetValue(mod.GUID, out BepInMod bepInMod) && bepInMod.Version == mod.version)
                 {
-                    sameMods.Add(bepInMod);
-                    missingMods.Remove(mod.Item1);
+                    missingMods.Remove(mod.GUID);
                     continue;
                 }
-                extraMods.Add(new KeyValuePair<string, string>(mod.Item3, mod.Item2));
+                extraMods.Add(new KeyValuePair<string, string>(mod.name, mod.version));
             }
         }
-
         public static void DisconnectWithReason(string reason)
         {
             AmongUsClient.Instance.ExitGame(DisconnectReasons.Custom);
             AmongUsClient.Instance.LastCustomDisconnect = reason;
-        }
-        public static System.Collections.IEnumerator CoKick(ClientData clientData, Func<string, string> message)
-        {
-            if (!AmongUsClient.Instance.AmHost) yield break;
-
-            DateTime startTime = DateTime.UtcNow;
-            string playerName = null;
-
-            while (playerName == null)
-            {
-                if (DateTime.UtcNow - startTime > TimeSpan.FromSeconds(2))
-                {
-                    playerName = "(unknown)";
-                    break;
-                }
-
-                NetworkedPlayerInfo networkedPlayerInfo = GameData.Instance.GetPlayerByClient(clientData);
-
-                if (networkedPlayerInfo != null)
-                {
-                    playerName = networkedPlayerInfo.PlayerName;
-                }
-
-                yield return null;
-            }
-
-            AmongUsClient.Instance?.KickPlayer(clientData.Id, false);
-            HudManager.Instance?.Notifier.AddDisconnectMessage(message(playerName));
-        }
-        public enum DisconnectReason
-        {
-            MissingMods,
-            ExtraMods,
-            Custom
         }
     }
 }

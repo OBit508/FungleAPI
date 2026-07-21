@@ -85,7 +85,8 @@ namespace FungleAPI.GameOptions.Options
         public override OptionBehaviour CreateOption(Transform parent)
         {
             StringGameSetting stringGameSetting = Data.SafeCast<StringGameSetting>();
-            StringOption stringOption = OptionManager.CreateEnumOption(parent, stringGameSetting, delegate (StringOption stringOption)
+            StringOption stringOption = null;
+            stringOption = OptionManager.CreateEnumOption(parent, stringGameSetting, delegate
             {
                 SetValue(stringOption.Value, true);
                 stringGameSetting.Index = stringOption.Value;

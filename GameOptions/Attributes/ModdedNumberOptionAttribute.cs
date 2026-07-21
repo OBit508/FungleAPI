@@ -70,7 +70,8 @@ namespace FungleAPI.GameOptions.Attributes
         public override OptionBehaviour CreateOption(Transform parent)
         {
             FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();
-            NumberOption option = OptionManager.CreateNumberOption(parent, setting, delegate (NumberOption option)
+            NumberOption option = null;
+            option = OptionManager.CreateNumberOption(parent, setting, delegate
             {
                 SetValue(option.Value, true);
                 setting.Value = option.Value;

@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.Api;
 using FungleAPI.Event;
+using FungleAPI.Event.Api;
 using FungleAPI.Event.BelpInEx;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
@@ -32,6 +33,8 @@ namespace FungleAPI.GameModes
         {
             if (AmongUsClient.Instance == null) return Default;
 
+            if (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay) return Default;
+
             if (GameModes.TryGetValue(AmongUsClient.Instance.AmHost ? HostValue.Value : NonHostValue, out BaseGameMode baseGameMode))
             {
                 return baseGameMode;
@@ -55,7 +58,8 @@ namespace FungleAPI.GameModes
         public static OptionBehaviour CreateGameModeOption(Transform parent)
         {
             StringGameSetting stringGameSetting = Data.SafeCast<StringGameSetting>();
-            StringOption stringOption = OptionManager.CreateEnumOption(parent, stringGameSetting, delegate (StringOption stringOption)
+            StringOption stringOption = null;
+            stringOption = OptionManager.CreateEnumOption(parent, stringGameSetting, delegate
             {
                 bool changed = HostValue.Value != stringOption.Value;
 
@@ -73,7 +77,7 @@ namespace FungleAPI.GameModes
         }
 
         [EventRegister]
-        public static void Initialize(FinishedPluginLoadingEvent finishedPluginLoadingEvent)
+        public static void Initialize(FirstSceneLoadEvent firstSceneLoadEvent)
         {
             Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
@@ -83,7 +87,7 @@ namespace FungleAPI.GameModes
 
             HostValue = FungleApiPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", (uint)0);
 
-            if (Values.Count > HostValue.Value)
+            if (Values.Count < HostValue.Value)
             {
                 HostValue.Value = 0;
             }

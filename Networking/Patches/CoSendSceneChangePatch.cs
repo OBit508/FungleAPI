@@ -34,7 +34,7 @@ namespace FungleAPI.Networking.Patches
                     messageWriter.WritePacked(innerNetClient.ClientId);
                     messageWriter.Write(__instance.sceneName);
 
-                    messageWriter.WritePacked(HandShakeManager.RequiredMods.Count);
+                    messageWriter.Write((ushort)HandShakeManager.RequiredMods.Count);
 
                     foreach (BepInMod bepInMod in HandShakeManager.RequiredMods.Values)
                     {

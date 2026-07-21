@@ -28,16 +28,14 @@ using UnityEngine;
 
 namespace FungleAPI.GlobalPatches
 {
-    [HarmonyPatch(typeof(AmongUsClient))]
     internal static class AmongUsClientPatch
     {
-        [HarmonyPatch(nameof(AmongUsClient.CreatePlayer))]
+        public static Dictionary<int, KeyValuePair<string, string>> WrongModdeds = new Dictionary<int, KeyValuePair<string, string>>();
+        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]
         [HarmonyPostfix]
-        public static void SyncEverything(AmongUsClient __instance, ClientData clientData)
+        public static void ResetModdedList(InnerNetClient __instance)
         {
-            if (__instance.HostId == clientData.Id || !__instance.AmHost) return;
-
-            SyncManager.RpcSyncEverything(clientData.Id);
+            WrongModdeds.Clear();
         }
     }
 }

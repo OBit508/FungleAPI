@@ -90,6 +90,7 @@
     <Compile Include="Api\NormalGameMode.cs" />
     <Compile Include="GameModes\Patches\LogicOptionsNormalPatch.cs" />
     <Compile Include="GameModes\Patches\NormalGameManagerPatch.cs" />
+    <Compile Include="GameOptions\Patches\GameOptionButtonPatch.cs" />
     <Compile Include="GameOptions\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Colors\CustomColor.cs" />
@@ -157,7 +158,6 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
-    <Compile Include="Networking\ModsDisconnectData.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />

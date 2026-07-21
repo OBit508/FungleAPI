@@ -136,7 +136,8 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual OptionBehaviour CreateCountOption(Transform transform)
         {
-            NumberOption option = OptionManager.CreateNumberOption(transform, CountData, delegate (NumberOption option)
+            NumberOption option = null;
+            option = OptionManager.CreateNumberOption(transform, CountData, delegate
             {
                 if (this == ModdedTeamManager.Impostors)
                 {
@@ -153,7 +154,8 @@ namespace FungleAPI.Teams
         /// </summary>
         public virtual OptionBehaviour CreatePriorityOption(Transform transform)
         {
-            NumberOption option = OptionManager.CreateNumberOption(transform, PriorityData, delegate (NumberOption option)
+            NumberOption option = null;
+            option = OptionManager.CreateNumberOption(transform, PriorityData, delegate
             {
                 TeamOptions.SetLocal(TeamOptions.LocalTeamCount, (int)option.Value);
             });

@@ -1,4 +1,5 @@
-﻿using FungleAPI.AntiCheat;
+﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.AntiCheat;
 using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
 using FungleAPI.GameModes;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncEverything : SimpleRpc<NetworkedPlayerInfo>
+    internal class RpcSyncEverything : SimpleRpc<PlayerControl>
     {
         public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
@@ -48,48 +49,56 @@ namespace FungleAPI.GameOptions.Networking
 
             UnSynced = false;
         }
-        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
             if (innerNetObject == null) return;
 
-            if (AntiCheatManager.Active && !innerNetObject.IsHost())
+            System.Collections.IEnumerator CoHandleRpc()
             {
-                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
+                while (innerNetObject == null || innerNetObject != null && (innerNetObject.Data == null || innerNetObject.Data.ClientId < 0)) yield return null;
 
-                return;
-            }
+                if (innerNetObject == null) yield break;
 
-            try
-            {
-                UnSynced = true;
-                int optionCount = messageReader.ReadPackedInt32();
-                for (int i = 0; i < optionCount; i++)
+                if (AntiCheatManager.Active && !innerNetObject.Data.IsHost())
                 {
-                    IModdedOption moddedOption = messageReader.ReadOption();
-                    moddedOption.Deserialize(messageReader);
+                    AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
+
+                    yield break;
                 }
 
-                RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
-                RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
-                RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
+                try
+                {
+                    UnSynced = true;
+                    int optionCount = messageReader.ReadPackedInt32();
+                    for (int i = 0; i < optionCount; i++)
+                    {
+                        IModdedOption moddedOption = messageReader.ReadOption();
+                        moddedOption.Deserialize(messageReader);
+                    }
 
-                rpcSyncGamemode.Handle(innerNetObject, messageReader);
-                int roleCount = messageReader.ReadPackedInt32();
-                for (int i = 0; i < roleCount; i++)
-                {
-                    rpcSyncRole.Handle(innerNetObject, messageReader);
+                    RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
+                    RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
+                    RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
+
+                    rpcSyncGamemode.Handle(innerNetObject.Data, messageReader);
+                    int roleCount = messageReader.ReadPackedInt32();
+                    for (int i = 0; i < roleCount; i++)
+                    {
+                        rpcSyncRole.Handle(innerNetObject.Data, messageReader);
+                    }
+                    int teamCount = messageReader.ReadPackedInt32();
+                    for (int i = 0; i < teamCount; i++)
+                    {
+                        rpcSyncTeam.Handle(innerNetObject.Data, messageReader);
+                    }
+                    UnSynced = false;
                 }
-                int teamCount = messageReader.ReadPackedInt32();
-                for (int i = 0; i < teamCount; i++)
+                catch (Exception ex)
                 {
-                    rpcSyncTeam.Handle(innerNetObject, messageReader);
+                    HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
                 }
-                UnSynced = false;
             }
-            catch (Exception ex)
-            {
-                HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
-            }
+            Helpers.StartCoroutine(CoHandleRpc().WrapToIl2Cpp());
         }
     }
 }
