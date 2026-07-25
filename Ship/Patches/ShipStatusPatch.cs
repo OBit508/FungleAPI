@@ -34,12 +34,11 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPostfix]
         public static void StartPostfix(ShipStatus __instance)
         {
-            EventManager.CallEvent(new ShipStartEvent());
-
             if (HudManager.InstanceExists && !GameManager.Instance.IsHideAndSeek() && GameModeManager.GetCurrentGameMode().GetChatInGame())
             {
                 HudManager.Instance.Chat.SetVisible(true);
             }
+            EventManager.CallEvent(new ShipStartEvent());
         }
         [HarmonyPatch("Begin")]
         [HarmonyPrefix]

@@ -17,7 +17,6 @@ namespace FungleAPI.Player.Networking.Data
     }
     internal struct MurderData
     {
-        public PlayerControl Source;
         public PlayerControl Target;
         public bool DidSucceed;
         public bool ResetKillTimer;
@@ -25,9 +24,8 @@ namespace FungleAPI.Player.Networking.Data
         public bool Teleport;
         public bool ShowAnim;
         public bool PlayKillSound;
-        public MurderData(PlayerControl source, PlayerControl target, bool didSucceed, bool resetKillTimer, bool createDeadBody, bool teleport, bool showAnim, bool playKillSound)
+        public MurderData(PlayerControl target, bool didSucceed, bool resetKillTimer, bool createDeadBody, bool teleport, bool showAnim, bool playKillSound)
         {
-            Source = source;
             Target = target;
             DidSucceed = didSucceed;
             ResetKillTimer = resetKillTimer;
@@ -38,7 +36,6 @@ namespace FungleAPI.Player.Networking.Data
         }
         public MurderData(MessageReader reader)
         {
-            Source = reader.ReadNetObject<PlayerControl>();
             Target = reader.ReadNetObject<PlayerControl>();
             CustomMurderFlags flags = (CustomMurderFlags)reader.ReadByte();
             DidSucceed = (flags & CustomMurderFlags.DidSucceed) != 0;
@@ -50,7 +47,6 @@ namespace FungleAPI.Player.Networking.Data
         }
         public void Serialize(MessageWriter writer)
         {
-            writer.WriteNetObject(Source);
             writer.WriteNetObject(Target);
             CustomMurderFlags flags = CustomMurderFlags.None;
             if (DidSucceed)

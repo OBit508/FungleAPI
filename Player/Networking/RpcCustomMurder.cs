@@ -26,34 +26,25 @@ using static UnityEngine.GraphicsBuffer;
 
 namespace FungleAPI.Player.Networking
 {
-    internal class RpcCustomMurder : AdvancedRpc<MurderData, NetworkedPlayerInfo>
+    internal class RpcCustomMurder : AdvancedRpc<MurderData, PlayerControl>
     {
-        public override void Write(MessageWriter messageWriter, MurderData value)
+        public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, MurderData value)
         {
             value.Serialize(messageWriter);
 
             MurderResultFlags murderResultFlags = (value.DidSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
             MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
 
-            value.Source.CustomMurderPlayer(value.Target, murderResultFlags2, value.ResetKillTimer, value.CreateDeadBody, value.Teleport, value.ShowAnim, value.PlayKillSound);
+            innerNetObject.CustomMurderPlayer(value.Target, murderResultFlags2, value.ResetKillTimer, value.CreateDeadBody, value.Teleport, value.ShowAnim, value.PlayKillSound);
         }
-        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
-
-            if (AntiCheatManager.Active && !innerNetObject.IsHost())
-            {
-                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
-
-                return;
-            }
-
             MurderData murderData = new MurderData(messageReader);
 
             MurderResultFlags murderResultFlags = (murderData.DidSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
             MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
 
-            murderData.Source.CustomMurderPlayer(murderData.Target, murderResultFlags2, murderData.ResetKillTimer, murderData.CreateDeadBody, murderData.Teleport, murderData.ShowAnim, murderData.PlayKillSound);
+            innerNetObject.CustomMurderPlayer(murderData.Target, murderResultFlags2, murderData.ResetKillTimer, murderData.CreateDeadBody, murderData.Teleport, murderData.ShowAnim, murderData.PlayKillSound);
         }
     }
 }

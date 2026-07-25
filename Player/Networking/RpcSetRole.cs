@@ -15,31 +15,20 @@ using UnityEngine;
 
 namespace FungleAPI.Player.Networking
 {
-    internal class RpcSetRole : AdvancedRpc<SetRoleData, NetworkedPlayerInfo>
+    internal class RpcSetRole : AdvancedRpc<SetRoleData, PlayerControl>
     {
-        public override void Write(MessageWriter messageWriter, SetRoleData data)
+        public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, SetRoleData data)
         {
-            messageWriter.WriteNetObject(data.Target);
             messageWriter.Write((ushort)data.RoleType);
             messageWriter.Write(data.ShowIntro);
-            data.Target.StartCoroutine(CoSetRole(data.Target, data.RoleType, data.ShowIntro).WrapToIl2Cpp());
+            innerNetObject.StartCoroutine(CoSetRole(innerNetObject, data.RoleType, data.ShowIntro).WrapToIl2Cpp());
         }
-        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
-
-            if (AntiCheatManager.Active && !innerNetObject.IsHost())
-            {
-                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
-
-                return;
-            }
-
-            PlayerControl playerControl = messageReader.ReadNetObject<PlayerControl>();
             RoleTypes roleTypes = (RoleTypes)messageReader.ReadUInt16();
             bool showIntro = messageReader.ReadBoolean();
 
-            playerControl.StartCoroutine(CoSetRole(playerControl, roleTypes, showIntro).WrapToIl2Cpp());
+            innerNetObject.StartCoroutine(CoSetRole(innerNetObject, roleTypes, showIntro).WrapToIl2Cpp());
         }
         public System.Collections.IEnumerator CoSetRole(PlayerControl playerControl, RoleTypes roleTypes, bool showIntro)
         {

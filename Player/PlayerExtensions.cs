@@ -47,7 +47,7 @@ namespace FungleAPI.Player
         public static void RpcCustomSetRole(this PlayerControl source, RoleTypes roleTypes, bool showIntro = false)
         {
             if (!AmongUsClient.Instance.AmHost) return;
-            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { Target = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { RoleType = roleTypes, ShowIntro = showIntro }, source);
         }
         /// <summary>
         /// Perform a custom murder
@@ -63,7 +63,7 @@ namespace FungleAPI.Player
             {
                 return;
             }
-            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(source, target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), PlayerControl.LocalPlayer.Data);
+            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
         /// <summary>
         /// Perform a custom murder
@@ -76,7 +76,7 @@ namespace FungleAPI.Player
                 source.CheckCustomMurder(target, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound);
                 return;
             }
-            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(source, target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<CmdCustomMurder>.Instance.Send(new MurderData(target, true, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
         }
 
 
@@ -312,7 +312,10 @@ namespace FungleAPI.Player
             FollowerCamera cam = Camera.main.GetComponent<FollowerCamera>();
             bool isParticipant = PlayerControl.LocalPlayer == source || PlayerControl.LocalPlayer == target;
             PlayerPhysics sourcePhys = source.MyPhysics;
-            KillAnimation.SetMovement(source, false);
+            if (teleportMurderer)
+            {
+                KillAnimation.SetMovement(source, false);
+            }
             KillAnimation.SetMovement(target, false);
             if (isParticipant)
             {
@@ -346,7 +349,10 @@ namespace FungleAPI.Player
                 source.NetTransform.SnapTo(target.transform.position);
             }
             sourcePhys.Animations.PlayIdleAnimation();
-            KillAnimation.SetMovement(source, true);
+            if (teleportMurderer)
+            {
+                KillAnimation.SetMovement(source, true);
+            }
             KillAnimation.SetMovement(target, true);
             if (isParticipant)
             {

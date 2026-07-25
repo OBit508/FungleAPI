@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AsmResolver.DotNet.Collections;
+﻿using AsmResolver.DotNet.Collections;
 using DiscordConnect;
+using FungleAPI.Api;
 using FungleAPI.Base.Events;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.InteropTypes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,7 +27,17 @@ namespace FungleAPI.Event
         {
             if (Events.TryGetValue(typeof(T), out Delegate @delegate))
             {
-                ((Action<T>)@delegate)?.Invoke(fungleEvent);
+                foreach (Action<T> handler in @delegate.GetInvocationList())
+                {
+                    try
+                    {
+                        handler(fungleEvent);
+                    }
+                    catch (Exception ex)
+                    {
+                        FunglePlugin<FungleApiPlugin>.Logger.LogError($"Failed to execute event '{typeof(T).Name}'.\n{ex}");
+                    }
+                }
             }
             return fungleEvent;
         }

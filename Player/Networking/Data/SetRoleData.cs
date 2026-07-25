@@ -9,7 +9,6 @@ namespace FungleAPI.Player.Networking.Data
 {
     internal struct SetRoleData
     {
-        public PlayerControl Target;
         public RoleTypes RoleType;
         public bool ShowIntro;
     }

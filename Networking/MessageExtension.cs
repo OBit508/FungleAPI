@@ -39,17 +39,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteVector2(this MessageWriter messageWriter, Vector2 vector)
         {
-            messageWriter.Write(vector.x);
-            messageWriter.Write(vector.y);
-        }
-        /// <summary>
-        /// Write a vector3
-        /// </summary>
-        public static void WriteVector3(this MessageWriter messageWriter, Vector3 vector)
-        {
-            messageWriter.Write(vector.x);
-            messageWriter.Write(vector.y);
-            messageWriter.Write(vector.z);
+            NetHelpers.WriteVector2(vector, messageWriter);
         }
         /// <summary>
         /// Write a option
@@ -122,19 +112,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static Vector2 ReadVector2(this MessageReader messageReader)
         {
-            float x = messageReader.ReadSingle();
-            float y = messageReader.ReadSingle();
-            return new Vector2(x, y);
-        }
-        /// <summary>
-        /// Read a vector3
-        /// </summary>
-        public static Vector2 ReadVector3(this MessageReader messageReader)
-        {
-            float x = messageReader.ReadSingle();
-            float y = messageReader.ReadSingle();
-            float z = messageReader.ReadSingle();
-            return new Vector3(x, y, z);
+            return NetHelpers.ReadVector2(messageReader);
         }
         /// <summary>
         /// Read a option
