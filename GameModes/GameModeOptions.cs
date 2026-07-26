@@ -13,7 +13,7 @@ namespace FungleAPI.GameModes
     public class GameModeOptions
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
-        public DefaultOptionCollection OptionCollection;
+        public OptionCollection OptionCollection;
         public bool initialized;
         public virtual void Initialize(ModPlugin modPlugin)
         {
@@ -36,7 +36,7 @@ namespace FungleAPI.GameModes
                         Groups.Add(group);
                     }
                 }
-                OptionCollection = new DefaultOptionCollection("GameModes");
+                OptionCollection = new OptionCollection("GameModes", type);
                 OptionCollection.Initialize(modPlugin, moddedOptions);
                 initialized = true;
             }

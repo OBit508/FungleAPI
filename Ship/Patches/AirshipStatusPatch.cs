@@ -1,4 +1,5 @@
-﻿using FungleAPI.Role;
+﻿using FungleAPI.GameModes;
+using FungleAPI.Role;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -13,7 +14,9 @@ namespace FungleAPI.Ship.Patches
     {
         public static bool Prefix(NetworkedPlayerInfo player, ref float __result)
         {
-            __result = RoleConfigManager.LightConfig.CalculateLightRadius(player, true);
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            __result = GameModeManager.GetCurrentGameMode().CalculateLightRadius(player, true);
             return false;
         }
     }

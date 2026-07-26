@@ -21,14 +21,14 @@ namespace FungleAPI.GameOptions.Networking
         public override void Write(MessageWriter messageWriter, ICustomRole data)
         {
             messageWriter.WriteRole(data as RoleBehaviour);
-            messageWriter.WritePacked(data.RoleOptions.LocalRoleCount);
-            messageWriter.WritePacked(data.RoleOptions.LocalRoleChance);
+            messageWriter.WritePacked(data.RoleOptions.LocalRoleCount.Value);
+            messageWriter.WritePacked(data.RoleOptions.LocalRoleChance.Value);
 
             if (!RpcSyncEverything.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.RoleColor.ToTextColor()}{data.RoleName.GetString()}</color></font>: " +
-                $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount}</font>, " +
-                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{data.RoleOptions.LocalRoleChance}%</font>.", false);
+                $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount.Value}</font>, " +
+                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{data.RoleOptions.LocalRoleChance.Value}%</font>.", false);
 
                 if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == data.RoleOptions.Plugin.ModAssembly)
                 {

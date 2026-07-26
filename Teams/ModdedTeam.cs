@@ -143,10 +143,10 @@ namespace FungleAPI.Teams
                 {
                     GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }
-                TeamOptions.SetLocal((int)option.Value, TeamOptions.LocalTeamPriority);
+                TeamOptions.SetLocal((int)option.Value, TeamOptions.LocalTeamPriority.Value);
             });
-            CountData.Value = TeamOptions.LocalTeamCount;
-            option.Value = TeamOptions.LocalTeamCount;
+            CountData.Value = TeamOptions.LocalTeamCount.Value;
+            option.Value = TeamOptions.LocalTeamCount.Value;
             return option;
         }
         /// <summary>
@@ -157,23 +157,23 @@ namespace FungleAPI.Teams
             NumberOption option = null;
             option = OptionManager.CreateNumberOption(transform, PriorityData, delegate
             {
-                TeamOptions.SetLocal(TeamOptions.LocalTeamCount, (int)option.Value);
+                TeamOptions.SetLocal(TeamOptions.LocalTeamCount.Value, (int)option.Value);
             });
-            PriorityData.Value = TeamOptions.LocalTeamPriority;
-            option.Value = TeamOptions.LocalTeamPriority;
+            PriorityData.Value = TeamOptions.LocalTeamPriority.Value;
+            option.Value = TeamOptions.LocalTeamPriority.Value;
             return option;
         }
         public virtual int GetCount()
         {
             TeamOptionCollection teamOptionCollection = TeamOptions;
 
-            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamCount : teamOptionCollection.NonHostTeamCount;
+            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamCount.Value : teamOptionCollection.NonHostTeamCount;
         }
         public virtual int GetPriority()
         {
             TeamOptionCollection teamOptionCollection = TeamOptions;
 
-            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamPriority : teamOptionCollection.NonHostTeamPriority;
+            return AmongUsClient.Instance.AmHost ? teamOptionCollection.LocalTeamPriority.Value : teamOptionCollection.NonHostTeamPriority;
         }
     }
 }

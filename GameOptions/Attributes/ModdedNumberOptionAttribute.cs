@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Configuration;
 using FungleAPI.Extensions;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -32,19 +33,21 @@ namespace FungleAPI.GameOptions.Attributes
 
         public override void SetValue(object value, bool amHost)
         {
-            bool changed = false;
             float realValue = amHost ? LocalValue : NonHostValue;
 
-            if (value is float floatValue) { changed = realValue != floatValue; realValue = floatValue; }
-            if (value is int intValue) { changed = realValue != intValue; realValue = intValue; }
+            if (value is float floatValue) { realValue = floatValue; }
+            if (value is int intValue) { realValue = intValue; }
 
             if (amHost)
             {
                 LocalValue = realValue;
-                OnValueChance?.Invoke(changed);
-                return;
+                SaveValue(Entry);
             }
-            NonHostValue = realValue;
+            else
+            {
+                NonHostValue = realValue;
+            }
+            OnValueChance?.Invoke();
         }
         public override string GetStringValue(bool amHost)
         {
@@ -59,13 +62,13 @@ namespace FungleAPI.GameOptions.Attributes
         {
             NonHostValue = messageReader.ReadSingle();
         }
-        public override void WriteLocalValue(BinaryWriter binaryWriter)
+        public override void SaveValue(ConfigEntry<string> configEntry)
         {
-            binaryWriter.Write(LocalValue);
+            configEntry.Value = LocalValue.ToString();
         }
-        public override void ReadLocalValue(BinaryReader binaryReader)
+        public override void LoadValue(ConfigEntry<string> configEntry)
         {
-            LocalValue = binaryReader.ReadSingle();
+            LocalValue = float.Parse(configEntry.Value);
         }
         public override OptionBehaviour CreateOption(Transform parent)
         {

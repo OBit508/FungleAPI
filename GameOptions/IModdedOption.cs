@@ -1,4 +1,5 @@
-﻿using FungleAPI.PluginLoading;
+﻿using BepInEx.Configuration;
+using FungleAPI.PluginLoading;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace FungleAPI.GameOptions
 {
     public interface IModdedOption
     {
+        ConfigEntry<string> Entry { get; set; }
         BaseGameSetting Data { get; set; }
         uint OptionId { get; set; }
         string StringOptionId { get; set; }
@@ -22,9 +24,9 @@ namespace FungleAPI.GameOptions
         string GetStringValue(bool amHost);
         void Serialize(MessageWriter messageWriter);
         void Deserialize(MessageReader messageReader);
-        void WriteLocalValue(BinaryWriter binaryWriter);
-        void ReadLocalValue(BinaryReader binaryReader);
-        void SetOnValueChance(Action<bool> action);
+        void SaveValue(ConfigEntry<string> configEntry);
+        void LoadValue(ConfigEntry<string> configEntry);
+        void SetOnValueChance(Action action);
         OptionBehaviour CreateOption(Transform parent);
     }
 }

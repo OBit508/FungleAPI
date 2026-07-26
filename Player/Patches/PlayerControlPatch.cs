@@ -95,14 +95,18 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool AdjustLightingPrefix(PlayerControl __instance)
         {
-            RoleConfigManager.LightConfig?.AdjustLighting(__instance);
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            GameModeManager.GetCurrentGameMode().AdjustLighting();
             return false;
         }
         [HarmonyPatch("IsFlashlightEnabled")]
         [HarmonyPrefix]
         public static bool IsFlashlightEnabledPrefix(PlayerControl __instance, ref bool __result)
         {
-            __result = RoleConfigManager.LightConfig.IsFlashlightEnabled(__instance);
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            __result = GameModeManager.GetCurrentGameMode().IsFlashlightEnabled();
             return false;
         }
         [HarmonyPatch(nameof(PlayerControl.Revive))]

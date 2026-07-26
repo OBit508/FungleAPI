@@ -71,10 +71,6 @@ namespace FungleAPI.Role
         /// </summary>
         KillButtonConfig KillConfig => KillButtonConfig.Default;
         /// <summary>
-        /// Light source config for the role
-        /// </summary>
-        LightSourceConfig LightConfig => LightSourceConfig.Default;
-        /// <summary>
         /// Player tab config for the role
         /// </summary>
         PlayerTabConfig PlayerTabConfig => PlayerTabConfig.Default;
@@ -98,13 +94,13 @@ namespace FungleAPI.Role
         {
             RoleOptionCollection roleOptionCollection = RoleOptions;
 
-            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleCount : roleOptionCollection.NonHostRoleCount;
+            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleCount.Value : roleOptionCollection.NonHostRoleCount;
         }
         int GetChance()
         {
             RoleOptionCollection roleOptionCollection = RoleOptions;
 
-            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleChance : roleOptionCollection.NonHostRoleChance;
+            return AmongUsClient.Instance.AmHost ? roleOptionCollection.LocalRoleChance.Value : roleOptionCollection.NonHostRoleChance;
         }
         internal static Dictionary<RoleTypes, RoleOptionCollection> Save = new();
     }

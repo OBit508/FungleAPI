@@ -18,10 +18,6 @@ namespace FungleAPI.Role
         /// </summary>
         public static KillButtonConfig KillConfig { get; private set; } = KillButtonConfig.Default;
         /// <summary>
-        /// Current light source configuration
-        /// </summary>
-        public static LightSourceConfig LightConfig { get; private set; } = LightSourceConfig.Default;
-        /// <summary>
         /// Current role tab configuration
         /// </summary>
         public static PlayerTabConfig PlayerTabConfig { get; private set; } = new PlayerTabConfig();
@@ -47,7 +43,6 @@ namespace FungleAPI.Role
                 return;
             }
             KillConfig = KillButtonConfig.Default;
-            LightConfig = LightSourceConfig.Default;
             PlayerTabConfig = PlayerTabConfig.Default;
             ReportConfig = ReportButtonConfig.Default;
             SabotageConfig = SabotageButtonConfig.Default;
@@ -68,7 +63,6 @@ namespace FungleAPI.Role
                 if (customRole != null)
                 {
                     KillConfig = customRole.KillConfig;
-                    LightConfig = customRole.LightConfig;
                     PlayerTabConfig = customRole.PlayerTabConfig;
                     ReportConfig = customRole.ReportConfig;
                     SabotageConfig = customRole.SabotageConfig;

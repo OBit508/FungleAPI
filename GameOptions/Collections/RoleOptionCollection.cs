@@ -1,4 +1,5 @@
-﻿using FungleAPI.Api;
+﻿using BepInEx.Configuration;
+using FungleAPI.Api;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -16,59 +17,31 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class RoleOptionCollection : OptionCollection
     {
-        public const int RoleOptionVersion = 3;
-
-        public int LocalRoleCount;
+        public ConfigEntry<int> LocalRoleCount;
         public int NonHostRoleCount;
 
-        public int LocalRoleChance;
+        public ConfigEntry<int> LocalRoleChance;
         public int NonHostRoleChance;
 
         public ICustomRole Role;
 
         public void SetLocal(int count, int chance)
         {
-            if (LocalRoleCount != count) { LocalRoleCount = count; Dirty = true; }
-            if (LocalRoleChance != chance) { LocalRoleChance = chance; Dirty = true; }
+            LocalRoleCount.Value = count;
+            LocalRoleChance.Value = chance;
         }
-        public override void WriteLocalOptions(BinaryWriter binaryWriter)
+        public override void LoadOptions(ConfigFile configFile, string collectionId)
         {
-            binaryWriter.Write(RoleOptionVersion);
-
-            binaryWriter.Write(LocalRoleCount);
-            binaryWriter.Write(LocalRoleChance);
-
-            base.WriteLocalOptions(binaryWriter);
-        }
-        public override void ReadLocalOptions(BinaryReader binaryReader)
-        {
-            SetAsDefault(true);
-            try
-            {
-                int roleOptionVersion = binaryReader.ReadInt32();
-                if (roleOptionVersion < RoleOptionVersion)
-                {
-                    FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Role Option Collection from {FilePath} founded, loading default.");
-                    return;
-                }
-
-                LocalRoleCount = binaryReader.ReadInt32();
-                LocalRoleChance = binaryReader.ReadInt32();
-
-                base.ReadLocalOptions(binaryReader);
-            }
-            catch (Exception ex)
-            {
-                FungleApiPlugin.Instance.Log.LogError($"Failed to read Role Option Collection from {FilePath}, loading default.\nMessage: {ex.Message}");
-                SetAsDefault(true);
-            }
+            LocalRoleCount = configFile.Bind(collectionId, "RoleCount", Role.Configuration.DefaultCount);
+            LocalRoleChance = configFile.Bind(collectionId, "RoleChance", Role.Configuration.DefaultChance);
+            base.LoadOptions(configFile, collectionId);
         }
         public override void SetAsDefault(bool amHost)
         {
-            if (amHost)
+            if (amHost && LocalRoleCount != null && LocalRoleChance != null)
             {
-                LocalRoleCount = Role.Configuration.DefaultCount;
-                LocalRoleChance = Role.Configuration.DefaultChance;
+                LocalRoleCount.Value = Role.Configuration.DefaultCount;
+                LocalRoleChance.Value = Role.Configuration.DefaultChance;
             }
             else
             {
@@ -79,9 +52,9 @@ namespace FungleAPI.GameOptions.Collections
             base.SetAsDefault(amHost);
         }
         public RoleOptionCollection(ICustomRole customRole)
+            :base("Roles", customRole.GetType())
         {
             Role = customRole;
-            FolderName = "Roles";
         }
     }
 }

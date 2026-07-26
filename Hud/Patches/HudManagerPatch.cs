@@ -76,7 +76,10 @@ namespace FungleAPI.Hud.Patches
                 HudHelper.BottomRight = Buttons.Find("BottomRight");
                 HudHelper.BottomLeft = Buttons.Find("BottomLeft");
 
-                HudHelper.BottomLeft.GetChild(0)?.gameObject.Destroy();
+                if (Constants.GetPlatformType() == Platforms.Android)
+                {
+                    HudHelper.BottomLeft.GetChild(0)?.gameObject.Destroy();
+                }
 
                 foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
                 {

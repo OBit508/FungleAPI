@@ -16,6 +16,8 @@ namespace FungleAPI.Components
     [RegisterTypeInIl2Cpp]
     public class PlayerTabBehaviour : MonoBehaviour
     {
+        public static PlayerTabBehaviour Instance;
+
         private bool Visible = true;
         public TaskPanelBehaviour Panel;
 
@@ -23,30 +25,11 @@ namespace FungleAPI.Components
         public TextMeshPro TabName;
         public void Start()
         {
+            Instance = this;
             SetVisible(false);
             TabText = Panel.taskText;
             TabName = Panel.tab.transform.GetChild(0).GetComponent<TextMeshPro>();
             TabName.GetComponent<TextTranslatorTMP>().Destroy();
-        }
-        public void Update()
-        {
-            UpdatePosition();
-
-            PlayerControl playerControl = PlayerControl.LocalPlayer;
-            if (playerControl != null)
-            {
-
-                RoleBehaviour roleBehaviour = playerControl.Data.Role;
-                if (roleBehaviour != null)
-                {
-
-                    SetVisible(roleBehaviour.GetHintType().HasFlag(RoleHintType.PlayerTab) && HudManager.Instance.TaskPanel.gameObject.activeSelf);
-                    Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
-                    RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
-                    TabText.text = stringBuilder.ToString();
-                    TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
-                }
-            }
         }
         public void SetVisible(bool visible)
         {
@@ -57,7 +40,7 @@ namespace FungleAPI.Components
             }
             Visible = visible;
         }
-        public void UpdatePosition()
+        public void Update()
         {
             Vector3 vector = Panel.background.sprite.bounds.extents;
             Vector3 vector2 = Panel.tab.sprite.bounds.extents;

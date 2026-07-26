@@ -68,7 +68,9 @@ namespace FungleAPI.Ship.Patches
         [HarmonyPrefix]
         public static bool CalculateLightRadiusPrefix(NetworkedPlayerInfo player, ref float __result)
         {
-            __result = RoleConfigManager.LightConfig.CalculateLightRadius(player, false);
+            if (GameManager.Instance.IsHideAndSeek()) return true;
+
+            __result = GameModeManager.GetCurrentGameMode().CalculateLightRadius(player, false);
             return false;
         }
     }

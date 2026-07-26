@@ -1,4 +1,5 @@
-﻿using Epic.OnlineServices.RTC;
+﻿using BepInEx.Configuration;
+using Epic.OnlineServices.RTC;
 using FungleAPI.Assets.Late;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Attributes;
@@ -6,6 +7,7 @@ using FungleAPI.GameOptions.Patches;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using Hazel;
+using Il2CppSystem.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,29 +30,20 @@ namespace FungleAPI.GameOptions.Options
 
         public override void SetValue(object value, bool amHost)
         {
-            bool changed = false;
             int realValue = amHost ? LocalValue : NonHostValue;
 
-            object convertedValue;
-
-            if (value is TEnum @enum)
-            {
-                convertedValue = Values.Values.GetIndex(@enum);
-            }
-            else
-            {
-                convertedValue = value;
-            }
-
-            if (convertedValue is int intValue) { changed = realValue != intValue; realValue = intValue; }
+            if (value is int intValue) { realValue = intValue; }
 
             if (amHost)
             {
                 LocalValue = realValue;
-                OnValueChance?.Invoke(changed);
-                return;
+                SaveValue(Entry);
             }
-            NonHostValue = realValue;
+            else
+            {
+                NonHostValue = realValue;
+            }
+            OnValueChance?.Invoke();
         }
         public override string GetStringValue(bool amHost)
         {
@@ -70,13 +63,13 @@ namespace FungleAPI.GameOptions.Options
                 NonHostValue = Values.Count - 1;
             }
         }
-        public override void WriteLocalValue(BinaryWriter binaryWriter)
+        public override void SaveValue(ConfigEntry<string> configEntry)
         {
-            binaryWriter.Write(LocalValue);
+            configEntry.Value = LocalValue.ToString();
         }
-        public override void ReadLocalValue(BinaryReader binaryReader)
+        public override void LoadValue(ConfigEntry<string> configEntry)
         {
-            LocalValue = binaryReader.ReadInt32();
+            LocalValue = int.Parse(configEntry.Value);
             if ((Values.Count - 1) < LocalValue)
             {
                 LocalValue = Values.Count - 1;
@@ -96,7 +89,7 @@ namespace FungleAPI.GameOptions.Options
         }
         public ModdedEnumOption(StringNames optionName, TEnum defaultValue, Dictionary<TEnum, StringNames> valuesNames)
         {
-            DefaultValue = defaultValue;
+            DefaultValue = valuesNames.Keys.GetIndex(defaultValue);
             Data = ScriptableObject.CreateInstance<StringGameSetting>().DontUnload();
             StringGameSetting stringGameSetting = (StringGameSetting)Data;
             stringGameSetting.Type = OptionTypes.String;

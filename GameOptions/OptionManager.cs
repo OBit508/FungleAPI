@@ -25,7 +25,6 @@ namespace FungleAPI.GameOptions
     {
         private static uint __optionId = uint.MinValue;
         public static Dictionary<uint, IModdedOption> AllOptions = new Dictionary<uint, IModdedOption>();
-        public static List<OptionCollection> OptionCollections = new List<OptionCollection>();
 
         public static Dictionary<Assembly, List<LobbyTab>> LobbyTabs = new Dictionary<Assembly, List<LobbyTab>>();
 
@@ -40,14 +39,6 @@ namespace FungleAPI.GameOptions
                 }
             }
             return assemblies;
-        }
-
-        public static void SaveOptionCollections()
-        {
-            foreach (OptionCollection optionCollection in OptionCollections)
-            {
-                optionCollection.Save();
-            }
         }
 
         public static List<IModdedOption> GetAndInitializeModdedOptions(Type type, ModPlugin modPlugin)

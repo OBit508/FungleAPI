@@ -53,7 +53,7 @@ namespace FungleAPI.GameOptions.Lobby
                         viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
                         if (i > 1)
                         {
-                            IModdedOption moddedOption = group.TeamOptions.Options[i - 2];
+                            IModdedOption moddedOption = group.TeamOptions.Options.ElementAt(i - 2);
                             if (moddedOption.Data.Type == OptionTypes.Checkbox)
                             {
                                 viewSettingsInfoPanel.SetInfoCheckbox(moddedOption.Data.Title, 61, bool.Parse(moddedOption.GetStringValue(AmongUsClient.Instance.AmHost)));

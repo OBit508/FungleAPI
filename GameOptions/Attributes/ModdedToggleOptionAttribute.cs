@@ -1,4 +1,5 @@
-﻿using Epic.OnlineServices.RTC;
+﻿using BepInEx.Configuration;
+using Epic.OnlineServices.RTC;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.Translation;
@@ -23,18 +24,20 @@ namespace FungleAPI.GameOptions.Attributes
 
         public override void SetValue(object value, bool amHost)
         {
-            bool changed = false;
             bool realValue = amHost ? LocalValue : NonHostValue;
 
-            if (value is bool boolValue) { changed = realValue != boolValue; realValue = boolValue; }
+            if (value is bool boolValue) { realValue = boolValue; }
 
             if (amHost)
             {
                 LocalValue = realValue;
-                OnValueChance?.Invoke(changed);
-                return;
+                SaveValue(Entry);
             }
-            NonHostValue = realValue;
+            else
+            {
+                NonHostValue = realValue;
+            }
+            OnValueChance?.Invoke();
         }
         public override string GetStringValue(bool amHost)
         {
@@ -49,13 +52,13 @@ namespace FungleAPI.GameOptions.Attributes
         {
             NonHostValue = messageReader.ReadBoolean();
         }
-        public override void WriteLocalValue(BinaryWriter binaryWriter)
+        public override void SaveValue(ConfigEntry<string> configEntry)
         {
-            binaryWriter.Write(LocalValue);
+            configEntry.Value = LocalValue.ToString();
         }
-        public override void ReadLocalValue(BinaryReader binaryReader)
+        public override void LoadValue(ConfigEntry<string> configEntry)
         {
-            LocalValue = binaryReader.ReadBoolean();
+            LocalValue = bool.Parse(configEntry.Value);
         }
         public override OptionBehaviour CreateOption(Transform transform)
         {

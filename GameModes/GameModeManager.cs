@@ -69,6 +69,9 @@ namespace FungleAPI.GameModes
                 if (changed)
                 {
                     SyncManager.RpcSyncGamemode();
+                    GameStartManager.Instance.MinPlayers = GetCurrentGameMode().RequiredPlayerToStart();
+                    GameStartManager.Instance.LastPlayerCount = 0;
+                    GameStartManager.Instance.ResetStartState();
                 }
             });
             stringGameSetting.Index = (int)HostValue.Value;

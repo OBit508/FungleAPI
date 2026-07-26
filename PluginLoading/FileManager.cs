@@ -1,4 +1,6 @@
 ﻿using BepInEx.Configuration;
+using FungleAPI.GameOptions.Collections;
+using HarmonyLib;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace FungleAPI.PluginLoading
     public static class FileManager
     {
         private static string FungleAPI_Folder = Path.Combine(Application.persistentDataPath, "FungleAPI");
+        private static Dictionary<string, ConfigFile> Files = new Dictionary<string, ConfigFile>();
         public static string GetAPI_Folder()
         {
             if (!Directory.Exists(FungleAPI_Folder))
@@ -21,29 +24,26 @@ namespace FungleAPI.PluginLoading
             }
             return FungleAPI_Folder;
         }
-        public static string GetPlugin_Folder(ModPlugin modPlugin)
+        public static ConfigFile GetFile(ModPlugin modPlugin)
         {
-            string path = Path.Combine(GetAPI_Folder(), TurnSafe(modPlugin.LocalMod.GUID));
-            if (!Directory.Exists(path))
+            string path = Path.Combine(GetAPI_Folder(), $"{TurnSafe(modPlugin.LocalMod.GUID)}.cfg");
+            ConfigFile configFile;
+            if (Files.TryGetValue(path, out configFile))
             {
-                Directory.CreateDirectory(path);
+                return configFile;
             }
-            return path;
-        }
-        public static string GetFolder(ModPlugin modPlugin, string folderName)
-        {
-            string path = Path.Combine(GetPlugin_Folder(modPlugin), folderName);
-            if (!Directory.Exists(path))
+            else
             {
-                Directory.CreateDirectory(path);
+                configFile = new ConfigFile(path, false);
+                Files[path] = configFile;
+                return configFile;
             }
-            return path;
         }
         private static string TurnSafe(string str)
         {
             foreach (char c in InvalidChars)
             {
-                str = str.Replace(c.ToString(), string.Empty);
+                str = str.Replace(c.ToString(), string.Empty).Replace(".", "-");
             }
             return str;
         }

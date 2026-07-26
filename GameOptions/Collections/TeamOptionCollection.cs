@@ -1,4 +1,5 @@
-﻿using FungleAPI.Api;
+﻿using BepInEx.Configuration;
+using FungleAPI.Api;
 using FungleAPI.GameOptions.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
@@ -16,59 +17,31 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class TeamOptionCollection : OptionCollection
     {
-        public const int TeamOptionVersion = 3;
-
-        public int LocalTeamCount;
+        public ConfigEntry<int> LocalTeamCount;
         public int NonHostTeamCount;
 
-        public int LocalTeamPriority;
+        public ConfigEntry<int> LocalTeamPriority;
         public int NonHostTeamPriority;
 
         public ModdedTeam Team;
 
         public void SetLocal(int count, int priority)
         {
-            if (LocalTeamCount != count) { LocalTeamCount = count; Dirty = true; }
-            if (LocalTeamPriority != priority) { LocalTeamPriority = priority; Dirty = true; }
+            LocalTeamCount.Value = count;
+            LocalTeamPriority.Value = priority;
         }
-        public override void WriteLocalOptions(BinaryWriter binaryWriter)
+        public override void LoadOptions(ConfigFile configFile, string collectionId)
         {
-            binaryWriter.Write(TeamOptionVersion);
-
-            binaryWriter.Write(LocalTeamCount);
-            binaryWriter.Write(LocalTeamPriority);
-
-            base.WriteLocalOptions(binaryWriter);
-        }
-        public override void ReadLocalOptions(BinaryReader binaryReader)
-        {
-            SetAsDefault(true);
-            try
-            {
-                int teamOptionVersion = binaryReader.ReadInt32();
-                if (teamOptionVersion < TeamOptionVersion)
-                {
-                    FungleApiPlugin.Instance.Log.LogWarning($"Different version of the Team Option Collection from {FilePath} founded, loading default.");
-                    return;
-                }
-
-                LocalTeamCount = binaryReader.ReadInt32();
-                LocalTeamPriority = binaryReader.ReadInt32();
-
-                base.ReadLocalOptions(binaryReader);
-            }
-            catch (Exception ex)
-            {
-                FungleApiPlugin.Instance.Log.LogError($"Failed to read Team Option Collection from {FilePath}, loading default.\nMessage: {ex.Message}");
-                SetAsDefault(true);
-            }
+            LocalTeamCount = configFile.Bind(collectionId, "TeamCount", Team.DefaultCount);
+            LocalTeamPriority = configFile.Bind(collectionId, "TeamPriority", Team.DefaultPriority);
+            base.LoadOptions(configFile, collectionId);
         }
         public override void SetAsDefault(bool amHost)
         {
-            if (amHost)
+            if (amHost && LocalTeamCount != null && LocalTeamPriority != null)
             {
-                LocalTeamCount = Team.DefaultCount;
-                LocalTeamPriority = Team.DefaultPriority;
+                LocalTeamCount.Value = Team.DefaultCount;
+                LocalTeamPriority.Value = Team.DefaultPriority;
             }
             else
             {
@@ -79,9 +52,9 @@ namespace FungleAPI.GameOptions.Collections
             base.SetAsDefault(amHost);
         }
         public TeamOptionCollection(ModdedTeam moddedTeam)
+            :base("Teams", moddedTeam.GetType())
         {
             Team = moddedTeam;
-            FolderName = "Teams";
         }
     }
 }

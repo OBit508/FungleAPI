@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOver;
@@ -24,6 +25,83 @@ namespace FungleAPI.Api
     public class NormalGameMode : BaseGameMode
     {
         public override StringNames GameModeName => StringNames.GameTypeClassic;
+        public override int RequiredPlayerToStart() => 4;
+        public override float CalculateLightRadius(NetworkedPlayerInfo player, bool airship)
+        {
+            ShipStatus ship = ShipStatus.Instance;
+            float Base()
+            {
+                if (player == null || player.IsDead)
+                {
+                    return ship.MaxLightRadius;
+                }
+                if (player.Role.IsImpostor)
+                {
+                    return ship.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
+                }
+                float t = 1f;
+                ISystemType systemType;
+                if (ship.Systems.TryGetValue(SystemTypes.Electrical, out systemType))
+                {
+                    t = systemType.SafeCast<SwitchSystem>().Value / 255f;
+                }
+                return Mathf.Lerp(ship.MinLightRadius, ship.MaxLightRadius, t) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
+            }
+            if (airship)
+            {
+                AirshipStatus airshipStatus = ship.SafeCast<AirshipStatus>();
+
+                float num = Base();
+                if (player.Role.AffectedByLightAffectors)
+                {
+                    foreach (LightAffector lightAffector in airshipStatus.LightAffectors)
+                    {
+                        if (player.Object && player.Object.Collider.IsTouching(lightAffector.Hitbox))
+                        {
+                            num *= lightAffector.Multiplier;
+                        }
+                    }
+                }
+                return num;
+            }
+            return Base();
+        }
+        public override void AdjustLighting()
+        {
+            if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
+
+            float flashlightSize = 0f;
+            if (IsFlashlightEnabled())
+            {
+                if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                {
+                    GameOptionsManager.Instance.CurrentGameOptions.TryGetFloat(FloatOptionNames.ImpostorFlashlightSize, out flashlightSize);
+                }
+                else
+                {
+                    GameOptionsManager.Instance.CurrentGameOptions.TryGetFloat(FloatOptionNames.CrewmateFlashlightSize, out flashlightSize);
+                }
+            }
+            PlayerControl.LocalPlayer.SetFlashlightInputMethod();
+            PlayerControl.LocalPlayer.lightSource.SetupLightingForGameplay(IsFlashlightEnabled(), flashlightSize, PlayerControl.LocalPlayer.TargetFlashlight.transform);
+        }
+        public override bool IsFlashlightEnabled()
+        {
+            if (LobbyBehaviour.Instance != null)
+            {
+                return false;
+            }
+            if (PlayerControl.LocalPlayer.Data.IsDead)
+            {
+                return false;
+            }
+            if (!GameManager.Instance.IsHideAndSeek())
+            {
+                return false;
+            }
+            bool flag = false;
+            return GameOptionsManager.Instance.CurrentGameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag) && flag;
+        }
         public override bool CanUse(IUsable usable, PlayerControl player) => true;
         public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
         {
@@ -141,6 +219,7 @@ namespace FungleAPI.Api
         public override void SetTaskPanelText(HudManager hudManager)
         {
             NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
+            RoleHintType roleHintType = data.Role.GetHintType();
             for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
             {
                 PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
@@ -155,10 +234,16 @@ namespace FungleAPI.Api
                     playerTask.AppendTaskText(hudManager.tasksString);
                 }
             }
-            if (data.Role != null && data.Role.GetHintType().HasFlag(RoleHintType.TaskHint))
+            if (data.Role != null && roleHintType.HasFlag(RoleHintType.TaskHint))
             {
                 RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, hudManager.tasksString);
             }
+
+            PlayerTabBehaviour.Instance.SetVisible(roleHintType.HasFlag(RoleHintType.PlayerTab) && HudManager.Instance.TaskPanel.gameObject.activeSelf);
+            Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
+            RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
+            PlayerTabBehaviour.Instance.TabText.text = stringBuilder.ToString();
+            PlayerTabBehaviour.Instance.TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
         }
         public override float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
@@ -213,7 +298,7 @@ namespace FungleAPI.Api
                         list2.Add(networkedPlayerInfo);
                     }
                 }
-                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount > 0);
+                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount.Value > 0);
                 teams.Sort((a, b) => b.GetPriority().CompareTo(a.GetPriority()));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
 
@@ -244,7 +329,7 @@ namespace FungleAPI.Api
                 }
             }
 
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.LocalTeamCount.Value, roleList, ref rolesAssigned);
 
             List<RoleManager.RoleAssignmentData> randomRoles = availableRoles.Select(role => new { Role = role, Chance = roleOptions.GetChancePerGame(role.Role) }).Where(x => x.Chance > 0 && x.Chance < 100).Select(x => new RoleManager.RoleAssignmentData(x.Role, roleOptions.GetNumPerGame(x.Role.Role), x.Chance)).ToList();
 
@@ -261,13 +346,13 @@ namespace FungleAPI.Api
                 }
             }
 
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.LocalTeamCount.Value, roleList, ref rolesAssigned);
 
-            while (roleList.Count < players.Count && roleList.Count + rolesAssigned < team.TeamOptions.LocalTeamCount)
+            while (roleList.Count < players.Count && roleList.Count + rolesAssigned < team.TeamOptions.LocalTeamCount.Value)
             {
                 roleList.Add(team.DefaultRole);
             }
-            logicRoleSelectionNormal.AssignRolesFromList(players, (int)team.TeamOptions.LocalTeamCount, roleList, ref rolesAssigned);
+            logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.LocalTeamCount.Value, roleList, ref rolesAssigned);
         }
         public override void AssignTasks(ShipStatus shipStatus)
         {

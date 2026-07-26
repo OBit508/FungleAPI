@@ -250,7 +250,7 @@ namespace FungleAPI.GameOptions.Lobby
             float num2 = 1.08f;
             for (int i = 0; i < role.RoleOptions.Options.Count; i++)
             {
-                IModdedOption baseGameSetting = role.RoleOptions.Options[i];
+                IModdedOption baseGameSetting = role.RoleOptions.Options.ElementAt(i);
                 ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate(advancedRoleViewPanel.infoPanelOrigin);
                 viewSettingsInfoPanel.transform.SetParent(advancedRoleViewPanel.transform);
                 viewSettingsInfoPanel.transform.localScale = Vector3.one;

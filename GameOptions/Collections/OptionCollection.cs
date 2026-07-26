@@ -1,4 +1,6 @@
-﻿using FungleAPI.GameOptions.Patches;
+﻿using BepInEx.Configuration;
+using FungleAPI.Api;
+using FungleAPI.GameOptions.Patches;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using Hazel;
@@ -11,44 +13,13 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions.Collections
 {
-    public abstract class OptionCollection
+    public class OptionCollection
     {
-        public bool Dirty;
-        public string FilePath;
         public ModPlugin Plugin;
         public List<IModdedOption> Options = new List<IModdedOption>();
 
-        public string FolderName;
-        public void Save()
-        {
-            if (!Dirty) return;
-
-            using (FileStream fileStream = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-            {
-                using (BinaryWriter binaryWriter = new BinaryWriter(fileStream))
-                {
-                    WriteLocalOptions(binaryWriter);
-                    binaryWriter.Flush();
-                    fileStream.Flush(true);
-                }
-            }
-            Dirty = false;
-        }
-        public void Load()
-        {
-            if (!File.Exists(FilePath))
-            {
-                SetAsDefault(true);
-                return;
-            }
-            using (FileStream fileStream = new FileStream(FilePath, FileMode.Open, FileAccess.Read))
-            {
-                using (BinaryReader binaryReader = new BinaryReader(fileStream))
-                {
-                    ReadLocalOptions(binaryReader);
-                }
-            }
-        }
+        public Type OwnerType;
+        public string CategoryName;
 
         public virtual void Initialize(ModPlugin modPlugin, List<IModdedOption> moddedOptions)
         {
@@ -56,18 +27,16 @@ namespace FungleAPI.GameOptions.Collections
             Options.AddRange(moddedOptions);
 
             Type type = GetType();
-            FilePath = Path.Combine(FileManager.GetFolder(modPlugin, FolderName), $"{type.Name}_{type.GetShortUniqueId()}");
+            string collectionId = $"{CategoryName}_{OwnerType.Name}_{OwnerType.GetShortUniqueId()}";
+
+            ConfigFile configFile = FileManager.GetFile(modPlugin);
 
             modPlugin.OptionCollections.Add(this);
-            OptionManager.OptionCollections.Add(this);
             foreach (IModdedOption moddedOption in Options)
             {
-                moddedOption.SetOnValueChance(delegate (bool changed)
+                moddedOption.Entry = configFile.Bind(collectionId, moddedOption.StringOptionId, moddedOption.DefaultValue.ToString());
+                moddedOption.SetOnValueChance(delegate
                 {
-                    if (changed)
-                    {
-                        Dirty = true;
-                    }
                     if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == modPlugin.ModAssembly) 
                     {
                         LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
@@ -76,28 +45,21 @@ namespace FungleAPI.GameOptions.Collections
                 OptionManager.AllOptions.Add(moddedOption.OptionId, moddedOption);
             }
 
-            Load();
-        }
-        public virtual void WriteLocalOptions(BinaryWriter binaryWriter) 
-        {
-            binaryWriter.Write(Options.Count);
-            foreach (IModdedOption moddedOption in Options)
+            try
             {
-                binaryWriter.Write(moddedOption.StringOptionId);
-                moddedOption.WriteLocalValue(binaryWriter);
+                LoadOptions(configFile, collectionId);
+            }
+            catch
+            {
+                FunglePlugin<FungleApiPlugin>.Logger.LogError("Found a corrupted ConfigEntry value from Options Collections, loading default.");
+                SetAsDefault(true);
             }
         }
-        public virtual void ReadLocalOptions(BinaryReader binaryReader) 
+        public virtual void LoadOptions(ConfigFile configFile, string collectionId) 
         {
-            int optionCount = binaryReader.ReadInt32();
-            for (int i = 0; i < optionCount; i++)
+            foreach (IModdedOption moddedOption in Options)
             {
-                string optionId = binaryReader.ReadString();
-                IModdedOption moddedOption = Options.FirstOrDefault(m => m.StringOptionId == optionId);
-                if (moddedOption != null)
-                {
-                    moddedOption.ReadLocalValue(binaryReader);
-                }
+                moddedOption.LoadValue(moddedOption.Entry);
             }
         }
         public virtual void SetAsDefault(bool amHost)
@@ -106,6 +68,11 @@ namespace FungleAPI.GameOptions.Collections
             {
                 moddedOption.SetValue(moddedOption.DefaultValue, amHost);
             }
+        }
+        public OptionCollection(string categoryName, Type ownerType)
+        {
+            CategoryName = categoryName;
+            OwnerType = ownerType;
         }
     }
 }

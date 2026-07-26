@@ -79,16 +79,11 @@ namespace FungleAPI.GlobalPatches
         {
             AspectPosition exitGame = mainMenuManager.quitButton.GetComponent<AspectPosition>();
             AspectPosition credits = mainMenuManager.creditsButton.GetComponent<AspectPosition>();
-            PassiveButton modsButton = GameObject.Instantiate<PassiveButton>(mainMenuManager.creditsButton, mainMenuManager.creditsButton.transform.parent);
-            modsButton.SetNewAction(mods);
-            TextMeshPro textMeshPro = modsButton.transform.GetChild(2).GetChild(0).GetComponent<TextMeshPro>();
-            GameObject.Destroy(textMeshPro.GetComponent<TextTranslatorTMP>());
-            textMeshPro.text = "Mods";
-            AspectPosition aspectPosition = modsButton.GetComponent<AspectPosition>();
+            
             credits.anchorPoint = new Vector2(0.391f, credits.anchorPoint.y);
-            aspectPosition.anchorPoint = new Vector2(0.5005f, credits.anchorPoint.y);
             exitGame.anchorPoint = new Vector2(0.610f, credits.anchorPoint.y);
-            foreach (AspectPosition aspect in new List<AspectPosition>() { exitGame, credits, aspectPosition })
+
+            foreach (AspectPosition aspect in new List<AspectPosition>() { exitGame, credits })
             {
                 AspectScaledAsset aspectScaledAsset = aspect.GetComponent<AspectScaledAsset>();
                 foreach (AspectScaledAsset.ScaledSprite scaledSprite in aspectScaledAsset.allSprites)
@@ -106,6 +101,13 @@ namespace FungleAPI.GlobalPatches
                 text.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.501f, 0.505f);
                 text.transform.parent.localPosition = Vector3.zero;
             }
+            PassiveButton modsButton = GameObject.Instantiate<PassiveButton>(mainMenuManager.creditsButton, mainMenuManager.creditsButton.transform.parent);
+            modsButton.SetNewAction(mods);
+            TextMeshPro textMeshPro = modsButton.transform.GetChild(2).GetChild(0).GetComponent<TextMeshPro>();
+            GameObject.Destroy(textMeshPro.GetComponent<TextTranslatorTMP>());
+            textMeshPro.text = "Mods";
+            modsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.5005f, credits.anchorPoint.y);
+
             return modsButton.transform;
         }
         public static System.Collections.IEnumerator RunStartUp(MainMenuManager mainMenuManager)

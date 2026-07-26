@@ -20,7 +20,7 @@ namespace FungleAPI.GameOptions
     public class RoomSettings
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
-        public DefaultOptionCollection OptionCollection;
+        public OptionCollection OptionCollection;
         public bool initialized;
         public virtual void Initialize(ModPlugin modPlugin)
         {
@@ -43,7 +43,7 @@ namespace FungleAPI.GameOptions
                         Groups.Add(group);
                     }
                 }
-                OptionCollection = new DefaultOptionCollection("Room");
+                OptionCollection = new OptionCollection("Room", type);
                 OptionCollection.Initialize(modPlugin, moddedOptions);
                 initialized = true;
             }

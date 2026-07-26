@@ -129,6 +129,8 @@ namespace FungleAPI.Hud
         public virtual void Enable() { }
         public virtual void Reset(bool changeRole = false)
         {
+            if (Button == null) return;
+
             if (changeRole && LimitedUses)
             {
                 SetNumUses(MaxUses);

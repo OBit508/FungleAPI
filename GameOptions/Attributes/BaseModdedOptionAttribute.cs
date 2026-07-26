@@ -1,4 +1,5 @@
-﻿using FungleAPI.Attributes;
+﻿using BepInEx.Configuration;
+using FungleAPI.Attributes;
 using FungleAPI.PluginLoading;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -17,21 +18,22 @@ namespace FungleAPI.GameOptions.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class BaseModdedOptionAttribute : Attribute, IModdedOption
     {
-        public Action<bool> OnValueChance;
+        public Action OnValueChance;
         public Type ReturnedType;
+        public ConfigEntry<string> Entry { get; set; }
         public BaseGameSetting Data { get; set; }
         public object DefaultValue { get; set; }
         public uint OptionId { get; set; }
         public string StringOptionId { get; set; }
         public ModPlugin OwnerPlugin { get; set; }
         public abstract object GetReturnedValue();
-        public void SetOnValueChance(Action<bool> action) => OnValueChance += action;
+        public void SetOnValueChance(Action action) => OnValueChance += action;
         public abstract void SetValue(object value, bool amHost);
         public abstract string GetStringValue(bool amHost);
         public abstract void Serialize(MessageWriter messageWriter);
         public abstract void Deserialize(MessageReader messageReader);
-        public abstract void WriteLocalValue(BinaryWriter binaryWriter);
-        public abstract void ReadLocalValue(BinaryReader binaryReader);
+        public abstract void SaveValue(ConfigEntry<string> configEntry);
+        public abstract void LoadValue(ConfigEntry<string> configEntry);
         public abstract OptionBehaviour CreateOption(Transform parent);
         public virtual void Initialize(PropertyInfo propertyInfo)
         {

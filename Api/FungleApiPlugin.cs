@@ -43,14 +43,14 @@ namespace FungleAPI.Api
     /// The API BasePlugin class
     /// </summary>
 	[BepInProcess("Among Us.exe")]
-	[BepInPlugin(ModId, "FungleAPI", ModV)]
+    [BepInPlugin(ModId, "FungleAPI", ModV)]
     [BepInDependency("gg.reactor.api", DependencyFlags.SoftDependency)]
     [BepInDependency("mira.api", DependencyFlags.SoftDependency)]
     [BepInDependency("Submerged", DependencyFlags.SoftDependency)]
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
-	{
+    {
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.3.2.1";
+        public const string ModV = "0.3.3.0";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
@@ -210,12 +210,6 @@ namespace FungleAPI.Api
                 yield return null;
             }
         }
-        internal class FungleHelper : MonoBehaviour 
-        {
-            public void OnApplicationQuit() 
-            { 
-                OptionManager.SaveOptionCollections();
-            } 
-        }
+        internal class FungleHelper : MonoBehaviour { }
     }
 }
