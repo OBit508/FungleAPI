@@ -36,39 +36,25 @@ namespace FungleAPI.Chat.Patches
                 command.text = ChatCommandManager.TryFindSomeCommand(lastText, ref baseChatCommand);
             }
         }
-        [HarmonyPatch(nameof(ChatController.SendFreeChat))]
-        [HarmonyPrefix]
-        public static bool SendFreeChatPrefix(ChatController __instance)
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSendChat))]
+        public static class SendPatch
         {
-            string text = __instance.freeChatField.Text;
-
-            BaseChatCommand baseChatCommand = null;
-            ChatCommandManager.TryFindSomeCommand(text, ref baseChatCommand);
-
-            if (baseChatCommand != null)
+            public static void Prefix(ref string chatText)
             {
-                bool cancelSend = false;
-                baseChatCommand.ExecuteCommand(text.Split(" ").Skip(1), ref cancelSend);
+                BaseChatCommand baseChatCommand = null;
+                ChatCommandManager.TryFindSomeCommand(chatText, ref baseChatCommand);
 
-                if (cancelSend)
+                if (baseChatCommand != null)
                 {
-                    return false;
+                    bool cancelSend = false;
+                    baseChatCommand.ExecuteCommand(chatText.Split(" ").Skip(1), ref cancelSend);
+
+                    if (cancelSend)
+                    {
+                        chatText = string.Empty;
+                    }
                 }
             }
-
-            int num;
-            int num2;
-            if (UrlFinder.TryFindUrl(text.ToCharArray(), out num, out num2))
-            {
-                ChatController.Logger.Warning(string.Format("{0}() :: ABORTED, URL was found. Showing {1} instead!", "SendFreeChat", StringNames.FreeChatLinkWarning), null);
-                __instance.AddChatWarning(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.FreeChatLinkWarning));
-                return false;
-            }
-            ChatController.Logger.Debug("SendFreeChat () :: Sending message: '" + text + "'", null);
-
-            PlayerControl.LocalPlayer.RpcSendChat(text);
-
-            return false;
         }
     }
 }
