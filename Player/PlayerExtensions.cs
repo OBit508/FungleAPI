@@ -14,6 +14,7 @@ using FungleAPI.Player.Networking.Data;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -330,7 +331,7 @@ namespace FungleAPI.Player
                 target.Data.Role.KillAnimSpecialSetup(deadBody, source, target);
                 if (PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.Detective && !PlayerControl.LocalPlayer.Data.IsDead && !PlayerControl.LocalPlayer.Data.Disconnected)
                 {
-                    (PlayerControl.LocalPlayer.Data.Role as DetectiveRole).KillAnimSpecialSetup(deadBody, source, target);
+                    PlayerControl.LocalPlayer.Data.Role.SafeCast<DetectiveRole>().KillAnimSpecialSetup(deadBody, source, target);
                 }
             }
             if (isParticipant)

@@ -50,12 +50,12 @@ namespace FungleAPI.Api
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
 	{
         public const string ModId = "io.github.obit508.fungleapi";
-        public const string ModV = "0.3.2";
+        public const string ModV = "0.3.2.1";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
         public string ModName { get; } = "Vanilla";
-        public string ModVersion { get; } = ModV;
+        public string ModVersion { get; } = ModV.EndsWith(".0") ? ModV[..^2] : ModV[..ModV.LastIndexOf('.')] + "-" + ModV[(ModV.LastIndexOf('.') + 1)..];
 
         internal static FungleHelper Helper;
         /// <summary>

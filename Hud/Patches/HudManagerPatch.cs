@@ -76,6 +76,8 @@ namespace FungleAPI.Hud.Patches
                 HudHelper.BottomRight = Buttons.Find("BottomRight");
                 HudHelper.BottomLeft = Buttons.Find("BottomLeft");
 
+                HudHelper.BottomLeft.GetChild(0)?.gameObject.Destroy();
+
                 foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
                 {
                     button.CreateButton();
@@ -101,47 +103,6 @@ namespace FungleAPI.Hud.Patches
 
             CreatePlayerTab();
         }
-        [HarmonyPatch("SetTouchType")]
-        [HarmonyPrefix]
-        public static void SetTouchTypePrefix(HudManager __instance, [HarmonyArgument(0)] ControlTypes type)
-        {
-            if (__instance.joystick != null)
-            {
-                GameObject.Destroy(__instance.joystick.SafeCast<MonoBehaviour>().gameObject);
-                __instance.joystick = null;
-            }
-            if (__instance.joystickR != null)
-            {
-                GameObject.Destroy(__instance.joystickR.gameObject);
-                __instance.joystickR = null;
-            }
-            MonoBehaviour monoBehaviour = GameObject.Instantiate<MonoBehaviour>(__instance.Joysticks[(int)type]);
-            if (monoBehaviour != null)
-            {
-                monoBehaviour.transform.SetParent(__instance.transform, false);
-                __instance.joystick = monoBehaviour.GetComponent<IVirtualJoystick>();
-            }
-            bool flag;
-            GameOptionsManager.Instance.CurrentGameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag);
-            if (type == ControlTypes.VirtualJoystick)
-            {
-                if (flag)
-                {
-                    MonoBehaviour monoBehaviour2 = GameObject.Instantiate<MonoBehaviour>(__instance.RightVJoystick);
-                    if (monoBehaviour2 != null)
-                    {
-                        monoBehaviour2.transform.SetParent(__instance.transform, false);
-                        __instance.joystickR = monoBehaviour2.GetComponent<VirtualJoystick>();
-                        __instance.joystickR.ToggleVisuals(LobbyBehaviour.Instance == null);
-                        Logger.GlobalInstance.Info(string.Format("[{0}] Initializing Right Joystick for Flashlight. [Use Flashlight: {1}] [Lobby: {2}]", "HudManager", flag, LobbyBehaviour.Instance != null), null);
-                    }
-                }
-                Vector3 pos = HudHelper.BottomLeft.localPosition;
-                pos.x = monoBehaviour.transform.localPosition.x + 1.5f;
-                HudHelper.BottomLeft.localPosition = pos;
-            }
-            __instance.SetJoystickSize(DataManager.Settings.Input.TouchJoystickSize);
-        }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
@@ -155,6 +116,12 @@ namespace FungleAPI.Hud.Patches
             if (__instance.joystickR != null && LobbyBehaviour.Instance != null)
             {
                 __instance.joystickR.ToggleVisuals(false);
+            }
+            if (__instance.joystick != null && __instance.joystick.Is(out VirtualJoystick virtualJoystick))
+            {
+                Vector3 pos = HudHelper.BottomLeft.localPosition;
+                pos.x = virtualJoystick.transform.localPosition.x + 1.5f;
+                HudHelper.BottomLeft.localPosition = pos;
             }
             __instance.taskDirtyTimer += Time.deltaTime;
             if (__instance.taskDirtyTimer > 0.25f)
