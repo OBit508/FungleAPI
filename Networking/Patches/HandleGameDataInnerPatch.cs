@@ -30,7 +30,7 @@ namespace FungleAPI.Networking.Patches
         public static System.Collections.IEnumerator CoStoreMessage(InnerNetClient innerNetClient, MessageReader messageReader, uint netId, byte callId, int msgNum)
         {
             FunglePlugin<FungleApiPlugin>.Logger.LogWarning(string.Format("Stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString());
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 11; i++)
             {
                 if (innerNetClient.allObjects.AllObjectsFast.TryGetValue(netId, out InnerNetObject innerNetObject))
                 {
@@ -48,7 +48,6 @@ namespace FungleAPI.Networking.Patches
                     yield break;
                 }
                 yield return new WaitForSeconds(0.1f);
-                FunglePlugin<FungleApiPlugin>.Logger.LogWarning(string.Format("Failed to read stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString() + " try: " + (i + 1));
             }
             FunglePlugin<FungleApiPlugin>.Logger.LogError(string.Format("Failed to read stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString());
         }

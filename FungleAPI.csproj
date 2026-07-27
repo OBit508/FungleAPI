@@ -81,8 +81,9 @@
     <Compile Include="GameOptions\Lobby\FungleTab.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncGamemode.cs" />
     <Compile Include="GameModes\GameModeOptions.cs" />
-    <Compile Include="GameOptions\Networking\RpcSyncEverything.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncGRnT.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncOption.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncOptions.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncRole.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncTeam.cs" />
     <Compile Include="GameOptions\Networking\SyncOptionType.cs" />

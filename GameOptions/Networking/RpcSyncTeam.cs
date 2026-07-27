@@ -24,7 +24,7 @@ namespace FungleAPI.GameOptions.Networking
             messageWriter.WritePacked(data.TeamOptions.LocalTeamCount.Value);
             messageWriter.WritePacked(data.TeamOptions.LocalTeamPriority.Value);
 
-            if (!RpcSyncEverything.UnSynced)
+            if (!RpcSyncGRnT.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.TeamColor.ToTextColor()}{data.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.TeamOptions.LocalTeamCount.Value}</font>, " +
@@ -53,9 +53,9 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{moddedTeam.TeamColor.ToTextColor()}{moddedTeam.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamCount}</font>, " +
-                $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", !RpcSyncEverything.UnSynced);
+                $"{FungleTranslation.PriorityText.GetString()}: {SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamPriority}</font>.", !RpcSyncGRnT.UnSynced);
 
-            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == moddedTeam.TeamOptions.Plugin.ModAssembly)
+            if (!RpcSyncGRnT.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == moddedTeam.TeamOptions.Plugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }

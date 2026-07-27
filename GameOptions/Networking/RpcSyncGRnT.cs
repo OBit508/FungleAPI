@@ -17,19 +17,12 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcSyncEverything : SimpleRpc<PlayerControl>
+    internal class RpcSyncGRnT : SimpleRpc<PlayerControl>
     {
         public static bool UnSynced;
         public override void Write(MessageWriter messageWriter)
         {
             UnSynced = true;
-
-            messageWriter.WritePacked(OptionManager.AllOptions.Count);
-            foreach (IModdedOption moddedOption in OptionManager.AllOptions.Values)
-            {
-                messageWriter.WriteOption(moddedOption);
-                moddedOption.Serialize(messageWriter);
-            }
 
             RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
             RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
@@ -69,13 +62,6 @@ namespace FungleAPI.GameOptions.Networking
                 try
                 {
                     UnSynced = true;
-                    int optionCount = messageReader.ReadPackedInt32();
-                    for (int i = 0; i < optionCount; i++)
-                    {
-                        IModdedOption moddedOption = messageReader.ReadOption();
-                        moddedOption.Deserialize(messageReader);
-                    }
-
                     RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
                     RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
                     RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;

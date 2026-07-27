@@ -24,7 +24,7 @@ namespace FungleAPI.GameOptions.Networking
             messageWriter.WritePacked(data.RoleOptions.LocalRoleCount.Value);
             messageWriter.WritePacked(data.RoleOptions.LocalRoleChance.Value);
 
-            if (!RpcSyncEverything.UnSynced)
+            if (!RpcSyncGRnT.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{data.RoleColor.ToTextColor()}{data.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{data.RoleOptions.LocalRoleCount.Value}</font>, " +
@@ -53,9 +53,9 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{customRole.RoleColor.ToTextColor()}{customRole.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleCount}</font>, " +
-                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", !RpcSyncEverything.UnSynced);
+                $"{FungleTranslation.ChanceText.GetString()}: {SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleChance}%</font>.", !RpcSyncGRnT.UnSynced);
 
-            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == customRole.RoleOptions.Plugin.ModAssembly)
+            if (!RpcSyncGRnT.UnSynced && LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == customRole.RoleOptions.Plugin.ModAssembly)
             {
                 LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
             }

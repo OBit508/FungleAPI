@@ -22,7 +22,7 @@ namespace FungleAPI.GameOptions.Networking
 
             messageWriter.WritePacked(GameModeManager.HostValue.Value);
 
-            if (!RpcSyncEverything.UnSynced)
+            if (!RpcSyncGRnT.UnSynced)
             {
                 HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{FungleTranslation.GameModeText.GetString()}</font>: " +
                 $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", false);
@@ -51,9 +51,9 @@ namespace FungleAPI.GameOptions.Networking
             GameModeManager.NonHostValue = gameModeId;
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{FungleTranslation.GameModeText.GetString()}</font>: " +
-                $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", !RpcSyncEverything.UnSynced);
+                $"{SyncManager.MainFont}{baseGameMode.GameModeName.GetString()}</font>", !RpcSyncGRnT.UnSynced);
 
-            if (!RpcSyncEverything.UnSynced && LobbyViewSettingsPanePatch.Tab != null)
+            if (!RpcSyncGRnT.UnSynced && LobbyViewSettingsPanePatch.Tab != null)
             {
                 if (LobbyViewSettingsPanePatch.Tab.TabAssembly == FungleApiPlugin.Plugin.ModAssembly)
                 {

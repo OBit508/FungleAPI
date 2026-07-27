@@ -27,7 +27,15 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncEverything>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, targetId);
+            Rpc<RpcSyncGRnT>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, targetId);
+            List<IModdedOption> moddedOptions = OptionManager.AllOptions.Values.ToList();
+            while (moddedOptions.Count > 0)
+            {
+                List<IModdedOption> batch = moddedOptions.Take(45).ToList();
+                moddedOptions.RemoveRange(0, batch.Count);
+
+                Rpc<RpcSyncOptions>.Instance.Send(batch, PlayerControl.LocalPlayer, SendOption.Reliable, targetId);
+            }
         }
         public static void RpcSyncTeam(ModdedTeam moddedTeam)
         {
