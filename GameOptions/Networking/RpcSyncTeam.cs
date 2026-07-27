@@ -21,8 +21,8 @@ namespace FungleAPI.GameOptions.Networking
         public override void Write(MessageWriter messageWriter, ModdedTeam data)
         {
             messageWriter.WriteTeam(data);
-            messageWriter.WritePacked(data.TeamOptions.LocalTeamCount.Value);
-            messageWriter.WritePacked(data.TeamOptions.LocalTeamPriority.Value);
+            messageWriter.Write(data.TeamOptions.LocalTeamCount.Value);
+            messageWriter.Write(data.TeamOptions.LocalTeamPriority.Value);
 
             if (!RpcSyncGRnT.UnSynced)
             {
@@ -48,8 +48,8 @@ namespace FungleAPI.GameOptions.Networking
             }
 
             ModdedTeam moddedTeam = messageReader.ReadTeam();
-            moddedTeam.TeamOptions.NonHostTeamCount = messageReader.ReadPackedInt32();
-            moddedTeam.TeamOptions.NonHostTeamPriority = messageReader.ReadPackedInt32();
+            moddedTeam.TeamOptions.NonHostTeamCount = messageReader.ReadByte();
+            moddedTeam.TeamOptions.NonHostTeamPriority = messageReader.ReadByte();
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{moddedTeam.TeamColor.ToTextColor()}{moddedTeam.TeamName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{moddedTeam.TeamOptions.NonHostTeamCount}</font>, " +

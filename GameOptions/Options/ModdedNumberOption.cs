@@ -30,6 +30,8 @@ namespace FungleAPI.GameOptions.Options
             if (value is float floatValue) { realValue = floatValue; }
             if (value is int intValue) { realValue = intValue; }
 
+            realValue = Quantize(realValue);
+
             if (amHost)
             {
                 LocalValue = realValue;
@@ -47,11 +49,58 @@ namespace FungleAPI.GameOptions.Options
         }
         public override void Serialize(MessageWriter messageWriter)
         {
-            messageWriter.Write(LocalValue);
+            var setting = Data.SafeCast<FloatGameSetting>();
+            float increment = setting.Increment > 0f ? setting.Increment : 1f;
+            float defaultV = (float)DefaultValue;
+            float clampedLocal = Mathf.Clamp(LocalValue, setting.ValidRange.min, setting.ValidRange.max);
+
+            int delta = Mathf.RoundToInt((clampedLocal - defaultV) / increment);
+
+            if (delta == 0)
+            {
+                messageWriter.Write((byte)2);
+                return;
+            }
+
+            int magnitude = Mathf.Abs(delta);
+
+            if (magnitude > ushort.MaxValue)
+            {
+                messageWriter.Write((byte)3);
+                messageWriter.Write(clampedLocal);
+                return;
+            }
+
+            byte sign = delta > 0 ? (byte)1 : (byte)0;
+            messageWriter.Write(sign);
+            messageWriter.Write((ushort)magnitude);
         }
+
         public override void Deserialize(MessageReader messageReader)
         {
-            NonHostValue = messageReader.ReadSingle();
+            var setting = Data.SafeCast<FloatGameSetting>();
+            float increment = setting.Increment > 0f ? setting.Increment : 1f;
+            float defaultV = (float)DefaultValue;
+
+            byte marker = messageReader.ReadByte();
+
+            switch (marker)
+            {
+                case 2:
+                    NonHostValue = defaultV;
+                    return;
+
+                case 3:
+                    NonHostValue = messageReader.ReadSingle();
+                    return;
+
+                case 0:
+                case 1:
+                    ushort magnitude = messageReader.ReadUInt16();
+                    int delta = marker == 1 ? magnitude : -magnitude;
+                    NonHostValue = defaultV + delta * increment;
+                    return;
+            }
         }
         public override void SaveValue(ConfigEntry<string> configEntry)
         {
@@ -59,7 +108,7 @@ namespace FungleAPI.GameOptions.Options
         }
         public override void LoadValue(ConfigEntry<string> configEntry)
         {
-            LocalValue = float.Parse(configEntry.Value);
+            LocalValue = Quantize(float.Parse(configEntry.Value));
         }
         public override OptionBehaviour CreateOption(Transform parent)
         {
@@ -73,6 +122,18 @@ namespace FungleAPI.GameOptions.Options
             setting.Value = LocalValue;
             option.Value = LocalValue;
             return option;
+        }
+        private float Quantize(float value)
+        {
+            var setting = Data.SafeCast<FloatGameSetting>();
+            float increment = setting.Increment > 0f ? setting.Increment : 1f;
+            float clamped = Mathf.Clamp(value, setting.ValidRange.min, setting.ValidRange.max);
+
+            float defaultV = (float)DefaultValue;
+            float steps = Mathf.Round((clamped - defaultV) / increment);
+            float snapped = defaultV + steps * increment;
+
+            return Mathf.Clamp(snapped, setting.ValidRange.min, setting.ValidRange.max);
         }
         public ModdedNumberOption(StringNames optionName, float defaultValue, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
         {

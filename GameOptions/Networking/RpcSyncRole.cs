@@ -21,8 +21,8 @@ namespace FungleAPI.GameOptions.Networking
         public override void Write(MessageWriter messageWriter, ICustomRole data)
         {
             messageWriter.WriteRole(data as RoleBehaviour);
-            messageWriter.WritePacked(data.RoleOptions.LocalRoleCount.Value);
-            messageWriter.WritePacked(data.RoleOptions.LocalRoleChance.Value);
+            messageWriter.Write(data.RoleOptions.LocalRoleCount.Value);
+            messageWriter.Write(data.RoleOptions.LocalRoleChance.Value);
 
             if (!RpcSyncGRnT.UnSynced)
             {
@@ -48,8 +48,8 @@ namespace FungleAPI.GameOptions.Networking
             }
 
             ICustomRole customRole = messageReader.ReadRole().CustomRole();
-            customRole.RoleOptions.NonHostRoleCount = messageReader.ReadPackedInt32();
-            customRole.RoleOptions.NonHostRoleChance = messageReader.ReadPackedInt32();
+            customRole.RoleOptions.NonHostRoleCount = messageReader.ReadByte();
+            customRole.RoleOptions.NonHostRoleChance = messageReader.ReadByte();
 
             HudManager.Instance.Notifier.SettingsChangeMessageLogic(StringNames.None, $"{SyncManager.MainFont}{customRole.RoleColor.ToTextColor()}{customRole.RoleName.GetString()}</color></font>: " +
                 $"{SyncManager.MainFont}{customRole.RoleOptions.NonHostRoleCount}</font>, " +

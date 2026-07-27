@@ -67,7 +67,7 @@ namespace FungleAPI.Role
         /// <summary>
         /// Max role count
         /// </summary>
-        public int MaxRoleCount = 15;
+        public byte MaxRoleCount = 15;
         /// <summary>
         /// Role solid icon
         /// </summary>
@@ -95,11 +95,11 @@ namespace FungleAPI.Role
         /// <summary>
         /// The default role count
         /// </summary>
-        public int DefaultCount = 0;
+        public byte DefaultCount = 0;
         /// <summary>
         /// The default role chance
         /// </summary>
-        public int DefaultChance = 0;
+        public byte DefaultChance = 0;
         public RoleConfiguration(ICustomRole customRole)
         {
             CanUseVent = customRole.Team == ModdedTeamManager.Impostors;

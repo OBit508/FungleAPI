@@ -77,7 +77,7 @@ namespace FungleAPI.Teams
             team.PriorityData.Type = OptionTypes.Float;
             team.PriorityData.Title = FungleTranslation.TeamPriorityText;
             team.PriorityData.Increment = 1;
-            team.PriorityData.ValidRange = new FloatRange(0, 500);
+            team.PriorityData.ValidRange = new FloatRange(0, byte.MaxValue);
             team.PriorityData.FormatString = null;
             team.PriorityData.ZeroIsInfinity = false;
             team.PriorityData.SuffixType = NumberSuffixes.None;

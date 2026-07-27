@@ -17,15 +17,15 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class RoleOptionCollection : OptionCollection
     {
-        public ConfigEntry<int> LocalRoleCount;
-        public int NonHostRoleCount;
+        public ConfigEntry<byte> LocalRoleCount;
+        public byte NonHostRoleCount;
 
-        public ConfigEntry<int> LocalRoleChance;
-        public int NonHostRoleChance;
+        public ConfigEntry<byte> LocalRoleChance;
+        public byte NonHostRoleChance;
 
         public ICustomRole Role;
 
-        public void SetLocal(int count, int chance)
+        public void SetLocal(byte count, byte chance)
         {
             LocalRoleCount.Value = count;
             LocalRoleChance.Value = chance;

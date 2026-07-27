@@ -71,15 +71,15 @@ namespace FungleAPI.Teams
         /// <summary>
         /// Maximum number of players allowed in this team
         /// </summary>
-        public virtual uint MaxCount => 3;
+        public virtual byte MaxCount => 3;
         /// <summary>
         /// Default number of players in this team
         /// </summary>
-        public virtual int DefaultCount => 1;
+        public virtual byte DefaultCount => 1;
         /// <summary>
         /// Default priority value for team assignment
         /// </summary>
-        public virtual int DefaultPriority => 1;
+        public virtual byte DefaultPriority => 1;
         /// <summary>
         /// Indicates whether the team is hidden on the lobby panels
         /// </summary>
@@ -143,7 +143,7 @@ namespace FungleAPI.Teams
                 {
                     GameOptionsManager.Instance.currentGameOptions.SetInt(Int32OptionNames.NumImpostors, (int)option.Value);
                 }
-                TeamOptions.SetLocal((int)option.Value, TeamOptions.LocalTeamPriority.Value);
+                TeamOptions.SetLocal((byte)option.Value, TeamOptions.LocalTeamPriority.Value);
             });
             CountData.Value = TeamOptions.LocalTeamCount.Value;
             option.Value = TeamOptions.LocalTeamCount.Value;
@@ -157,7 +157,7 @@ namespace FungleAPI.Teams
             NumberOption option = null;
             option = OptionManager.CreateNumberOption(transform, PriorityData, delegate
             {
-                TeamOptions.SetLocal(TeamOptions.LocalTeamCount.Value, (int)option.Value);
+                TeamOptions.SetLocal(TeamOptions.LocalTeamCount.Value, (byte)option.Value);
             });
             PriorityData.Value = TeamOptions.LocalTeamPriority.Value;
             option.Value = TeamOptions.LocalTeamPriority.Value;

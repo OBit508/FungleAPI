@@ -298,13 +298,19 @@ namespace FungleAPI.Api
                         list2.Add(networkedPlayerInfo);
                     }
                 }
-                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount.Value > 0);
+                List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t.TeamOptions.LocalTeamCount.Value > 0 && t != ModdedTeamManager.Crewmates);
                 teams.Sort((a, b) => b.GetPriority().CompareTo(a.GetPriority()));
                 Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players = list2.ToIl2CppList();
 
                 foreach (ModdedTeam team in teams)
                 {
+                    if (players.Count <= 0) break;
+
                     AssignRolesForTeam(logicRoleSelectionNormal, players, team);
+                }
+                if (players.Count > 0)
+                {
+                    AssignRolesForTeam(logicRoleSelectionNormal, players, ModdedTeamManager.Crewmates);
                 }
 
                 MiraCompatibility.Instance?.AssignModifiers();

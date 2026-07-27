@@ -77,7 +77,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteRole(this MessageWriter messageWriter, RoleBehaviour role)
         {
-            messageWriter.WritePacked((uint)role.Role);
+            messageWriter.Write((ushort)role.Role);
         }
         /// <summary>
         /// Write a team
@@ -158,7 +158,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static RoleBehaviour ReadRole(this MessageReader messageReader)
         {
-            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadPackedUInt32());
+            return RoleManager.Instance.GetRole((RoleTypes)messageReader.ReadUInt16());
         }
         /// <summary>
         /// Read a team

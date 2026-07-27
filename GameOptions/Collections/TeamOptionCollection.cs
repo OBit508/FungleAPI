@@ -17,15 +17,15 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class TeamOptionCollection : OptionCollection
     {
-        public ConfigEntry<int> LocalTeamCount;
-        public int NonHostTeamCount;
+        public ConfigEntry<byte> LocalTeamCount;
+        public byte NonHostTeamCount;
 
-        public ConfigEntry<int> LocalTeamPriority;
-        public int NonHostTeamPriority;
+        public ConfigEntry<byte> LocalTeamPriority;
+        public byte NonHostTeamPriority;
 
         public ModdedTeam Team;
 
-        public void SetLocal(int count, int priority)
+        public void SetLocal(byte count, byte priority)
         {
             LocalTeamCount.Value = count;
             LocalTeamPriority.Value = priority;

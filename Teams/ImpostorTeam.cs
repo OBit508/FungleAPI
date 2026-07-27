@@ -40,6 +40,6 @@ namespace FungleAPI.Teams
             return categoryHeaderRoleVariant;
         }
         public override RoleTypes DefaultRole => RoleTypes.Impostor;
-        public override int DefaultPriority => 10;
+        public override byte DefaultPriority => 10;
     }
 }

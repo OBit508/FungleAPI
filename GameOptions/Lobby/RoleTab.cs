@@ -158,7 +158,7 @@ namespace FungleAPI.GameOptions.Lobby
             option.SetRole(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions, customRole as RoleBehaviour, 20);
             option.OnValueChanged = new Action<OptionBehaviour>(delegate
             {
-                customRole.RoleOptions.SetLocal(option.RoleMaxCount, option.RoleChance);
+                customRole.RoleOptions.SetLocal((byte)option.RoleMaxCount, (byte)option.RoleChance);
                 option.UpdateValuesAndText(GameOptionsManager.Instance.CurrentGameOptions.RoleOptions);
                 if (AmongUsClient.Instance.AmHost)
                 {

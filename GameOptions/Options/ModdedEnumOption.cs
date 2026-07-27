@@ -53,11 +53,24 @@ namespace FungleAPI.GameOptions.Options
         }
         public override void Serialize(MessageWriter messageWriter)
         {
-            messageWriter.WritePacked(LocalValue);
+            if (Values.Count <= byte.MaxValue)
+            {
+                messageWriter.Write((byte)LocalValue);
+                return;
+            }
+            messageWriter.Write((ushort)LocalValue);
         }
         public override void Deserialize(MessageReader messageReader)
         {
-            NonHostValue = messageReader.ReadPackedInt32();
+            if (Values.Count <= byte.MaxValue)
+            {
+                NonHostValue = messageReader.ReadByte();
+            }
+            else
+            {
+                NonHostValue = messageReader.ReadUInt16();
+            }
+
             if ((Values.Count - 1) < NonHostValue)
             {
                 NonHostValue = Values.Count - 1;
