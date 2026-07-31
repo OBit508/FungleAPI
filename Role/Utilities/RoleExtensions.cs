@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP;
 using FungleAPI.Base.Roles;
 using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Player;
@@ -53,7 +54,7 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public static bool ShowRoleText(this RoleBehaviour role)
         {
-            if (role.IsMiraRole()) return false;
+            if (role.IsMiraRole() || IL2CPPChainloader.Instance.Plugins.ContainsKey("auavengers.tou.mira")) return false;
 
             if (role.CustomRole() != null)
             {
@@ -120,7 +121,7 @@ namespace FungleAPI.Role.Utilities
             {
                 return roleBehaviour.CustomRole().Configuration.CanUseVent;
             }
-            return roleBehaviour.CanVent && !GameManager.Instance.IsHideAndSeek();
+            return roleBehaviour.CanVent;
         }
         public static void AppendHint(RoleBehaviour roleBehaviour, RoleHintType roleHintType, Il2CppSystem.Text.StringBuilder stringBuilder)
         {

@@ -266,7 +266,7 @@ namespace FungleAPI.Api
                 Vector3 center = @object.Collider.bounds.center;
                 Vector3 position = vent.transform.position;
                 num = Vector2.Distance(center, position);
-                canUse &= (num <= vent.UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false));
+                canUse &= num <= vent.UsableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false);
             }
             return num;
         }

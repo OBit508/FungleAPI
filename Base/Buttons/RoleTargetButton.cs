@@ -1,4 +1,6 @@
 ﻿using FungleAPI.Attributes;
+using FungleAPI.Role;
+using FungleAPI.Utilities;
 
 namespace FungleAPI.Base.Buttons
 {
@@ -17,7 +19,20 @@ namespace FungleAPI.Base.Buttons
         /// <summary>
         /// Returns the local player's role
         /// </summary>
-        public RoleBehaviour Role => Player != null && Player.Data != null ? Player.Data.Role : null;
-        public override bool Active => Role != null && Role.GetType() == typeof(TRole);
+        public RoleBehaviour Role => GetRole();
+        public override bool Active => Player.Data.RoleType == CustomRoleManager.GetRoleType<TRole>();
+        private TRole __role;
+        private TRole GetRole()
+        {
+            if (__role == null)
+            {
+                RoleBehaviour roleBehaviour = Player != null && Player.Data != null ? Player.Data.Role : null; ;
+                if (roleBehaviour.Is(out TRole result))
+                {
+                    __role = result;
+                }
+            }
+            return __role;
+        }
     }
 }
