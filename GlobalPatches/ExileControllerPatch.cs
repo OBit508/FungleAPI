@@ -109,7 +109,7 @@ namespace FungleAPI.GlobalPatches
             Dictionary<ModdedTeam, int> teams = new Dictionary<ModdedTeam, int>();
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
             {
-                if (!player.Data.IsDead)
+                if (!player.Data.IsDead && player.Data != init.networkedPlayer)
                 {
                     ModdedTeam team = player.Data.Role.GetTeam();
                     if (teams.TryGetValue(team, out int value))
