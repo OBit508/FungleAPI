@@ -41,6 +41,8 @@ namespace FungleAPI.Translation
         /// </summary>
         public string GetString()
         {
+            if (!TranslationController.InstanceExists) return Default;
+
             foreach (KeyValuePair<SupportedLangs, string> pair in Strings)
             {
                 if (pair.Key == TranslationController.Instance.currentLanguage.languageID)

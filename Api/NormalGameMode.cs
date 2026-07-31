@@ -487,6 +487,10 @@ namespace FungleAPI.Api
                             neutralKillerCount.Add(player);
                             onlyCrewmates = false;
                         }
+                        else
+                        {
+                            crewmateCount++;
+                        }
                     }
                     else
                     {

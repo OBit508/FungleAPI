@@ -171,8 +171,8 @@ namespace FungleAPI.GameOptions.Lobby
             option.transform.localPosition = new Vector3(-0.15f, yPos, -2f);
             option.titleText.text = customRole.RoleName.GetString();
             option.labelSprite.color = customRole.RoleColor;
-            option.countText.text = customRole.RoleOptions.LocalRoleCount.ToString();
-            option.chanceText.text = customRole.RoleOptions.LocalRoleChance.ToString();
+            option.countText.text = customRole.RoleOptions.LocalRoleCount.Value.ToString();
+            option.chanceText.text = customRole.RoleOptions.LocalRoleChance.Value.ToString();
             if (customRole.RoleOptions.Options.Count > 0)
             {
                 PassiveButton cog = GameObject.Instantiate(FungleAssets.CogPrefab, option.transform);
