@@ -59,10 +59,6 @@ namespace FungleAPI.Hud
         /// </summary>
         public virtual bool TransformButton { get; }
         /// <summary>
-        /// Whether the button uses the vanilla transform button behaviour
-        /// </summary>
-        public virtual bool VanillaTransform { get; } = false;
-        /// <summary>
         /// Duration of the transform state
         /// </summary>
         public virtual float TransformDuration => 0f;
@@ -200,16 +196,7 @@ namespace FungleAPI.Hud
             if (TransformButton && Transformed)
             {
                 TransformTimer -= Time.deltaTime;
-                if (VanillaTransform)
-                {
-                    Button.cooldownTimerText.color = Color.white;
-                    Button.SetFillUp(TransformTimer, TransformDuration);
-                }
-                else
-                {
-                    Button.cooldownTimerText.color = Color.magenta;
-                    Button.SetCoolDown(TransformTimer, TransformDuration);
-                }
+                Button.SetFillUp(TransformTimer, TransformDuration);
                 if (TransformTimer <= 0f)
                 {
                     EndTransform();
@@ -222,7 +209,6 @@ namespace FungleAPI.Hud
                 {
                     Timer = 0;
                 }
-                Button.cooldownTimerText.color = Color.white;
                 Button.SetCoolDown(Timer, Cooldown);
             }
         }
