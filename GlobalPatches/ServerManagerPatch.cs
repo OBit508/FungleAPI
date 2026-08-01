@@ -15,37 +15,16 @@ using UnityEngine;
 
 namespace FungleAPI.GlobalPatches
 {
-    [HarmonyPatch(typeof(ServerManager), nameof(ServerManager.Awake))]
+    [HarmonyPatch(typeof(ServerManager), nameof(ServerManager.LoadServers))]
     internal static class ServerManagerPatch
     {
-        public static bool Prefix(ServerManager __instance)
+        public static void Prefix(ServerManager __instance)
         {
-            if (!ServerManager._instance)
-            {
-                ServerManager._instance = __instance;
-                if (__instance.DontDestroy)
-                {
-                    GameObject.DontDestroyOnLoad(__instance.gameObject);
-                }
-            }
-            else if (ServerManager._instance != __instance)
-            {
-                __instance.gameObject.Destroy();
-            }
-
-            if (DestroyableSingleton<ServerManager>.Instance != __instance)
-            {
-                return false;
-            }
-
             ServerManager.DefaultRegions = JsonConvert.DeserializeObject<ServerManager.JsonServerData>(AssetLoader.ReadText(FungleApiPlugin.Plugin.ModAssembly, "FungleAPI.Assets.FungleAssets.regionInfo.json"), new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto
             }).Regions;
-            __instance.serverInfoFileJson = Path.Combine(PlatformPaths.persistentDataPath, "CustomRegionInfo.json");
-            __instance.LoadServers();
-            __instance.HandleUpnp();
-            return false;
+            __instance.serverInfoFileJson = Path.Combine(PlatformPaths.persistentDataPath, "customRegionInfo.json");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Api;
 using FungleAPI.GameOptions.Networking;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -27,6 +28,9 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
+
+            FunglePlugin<FungleApiPlugin>.Logger.LogWarning("Syncing everything");
+
             Rpc<RpcSyncGRnT>.Instance.Send(PlayerControl.LocalPlayer, SendOption.Reliable, targetId);
             List<IModdedOption> moddedOptions = OptionManager.AllOptions.Values.ToList();
             while (moddedOptions.Count > 0)

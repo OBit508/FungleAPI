@@ -91,11 +91,9 @@ namespace FungleAPI.Components
                 Rpc<RpcSendModsDisconnect>.Instance.Send(mods, PlayerControl.LocalPlayer);
                 AmongUsClient.Instance.KickPlayer(player.Data.ClientId, false);
                 HudManager.Instance?.Notifier.AddDisconnectMessage(FungleTranslation.HandShakeFail_ModdedPlayerDisconnect.GetString());
+                yield break;
             }
-            else
-            {
-                SyncManager.RpcSyncEverything(player.Data.ClientId);
-            }
+            SyncManager.RpcSyncEverything(player.Data.ClientId);
         }
         public void Update()
         {

@@ -3,6 +3,7 @@ using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
 using FungleAPI.GameModes;
 using FungleAPI.Networking;
+using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
