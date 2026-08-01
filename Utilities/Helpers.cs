@@ -44,7 +44,7 @@ namespace FungleAPI.Utilities
         /// <summary>
         /// Show the shapeshifter minigame
         /// </summary>
-        public static void ShowShapMenu(List<PlayerControl> players)
+        public static void ShowShapMenu(List<PlayerControl> players, Action<PlayerControl> onClick)
         {
             if (ShapPrefab == null)
             {
@@ -78,7 +78,7 @@ namespace FungleAPI.Utilities
                 shapeshifterPanel.transform.localPosition = new Vector3(shapeshifterMinigame.XStart + (float)num * shapeshifterMinigame.XOffset, shapeshifterMinigame.YStart + (float)num2 * shapeshifterMinigame.YOffset, -1f);
                 shapeshifterPanel.SetPlayer(i, player.Data, new Action(delegate
                 {
-                    shapeshifterMinigame.Shapeshift(player);
+                    onClick(player);
                 }));
                 shapeshifterPanel.NameText.color = (flag ? player.Data.Role.NameColor : Color.white);
                 shapeshifterMinigame.potentialVictims.Add(shapeshifterPanel);
