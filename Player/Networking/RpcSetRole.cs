@@ -1,7 +1,6 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.AntiCheat;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Player.Networking.Data;
 using Hazel;

@@ -43,7 +43,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncTeam>.Instance.SendLate(moddedTeam, PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncTeam>.Instance.SendLate(moddedTeam, PlayerControl.LocalPlayer);
         }
         public static void RpcSyncRole(ICustomRole customRole)
         {
@@ -51,7 +51,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncRole>.Instance.SendLate(customRole, PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncRole>.Instance.SendLate(customRole, PlayerControl.LocalPlayer);
         }
         public static void RpcSyncGamemode()
         {
@@ -59,7 +59,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncGamemode>.Instance.SendLate(PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncGamemode>.Instance.SendLate(PlayerControl.LocalPlayer);
         }
         public static void RpcUpdatePreset(RulesPresets rulesPresets, ModPlugin modPlugin)
         {
@@ -67,7 +67,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcUpdatePreset>.Instance.SendLate((rulesPresets, modPlugin), PlayerControl.LocalPlayer.Data);
+            Rpc<RpcUpdatePreset>.Instance.SendLate((rulesPresets, modPlugin), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncOption(IModdedOption moddedOption)
         {
@@ -75,7 +75,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.None, moddedOption, null), PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.None, moddedOption, null), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncRoleOption(ICustomRole customRole, IModdedOption moddedOption)
         {
@@ -83,7 +83,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Role, moddedOption, customRole), PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Role, moddedOption, customRole), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncTeamOption(ModdedTeam moddedTeam, IModdedOption moddedOption)
         {
@@ -91,7 +91,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Team, moddedOption, moddedTeam), PlayerControl.LocalPlayer.Data);
+            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Team, moddedOption, moddedTeam), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncGameOption(IModdedOption moddedOption)
         {

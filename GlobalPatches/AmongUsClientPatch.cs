@@ -31,6 +31,23 @@ namespace FungleAPI.GlobalPatches
     internal static class AmongUsClientPatch
     {
         public static Dictionary<int, KeyValuePair<string, string>> WrongModdeds = new Dictionary<int, KeyValuePair<string, string>>();
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
+        [HarmonyPostfix]
+        public static void SyncSettings(AmongUsClient __instance, ClientData clientData)
+        {
+            if (__instance.HostId == clientData.Id) return;
+
+            SyncManager.RpcSyncEverything(clientData.Id);
+        }
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
+        [HarmonyPostfix]
+        public static void RemoveFromList(AmongUsClient __instance, ClientData data)
+        {
+            if (WrongModdeds.ContainsKey(data.Id))
+            {
+                WrongModdeds.Remove(data.Id);
+            }
+        }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]
         [HarmonyPostfix]
         public static void ResetModdedList(InnerNetClient __instance)

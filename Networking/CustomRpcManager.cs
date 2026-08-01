@@ -81,31 +81,5 @@ namespace FungleAPI.Networking
                 FunglePlugin<FungleApiPlugin>.Instance.Log.LogError($"Failed to read rpc, Exception: {ex.Message}");
             }
         }
-        [HarmonyPatch(typeof(Constants))]
-        internal static class ConstantsPatch
-        {
-            [HarmonyPatch("GetBroadcastVersion")]
-            [HarmonyPriority(Priority.Last)]
-            [HarmonyPostfix]
-            public static void GetBroadcastVersionPostfix(ref int __result)
-            {
-                if (ReactorCompatibility.Instance != null || AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame) return;
-
-                if (__result % 50 < 25)
-                {
-                    __result += 25;
-                }
-            }
-            [HarmonyPatch("IsVersionModded")]
-            [HarmonyPriority(Priority.Last)]
-            [HarmonyPrefix]
-            public static bool IsVersionModdedPrefix(ref bool __result)
-            {
-                if (ReactorCompatibility.Instance != null) return true;
-
-                __result = true;
-                return false;
-            }
-        }
     }
 }

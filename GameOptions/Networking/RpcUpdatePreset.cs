@@ -1,6 +1,5 @@
 ﻿using AmongUs.GameOptions;
 using Epic.OnlineServices;
-using FungleAPI.AntiCheat;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
@@ -19,7 +18,7 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.GameOptions.Networking
 {
-    internal class RpcUpdatePreset : AdvancedRpc<(RulesPresets preset, ModPlugin modPlugin), NetworkedPlayerInfo>
+    internal class RpcUpdatePreset : AdvancedRpc<(RulesPresets preset, ModPlugin modPlugin), PlayerControl>
     {
         public override void Write(MessageWriter messageWriter, (RulesPresets preset, ModPlugin modPlugin) value)
         {
@@ -28,16 +27,9 @@ namespace FungleAPI.GameOptions.Networking
 
             HudManager.Instance.Notifier.AddSettingsChangeMessage(StringNames.ModeLabel, DestroyableSingleton<TranslationController>.Instance.GetString(GameOptionsManager.Instance.CurrentGameOptions.GetRulesPresetTitle()), false, RoleTypes.Crewmate);
         }
-        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
-
-            if (AntiCheatManager.Active && !innerNetObject.IsHost())
-            {
-                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
-
-                return;
-            }
+            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
 
             RulesPresets rulesPresets = (RulesPresets)messageReader.ReadByte();
             ModPlugin modPlugin = messageReader.ReadPlugin();

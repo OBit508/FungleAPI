@@ -79,6 +79,7 @@ namespace FungleAPI.Utilities
                 shapeshifterPanel.SetPlayer(i, player.Data, new Action(delegate
                 {
                     onClick(player);
+                    shapeshifterMinigame.Close();
                 }));
                 shapeshifterPanel.NameText.color = (flag ? player.Data.Role.NameColor : Color.white);
                 shapeshifterMinigame.potentialVictims.Add(shapeshifterPanel);

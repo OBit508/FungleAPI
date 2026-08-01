@@ -1,5 +1,4 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.AntiCheat;
 using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
 using FungleAPI.GameModes;
@@ -44,47 +43,32 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
+            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
 
-            System.Collections.IEnumerator CoHandleRpc()
+            try
             {
-                while (innerNetObject == null || innerNetObject != null && (innerNetObject.Data == null || innerNetObject.Data.ClientId < 0)) yield return null;
+                UnSynced = true;
+                RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
+                RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
+                RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
 
-                if (innerNetObject == null) yield break;
-
-                if (AntiCheatManager.Active && !innerNetObject.Data.IsHost())
+                rpcSyncGamemode.Handle(innerNetObject, messageReader);
+                int roleCount = messageReader.ReadPackedInt32();
+                for (int i = 0; i < roleCount; i++)
                 {
-                    AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
-
-                    yield break;
+                    rpcSyncRole.Handle(innerNetObject, messageReader);
                 }
-
-                try
+                int teamCount = messageReader.ReadPackedInt32();
+                for (int i = 0; i < teamCount; i++)
                 {
-                    UnSynced = true;
-                    RpcSyncGamemode rpcSyncGamemode = Rpc<RpcSyncGamemode>.Instance;
-                    RpcSyncRole rpcSyncRole = Rpc<RpcSyncRole>.Instance;
-                    RpcSyncTeam rpcSyncTeam = Rpc<RpcSyncTeam>.Instance;
-
-                    rpcSyncGamemode.Handle(innerNetObject.Data, messageReader);
-                    int roleCount = messageReader.ReadPackedInt32();
-                    for (int i = 0; i < roleCount; i++)
-                    {
-                        rpcSyncRole.Handle(innerNetObject.Data, messageReader);
-                    }
-                    int teamCount = messageReader.ReadPackedInt32();
-                    for (int i = 0; i < teamCount; i++)
-                    {
-                        rpcSyncTeam.Handle(innerNetObject.Data, messageReader);
-                    }
-                    UnSynced = false;
+                    rpcSyncTeam.Handle(innerNetObject, messageReader);
                 }
-                catch (Exception ex)
-                {
-                    HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
-                }
+                UnSynced = false;
             }
-            Helpers.StartCoroutine(CoHandleRpc().WrapToIl2Cpp());
+            catch (Exception ex)
+            {
+                HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
+            }
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.AntiCheat;
 using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Networking;
@@ -28,36 +27,21 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
+            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
 
-            System.Collections.IEnumerator CoHandleRpc()
+            try
             {
-                while (innerNetObject == null || innerNetObject != null && (innerNetObject.Data == null || innerNetObject.Data.ClientId < 0)) yield return null;
-
-                if (innerNetObject == null) yield break;
-
-                if (AntiCheatManager.Active && !innerNetObject.Data.IsHost())
+                uint optionsCount = messageReader.ReadPackedUInt32();
+                for (int i = 0; i < optionsCount; i++)
                 {
-                    AntiCheatManager.CheaterFinded(innerNetObject.Data.ClientId);
-
-                    yield break;
-                }
-
-                try
-                {
-                    uint optionsCount = messageReader.ReadPackedUInt32();
-                    for (int i = 0; i < optionsCount; i++)
-                    {
-                        IModdedOption moddedOption = messageReader.ReadOption();
-                        moddedOption.Deserialize(messageReader);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
+                    IModdedOption moddedOption = messageReader.ReadOption();
+                    moddedOption.Deserialize(messageReader);
                 }
             }
-            Helpers.StartCoroutine(CoHandleRpc().WrapToIl2Cpp());
+            catch (Exception ex)
+            {
+                HandShakeManager.DisconnectWithReason(FungleTranslation.FailedToSync.GetString() + ex.Message);
+            }
         }
     }
 }

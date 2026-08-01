@@ -1,5 +1,4 @@
-﻿using FungleAPI.AntiCheat;
-using FungleAPI.Base.Rpc;
+﻿using FungleAPI.Base.Rpc;
 using Hazel;
 using System;
 using System.Collections.Generic;
@@ -9,23 +8,16 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking
 {
-    internal class RpcSendModsDisconnect : AdvancedRpc<KeyValuePair<string, string>, NetworkedPlayerInfo>
+    internal class RpcSendModsDisconnect : AdvancedRpc<KeyValuePair<string, string>, PlayerControl>
     {
         public override void Write(MessageWriter messageWriter, KeyValuePair<string, string> data)
         {
             messageWriter.Write(data.Key);
             messageWriter.Write(data.Value);
         }
-        public override void Handle(NetworkedPlayerInfo innerNetObject, MessageReader messageReader)
+        public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject == null) return;
-
-            if (AntiCheatManager.Active && !innerNetObject.IsHost())
-            {
-                AntiCheatManager.CheaterFinded(innerNetObject.ClientId);
-
-                return;
-            }
+            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
 
             HandShakeManager.MissingMods = messageReader.ReadString();
             HandShakeManager.ExtraMods = messageReader.ReadString();

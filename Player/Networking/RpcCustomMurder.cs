@@ -2,7 +2,6 @@
 using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
-using FungleAPI.AntiCheat;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.Player;

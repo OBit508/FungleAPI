@@ -88,13 +88,9 @@ namespace FungleAPI.Components
             if (AmongUsClientPatch.WrongModdeds.TryGetValue(player.Data.ClientId, out KeyValuePair<string, string> mods))
             {
                 AmongUsClientPatch.WrongModdeds.Remove(player.Data.ClientId);
-                Rpc<RpcSendModsDisconnect>.Instance.Send(mods, PlayerControl.LocalPlayer.Data);
+                Rpc<RpcSendModsDisconnect>.Instance.Send(mods, PlayerControl.LocalPlayer);
                 AmongUsClient.Instance.KickPlayer(player.Data.ClientId, false);
                 HudManager.Instance?.Notifier.AddDisconnectMessage(FungleTranslation.HandShakeFail_ModdedPlayerDisconnect.GetString());
-            }
-            else
-            {
-                SyncManager.RpcSyncEverything(player.Data.ClientId);
             }
         }
         public void Update()
