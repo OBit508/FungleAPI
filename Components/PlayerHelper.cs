@@ -92,6 +92,10 @@ namespace FungleAPI.Components
                 AmongUsClient.Instance.KickPlayer(player.Data.ClientId, false);
                 HudManager.Instance?.Notifier.AddDisconnectMessage(FungleTranslation.HandShakeFail_ModdedPlayerDisconnect.GetString());
             }
+            else
+            {
+                SyncManager.RpcSyncEverything(player.Data.ClientId);
+            }
         }
         public void Update()
         {
