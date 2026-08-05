@@ -135,7 +135,7 @@ namespace FungleAPI.Hud
             {
                 SetNumUses(MaxUses);
             }
-            SetCooldown(changeRole ? InitialCooldown : Cooldown);
+            SetCooldown(changeRole ? (AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay ? 0.01f : InitialCooldown) : Cooldown);
             Transformed = false;
             TransformTimer = TransformDuration;
         }

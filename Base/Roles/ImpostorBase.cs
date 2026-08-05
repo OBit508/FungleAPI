@@ -33,6 +33,10 @@ namespace FungleAPI.Base.Roles
                 GameObject.Destroy(playerTask.gameObject);
             }
         }
+        public override bool ValidTarget(NetworkedPlayerInfo target)
+        {
+            return base.ValidTarget(target) && (target.Role.GetTeam() != this.GetTeam() || this.GetTeam().FriendlyFire);
+        }
         public override void SpawnTaskHeader(PlayerControl playerControl)
         {
             if (playerControl != PlayerControl.LocalPlayer || !DoTasks)

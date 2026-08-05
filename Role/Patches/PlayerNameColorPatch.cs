@@ -16,6 +16,12 @@ namespace FungleAPI.Role.Patches
     {
         public static bool Prefix(RoleBehaviour otherPlayerRole, ref Color __result)
         {
+            if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null || PlayerControl.LocalPlayer.Data.Role == null || otherPlayerRole == null)
+            {
+                __result = Color.white;
+                return false;
+            }
+
             RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
 
             if (role.IsMiraRole() && MiraCompatibility.Instance.RoleExtensions.CanLocalPlayerSeeRole(role, otherPlayerRole.Player))
@@ -26,7 +32,7 @@ namespace FungleAPI.Role.Patches
 
             ModdedTeam team = role.GetTeam();
 
-            if (team == otherPlayerRole.GetTeam() && team.KnowMembers || otherPlayerRole.Player != null && otherPlayerRole.Player.AmOwner)
+            if (team == otherPlayerRole.GetTeam() && (team.KnowMembers || otherPlayerRole.Player.AmOwner))
             {
                 __result = otherPlayerRole.NameColor;
                 return false;

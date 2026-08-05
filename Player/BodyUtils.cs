@@ -17,6 +17,20 @@ namespace FungleAPI.Player
         /// </summary>
         public static List<DeadBody> AllDeadBodies = new List<DeadBody>();
         /// <summary>
+        /// Set a outline on the body
+        /// </summary>
+        public static void SetOutline(this DeadBody deadBody, bool active, Color? color = null)
+        {
+            foreach (SpriteRenderer spriteRenderer in deadBody.bodyRenderers)
+            {
+                spriteRenderer.material.SetFloat("_Outline", active ? 1 : 0);
+                if (color != null)
+                {
+                    spriteRenderer.material.SetColor("_OutlineColor", color.Value);
+                }
+            }
+        }
+        /// <summary>
         /// Get a dead body by the Id
         /// </summary>
         public static DeadBody GetBodyById(byte id)
