@@ -30,14 +30,20 @@ namespace FungleAPI.Role.Patches
                 return false;
             }
 
-            ModdedTeam team = role.GetTeam();
+            bool canSee = false;
 
-            if (team == otherPlayerRole.GetTeam() && (team.KnowMembers || otherPlayerRole.Player.AmOwner))
+            ICustomRole customRole = role.CustomRole();
+            if (customRole != null)
             {
-                __result = otherPlayerRole.NameColor;
-                return false;
+                canSee = customRole.CanSeeRole(otherPlayerRole);
             }
-            __result = Color.white;
+            else
+            {
+                ModdedTeam team = role.GetTeam();
+
+                canSee = team == otherPlayerRole.GetTeam() && (team.KnowMembers || otherPlayerRole.Player.AmOwner);
+            }
+            __result = canSee ? otherPlayerRole.NameColor : Color.white;
             return false;
         }
     }

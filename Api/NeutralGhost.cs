@@ -110,7 +110,6 @@ namespace FungleAPI.Api
             CanSabotage = OldRole != null ? OldRole.CanSabotage() : false,
             CompletedTasksCountForProgress = false,
             GhostRole = RoleTypes.CrewmateGhost,
-            NeutralWinText = OldRole.CustomRole() != null ? OldRole.CustomRole().Configuration.NeutralWinText : () => string.Format(FungleTranslation.VictoryText.GetString(), OldRole.NiceName),
             KeepGameRunning = false,
             OutlineColor = OldRole != null ? OldRole.TeamColor : Color.gray,
             HideInLobby = true,

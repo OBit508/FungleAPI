@@ -18,6 +18,9 @@ namespace FungleAPI.Networking
         internal static string MissingMods = null;
         internal static string ExtraMods = null;
         public static Dictionary<string, BepInMod> RequiredMods = new Dictionary<string, BepInMod>();
+
+        public static bool? ModdedServerHandshakeActive;
+
         public static void GetMods((string GUID, string version, string name)[] mods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods)
         {
             missingMods = new Dictionary<string, KeyValuePair<string, string>>();

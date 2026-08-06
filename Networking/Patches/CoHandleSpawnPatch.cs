@@ -24,7 +24,7 @@ namespace FungleAPI.Networking.Patches
         public const int HeaderSize = 8;
         public static void Postfix(InnerNetClient._CoHandleSpawn_d__168 __instance, bool __result)
         {
-            if (ReactorCompatibility.Instance != null || __result) return;
+            if (ReactorCompatibility.Instance != null || __result || HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault()) return;
 
             if (!AmongUsClient.Instance.AmHost && __instance._ownerId_5__2 == AmongUsClient.Instance.ClientId)
             {

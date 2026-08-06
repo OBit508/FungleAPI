@@ -530,15 +530,7 @@ namespace FungleAPI.Api
                     }
                     else if (neutralKillerCount.Count == 1 && crewmateCount <= 1)
                     {
-                        PlayerControl winner = neutralKillerCount[0];
-                        ICustomRole customRole = winner.Data.Role.CustomRole();
-                        if (customRole != null && customRole.Configuration.CallGameOverAsNeutral != null)
-                        {
-                            customRole.Configuration.CallGameOverAsNeutral(winner);
-                            return;
-                        }
-
-                        GameManager.Instance?.RpcEndGame<NeutralGameOver, PlayerControl>(winner);
+                        neutralKillerCount[0].Data.Role.CustomRole().CallGameOverAsNeutral();
                     }
                 }
                 else if (independentTeams.Count == 1)

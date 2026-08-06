@@ -51,6 +51,7 @@
     <Compile Include="Cosmetics\Helpers\CosmeticLocator.cs" />
     <Compile Include="Cosmetics\Helpers\CosmeticProvider.cs" />
     <Compile Include="Cosmetics\Patches\AssetReferencePatch.cs" />
+    <Compile Include="Cosmetics\Patches\ChatNotificationPatch.cs" />
     <Compile Include="Cosmetics\Patches\CosmeticDataPatch.cs" />
     <Compile Include="Cosmetics\Patches\HatManagerPatch.cs" />
     <Compile Include="Cosmetics\Patches\RoleEffectAnimationPatch.cs" />

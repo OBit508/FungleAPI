@@ -19,7 +19,7 @@ namespace FungleAPI.Networking.Patches
     {
         public static bool Prefix(InnerNetClient._CoSendSceneChange_d__158 __instance, ref bool __result)
         {
-            if (ReactorCompatibility.Instance != null) return true;
+            if (ReactorCompatibility.Instance != null || HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault()) return true;
 
             InnerNetClient innerNetClient = __instance.__4__this;
             if (!innerNetClient.AmHost && innerNetClient.connection.State == ConnectionState.Connected && innerNetClient.ClientId >= 0)

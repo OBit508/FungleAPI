@@ -27,8 +27,6 @@ namespace FungleAPI.Cosmetics
         internal static Dictionary<string, UnityEngine.Object> Assets = new Dictionary<string, UnityEngine.Object>();
         internal static Dictionary<CosmeticData, StringNames> CosmeticsNames = new Dictionary<CosmeticData, StringNames>();
 
-        public static bool UnlockAll = true;
-
         public static List<CustomHat> AllHats = new List<CustomHat>();
         public static List<CustomSkin> AllSkins = new List<CustomSkin>();
         public static List<CustomVisor> AllVisors = new List<CustomVisor>();
@@ -48,8 +46,15 @@ namespace FungleAPI.Cosmetics
 
         public static bool IsSpecialColor(int colorId, out SpecialColor specialColor)
         {
-            specialColor = (SpecialColor)SpecialColors.FirstOrDefault(c => c.ColorId == colorId);
-            return specialColor != null;
+            CustomColor customColor = SpecialColors.FirstOrDefault(c => c.ColorId == colorId);
+
+            if (customColor == null)
+            {
+                specialColor = null;
+                return false;
+            }
+            specialColor = (SpecialColor)customColor;
+            return true;
         }
         public static bool IsCustom(int colorId)
         {
@@ -98,7 +103,7 @@ namespace FungleAPI.Cosmetics
             }
         }
         /// <summary>
-        /// 
+        /// Returns the color from the given id
         /// </summary>
         public static Color GetBaseColor(int colorId)
         {
@@ -110,7 +115,7 @@ namespace FungleAPI.Cosmetics
             return color == null ? Color.black : color.PlayerColor;
         }
         /// <summary>
-        /// 
+        /// Returns a proxy color
         /// </summary>
         public static Color GetValidProxyColor()
         {

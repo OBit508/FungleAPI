@@ -14,6 +14,17 @@ namespace FungleAPI.Cosmetics.Patches
     [HarmonyPatch(typeof(PlayerMaterial))]
     internal static class PlayerMaterialPatch
     {
+        [HarmonyPatch("SetColors", new Type[] { typeof(int), typeof(Material) })]
+        [HarmonyPostfix]
+        public static void SetColorsPostfix(int colorId, Material material)
+        {
+            CustomColor customColor = CosmeticManager.AllColors.FirstOrDefault(c => c.ColorId == colorId);
+            if (material == null || customColor ==  null)
+            {
+                return;
+            }
+            material.SetColor(PlayerMaterial.VisorColor, customColor.VisorColor);
+        }
         [HarmonyPatch("SetColors", new Type[] { typeof(int), typeof(Renderer) })]
         [HarmonyPostfix]
         public static void SetColorsPostfix(int colorId, Renderer rend)

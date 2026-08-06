@@ -81,17 +81,9 @@ namespace FungleAPI.Role
         /// </summary>
         public DeadBodyType CreatedDeadBodyOnKill = DeadBodyType.Normal;
         /// <summary>
-        /// Role neutral win text
-        /// </summary>
-        public Func<string> NeutralWinText;
-        /// <summary>
         /// Role base outline color
         /// </summary>
         public Color OutlineColor;
-        /// <summary>
-        /// Call game over as neutral
-        /// </summary>
-        public Action<PlayerControl> CallGameOverAsNeutral;
         /// <summary>
         /// The default role count
         /// </summary>
@@ -108,13 +100,8 @@ namespace FungleAPI.Role
             CanSabotage = customRole.Team == ModdedTeamManager.Impostors;
             CompletedTasksCountForProgress = customRole.Team == ModdedTeamManager.Crewmates;
             GhostRole = customRole.Team == ModdedTeamManager.Crewmates ? RoleTypes.CrewmateGhost : (customRole.Team == ModdedTeamManager.Impostors ? RoleTypes.ImpostorGhost : CustomRoleManager.NeutralGhost);
-            NeutralWinText = () => string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());
             KeepGameRunning = customRole.Team == ModdedTeamManager.Impostors;
             OutlineColor = customRole.RoleColor;
-            CallGameOverAsNeutral = delegate (PlayerControl playerControl)
-            {
-                GameManager.Instance?.RpcEndGame<NeutralGameOver, PlayerControl>(playerControl);
-            };
         }
     }
 }

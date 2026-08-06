@@ -63,10 +63,21 @@ namespace FungleAPI.Components
 
             if (roleBehaviour != null && roleBehaviour.ShowRoleText())
             {
-                ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
-                ModdedTeam team = roleBehaviour.GetTeam();
+                bool canSee = false;
 
-                if (localTeam == team && localTeam.KnowMembers || player.AmOwner)
+                ICustomRole localRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
+                if (localRole != null)
+                {
+                    canSee = localRole.CanSeeRole(roleBehaviour);
+                }
+                else
+                {
+                    ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
+                    ModdedTeam team = roleBehaviour.GetTeam();
+                    canSee = localTeam == team && (localTeam.KnowMembers || player.AmOwner);
+                }
+
+                if (canSee)
                 {
                     RoleText.gameObject.SetActive(true);
                     RoleText.text = roleBehaviour.NiceName;

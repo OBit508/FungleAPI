@@ -134,15 +134,23 @@ namespace FungleAPI.GameOptions.Attributes
         }
         private float Quantize(float value)
         {
-            var setting = Data.SafeCast<FloatGameSetting>();
+            FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();
             float increment = setting.Increment > 0f ? setting.Increment : 1f;
             float clamped = Mathf.Clamp(value, setting.ValidRange.min, setting.ValidRange.max);
-
             float defaultV = (float)DefaultValue;
             float steps = Mathf.Round((clamped - defaultV) / increment);
             float snapped = defaultV + steps * increment;
-
-            return Mathf.Clamp(snapped, setting.ValidRange.min, setting.ValidRange.max);
+            snapped = Mathf.Clamp(snapped, setting.ValidRange.min, setting.ValidRange.max);
+            int decimals = GetDecimalPlaces(increment);
+            snapped = (float)Math.Round(snapped, decimals, MidpointRounding.AwayFromZero);
+            return snapped;
+        }
+        private static int GetDecimalPlaces(float increment)
+        {
+            string s = increment.ToString("G9", System.Globalization.CultureInfo.InvariantCulture);
+            int idx = s.IndexOf('.');
+            if (idx < 0) return 0;
+            return Math.Min(s.Length - idx - 1, 6);
         }
         public ModdedNumberOptionAttribute(string defaultName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
         {

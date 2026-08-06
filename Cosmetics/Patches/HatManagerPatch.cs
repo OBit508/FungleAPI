@@ -13,34 +13,6 @@ namespace FungleAPI.Cosmetics.Patches
     {
         public static void Postfix(HatManager __instance)
         {
-            if (CosmeticManager.UnlockAll)
-            {
-                foreach (HatData hat in __instance.allHats)
-                { 
-                    hat.Free = true;
-                }
-
-                foreach (NamePlateData nameplate in __instance.allNamePlates)
-                { 
-                    nameplate.Free = true;
-                }
-
-                foreach (PetData pet in __instance.allPets)
-                { 
-                    pet.Free = true; 
-                }
-
-                foreach (SkinData skin in __instance.allSkins)
-                { 
-                    skin.Free = true;
-                }
-
-                foreach (VisorData visor in __instance.allVisors)
-                { 
-                    visor.Free = true;
-                }
-            }
-
             SetHat(__instance);
             SetSkin(__instance);
             SetVisor(__instance);

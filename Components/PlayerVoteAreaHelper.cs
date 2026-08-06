@@ -1,5 +1,6 @@
 ﻿using AmongUs.Data;
 using FungleAPI.Attributes;
+using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using System;
@@ -22,22 +23,37 @@ namespace FungleAPI.Components
         {
             NameText = Owner.PlayerName;
 
-            ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
-            ModdedTeam team = Owner.Role.GetTeam();
+            bool canSee = false;
 
-            if (Owner.Role.ShowRoleText() && (localTeam == team && localTeam.KnowMembers || Owner.Object.AmOwner))
+            ICustomRole localRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
+            if (localRole != null)
             {
-                NameText = $"{Owner.PlayerName}\n{Owner.Role.TeamColor.ToTextColor()}<size=60%>{Owner.Role.NiceName}</size></color>";
+                canSee = localRole.CanSeeRole(Owner.Role);
+            }
+            else
+            {
+                ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
+                ModdedTeam team = Owner.Role.GetTeam();
+                canSee = localTeam == team && (localTeam.KnowMembers || Owner.Object.AmOwner);
+            }
 
-                SetColorblindText = () =>
+            if (canSee)
+            {
+                NameText = $"{Owner.Role.NameColor.ToTextColor()}{Owner.PlayerName}</color>";
+                if (Owner.Role.ShowRoleText())
                 {
-                    VoteArea.NameText.transform.localPosition = new Vector3(0.3384f, DataManager.Settings.Accessibility.ColorBlindMode ? 0.0911f : 0.0111f, -0.1f);
-                };
-                SetColorblindText();
+                    NameText += $"\n{Owner.Role.TeamColor.ToTextColor()}<size=60%>{Owner.Role.NiceName}</size></color>";
 
-                DataManager.Settings.Accessibility.OnColorBlindModeChanged += SetColorblindText;
+                    SetColorblindText = () =>
+                    {
+                        VoteArea.NameText.transform.localPosition = new Vector3(0.3384f, DataManager.Settings.Accessibility.ColorBlindMode ? 0.0911f : 0.0111f, -0.1f);
+                    };
+                    SetColorblindText();
 
-                return;
+                    DataManager.Settings.Accessibility.OnColorBlindModeChanged += SetColorblindText;
+
+                    return;
+                }
             }
         }
         public void OnDestroy()

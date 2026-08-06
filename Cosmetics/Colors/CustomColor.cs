@@ -28,6 +28,7 @@ namespace FungleAPI.Cosmetics.Colors
         public int ColorId { get; internal set; }
         public Color PlayerColor;
         public Color BackColor;
+        public Color VisorColor = Palette.VisorColor;
         public StringNames ColorName;
     }
 }

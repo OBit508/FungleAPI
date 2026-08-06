@@ -15,11 +15,17 @@ namespace FungleAPI.Cosmetics.Patches
     {
         public static void Postfix(RoleEffectAnimation __instance, int colorId)
         {
+            CustomColor customColor = CosmeticManager.AllColors.FirstOrDefault(c => c.ColorId == colorId);
+
+            if (customColor == null) return;
+
+            __instance.Renderer.material.SetColor("_VisorColor", customColor.VisorColor);
+
             SpecialColorBehaviour specialColorBehaviour;
-            if (CosmeticManager.IsSpecialColor(colorId, out SpecialColor color))
+            if (customColor is SpecialColor specialColor)
             {
                 specialColorBehaviour = __instance.Renderer.gameObject.GetOrAddComponent<SpecialColorBehaviour>();
-                specialColorBehaviour.Color = color;
+                specialColorBehaviour.Color = specialColor;
                 specialColorBehaviour.Mat = __instance.Renderer.material;
             }
             else

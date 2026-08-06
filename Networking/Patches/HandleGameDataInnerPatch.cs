@@ -103,7 +103,7 @@ namespace FungleAPI.Networking.Patches
 
             if (messageReader.Tag == (byte)GameDataTypes.SceneChangeFlag)
             {
-                if (ReactorCompatibility.Instance != null) return true;
+                if (ReactorCompatibility.Instance != null || HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault()) return true;
 
                 InnerNetClient innerNetClient = __instance.__4__this;
 

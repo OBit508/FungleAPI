@@ -90,6 +90,24 @@ namespace FungleAPI.Role
             NetworkedPlayerInfo networkedPlayerInfo = exileController.initData.networkedPlayer;
             return string.Format(FungleTranslation.ExileText.GetString(), networkedPlayerInfo.PlayerName, networkedPlayerInfo.Role.NiceName);
         }
+        /// <summary>
+        /// Role neutral win text
+        /// </summary>
+        string NeutralWinText()
+        {
+            return string.Format(FungleTranslation.VictoryText.GetString(), RoleName.GetString());
+        }
+        /// <summary>
+        /// Call game over as neutral
+        /// </summary>
+        void CallGameOverAsNeutral() 
+        {
+            GameManager.Instance?.RpcEndGame<NeutralGameOver, PlayerControl>((this as RoleBehaviour).Player);
+        }
+        bool CanSeeRole(RoleBehaviour otherRole)
+        {
+            return otherRole.GetTeam() == Team && (Team.KnowMembers || otherRole.Player.AmOwner);
+        }
         int GetCount()
         {
             RoleOptionCollection roleOptionCollection = RoleOptions;
