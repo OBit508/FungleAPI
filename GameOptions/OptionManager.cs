@@ -168,5 +168,23 @@ namespace FungleAPI.GameOptions
             option.name = "ModdedOption";
             option.enabled = true;
         }
+        internal static float Quantize(float value, float defaultValue, FloatGameSetting setting)
+        {
+            float increment = setting.Increment > 0f ? setting.Increment : 1f;
+            float clamped = Mathf.Clamp(value, setting.ValidRange.min, setting.ValidRange.max);
+            float steps = Mathf.Round((clamped - defaultValue) / increment);
+            float snapped = defaultValue + steps * increment;
+            snapped = Mathf.Clamp(snapped, setting.ValidRange.min, setting.ValidRange.max);
+            int decimals = GetDecimalPlaces(increment);
+            snapped = (float)Math.Round(snapped, decimals, MidpointRounding.AwayFromZero);
+            return snapped;
+        }
+        private static int GetDecimalPlaces(float increment)
+        {
+            string s = increment.ToString("G9", System.Globalization.CultureInfo.InvariantCulture);
+            int idx = s.IndexOf('.');
+            if (idx < 0) return 0;
+            return Math.Min(s.Length - idx - 1, 6);
+        }
     }
 }

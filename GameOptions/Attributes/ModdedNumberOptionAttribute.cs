@@ -1,5 +1,6 @@
 ﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
+using Epic.OnlineServices.RTC;
 using FungleAPI.Extensions;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
@@ -38,7 +39,7 @@ namespace FungleAPI.GameOptions.Attributes
             if (value is float floatValue) { realValue = floatValue; }
             if (value is int intValue) { realValue = intValue; }
 
-            realValue = Quantize(realValue);
+            realValue = OptionManager.Quantize(realValue, (float)DefaultValue, Data.SafeCast<FloatGameSetting>());
 
             if (amHost)
             {
@@ -88,7 +89,7 @@ namespace FungleAPI.GameOptions.Attributes
         public override void Deserialize(MessageReader messageReader)
         {
             var setting = Data.SafeCast<FloatGameSetting>();
-            float increment = setting.Increment > 0f ? setting.Increment : 1f;
+            float increment = setting.Increment > 0 ? setting.Increment : 1;
             float defaultV = (float)DefaultValue;
 
             byte marker = messageReader.ReadByte();
@@ -96,18 +97,18 @@ namespace FungleAPI.GameOptions.Attributes
             switch (marker)
             {
                 case 2:
-                    NonHostValue = defaultV;
+                    NonHostValue = OptionManager.Quantize(defaultV, defaultV, Data.SafeCast<FloatGameSetting>());
                     return;
 
                 case 3:
-                    NonHostValue = messageReader.ReadSingle();
+                    NonHostValue = OptionManager.Quantize(messageReader.ReadSingle(), defaultV, Data.SafeCast<FloatGameSetting>());
                     return;
 
                 case 0:
                 case 1:
                     ushort magnitude = messageReader.ReadUInt16();
                     int delta = marker == 1 ? magnitude : -magnitude;
-                    NonHostValue = defaultV + delta * increment;
+                    NonHostValue = OptionManager.Quantize(defaultV + delta * increment, defaultV, Data.SafeCast<FloatGameSetting>());
                     return;
             }
         }
@@ -117,7 +118,7 @@ namespace FungleAPI.GameOptions.Attributes
         }
         public override void LoadValue(ConfigEntry<string> configEntry)
         {
-            LocalValue = Quantize(float.Parse(configEntry.Value));
+            LocalValue = OptionManager.Quantize(float.Parse(configEntry.Value), (float)DefaultValue, Data.SafeCast<FloatGameSetting>());
         }
         public override OptionBehaviour CreateOption(Transform parent)
         {
@@ -125,32 +126,13 @@ namespace FungleAPI.GameOptions.Attributes
             NumberOption option = null;
             option = OptionManager.CreateNumberOption(parent, setting, delegate
             {
+                option.Value = OptionManager.Quantize(option.Value, (float)DefaultValue, setting);
                 SetValue(option.Value, true);
                 setting.Value = option.Value;
             });
             setting.Value = LocalValue;
             option.Value = LocalValue;
             return option;
-        }
-        private float Quantize(float value)
-        {
-            FloatGameSetting setting = Data.SafeCast<FloatGameSetting>();
-            float increment = setting.Increment > 0f ? setting.Increment : 1f;
-            float clamped = Mathf.Clamp(value, setting.ValidRange.min, setting.ValidRange.max);
-            float defaultV = (float)DefaultValue;
-            float steps = Mathf.Round((clamped - defaultV) / increment);
-            float snapped = defaultV + steps * increment;
-            snapped = Mathf.Clamp(snapped, setting.ValidRange.min, setting.ValidRange.max);
-            int decimals = GetDecimalPlaces(increment);
-            snapped = (float)Math.Round(snapped, decimals, MidpointRounding.AwayFromZero);
-            return snapped;
-        }
-        private static int GetDecimalPlaces(float increment)
-        {
-            string s = increment.ToString("G9", System.Globalization.CultureInfo.InvariantCulture);
-            int idx = s.IndexOf('.');
-            if (idx < 0) return 0;
-            return Math.Min(s.Length - idx - 1, 6);
         }
         public ModdedNumberOptionAttribute(string defaultName, float minValue, float maxValue, float increment = 1, string formatString = null, bool zeroIsInfinity = false, NumberSuffixes suffixType = NumberSuffixes.Seconds)
         {
