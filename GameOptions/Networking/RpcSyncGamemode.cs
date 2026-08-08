@@ -1,7 +1,8 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.Base.Rpc;
-using FungleAPI.GameOptions.Patches;
 using FungleAPI.GameModes;
+using FungleAPI.GameOptions.Patches;
+using FungleAPI.Networking;
 using FungleAPI.Utilities;
 using Hazel;
 using System;
@@ -34,7 +35,7 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
             uint gameModeId = messageReader.ReadPackedUInt32();
 

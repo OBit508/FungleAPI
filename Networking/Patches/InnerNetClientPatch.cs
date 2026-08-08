@@ -63,7 +63,7 @@ namespace FungleAPI.Networking.Patches
 
             MessageWriter handshake = new MessageWriter(1000);
             handshake.Write(__result);
-            handshake.Write(8243101772754678272UL | 2U);
+            handshake.Write(8243101772754678272UL | 2UL);
 
             handshake.WritePacked(HandShakeManager.RequiredMods.Count);
             foreach (BepInMod bepInMod in HandShakeManager.RequiredMods.Values)
@@ -82,28 +82,37 @@ namespace FungleAPI.Networking.Patches
         public static void DisconnectInternalPrefix(InnerNetClient __instance, ref DisconnectReasons reason)
         {
             HandShakeManager.ModdedServerHandshakeActive = null;
-            if (reason == DisconnectReasons.Kicked && (!string.IsNullOrEmpty(HandShakeManager.MissingMods) || !string.IsNullOrEmpty(HandShakeManager.ExtraMods)))
+            if (reason == DisconnectReasons.Kicked && (!string.IsNullOrEmpty(HandShakeManager.MissingMods) || !string.IsNullOrEmpty(HandShakeManager.ExtraMods) || !string.IsNullOrEmpty(AntiCheatManager.LastKickReason)))
             {
-                StringBuilder stringBuilder = new StringBuilder();
-
-                if (!string.IsNullOrEmpty(HandShakeManager.MissingMods))
+                if (!string.IsNullOrEmpty(AntiCheatManager.LastKickReason))
                 {
-                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), HandShakeManager.MissingMods));
+                    reason = DisconnectReasons.Custom;
+                    __instance.LastCustomDisconnect = AntiCheatManager.LastKickReason;
+                }
+                else
+                {
+                    StringBuilder stringBuilder = new StringBuilder();
+
+                    if (!string.IsNullOrEmpty(HandShakeManager.MissingMods))
+                    {
+                        stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_MissingMods.GetString(), HandShakeManager.MissingMods));
+
+                        if (!string.IsNullOrEmpty(HandShakeManager.ExtraMods))
+                        {
+                            stringBuilder.AppendLine();
+                        }
+                    }
 
                     if (!string.IsNullOrEmpty(HandShakeManager.ExtraMods))
                     {
-                        stringBuilder.AppendLine();
+                        stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), HandShakeManager.ExtraMods));
                     }
+
+                    reason = DisconnectReasons.Custom;
+                    __instance.LastCustomDisconnect = stringBuilder.ToString();
                 }
 
-                if (!string.IsNullOrEmpty(HandShakeManager.ExtraMods))
-                {
-                    stringBuilder.Append(string.Format(FungleTranslation.HandShakeFail_ExtraMods.GetString(), HandShakeManager.ExtraMods));
-                }
-
-                reason = DisconnectReasons.Custom;
-                __instance.LastCustomDisconnect = stringBuilder.ToString();
-
+                AntiCheatManager.LastKickReason = null;
                 HandShakeManager.MissingMods = null;
                 HandShakeManager.ExtraMods = null;
             }

@@ -29,7 +29,7 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
             RulesPresets rulesPresets = (RulesPresets)messageReader.ReadByte();
             ModPlugin modPlugin = messageReader.ReadPlugin();

@@ -7,6 +7,7 @@ using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
+using FungleAPI.GameModes;
 using FungleAPI.GameOver;
 using FungleAPI.Networking;
 using FungleAPI.Player.Networking;
@@ -40,7 +41,7 @@ namespace FungleAPI.Player
             {
                 return;
             }
-            Rpc<RpcMoveToVent>.Instance.Send(ventHelper, source);
+            Rpc<RpcMoveToVent>.Instance.SendLate(ventHelper, source);
         }
         /// <summary>
         /// Perform a custom murder
@@ -48,7 +49,7 @@ namespace FungleAPI.Player
         public static void RpcCustomSetRole(this PlayerControl source, RoleTypes roleTypes, bool showIntro = false)
         {
             if (!AmongUsClient.Instance.AmHost) return;
-            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { RoleType = roleTypes, ShowIntro = showIntro }, source);
+            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { Source = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer);
         }
         /// <summary>
         /// Perform a custom murder
@@ -64,7 +65,7 @@ namespace FungleAPI.Player
             {
                 return;
             }
-            Rpc<RpcCustomMurder>.Instance.Send(new MurderData(target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source);
+            Rpc<RpcCustomMurder>.Instance.Send((new MurderData(target, didSucceed, resetKillTimer, createDeadBody, teleportMurderer, showKillAnim, playKillSound), source), PlayerControl.LocalPlayer);
         }
         /// <summary>
         /// Perform a custom murder
@@ -202,20 +203,17 @@ namespace FungleAPI.Player
             {
                 int num = target ? ((int)target.PlayerId) : -1;
                 source.logger.Warning(string.Format("Bad kill from {0} to {1}", source.PlayerId, num), null);
-                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
             NetworkedPlayerInfo data = target.Data;
             if (data == null || data.IsDead || target.inVent || target.MyPhysics.Animations.IsPlayingEnterVentAnimation() || target.MyPhysics.Animations.IsPlayingAnyLadderAnimation() || target.inMovingPlat)
             {
                 source.logger.Warning("Invalid target data for kill", null);
-                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
-            if (MeetingHud.Instance)
+            if (MeetingHud.Instance != null)
             {
                 source.logger.Warning("Tried to kill while a meeting was starting", null);
-                source.RpcCustomMurderPlayer(target, false);
                 return;
             }
             source.isKilling = true;

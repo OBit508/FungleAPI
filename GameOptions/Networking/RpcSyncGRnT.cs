@@ -44,7 +44,7 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
             try
             {

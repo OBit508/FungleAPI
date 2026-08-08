@@ -101,6 +101,20 @@ namespace FungleAPI.Networking
             messageWriter.WriteMod(plugin.LocalMod);
         }
         /// <summary>
+        /// Write a player data
+        /// </summary>
+        public static void WritePlayerData(this MessageWriter messageWriter, NetworkedPlayerInfo networkedPlayerInfo)
+        {
+            messageWriter.Write(networkedPlayerInfo.PlayerId);
+        }
+        /// <summary>
+        /// Write a player
+        /// </summary>
+        public static void WritePlayer(this MessageWriter messageWriter, PlayerControl playerControl)
+        {
+            messageWriter.WritePlayerData(playerControl.Data);
+        }
+        /// <summary>
         /// Read a body
         /// </summary>
         public static DeadBody ReadBody(this MessageReader messageReader)
@@ -182,6 +196,20 @@ namespace FungleAPI.Networking
         public static ModPlugin ReadPlugin(this MessageReader messageReader)
         {
             return ModPluginManager.GetModPlugin(messageReader.ReadMod().Assembly);
+        }
+        /// <summary>
+        /// Read a player data
+        /// </summary>
+        public static NetworkedPlayerInfo ReadPlayerData(this MessageReader messageReader)
+        {
+            return GameData.Instance.GetPlayerById(messageReader.ReadByte());
+        }
+        /// <summary>
+        /// Read a player
+        /// </summary>
+        public static PlayerControl ReadPlayer(this MessageReader messageReader)
+        {
+            return messageReader.ReadPlayerData().Object;
         }
     }
 }

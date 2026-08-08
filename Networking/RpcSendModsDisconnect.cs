@@ -17,7 +17,7 @@ namespace FungleAPI.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
             HandShakeManager.MissingMods = messageReader.ReadString();
             HandShakeManager.ExtraMods = messageReader.ReadString();

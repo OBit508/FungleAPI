@@ -1,4 +1,5 @@
-﻿using Hazel;
+﻿using FungleAPI.Networking;
+using Hazel;
 using InnerNet;
 using System;
 
@@ -36,7 +37,7 @@ namespace FungleAPI.Player.Networking.Data
         }
         public MurderData(MessageReader reader)
         {
-            Target = reader.ReadNetObject<PlayerControl>();
+            Target = reader.ReadPlayer();
             CustomMurderFlags flags = (CustomMurderFlags)reader.ReadByte();
             DidSucceed = (flags & CustomMurderFlags.DidSucceed) != 0;
             ResetKillTimer = (flags & CustomMurderFlags.ResetKillTimer) != 0;
@@ -47,7 +48,7 @@ namespace FungleAPI.Player.Networking.Data
         }
         public void Serialize(MessageWriter writer)
         {
-            writer.WriteNetObject(Target);
+            writer.WritePlayer(Target);
             CustomMurderFlags flags = CustomMurderFlags.None;
             if (DidSucceed)
             {

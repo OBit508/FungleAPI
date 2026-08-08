@@ -2,6 +2,7 @@
 using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Base.Rpc;
+using FungleAPI.Networking;
 using FungleAPI.Player.Networking.Data;
 using Hazel;
 using InnerNet;
@@ -18,16 +19,20 @@ namespace FungleAPI.Player.Networking
     {
         public override void Write(PlayerControl innerNetObject, MessageWriter messageWriter, SetRoleData data)
         {
+            messageWriter.WritePlayer(data.Source);
             messageWriter.Write((ushort)data.RoleType);
             messageWriter.Write(data.ShowIntro);
             innerNetObject.StartCoroutine(CoSetRole(innerNetObject, data.RoleType, data.ShowIntro).WrapToIl2Cpp());
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
+
+            PlayerControl source = messageReader.ReadPlayer();
             RoleTypes roleTypes = (RoleTypes)messageReader.ReadUInt16();
             bool showIntro = messageReader.ReadBoolean();
 
-            innerNetObject.StartCoroutine(CoSetRole(innerNetObject, roleTypes, showIntro).WrapToIl2Cpp());
+            source.StartCoroutine(CoSetRole(source, roleTypes, showIntro).WrapToIl2Cpp());
         }
         public System.Collections.IEnumerator CoSetRole(PlayerControl playerControl, RoleTypes roleTypes, bool showIntro)
         {

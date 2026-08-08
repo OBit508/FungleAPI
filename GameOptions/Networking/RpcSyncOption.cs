@@ -58,7 +58,7 @@ namespace FungleAPI.GameOptions.Networking
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
-            if (innerNetObject.OwnerId != AmongUsClient.Instance.HostId) return;
+            if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
             IModdedOption moddedOption = messageReader.ReadOption();
             moddedOption.Deserialize(messageReader);

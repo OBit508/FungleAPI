@@ -157,6 +157,7 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
+    <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
     <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Networking\Patches\InnerNetClientPatch.cs" />
     <Compile Include="Networking\Patches\SpawnGameDataMessagePatch.cs" />
     <Compile Include="Networking\Rpc.cs" />
+    <Compile Include="Networking\RpcKickWithReason.cs" />
     <Compile Include="Networking\RpcSendModsDisconnect.cs" />
     <Compile Include="Player\Networking\CmdCustomMurder.cs" />
     <Compile Include="Player\Networking\Data\MurderData.cs" />
