@@ -22,7 +22,7 @@ namespace FungleAPI.Player.Networking
             messageWriter.WritePlayer(data.Source);
             messageWriter.Write((ushort)data.RoleType);
             messageWriter.Write(data.ShowIntro);
-            innerNetObject.StartCoroutine(CoSetRole(innerNetObject, data.RoleType, data.ShowIntro).WrapToIl2Cpp());
+            data.Source.StartCoroutine(CoSetRole(data.Source, data.RoleType, data.ShowIntro).WrapToIl2Cpp());
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {

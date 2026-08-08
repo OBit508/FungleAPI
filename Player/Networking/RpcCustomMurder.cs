@@ -36,7 +36,7 @@ namespace FungleAPI.Player.Networking
             MurderResultFlags murderResultFlags = (data.Item1.DidSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
             MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
 
-            innerNetObject.CustomMurderPlayer(data.Item1.Target, murderResultFlags2, data.Item1.ResetKillTimer, data.Item1.CreateDeadBody, data.Item1.Teleport, data.Item1.ShowAnim, data.Item1.PlayKillSound);
+            data.Item2.CustomMurderPlayer(data.Item1.Target, murderResultFlags2, data.Item1.ResetKillTimer, data.Item1.CreateDeadBody, data.Item1.Teleport, data.Item1.ShowAnim, data.Item1.PlayKillSound);
         }
         public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
         {
