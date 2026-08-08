@@ -52,6 +52,6 @@ namespace FungleAPI.Api
         public static Translator HandShakeFail_MissingMods { get; } = new Translator("The following mods are missing from the local client: {0};");
         public static Translator HandShakeFail_ExtraMods { get; } = new Translator("The following mods are missing from the host client: {0};");
         public static Translator HandShakeFail_HostNotModded { get; } = new Translator("Host is not modded.");
-        public static Translator HandShakeFail_HostUsingReactor { get; } = new Translator("Host is using Reactor. Please use Reactor to join this lobby.");
+        public static Translator HandShakeFail_HostUsingReactor { get; } = new Translator("Host is using Reactor.\nPlease use Reactor to join this lobby.");
     }
 }

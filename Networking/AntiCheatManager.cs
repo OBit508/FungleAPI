@@ -15,7 +15,7 @@ namespace FungleAPI.Networking
         }
         public static void KickWithReason(int clientId, string reason)
         {
-            if (!AmongUsClient.Instance.AmHost) return;
+            if (!AmongUsClient.Instance.AmHost || AmongUsClient.Instance.HostId == clientId) return;
 
             Rpc<RpcKickWithReason>.Instance.Send((reason, clientId), PlayerControl.LocalPlayer);
             string name = null;

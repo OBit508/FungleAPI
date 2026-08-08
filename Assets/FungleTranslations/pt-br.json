@@ -39,5 +39,5 @@
   "HandShakeFail_MissingMods": "Faltam os seguintes mods no cliente local: {0};",
   "HandShakeFail_ExtraMods": "Faltam os seguintes mods no cliente do anfitrião: {0};",
   "HandShakeFail_HostNotModded": "O Anfitrião não está modificado.",
-  "HandShakeFail_HostUsingReactor": "O Anfitrião está usando o Reactor. Para entrar nesta sala será necessario que você também use."
+  "HandShakeFail_HostUsingReactor": "O Anfitrião está usando o Reactor.\nPara entrar nesta sala será necessario que você também use."
 }
