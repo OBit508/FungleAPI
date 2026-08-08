@@ -22,14 +22,12 @@ namespace FungleAPI.Cosmetics
         {
             base.Initialize();
 
-            if (Data != null) return;
-
             NamePlateData data = Data.SafeCast<NamePlateData>();
 
             Data.ProductId = GetProductId("nameplate");
 
             NamePlateViewData viewData = ScriptableObject.CreateInstance<NamePlateViewData>().DontUnload();
-            __configureData(viewData);
+            __configureData?.Invoke(viewData);
 
             SetPreview(viewData.Image);
 

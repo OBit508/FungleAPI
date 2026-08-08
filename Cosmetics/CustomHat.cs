@@ -27,8 +27,6 @@ namespace FungleAPI.Cosmetics
         {
             base.Initialize();
 
-            if (Data != null) return;
-
             HatData data = Data.SafeCast<HatData>();
 
             data.BlocksVisors = BlocksVisors;
@@ -38,7 +36,7 @@ namespace FungleAPI.Cosmetics
             Data.ProductId = GetProductId("hat");
 
             HatViewData viewData = ScriptableObject.CreateInstance<HatViewData>().DontUnload();
-            __configureData(viewData);
+            __configureData?.Invoke(viewData);
 
             data.PreviewCrewmateColor = viewData.MatchPlayerColor;
 

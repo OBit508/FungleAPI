@@ -60,6 +60,10 @@ namespace FungleAPI.Cosmetics
         {
             return !FungleApiPlugin.Plugin.Cosmetics.Colors.Any(c => c.ColorId == colorId);
         }
+        public static bool IsCustom(CosmeticData cosmeticData)
+        {
+            return CosmeticsNames.ContainsKey(cosmeticData);
+        }
         public static bool IsInvalid(int colorId)
         {
             if (colorId == 255 && AllColors.Count < 244)

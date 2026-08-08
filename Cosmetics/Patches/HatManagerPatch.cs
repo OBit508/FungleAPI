@@ -36,7 +36,7 @@ namespace FungleAPI.Cosmetics.Patches
             hatManager.allHats = cosmetics.ToArray();
             cosmetics = null;
 
-            hatManager.allHats = hatManager.allHats.Concat(vanilla).ToArray();
+            hatManager.allHats = hatManager.allHats.Concat(vanilla).Where(h => h != null).ToArray();
         }
         public static void SetSkin(HatManager hatManager)
         {
@@ -56,7 +56,7 @@ namespace FungleAPI.Cosmetics.Patches
             hatManager.allSkins = cosmetics.ToArray();
             cosmetics = null;
 
-            hatManager.allSkins = hatManager.allSkins.Concat(vanilla).ToArray();
+            hatManager.allSkins = hatManager.allSkins.Concat(vanilla).Where(h => h != null).ToArray();
         }
         public static void SetVisor(HatManager hatManager)
         {
@@ -76,7 +76,7 @@ namespace FungleAPI.Cosmetics.Patches
             hatManager.allVisors = cosmetics.ToArray();
             cosmetics = null;
 
-            hatManager.allVisors = hatManager.allVisors.Concat(vanilla).ToArray();
+            hatManager.allVisors = hatManager.allVisors.Concat(vanilla).Where(h => h != null).ToArray();
         }
         public static void SetPet(HatManager hatManager)
         {
@@ -96,7 +96,7 @@ namespace FungleAPI.Cosmetics.Patches
             hatManager.allPets = cosmetics.ToArray();
             cosmetics = null;
 
-            hatManager.allPets = hatManager.allPets.Concat(vanilla).ToArray();
+            hatManager.allPets = hatManager.allPets.Concat(vanilla).Where(h => h != null).ToArray();
         }
         public static void SetNamePlate(HatManager hatManager)
         {
@@ -116,7 +116,7 @@ namespace FungleAPI.Cosmetics.Patches
             hatManager.allNamePlates = cosmetics.ToArray();
             cosmetics = null;
 
-            hatManager.allNamePlates = hatManager.allNamePlates.Concat(vanilla).ToArray();
+            hatManager.allNamePlates = hatManager.allNamePlates.Concat(vanilla).Where(h => h != null).ToArray();
         }
     }
 }

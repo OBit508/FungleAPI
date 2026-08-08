@@ -22,14 +22,12 @@ namespace FungleAPI.Cosmetics
         {
             base.Initialize();
 
-            if (Data != null) return;
-
             SkinData data = Data.SafeCast<SkinData>();
 
             Data.ProductId = GetProductId("skin");
 
             SkinViewData viewData = ScriptableObject.CreateInstance<SkinViewData>().DontUnload();
-            __configureData(viewData);
+            __configureData?.Invoke(viewData);
 
             data.PreviewCrewmateColor = viewData.MatchPlayerColor;
 

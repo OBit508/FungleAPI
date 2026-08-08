@@ -24,8 +24,6 @@ namespace FungleAPI.Cosmetics
         {
             base.Initialize();
 
-            if (Data != null) return;
-
             VisorData data = Data.SafeCast<VisorData>();
 
             data.behindHats = BehindHats;
@@ -33,7 +31,7 @@ namespace FungleAPI.Cosmetics
             Data.ProductId = GetProductId("visor");
 
             VisorViewData viewData = ScriptableObject.CreateInstance<VisorViewData>().DontUnload();
-            __configureData(viewData);
+            __configureData?.Invoke(viewData);
 
             data.PreviewCrewmateColor = viewData.MatchPlayerColor;
 
