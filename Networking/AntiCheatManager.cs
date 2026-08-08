@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.Networking
 {
-    internal static class AntiCheatManager
+    public static class AntiCheatManager
     {
         public static string LastKickReason;
         public static bool IsHost(this PlayerControl playerControl)
