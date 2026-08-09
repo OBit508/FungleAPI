@@ -11,6 +11,7 @@ namespace FungleAPI.GameOptions.Networking
         None,
         Role,
         Team,
+        Modifier,
         Game
     }
 }

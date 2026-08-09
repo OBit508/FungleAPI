@@ -1,7 +1,11 @@
 {
   "language": "it",
 
+  "QuantityPerGame": "STRMISS",
+  "ChancePerGame": "STRMISS",
   "ModifiersText": "STRMISS",
+  "ModifierConfigButtonText": "STRMISS",
+  "ModifierConfigDescText": "STRMISS",
 
   "RoomText": "Partita",
   "RoomSettings": "Impostazioni della Partita",

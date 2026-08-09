@@ -1,7 +1,11 @@
 {
   "language": "pt-br",
 
+  "QuantityPerGame": "Quantidade por jogo",
+  "ChancePerGame": "Chance por jogo",
   "ModifiersText": "Atributos",
+  "ModifierConfigButtonText": "Configurações dos atributos",
+  "ModifierConfigDescText": "Edite as configurações de atributos para sua sala.",
   "RoomText": "Jogo",
   "RoomSettings": "Configurações do Jogo",
   "RoomTabDescription": "Edite as configurações do Jogo para sua sala.",

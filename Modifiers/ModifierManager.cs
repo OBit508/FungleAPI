@@ -1,5 +1,7 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Api;
 using FungleAPI.Components;
+using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
@@ -7,6 +9,7 @@ using FungleAPI.Modifiers.Networking;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
+using FungleAPI.Teams;
 using Il2CppInterop.Runtime.Injection;
 using System;
 using System.Collections.Generic;
@@ -76,6 +79,26 @@ namespace FungleAPI.Modifiers
             baseModifier.ModifierId = LastModifierId;
             Modifiers.Add(LastModifierId, baseModifier);
             LastModifierId++;
+
+            baseModifier.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
+            baseModifier.CountData.Type = OptionTypes.Float;
+            baseModifier.CountData.Title = FungleTranslation.QuantityPerGame;
+            baseModifier.CountData.Increment = 1;
+            baseModifier.CountData.ValidRange = new FloatRange(0, baseModifier.MaxCount);
+            baseModifier.CountData.FormatString = null;
+            baseModifier.CountData.ZeroIsInfinity = false;
+            baseModifier.CountData.SuffixType = NumberSuffixes.None;
+            baseModifier.CountData.OptionName = FloatOptionNames.Invalid;
+
+            baseModifier.ChanceData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
+            baseModifier.ChanceData.Type = OptionTypes.Float;
+            baseModifier.ChanceData.Title = FungleTranslation.ChancePerGame;
+            baseModifier.ChanceData.Increment = 1;
+            baseModifier.ChanceData.ValidRange = new FloatRange(0, 100);
+            baseModifier.ChanceData.FormatString = null;
+            baseModifier.ChanceData.ZeroIsInfinity = false;
+            baseModifier.ChanceData.SuffixType = NumberSuffixes.None;
+            baseModifier.ChanceData.OptionName = FloatOptionNames.Invalid;
 
             baseModifier.ModifierOptions = new ModifierOptionCollection(baseModifier);
             baseModifier.ModifierOptions.Initialize(modPlugin, OptionManager.GetAndInitializeModdedOptions(type, modPlugin));

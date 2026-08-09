@@ -1,6 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Api;
 using FungleAPI.GameOptions.Networking;
+using FungleAPI.Modifiers;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -49,6 +50,14 @@ namespace FungleAPI.GameOptions
             }
             Rpc<RpcSyncTeam>.Instance.SendLate(moddedTeam, PlayerControl.LocalPlayer);
         }
+        public static void RpcSyncModifier(BaseModifier baseModifier)
+        {
+            if (!AmongUsClient.Instance.AmHost)
+            {
+                return;
+            }
+            Rpc<RpcSyncModifier>.Instance.SendLate(baseModifier, PlayerControl.LocalPlayer);
+        }
         public static void RpcSyncRole(ICustomRole customRole)
         {
             if (!AmongUsClient.Instance.AmHost || customRole == null)
@@ -96,6 +105,14 @@ namespace FungleAPI.GameOptions
                 return;
             }
             Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Team, moddedOption, moddedTeam), PlayerControl.LocalPlayer);
+        }
+        public static void RpcSyncModifierOption(BaseModifier baseModifier, IModdedOption moddedOption)
+        {
+            if (!AmongUsClient.Instance.AmHost)
+            {
+                return;
+            }
+            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Team, moddedOption, baseModifier), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncGameOption(IModdedOption moddedOption)
         {

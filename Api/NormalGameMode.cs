@@ -350,10 +350,9 @@ namespace FungleAPI.Api
 
                 ApplyRoleAssignmentOverrides();
 
-                MiraCompatibility.Instance?.AssignModifiers();
+                AssignModifiers();
             }
         }
-
         private static void ApplyRoleAssignmentOverrides()
         {
             if (ConsumeRoleAssignmentOverrides == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
@@ -428,6 +427,70 @@ namespace FungleAPI.Api
                 roleList.Add(team.DefaultRole);
             }
             logicRoleSelectionNormal.AssignRolesFromList(players, team.TeamOptions.LocalTeamCount.Value, roleList, ref rolesAssigned);
+        }
+        public virtual void AssignModifiers()
+        {
+            Dictionary<BaseModifier, uint> modifiers = new Dictionary<BaseModifier, uint>();
+            foreach (BaseModifier baseModifier in ModifierManager.Modifiers.Values.Where(m => UnityEngine.Random.RandomRangeInt(0, 100) <= m.GetChance() && m.GetCount() > 0))
+            {
+                modifiers.Add(baseModifier, (uint)baseModifier.GetCount());
+            }
+
+            List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t != null && t.TeamOptions != null && t.TeamOptions.LocalTeamCount.Value > 0 && t != ModdedTeamManager.Crewmates);
+            teams.Sort((a, b) => b.GetPriority().CompareTo(a.GetPriority()));
+
+            List<NetworkedPlayerInfo> players = GameData.Instance.AllPlayers.ToSystemList();
+
+            int modifiersPerPlayer = 1;
+
+            void Assign(Func<BaseModifier, bool> condition, List<NetworkedPlayerInfo> validPlayers)
+            {
+                List<BaseModifier> validModifiers = modifiers.Keys.Where(condition).ToList();
+
+                if (validModifiers.Count <= 0) return;
+
+                NetworkedPlayerInfo target = validPlayers.Random();
+
+                for (int i = 0; i < modifiersPerPlayer; i++)
+                {
+                    if (validModifiers.Count <= 0) return;
+
+                    BaseModifier modifier = validModifiers.Random();
+                    uint count = modifiers[modifier];
+                    count--;
+                    if (count <= 0)
+                    {
+                        modifiers.Remove(modifier);
+                        validModifiers.Remove(modifier);
+                    }
+                    else
+                    {
+                        modifiers[modifier] = count;
+                    }
+
+                    target.Object?.RpcAddModifier(modifier.ModifierId);
+                }
+
+                players.Remove(target);
+            }
+
+            foreach (ModdedTeam team in teams)
+            {
+                if (players.Count <= 0) break;
+
+                List<NetworkedPlayerInfo> validPlayers = players.FindAll(p => p.Role.GetTeam() == team);
+
+                if (validPlayers.Count <= 0) continue;
+
+                Assign(m => m.SpecificTeam == null || m.SpecificTeam == team, validPlayers);
+            }
+
+            if (players.Count > 0)
+            {
+                Assign(m => m.SpecificTeam == null, players);
+            }
+
+            MiraCompatibility.Instance?.AssignModifiers();
         }
         public override void AssignTasks(ShipStatus shipStatus)
         {

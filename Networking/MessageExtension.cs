@@ -3,6 +3,7 @@ using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
+using FungleAPI.Modifiers;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -85,6 +86,13 @@ namespace FungleAPI.Networking
         public static void WriteTeam(this MessageWriter messageWriter, ModdedTeam team)
         {
             messageWriter.WritePacked(team.TeamId);
+        }
+        /// <summary>
+        /// Write a modifier
+        /// </summary>
+        public static void WriteModifier(this MessageWriter messageWriter, BaseModifier baseModifier)
+        {
+            messageWriter.WritePacked(baseModifier.ModifierId);
         }
         /// <summary>
         /// Write a rpc
@@ -181,6 +189,14 @@ namespace FungleAPI.Networking
         {
             uint id = messageReader.ReadPackedUInt32();
             return ModdedTeamManager.Teams.Values.FirstOrDefault(t => t.TeamId == id);
+        }
+        /// <summary>
+        /// Read a modifier
+        /// </summary>
+        public static BaseModifier ReadModifier(this MessageReader messageReader)
+        {
+            uint id = messageReader.ReadPackedUInt32();
+            return ModifierManager.Modifiers[id];
         }
         /// <summary>
         /// Read a rpc

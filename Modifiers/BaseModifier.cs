@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Collections;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ namespace FungleAPI.Modifiers
     [FungleIgnore]
     public abstract class BaseModifier
     {
+        internal FloatGameSetting CountData;
+        internal FloatGameSetting ChanceData;
+
         public PlayerControl Player;
         public uint ModifierId { get; internal set; }
         public ModifierOptionCollection ModifierOptions { get; internal set; }
@@ -27,6 +31,9 @@ namespace FungleAPI.Modifiers
 
         public virtual byte DefaultCount { get; }
         public virtual byte DefaultChance { get; }
+        public virtual byte MaxCount => 15;
+
+        public virtual ModdedTeam SpecificTeam { get; }
 
         public virtual void OnDeath(DeathReason reason) { }
         public virtual void Update() { }

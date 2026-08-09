@@ -79,9 +79,11 @@
     <Compile Include="GameModes\Patches\SpawnInMinigamePatch.cs" />
     <Compile Include="GameOptions\Collections\ModifierOptionCollection.cs" />
     <Compile Include="GameOptions\Lobby\FungleTab.cs" />
+    <Compile Include="GameOptions\Lobby\ModifierTab.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncGamemode.cs" />
     <Compile Include="GameModes\GameModeOptions.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncGRnT.cs" />
+    <Compile Include="GameOptions\Networking\RpcSyncModifier.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncOption.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncOptions.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncRole.cs" />

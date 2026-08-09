@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Base.Rpc;
 using FungleAPI.GameOptions.Options;
 using FungleAPI.GameOptions.Patches;
+using FungleAPI.Modifiers;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -43,6 +44,13 @@ namespace FungleAPI.GameOptions.Networking
                         messageWriter.WriteTeam(moddedTeam);
                     }
                     break;
+                case SyncOptionType.Modifier:
+                    if (data.Item3 is BaseModifier baseModifier)
+                    {
+                        str = $"{baseModifier.ModifierColor.ToTextColor()}({baseModifier.ModifierName.GetString()}) ";
+                        messageWriter.WriteModifier(baseModifier);
+                    }
+                    break;
                 case SyncOptionType.Game:
                     str += $"({data.Item2.OwnerPlugin.FunglePlugin.ModName}) ";
                     break;
@@ -75,6 +83,10 @@ namespace FungleAPI.GameOptions.Networking
                 case SyncOptionType.Team:
                     ModdedTeam moddedTeam = messageReader.ReadTeam();
                     str = $"{moddedTeam.TeamColor.ToTextColor()}({moddedTeam.TeamName.GetString()}) ";
+                    break;
+                case SyncOptionType.Modifier:
+                    BaseModifier baseModifier = messageReader.ReadModifier();
+                    str = $"{baseModifier.ModifierColor.ToTextColor()}({baseModifier.ModifierName.GetString()}) ";
                     break;
                 case SyncOptionType.Game:
                     str += $"({moddedOption.OwnerPlugin.FunglePlugin.ModName}) ";
