@@ -5,6 +5,8 @@ using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
+using FungleAPI.Event;
+using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.ModCompatibility;
@@ -35,6 +37,7 @@ namespace FungleAPI.GlobalPatches
         [HarmonyPostfix]
         public static void RemoveFromList(AmongUsClient __instance, ClientData data)
         {
+            EventManager.CallEvent(new PlayerLeaveEvent(data));
             if (WrongModdeds.ContainsKey(data.Id))
             {
                 WrongModdeds.Remove(data.Id);

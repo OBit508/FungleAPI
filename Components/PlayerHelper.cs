@@ -59,6 +59,8 @@ namespace FungleAPI.Components
         public void SetRoleText(RoleTypes roleTypes)
         {
             if (RoleText == null) Start();
+            if (RoleText == null || PlayerControl.LocalPlayer?.Data?.Role == null)
+                return;
 
             RoleBehaviour roleBehaviour = RoleManager.Instance.GetRole(roleTypes);
 
@@ -125,7 +127,7 @@ namespace FungleAPI.Components
                 }
                 return;
             }
-            afterSetRoleEvent.TargetPlayer.GetComponent<PlayerHelper>().SetRoleText(afterSetRoleEvent.RoleType);
+            afterSetRoleEvent.TargetPlayer.GetComponent<PlayerHelper>()?.SetRoleText(afterSetRoleEvent.RoleType);
         }
     }
 }

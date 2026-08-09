@@ -106,7 +106,10 @@ namespace FungleAPI.Role
         }
         bool CanSeeRole(RoleBehaviour otherRole)
         {
-            return otherRole.GetTeam() == Team && (Team.KnowMembers || otherRole.Player.AmOwner);
+            if (otherRole == null || Team == null)
+                return false;
+            var otherTeam = otherRole.GetTeam();
+            return otherTeam != null && otherTeam == Team && (Team.KnowMembers || otherRole.Player?.AmOwner == true);
         }
         int GetCount()
         {

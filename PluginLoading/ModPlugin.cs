@@ -33,6 +33,7 @@ namespace FungleAPI.PluginLoading
         public List<Type> AllTypes = new List<Type>();
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
+        public List<Type> Modifiers = new List<Type>();
         public List<OptionCollection> OptionCollections = new List<OptionCollection>();
 
 

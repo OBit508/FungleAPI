@@ -71,7 +71,9 @@ namespace FungleAPI.Role.Utilities
 
             if (role.CustomRole() != null)
             {
-                return role.CustomRole().Team;
+                var customTeam = role.CustomRole().Team;
+                if (customTeam != null)
+                    return customTeam;
             }
             return role.TeamType == RoleTeamTypes.Impostor ? ModdedTeamManager.Impostors : ModdedTeamManager.Crewmates;
         }

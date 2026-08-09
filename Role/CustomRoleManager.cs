@@ -180,7 +180,8 @@ namespace FungleAPI.Role
 
             RoleOptionCollection roleOptions = new RoleOptionCollection(customRole);
             ICustomRole.Save[roleType] = roleOptions;
-            roleOptions.Initialize(plugin, OptionManager.GetAndInitializeModdedOptions(type, plugin));
+            var options = OptionManager.GetAndInitializeModdedOptions(type, plugin);
+            roleOptions.Initialize(plugin, options);
 
             RoleConfiguration roleConfiguration = customRole.Configuration;
             role.name = type.Name;

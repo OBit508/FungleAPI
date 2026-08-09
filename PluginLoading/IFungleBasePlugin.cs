@@ -23,8 +23,8 @@ namespace FungleAPI.PluginLoading
     public interface IFungleBasePlugin
     {
         PluginInfo PluginInfo => ModPluginManager.TryGetPluginInfo(this as BasePlugin);
-        string ModName => PluginInfo.Metadata.Name;
-        string ModVersion => PluginInfo.Metadata.Version.Clean();
+        string ModName => PluginInfo?.Metadata?.Name ?? GetType().Assembly.GetName().Name ?? "Unknown Mod";
+        string ModVersion => PluginInfo?.Metadata?.Version.Clean() ?? GetType().Assembly.GetName().Version?.ToString() ?? "0.0.0";
         bool UseAutoRegistration => true;
         bool RequiredOnAllClients => true;
         PluginCredits? Credits => new PluginCredits()

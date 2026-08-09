@@ -34,8 +34,9 @@ namespace FungleAPI.GameOptions.Networking
             {
                 rpcSyncRole.Write(messageWriter, customRole);
             }
-            messageWriter.WritePacked(ModdedTeamManager.Teams.Count);
-            foreach (ModdedTeam moddedTeam in ModdedTeamManager.Teams.Values)
+            var initializedTeams = ModdedTeamManager.Teams.Values.Where(team => team != null && team.TeamOptions != null).ToList();
+            messageWriter.WritePacked(initializedTeams.Count);
+            foreach (ModdedTeam moddedTeam in initializedTeams)
             {
                 rpcSyncTeam.Write(messageWriter, moddedTeam);
             }

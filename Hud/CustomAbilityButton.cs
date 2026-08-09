@@ -97,10 +97,15 @@ namespace FungleAPI.Hud
             {
                 return;
             }
+            Sprite sprite = ButtonSprite;
+            if (sprite == null || HudManager.Instance?.AbilityButton == null)
+            {
+                FungleAPI.Api.FungleApiPlugin.Instance.Log.LogError($"Failed to create button {GetType().Name}: button sprite or HUD template is missing");
+                return;
+            }
             Button = GameObject.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
-            Button.gameObject.AddComponent<CustomAbilityButtonHelper>().Button = this;
             Button.name = OverrideText;
-            Button.graphic.sprite = ButtonSprite;
+            Button.graphic.sprite = sprite;
             Button.OverrideText(OverrideText);
             Button.buttonLabelText.SetOutlineColor(TextOutlineColor);
             SetCooldown(InitialCooldown);
@@ -146,17 +151,17 @@ namespace FungleAPI.Hud
         public virtual void SetCooldown(float cooldown)
         {
             Timer = cooldown;
-            Button.SetCoolDown(Timer, Cooldown);
+            Button?.SetCoolDown(Timer, Cooldown);
         }
         public virtual void SetNumUses(int numUses)
         {
             UsesLeft = numUses;
-            Button.SetUsesRemaining(numUses);
+            Button?.SetUsesRemaining(numUses);
         }
         public virtual void SetTransformDuration(float newDuration)
         {
             TransformTimer = newDuration;
-            Button.SetFillUp(Timer, TransformDuration);
+            Button?.SetFillUp(Timer, TransformDuration);
         }
         public virtual void ClickHandler()
         {
@@ -184,6 +189,8 @@ namespace FungleAPI.Hud
         }
         public virtual void Update()
         {
+            if (!Button)
+                return;
             UpdateTimer();
             UpdateUI();
         }
@@ -214,6 +221,11 @@ namespace FungleAPI.Hud
         }
         protected virtual void UpdateUI()
         {
+            bool visible = Active && HudHelper.Active && Minigame.Instance == null && MeetingHud.Instance == null && ExileController.Instance == null;
+            Button.ToggleVisible(visible);
+            if (!visible)
+                return;
+
             bool enabled = CanUse() && (!LimitedUses || UsesLeft > 0);
             Color color = enabled ? Palette.EnabledColor : Palette.DisabledClear;
             int desat = enabled ? 0 : 1;
