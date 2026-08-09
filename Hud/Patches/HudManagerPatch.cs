@@ -134,8 +134,6 @@ namespace FungleAPI.Hud.Patches
                     FungleApiPlugin.Instance.Log.LogError($"Failed to update button {button.GetType().FullName}: {exception}");
                 }
             }
-            ArrangeGrid(HudHelper.BottomLeft);
-            ArrangeGrid(HudHelper.BottomRight);
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
                 Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;
@@ -219,28 +217,6 @@ namespace FungleAPI.Hud.Patches
             }
             return false;
         }
-
-        private static void ArrangeGrid(Transform root)
-        {
-            if (root == null) return;
-            GridArrange grid = root.GetComponent<GridArrange>();
-            if (grid == null) return;
-            try
-            {
-                grid.ArrangeChilds();
-            }
-            catch
-            {
-                try
-                {
-                    grid.Start();
-                    grid.ArrangeChilds();
-                }
-                catch
-                {
-                }
-            }
-        }
         [HarmonyPostfix]
         [HarmonyPatch("SetHudActive", new Type[]
         {
@@ -263,8 +239,7 @@ namespace FungleAPI.Hud.Patches
 
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
-                if (button.Button != null && !isActive)
-                    button.Button.ToggleVisible(false);
+                button.Button.ToggleVisible(button.Active && isActive);
             }
         }
         public static void CreatePlayerTab()

@@ -221,11 +221,6 @@ namespace FungleAPI.Hud
         }
         protected virtual void UpdateUI()
         {
-            bool visible = Active && HudHelper.Active && Minigame.Instance == null && MeetingHud.Instance == null && ExileController.Instance == null;
-            Button.ToggleVisible(visible);
-            if (!visible)
-                return;
-
             bool enabled = CanUse() && (!LimitedUses || UsesLeft > 0);
             Color color = enabled ? Palette.EnabledColor : Palette.DisabledClear;
             int desat = enabled ? 0 : 1;

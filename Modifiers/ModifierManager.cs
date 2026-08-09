@@ -37,6 +37,8 @@ namespace FungleAPI.Modifiers
 
         public static bool HasModifier<T>(PlayerControl player) where T : BaseModifier => GetModifier<T>(player) != null;
 
+        public static bool HasModifier(PlayerControl player, Type type) => GetModifiers(player).FirstOrDefault(m => m.GetType() == type) != null;
+
         public static bool AddModifier(PlayerControl player, uint modifierId, float duration = -1f)
         {
             if (player == null || !ModifierTypes.TryGetValue(modifierId, out var type)) return false;

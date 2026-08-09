@@ -1,6 +1,7 @@
 ﻿using AmongUs.Matchmaking;
 using FungleAPI.Attributes;
 using FungleAPI.Freeplay.Helpers;
+using FungleAPI.Modifiers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -54,6 +55,18 @@ namespace FungleAPI.Freeplay
                     }
                     SubFolders.Add(teamFolder);
                 }
+            }
+            Folder modifiersFolder = new Folder() { FolderName = "Modifiers", FolderColor = Color.gray };
+            foreach (KeyValuePair<uint, Type> pair in ModifierManager.RegisteredModifiers)
+            {
+                BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(pair.Value);
+                modifiersFolder.Items.Add(new FolderItem()
+                {
+                    Name = baseModifier.NiceName,
+                    Color = Color.gray,
+                    OnClick = delegate { ModifierManager.AddModifier(PlayerControl.LocalPlayer, pair.Key); },
+                    Overlay = () => ModifierManager.HasModifier(PlayerControl.LocalPlayer, pair.Value)
+                });
             }
             Initialized = true;
         }
