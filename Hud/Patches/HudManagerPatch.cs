@@ -127,7 +127,10 @@ namespace FungleAPI.Hud.Patches
             {
                 try
                 {
-                    if (button.Button == null || !button.Button.isActiveAndEnabled) continue;
+                    if (button.Button == null) continue;
+                    bool visible = button.Active && HudHelper.Active && Minigame.Instance == null && MeetingHud.Instance == null && ExileController.Instance == null;
+                    button.Button.ToggleVisible(visible);
+                    if (!visible) continue;
                     button.Update();
                 }
                 catch (Exception exception)
