@@ -127,6 +127,7 @@ namespace FungleAPI.Hud.Patches
             {
                 try
                 {
+                    if (button.Button == null || !button.Button.isActiveAndEnabled) continue;
                     button.Update();
                 }
                 catch (Exception exception)
