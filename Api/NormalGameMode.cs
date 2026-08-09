@@ -256,14 +256,19 @@ namespace FungleAPI.Api
                 return;
             }
 
+            bool modifiers = ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.Count > 0;
             bool taskPanelVisible = hudManager.TaskPanel != null && hudManager.TaskPanel.gameObject.activeSelf;
-            playerTab.SetVisible(roleHintType.HasFlag(RoleHintType.PlayerTab) && taskPanelVisible);
+            playerTab.SetVisible((roleHintType.HasFlag(RoleHintType.PlayerTab) || modifiers) && taskPanelVisible);
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
             RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
 
-            if (ModifierHolder.LocalPlayer != null)
+            if (modifiers)
             {
-                stringBuilder.AppendLine();
+                if (stringBuilder.Length > 0)
+                {
+                    stringBuilder.AppendLine();
+                }
+
                 foreach (BaseModifier baseModifier in ModifierHolder.LocalPlayer.Modifiers.Values)
                 {
                     baseModifier.AppendHint(stringBuilder);

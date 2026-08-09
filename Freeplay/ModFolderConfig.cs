@@ -64,14 +64,24 @@ namespace FungleAPI.Freeplay
                 Folder modifierFolder = new Folder() { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.gray };
                 foreach (BaseModifier baseModifier in modPlugin.Modifiers)
                 {
+                    Func<bool> factory = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId);
                     modifierFolder.Items.Add(new FolderItem()
                     {
                         Name = baseModifier.ModifierName.GetString(),
                         Color = baseModifier.ModifierColor,
-                        OnClick = delegate { PlayerControl.LocalPlayer?.RpcAddModifier(baseModifier.ModifierId); },
-                        Overlay = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId)
+                        OnClick = delegate 
+                        {
+                            if (factory())
+                            {
+                                PlayerControl.LocalPlayer?.RpcRemoveModifier(baseModifier.ModifierId);
+                                return;
+                            }
+                            PlayerControl.LocalPlayer?.RpcAddModifier(baseModifier.ModifierId);
+                        },
+                        Overlay = factory
                     });
                 }
+                SubFolders.Add(modifierFolder);
             }
             Initialized = true;
         }
