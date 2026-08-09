@@ -75,6 +75,10 @@ namespace FungleAPI.Modifiers
 
         public static void RegisterModifier(Type type, ModPlugin modPlugin)
         {
+            if (type.IsAbstract)
+            {
+                return;
+            }
             BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(type);
             baseModifier.ModifierId = LastModifierId;
             Modifiers.Add(LastModifierId, baseModifier);
