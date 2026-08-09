@@ -10,7 +10,6 @@ using FungleAPI.Components;
 using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.MiraSupport;
-using FungleAPI.Modifiers;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Extensions;
@@ -122,7 +121,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
-            ModifierManager.Update();
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 try

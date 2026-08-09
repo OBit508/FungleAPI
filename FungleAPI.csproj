@@ -76,6 +76,7 @@
     <Compile Include="GameModes\Patches\PhantomRolePatch.cs" />
     <Compile Include="GameModes\Patches\ReportButtonPatch.cs" />
     <Compile Include="GameModes\Patches\SpawnInMinigamePatch.cs" />
+    <Compile Include="GameOptions\Collections\ModifierOptionCollection.cs" />
     <Compile Include="GameOptions\Lobby\FungleTab.cs" />
     <Compile Include="GameOptions\Networking\RpcSyncGamemode.cs" />
     <Compile Include="GameModes\GameModeOptions.cs" />
@@ -157,10 +158,8 @@
     <Compile Include="ModCompatibility\MiraSupport\MiraRoleExtensions.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
-    <Compile Include="Modifiers\BaseModifier.cs" />
-    <Compile Include="Modifiers\ModifierManager.cs" />
-    <Compile Include="Modifiers\ModifierRpc.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
+    <Compile Include="Modifiers\BaseModifier.cs" />
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />

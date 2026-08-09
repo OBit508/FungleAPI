@@ -1,35 +1,46 @@
-using FungleAPI.Attributes;
-using FungleAPI.Translation;
+﻿using FungleAPI.Api;
+using FungleAPI.GameOptions.Collections;
+using FungleAPI.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace FungleAPI.Modifiers
 {
-    [FungleIgnore]
     public abstract class BaseModifier
     {
-        public PlayerControl Player { get; internal set; }
-        public uint TypeId { get; internal set; }
-        public float RemainingDuration { get; internal set; }
-        public virtual StringNames ModifierName => TranslationManager.GetStringName(GetType().Name);
-        public string NiceName
+        public PlayerControl Player;
+        public uint ModifierId { get; internal set; }
+        public ModifierOptionCollection ModifierOptions { get; internal set; }
+
+        public abstract StringNames ModifierName { get; }
+        public abstract StringNames ModifierBlur { get; }
+        public virtual Color ModifierColor => Color.gray;
+
+        public virtual bool HideInFreeplay { get; }
+        public virtual bool HideInLobby { get; }
+
+        public virtual byte DefaultCount { get; }
+        public virtual byte DefaultChance { get; }
+
+        public virtual void OnDeath(DeathReason reason) { }
+        public virtual void Update() { }
+        public virtual void FixedUpdate() { }
+        public virtual void Initialize(PlayerControl owner)
         {
-            get
-            {
-                if (TranslationManager.Translators.TryGetValue(ModifierName, out var translator))
-                    return translator.GetString();
-                if (TranslationController.InstanceExists)
-                    return TranslationController.Instance.GetString(ModifierName);
-                return GetType().Name;
-            }
+            Player = owner;
         }
-        public virtual bool Unique => true;
-        public virtual float Duration => -1f;
-        public virtual bool HideOnUi => false;
-        public virtual bool? CanVent => null;
-        public virtual bool? CanUseKillButton => null;
-        public virtual void OnAdded() { }
-        public virtual void OnRemoved() { }
-        public virtual void OnUpdated() { }
-        public virtual void OnPlayerDied(DeathReason reason) { }
-        public virtual void OnMeetingStarted() { }
+        public virtual void Deinitialize() { }
+        public virtual void AppendHint(Il2CppSystem.Text.StringBuilder stringBuilder) 
+        {
+            stringBuilder.AppendLine($"{ModifierColor.ToTextColor()}<b>{ModifierName.GetString()}</b>:</color>");
+            stringBuilder.AppendLine($"<size=70%>{ModifierBlur.GetString()}</size>");
+        }
+
+        public virtual int GetCount() => AmongUsClient.Instance.AmHost ? ModifierOptions.LocalModifierCount.Value : ModifierOptions.NonHostModifierCount;
+        public virtual int GetChance() => AmongUsClient.Instance.AmHost ? ModifierOptions.LocalModifierChance.Value : ModifierOptions.NonHostModifierChance;
     }
 }
