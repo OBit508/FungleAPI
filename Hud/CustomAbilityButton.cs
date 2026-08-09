@@ -158,7 +158,7 @@ namespace FungleAPI.Hud
         public virtual void SetCooldown(float cooldown)
         {
             Timer = cooldown;
-            Button?.SetCoolDown(Timer, Cooldown);
+            Button?.SetCoolDown(Timer, GetSafeCooldownDuration());
         }
         public virtual void SetNumUses(int numUses)
         {
@@ -223,7 +223,7 @@ namespace FungleAPI.Hud
                 {
                     Timer = 0;
                 }
-                Button.SetCoolDown(Timer, Cooldown);
+                Button.SetCoolDown(Timer, GetSafeCooldownDuration());
             }
         }
         protected virtual void UpdateUI()
@@ -239,6 +239,10 @@ namespace FungleAPI.Hud
         {
             Transformed = false;
             TransformTimer = TransformDuration;
+        }
+        private float GetSafeCooldownDuration()
+        {
+            return Mathf.Max(Cooldown, 0.01f);
         }
         public virtual void Destroy()
         {
