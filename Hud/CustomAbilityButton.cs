@@ -229,7 +229,7 @@ namespace FungleAPI.Hud
         protected virtual void UpdateUI()
         {
             bool enabled = CanUse() && (!LimitedUses || UsesLeft > 0);
-            Color color = enabled ? Palette.EnabledColor : new Color(1f, 1f, 1f, 0.5f);
+            Color color = enabled ? Palette.EnabledColor : Palette.DisabledClear;
             int desat = enabled ? 0 : 1;
             Button.graphic.color = color;
             Button.graphic.material.SetFloat("_Desat", desat);
