@@ -5,10 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using AmongUs.Data;
 using AmongUs.GameOptions;
+using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Modifiers;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Extensions;
@@ -31,6 +33,9 @@ namespace FungleAPI.Hud.Patches
         public static void StartPostfix(HudManager __instance)
         {
             HudHelper.Bottom.Clear();
+            ReportButtonConfig.DefaultSprite = __instance.ReportButton?.graphic?.sprite;
+            SabotageButtonConfig.DefaultSprite = __instance.SabotageButton?.graphic?.sprite;
+            VentButtonConfig.DefaultSprite = __instance.ImpostorVentButton?.graphic?.sprite;
 
             timer = 0;
             if (ShipStatus.Instance != null && LevelImpostorSupport.LevelImpostorAssembly == null)
@@ -61,11 +66,7 @@ namespace FungleAPI.Hud.Patches
                 HudHelper.BottomLeft.name = "BottomLeft";
                 gridArrange.Alignment = GridArrange.StartAlign.Right;
                 aspectPosition.Alignment = AspectPosition.EdgeAlignments.LeftBottom;
-                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
-                {
-                    button.CreateButton();
-                    button.Button.ToggleVisible(false);
-                }
+                InitializeButtons();
                 gridArrange.Start();
                 gridArrange.ArrangeChilds();
                 aspectPosition.AdjustPosition();
@@ -81,11 +82,7 @@ namespace FungleAPI.Hud.Patches
                     HudHelper.BottomLeft.GetChild(0)?.gameObject.Destroy();
                 }
 
-                foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
-                {
-                    button.CreateButton();
-                    button.Button.ToggleVisible(false);
-                }
+                InitializeButtons();
 
                 GridArrange gridArrange = HudHelper.BottomLeft.GetComponent<GridArrange>();
 
@@ -98,18 +95,45 @@ namespace FungleAPI.Hud.Patches
             __instance.ImpostorVentButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
             __instance.SabotageButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.SabotageButton.transform);
             __instance.SabotageButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
-            ReportButtonConfig.DefaultSprite = __instance.ReportButton.graphic.sprite;
-            SabotageButtonConfig.DefaultSprite = __instance.SabotageButton.graphic.sprite;
-            VentButtonConfig.DefaultSprite = __instance.ImpostorVentButton.graphic.sprite;
             __instance.KillButton.SetDisabled();
             __instance.ImpostorVentButton.SetDisabled();
 
             CreatePlayerTab();
         }
+
+        private static void InitializeButtons()
+        {
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+            {
+                try
+                {
+                    button.CreateButton();
+                    button.Button?.ToggleVisible(false);
+                }
+                catch (Exception exception)
+                {
+                    FungleApiPlugin.Instance.Log.LogError($"Failed to create button {button.GetType().FullName}: {exception}");
+                }
+            }
+        }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
+            ModifierManager.Update();
+            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
+            {
+                try
+                {
+                    button.Update();
+                }
+                catch (Exception exception)
+                {
+                    FungleApiPlugin.Instance.Log.LogError($"Failed to update button {button.GetType().FullName}: {exception}");
+                }
+            }
+            HudHelper.BottomLeft?.GetComponent<GridArrange>()?.ArrangeChilds();
+            HudHelper.BottomRight?.GetComponent<GridArrange>()?.ArrangeChilds();
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
                 Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;
@@ -215,10 +239,8 @@ namespace FungleAPI.Hud.Patches
 
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
-                if (button.Button != null)
-                {
-                    button.Button.ToggleVisible(button.Active && isActive);
-                }
+                if (button.Button != null && !isActive)
+                    button.Button.ToggleVisible(false);
             }
         }
         public static void CreatePlayerTab()

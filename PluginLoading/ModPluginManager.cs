@@ -14,6 +14,7 @@ using FungleAPI.GameOver;
 using FungleAPI.GameModes;
 using FungleAPI.Hud;
 using FungleAPI.Networking;
+using FungleAPI.Modifiers;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
 using FungleAPI.Ship.Patches;
@@ -189,6 +190,11 @@ namespace FungleAPI.PluginLoading
                 CustomRpcManager.RegisterRpc(type, plugin);
                 return;
             }
+            else if (typeof(BaseModifier).IsAssignableFrom(type))
+            {
+                ModifierManager.RegisterModifier(type, plugin);
+                return;
+            }
             else if (typeof(PlayerComponent).IsAssignableFrom(type))
             {
                 registeredInIl2cpp = true;
@@ -226,7 +232,6 @@ namespace FungleAPI.PluginLoading
             {
                 return pluginInfo;
             }
-            basePlugin?.Log.LogError("Failed to get PluginInfo");
             return null;
         }
     }

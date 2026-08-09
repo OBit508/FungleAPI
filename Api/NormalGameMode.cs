@@ -24,6 +24,7 @@ namespace FungleAPI.Api
 {
     public class NormalGameMode : BaseGameMode
     {
+        public static Func<IReadOnlyDictionary<byte, RoleTypes>> ConsumeRoleAssignmentOverrides;
         public override StringNames GameModeName => StringNames.GameTypeClassic;
         public override int RequiredPlayerToStart() => 4;
         public override float CalculateLightRadius(NetworkedPlayerInfo player, bool airship)
@@ -218,32 +219,48 @@ namespace FungleAPI.Api
         }
         public override void SetTaskPanelText(HudManager hudManager)
         {
-            NetworkedPlayerInfo data = PlayerControl.LocalPlayer.Data;
-            RoleHintType roleHintType = data.Role.GetHintType();
-            for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+            PlayerControl localPlayer = PlayerControl.LocalPlayer;
+            if (hudManager == null || localPlayer == null || localPlayer.Data == null || localPlayer.Data.Role == null || hudManager.tasksString == null)
             {
-                PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
-                if (playerTask)
+                return;
+            }
+
+            NetworkedPlayerInfo data = localPlayer.Data;
+            RoleHintType roleHintType = data.Role.GetHintType();
+            if (localPlayer.myTasks != null)
+            {
+                for (int i = 0; i < localPlayer.myTasks.Count; i++)
                 {
-                    if (playerTask.TaskType == TaskTypes.FixComms && !(data.Role != null && data.Role.IsImpostor))
+                    PlayerTask playerTask = localPlayer.myTasks[i];
+                    if (playerTask)
                     {
-                        hudManager.tasksString.Clear();
+                        if (playerTask.TaskType == TaskTypes.FixComms && !data.Role.IsImpostor)
+                        {
+                            hudManager.tasksString.Clear();
+                            playerTask.AppendTaskText(hudManager.tasksString);
+                            break;
+                        }
                         playerTask.AppendTaskText(hudManager.tasksString);
-                        break;
                     }
-                    playerTask.AppendTaskText(hudManager.tasksString);
                 }
             }
-            if (data.Role != null && roleHintType.HasFlag(RoleHintType.TaskHint))
+            if (roleHintType.HasFlag(RoleHintType.TaskHint))
             {
                 RoleExtensions.AppendHint(data.Role, RoleHintType.TaskHint, hudManager.tasksString);
             }
 
-            PlayerTabBehaviour.Instance.SetVisible(roleHintType.HasFlag(RoleHintType.PlayerTab) && HudManager.Instance.TaskPanel.gameObject.activeSelf);
+            PlayerTabBehaviour playerTab = PlayerTabBehaviour.Instance;
+            if (playerTab == null || playerTab.TabText == null || playerTab.TabName == null)
+            {
+                return;
+            }
+
+            bool taskPanelVisible = hudManager.TaskPanel != null && hudManager.TaskPanel.gameObject.activeSelf;
+            playerTab.SetVisible(roleHintType.HasFlag(RoleHintType.PlayerTab) && taskPanelVisible);
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
             RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
-            PlayerTabBehaviour.Instance.TabText.text = stringBuilder.ToString();
-            PlayerTabBehaviour.Instance.TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
+            playerTab.TabText.text = stringBuilder.ToString();
+            playerTab.TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
         }
         public override float CanUseVent(Vent vent, NetworkedPlayerInfo pc, out bool canUse, out bool couldUse)
         {
@@ -313,7 +330,41 @@ namespace FungleAPI.Api
                     AssignRolesForTeam(logicRoleSelectionNormal, players, ModdedTeamManager.Crewmates);
                 }
 
+                ApplyRoleAssignmentOverrides();
+
                 MiraCompatibility.Instance?.AssignModifiers();
+            }
+        }
+
+        private static void ApplyRoleAssignmentOverrides()
+        {
+            if (ConsumeRoleAssignmentOverrides == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
+            var assignments = ConsumeRoleAssignmentOverrides.Invoke();
+            if (assignments == null || assignments.Count == 0) return;
+            var allPlayers = PlayerControl.AllPlayerControls;
+            if (allPlayers == null) return;
+            foreach (var assignment in assignments)
+            {
+                PlayerControl target = null;
+                for (var i = 0; i < allPlayers.Count; i++)
+                {
+                    if (allPlayers[i] != null && allPlayers[i].PlayerId == assignment.Key)
+                    {
+                        target = allPlayers[i];
+                        break;
+                    }
+                }
+                if (target == null || target.Data == null || target.Data.Role == null || target.Data.Role.Role == assignment.Value) continue;
+                var previousRole = target.Data.Role.Role;
+                for (var i = 0; i < allPlayers.Count; i++)
+                {
+                    var holder = allPlayers[i];
+                    if (holder == null || holder == target || holder.Data == null || holder.Data.Role == null || holder.Data.Disconnected) continue;
+                    if (holder.Data.Role.Role != assignment.Value) continue;
+                    holder.RpcSetRole(previousRole, true);
+                    break;
+                }
+                target.RpcSetRole(assignment.Value, true);
             }
         }
         public void AssignRolesForTeam(LogicRoleSelectionNormal logicRoleSelectionNormal, Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> players, ModdedTeam team)

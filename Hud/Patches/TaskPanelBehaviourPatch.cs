@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace FungleAPI.Hud.Patches
 {
-    [HarmonyPatch(typeof(TaskPanelBehaviour), "Update")] // MiraAPI Patch
+    [HarmonyPatch(typeof(TaskPanelBehaviour), "Update")]
     internal static class TaskPanelBehaviourPatch
     {
         public static bool Prefix(TaskPanelBehaviour __instance)

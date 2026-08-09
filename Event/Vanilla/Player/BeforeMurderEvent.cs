@@ -10,9 +10,11 @@ namespace FungleAPI.Event.Vanilla.Player
     public class BeforeMurderEvent : CancelableEvent
     {
         public readonly PlayerControl Target;
+        public readonly PlayerControl Source;
         public readonly MurderResultFlags Flags;
-        public BeforeMurderEvent(PlayerControl target, MurderResultFlags flags)
+        public BeforeMurderEvent(PlayerControl source, PlayerControl target, MurderResultFlags flags)
         {
+            Source = source;
             Target = target;
             Flags = flags;
         }

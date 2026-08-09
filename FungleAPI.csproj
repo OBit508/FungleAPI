@@ -116,6 +116,7 @@
     <Compile Include="Event\Vanilla\Player\CompleteTaskEvent.cs" />
     <Compile Include="Event\Vanilla\EndMeetingEvent.cs" />
     <Compile Include="Event\Vanilla\Player\PlayerDieEvent.cs" />
+    <Compile Include="Event\Vanilla\Player\PlayerLeaveEvent.cs" />
     <Compile Include="Event\Vanilla\Player\ReportBodyEvent.cs" />
     <Compile Include="Event\Vanilla\StartMeetingEvent.cs" />
     <Compile Include="Event\Vanilla\Ship\UpdateSystemEvent.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="GameOptions\Collections\OptionCollection.cs" />
     <Compile Include="GameOptions\Collections\RoleOptionCollection.cs" />
     <Compile Include="GameOptions\Collections\TeamOptionCollection.cs" />
+    <Compile Include="GameOptions\Groups\RoleOptionGroup.cs" />
     <Compile Include="GameOptions\IModdedOption.cs" />
     <Compile Include="GameOptions\Lobby\RoomSettingsTab.cs" />
     <Compile Include="GameOptions\Lobby\RoleTab.cs" />
@@ -156,6 +158,9 @@
     <Compile Include="ModCompatibility\MiraSupport\MiraRoleExtensions.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
+    <Compile Include="Modifiers\BaseModifier.cs" />
+    <Compile Include="Modifiers\ModifierManager.cs" />
+    <Compile Include="Modifiers\ModifierRpc.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
@@ -309,6 +314,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\FungleTranslations\pt-br.json" />
+    <EmbeddedResource Include="Assets\FungleTranslations\it.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\FungleAssets\cog.png" />

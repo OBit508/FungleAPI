@@ -22,6 +22,7 @@ namespace FungleAPI.GameOptions.Options
 
         public int IntValue => (int)FloatValue;
         public float FloatValue => AmongUsClient.Instance.AmHost ? LocalValue : NonHostValue;
+        public float Value => FloatValue;
 
         public override void SetValue(object value, bool amHost)
         {

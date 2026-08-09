@@ -136,7 +136,8 @@ namespace FungleAPI.Api
 
                 // Organiza os mods registrados por GUID
 
-                IOrderedEnumerable<ModPlugin> ordered = ModPluginManager.AllPlugins.FindAll(p => p != Plugin).OrderBy(p => p.LocalMod.GUID, StringComparer.Ordinal);
+                IOrderedEnumerable<ModPlugin> ordered = ModPluginManager.AllPlugins.FindAll(p => p != Plugin)
+                    .OrderBy(p => string.IsNullOrWhiteSpace(p.LocalMod.GUID) ? p.ModAssembly?.GetName().Name ?? string.Empty : p.LocalMod.GUID, StringComparer.Ordinal);
                 ModPluginManager.AllPlugins.Clear();
                 ModPluginManager.AllPlugins.Add(Plugin);
                 ModPluginManager.AllPlugins.AddRange(ordered);

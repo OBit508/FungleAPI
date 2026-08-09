@@ -5,6 +5,7 @@ using FungleAPI.Event;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
+using FungleAPI.GameOptions.Groups;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
@@ -180,7 +181,16 @@ namespace FungleAPI.Role
 
             RoleOptionCollection roleOptions = new RoleOptionCollection(customRole);
             ICustomRole.Save[roleType] = roleOptions;
-            roleOptions.Initialize(plugin, OptionManager.GetAndInitializeModdedOptions(type, plugin));
+            var options = OptionManager.GetAndInitializeModdedOptions(type, plugin);
+            foreach (Type groupType in plugin.AllTypes.Where(candidate => !candidate.IsAbstract && typeof(IRoleOptionGroup).IsAssignableFrom(candidate)))
+            {
+                var group = (IRoleOptionGroup)Activator.CreateInstance(groupType);
+                if (group.RoleType != type) continue;
+                var singletonType = typeof(OptionGroupSingleton<>).MakeGenericType(groupType);
+                singletonType.GetProperty(nameof(OptionGroupSingleton<IRoleOptionGroup>.Instance))?.SetValue(null, group);
+                options.AddRange(OptionManager.GetAndInitializeModdedOptions(groupType, plugin));
+            }
+            roleOptions.Initialize(plugin, options);
 
             RoleConfiguration roleConfiguration = customRole.Configuration;
             role.name = type.Name;

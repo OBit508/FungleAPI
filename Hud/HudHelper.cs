@@ -17,6 +17,7 @@ namespace FungleAPI.Hud
     public static class HudHelper
     {
         internal static Dictionary<Type, CustomAbilityButton> Buttons = new Dictionary<Type, CustomAbilityButton>();
+        public static IReadOnlyCollection<CustomAbilityButton> RegisteredButtons => Buttons.Values.ToArray();
         internal static List<AspectPosition> Bottom = new List<AspectPosition>();
         internal static bool Active;
         public static Transform BottomLeft;
@@ -87,6 +88,10 @@ namespace FungleAPI.Hud
         }
         public static void RegisterButton(Type type, ModPlugin plugin)
         {
+            if (type.IsAbstract || !typeof(CustomAbilityButton).IsAssignableFrom(type) || Buttons.ContainsKey(type))
+            {
+                return;
+            }
             CustomAbilityButton button = (CustomAbilityButton)Activator.CreateInstance(type);
             Buttons.Add(type, button);
             plugin.BasePlugin.Log.LogInfo("Registered CustomButton " + type.Name);

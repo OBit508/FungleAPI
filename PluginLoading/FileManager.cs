@@ -26,7 +26,10 @@ namespace FungleAPI.PluginLoading
         }
         public static ConfigFile GetFile(ModPlugin modPlugin)
         {
-            string path = Path.Combine(GetAPI_Folder(), $"{TurnSafe(modPlugin.LocalMod.GUID)}.cfg");
+            string identifier = string.IsNullOrWhiteSpace(modPlugin.LocalMod.GUID)
+                ? modPlugin.ModAssembly?.GetName().Name ?? modPlugin.FunglePlugin?.ModName ?? "UnknownMod"
+                : modPlugin.LocalMod.GUID;
+            string path = Path.Combine(GetAPI_Folder(), $"{TurnSafe(identifier)}.cfg");
             ConfigFile configFile;
             if (Files.TryGetValue(path, out configFile))
             {
@@ -41,6 +44,10 @@ namespace FungleAPI.PluginLoading
         }
         private static string TurnSafe(string str)
         {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return "UnknownMod";
+            }
             foreach (char c in InvalidChars)
             {
                 str = str.Replace(c.ToString(), string.Empty).Replace(".", "-");

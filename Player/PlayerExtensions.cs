@@ -61,7 +61,7 @@ namespace FungleAPI.Player
             MurderResultFlags murderResultFlags = (didSucceed ? MurderResultFlags.Succeeded : MurderResultFlags.FailedError);
             MurderResultFlags murderResultFlags2 = MurderResultFlags.DecisionByHost | murderResultFlags;
 
-            if (EventManager.CallEvent(new BeforeMurderEvent(target, murderResultFlags2)).Cancelled)
+            if (EventManager.CallEvent(new BeforeMurderEvent(source, target, murderResultFlags2)).Cancelled)
             {
                 return;
             }
