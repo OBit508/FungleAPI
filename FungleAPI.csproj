@@ -128,7 +128,6 @@
     <Compile Include="GameOptions\Collections\OptionCollection.cs" />
     <Compile Include="GameOptions\Collections\RoleOptionCollection.cs" />
     <Compile Include="GameOptions\Collections\TeamOptionCollection.cs" />
-    <Compile Include="GameOptions\Groups\RoleOptionGroup.cs" />
     <Compile Include="GameOptions\IModdedOption.cs" />
     <Compile Include="GameOptions\Lobby\RoomSettingsTab.cs" />
     <Compile Include="GameOptions\Lobby\RoleTab.cs" />

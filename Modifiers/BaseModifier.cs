@@ -1,4 +1,5 @@
 using FungleAPI.Attributes;
+using FungleAPI.Translation;
 
 namespace FungleAPI.Modifiers
 {
@@ -8,7 +9,18 @@ namespace FungleAPI.Modifiers
         public PlayerControl Player { get; internal set; }
         public uint TypeId { get; internal set; }
         public float RemainingDuration { get; internal set; }
-        public virtual string ModifierName => GetType().Name;
+        public virtual StringNames ModifierName => TranslationManager.GetStringName(GetType().Name);
+        public string NiceName
+        {
+            get
+            {
+                if (TranslationManager.Translators.TryGetValue(ModifierName, out var translator))
+                    return translator.GetString();
+                if (TranslationController.InstanceExists)
+                    return TranslationController.Instance.GetString(ModifierName);
+                return GetType().Name;
+            }
+        }
         public virtual bool Unique => true;
         public virtual float Duration => -1f;
         public virtual bool HideOnUi => false;
