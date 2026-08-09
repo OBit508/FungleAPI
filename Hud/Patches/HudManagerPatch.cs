@@ -123,28 +123,17 @@ namespace FungleAPI.Hud.Patches
         public static bool UpdatePrefix(HudManager __instance)
         {
             ModifierManager.Update();
-            bool layoutDirty = false;
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {
                 try
                 {
-                    if (button.Button == null) continue;
-                    bool visible = button.Active && HudHelper.Active && Minigame.Instance == null && MeetingHud.Instance == null && ExileController.Instance == null;
-                    bool wasVisible = button.Button.graphic != null && button.Button.graphic.enabled;
-                    button.Button.ToggleVisible(visible);
-                    layoutDirty |= wasVisible != visible;
-                    if (!visible) continue;
+                    if (button.Button == null || !button.Button.isActiveAndEnabled) continue;
                     button.Update();
                 }
                 catch (Exception exception)
                 {
                     FungleApiPlugin.Instance.Log.LogError($"Failed to update button {button.GetType().FullName}: {exception}");
                 }
-            }
-            if (layoutDirty)
-            {
-                ArrangeGrid(HudHelper.BottomLeft);
-                ArrangeGrid(HudHelper.BottomRight);
             }
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
@@ -230,20 +219,6 @@ namespace FungleAPI.Hud.Patches
             return false;
         }
 
-        private static void ArrangeGrid(Transform root)
-        {
-            if (root == null) return;
-            GridArrange grid = root.GetComponent<GridArrange>();
-            if (grid == null) return;
-            try
-            {
-                grid.Start();
-                grid.ArrangeChilds();
-            }
-            catch
-            {
-            }
-        }
         [HarmonyPostfix]
         [HarmonyPatch("SetHudActive", new Type[]
         {
