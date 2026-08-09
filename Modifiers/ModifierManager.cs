@@ -32,13 +32,14 @@ namespace FungleAPI.Modifiers
 
         public static T GetModifier<T>(this PlayerControl playerControl) where T : BaseModifier
         {
-            return GetHolder(playerControl).Modifiers.OfType<T>().FirstOrDefault();
+            return GetHolder(playerControl)?.Modifiers.Values.OfType<T>().FirstOrDefault();
         }
         public static void RpcAddModifier(this PlayerControl playerControl, uint modifierId, bool sendLate = true)
         {
-            if (!AmongUsClient.Instance.AmHost) return;
+            if (playerControl == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
 
-            if (GetHolder(playerControl).AddModifier(modifierId))
+            ModifierHolder holder = GetHolder(playerControl);
+            if (holder != null && holder.AddModifier(modifierId))
             {
                 if (sendLate)
                 {
@@ -50,9 +51,10 @@ namespace FungleAPI.Modifiers
         }
         public static void RpcRemoveModifier(this PlayerControl playerControl, uint modifierId, bool sendLate = true)
         {
-            if (!AmongUsClient.Instance.AmHost) return;
+            if (playerControl == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
 
-            if (GetHolder(playerControl).RemoveModifier(modifierId))
+            ModifierHolder holder = GetHolder(playerControl);
+            if (holder != null && holder.RemoveModifier(modifierId))
             {
                 if (sendLate)
                 {
@@ -64,12 +66,19 @@ namespace FungleAPI.Modifiers
         }
         public static ModifierHolder GetHolder(PlayerControl playerControl)
         {
-            if (Holders.TryGetValue(playerControl, out ModifierHolder modifierHolder))
+            if (playerControl == null)
+            {
+                return null;
+            }
+            if (Holders.TryGetValue(playerControl, out ModifierHolder modifierHolder) && modifierHolder != null)
             {
                 return modifierHolder;
             }
             ModifierHolder holder = playerControl.GetComponent<ModifierHolder>();
-            Holders[playerControl] = holder;
+            if (holder != null)
+            {
+                Holders[playerControl] = holder;
+            }
             return holder;
         }
 

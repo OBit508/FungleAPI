@@ -22,7 +22,7 @@ namespace FungleAPI.Modifiers.Networking
 
             uint modifierId = messageReader.ReadPackedUInt32();
             PlayerControl playerControl = messageReader.ReadPlayer();
-            ModifierManager.GetHolder(playerControl).RemoveModifier(modifierId);
+            ModifierManager.GetHolder(playerControl)?.RemoveModifier(modifierId);
         }
     }
 }

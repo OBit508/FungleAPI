@@ -15,7 +15,7 @@ namespace FungleAPI.Components
         public Dictionary<uint, BaseModifier> Modifiers = new Dictionary<uint, BaseModifier>();
         public void Update()
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            foreach (BaseModifier baseModifier in Modifiers.Values.ToArray())
             {
                 baseModifier.Update();
             }
@@ -26,14 +26,14 @@ namespace FungleAPI.Components
         }
         public void FixedUpdate()
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            foreach (BaseModifier baseModifier in Modifiers.Values.ToArray())
             {
                 baseModifier.FixedUpdate();
             }
         }
         public void CallOnDeath(DeathReason reason)
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            foreach (BaseModifier baseModifier in Modifiers.Values.ToArray())
             {
                 baseModifier.OnDeath(reason);
             }
@@ -42,15 +42,15 @@ namespace FungleAPI.Components
         {
             if (ModifierManager.Modifiers.TryGetValue(modifierId, out BaseModifier modifier))
             {
+                if (Modifiers.TryGetValue(modifierId, out BaseModifier currentModifier))
+                {
+                    currentModifier.Deinitialize();
+                }
+
                 BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(modifier.GetType());
                 baseModifier.ModifierId = modifierId;
                 baseModifier.ModifierOptions = modifier.ModifierOptions;
                 baseModifier.Initialize(player);
-
-                if (Modifiers.ContainsKey(modifierId))
-                {
-                    Modifiers[modifierId].Deinitialize();
-                }
 
                 Modifiers[modifierId] = baseModifier;
                 return true;
@@ -69,7 +69,20 @@ namespace FungleAPI.Components
         }
         private void OnDestroy()
         {
-            ModifierManager.Holders.Remove(ModifierManager.Holders.FirstOrDefault(f => f.Value == this).Key);
+            foreach (BaseModifier modifier in Modifiers.Values.ToArray())
+            {
+                modifier.Deinitialize();
+            }
+            Modifiers.Clear();
+
+            if (player != null)
+            {
+                ModifierManager.Holders.Remove(player);
+            }
+            if (LocalPlayer == this)
+            {
+                LocalPlayer = null;
+            }
         }
         [EventRegister]
         public static void OnPlayerDeath(PlayerDieEvent playerDieEvent)
