@@ -163,7 +163,6 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
     <Compile Include="Modifiers\BaseModifier.cs" />
-    <Compile Include="Modifiers\ExampleModifier.cs" />
     <Compile Include="Modifiers\ModifierManager.cs" />
     <Compile Include="Modifiers\Networking\RpcAddModifier.cs" />
     <Compile Include="Modifiers\Networking\RpcRemoveModifier.cs" />
