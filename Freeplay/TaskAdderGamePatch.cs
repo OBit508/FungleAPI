@@ -126,6 +126,32 @@ namespace FungleAPI.Freeplay
             __instance.GoToRoot();
             return false;
         }
+        [HarmonyPatch(typeof(Minigame), nameof(Minigame.Close), new Type[0])]
+        [HarmonyPostfix]
+        public static void ClosePostfix(Minigame __instance)
+        {
+            if (__instance is not TaskAdderGame || AmongUsClient.Instance?.NetworkMode != NetworkModes.FreePlay)
+            {
+                return;
+            }
+
+            FungleAPI.Utilities.Helpers.StartCoroutine(RestoreHud());
+        }
+        private static System.Collections.IEnumerator RestoreHud()
+        {
+            yield return null;
+            yield return null;
+
+            HudManager hud = HudManager.Instance;
+            PlayerControl player = PlayerControl.LocalPlayer;
+            RoleBehaviour role = player?.Data?.Role;
+            if (hud == null || player == null || role == null || ShipStatus.Instance == null)
+            {
+                yield break;
+            }
+
+            hud.SetHudActive(player, role, true);
+        }
         [HarmonyPatch("ShowFolder")]
         [HarmonyPrefix]
         public static bool ShowFolderPrefix(TaskAdderGame __instance, [HarmonyArgument(0)] TaskFolder taskFolder)
