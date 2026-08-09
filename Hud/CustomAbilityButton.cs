@@ -146,7 +146,14 @@ namespace FungleAPI.Hud
         }
         public virtual bool CanClick()
         {
-            return CanUse() && (Timer <= 0f) && (!LimitedUses || UsesLeft > 0);
+            return Active &&
+                   HudHelper.Active &&
+                   Button != null &&
+                   Button.graphic != null &&
+                   Button.graphic.enabled &&
+                   CanUse() &&
+                   Timer <= 0f &&
+                   (!LimitedUses || UsesLeft > 0);
         }
         public virtual void SetCooldown(float cooldown)
         {
@@ -222,7 +229,7 @@ namespace FungleAPI.Hud
         protected virtual void UpdateUI()
         {
             bool enabled = CanUse() && (!LimitedUses || UsesLeft > 0);
-            Color color = enabled ? Palette.EnabledColor : Palette.DisabledClear;
+            Color color = enabled ? Palette.EnabledColor : new Color(1f, 1f, 1f, 0.5f);
             int desat = enabled ? 0 : 1;
             Button.graphic.color = color;
             Button.graphic.material.SetFloat("_Desat", desat);
