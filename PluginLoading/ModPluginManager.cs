@@ -9,10 +9,11 @@ using FungleAPI.Components;
 using FungleAPI.Cosmetics;
 using FungleAPI.Event;
 using FungleAPI.Freeplay;
+using FungleAPI.GameModes;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOver;
-using FungleAPI.GameModes;
 using FungleAPI.Hud;
+using FungleAPI.Modifiers;
 using FungleAPI.Networking;
 using FungleAPI.Player.Patches;
 using FungleAPI.Role;
@@ -187,6 +188,11 @@ namespace FungleAPI.PluginLoading
             else if (typeof(RpcHelper).IsAssignableFrom(type))
             {
                 CustomRpcManager.RegisterRpc(type, plugin);
+                return;
+            }
+            else if (typeof(BaseModifier).IsAssignableFrom(type))
+            {
+                ModifierManager.RegisterModifier(type, plugin);
                 return;
             }
             else if (typeof(PlayerComponent).IsAssignableFrom(type))

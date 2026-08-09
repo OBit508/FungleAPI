@@ -5,6 +5,7 @@ using FungleAPI.GameModes;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
 using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Modifiers;
 using FungleAPI.Player;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
@@ -259,6 +260,18 @@ namespace FungleAPI.Api
             playerTab.SetVisible(roleHintType.HasFlag(RoleHintType.PlayerTab) && taskPanelVisible);
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
             RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
+
+            if (ModifierHolder.LocalPlayer != null)
+            {
+                stringBuilder.AppendLine();
+                foreach (BaseModifier baseModifier in ModifierHolder.LocalPlayer.Modifiers.Values)
+                {
+                    baseModifier.AppendHint(stringBuilder);
+                    stringBuilder.AppendLine();
+                }
+            }
+
+
             playerTab.TabText.text = stringBuilder.ToString();
             playerTab.TabName.text = RoleConfigManager.PlayerTabConfig.TabName();
         }

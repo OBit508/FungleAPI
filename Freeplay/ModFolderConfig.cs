@@ -1,9 +1,13 @@
 ﻿using AmongUs.Matchmaking;
+using FungleAPI.Api;
 using FungleAPI.Attributes;
+using FungleAPI.Components;
 using FungleAPI.Freeplay.Helpers;
+using FungleAPI.Modifiers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
+using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using System;
@@ -53,6 +57,20 @@ namespace FungleAPI.Freeplay
                         });
                     }
                     SubFolders.Add(teamFolder);
+                }
+            }
+            if (modPlugin.Modifiers.Count > 0)
+            {
+                Folder modifierFolder = new Folder() { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.gray };
+                foreach (BaseModifier baseModifier in modPlugin.Modifiers)
+                {
+                    modifierFolder.Items.Add(new FolderItem()
+                    {
+                        Name = baseModifier.ModifierName.GetString(),
+                        Color = baseModifier.ModifierColor,
+                        OnClick = delegate { PlayerControl.LocalPlayer?.RpcAddModifier(baseModifier.ModifierId); },
+                        Overlay = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId)
+                    });
                 }
             }
             Initialized = true;

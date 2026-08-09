@@ -38,6 +38,7 @@
     <Compile Include="BepInEx\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\CustomAbilityButtonHelper.cs" />
     <Compile Include="Components\IntroHelper.cs" />
+    <Compile Include="Components\ModifierHolder.cs" />
     <Compile Include="Components\PlayerTabBehaviour.cs" />
     <Compile Include="Components\PlayerVoteAreaHelper.cs" />
     <Compile Include="Components\SpecialColorBehaviour.cs" />
@@ -160,6 +161,9 @@
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
     <Compile Include="ModCompatibility\SubmergedCompatibility.cs" />
     <Compile Include="Modifiers\BaseModifier.cs" />
+    <Compile Include="Modifiers\ModifierManager.cs" />
+    <Compile Include="Modifiers\Networking\RpcAddModifier.cs" />
+    <Compile Include="Modifiers\Networking\RpcRemoveModifier.cs" />
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />

@@ -1,4 +1,5 @@
 ﻿using FungleAPI.Api;
+using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.Utilities;
 using System;
@@ -10,6 +11,7 @@ using UnityEngine;
 
 namespace FungleAPI.Modifiers
 {
+    [FungleIgnore]
     public abstract class BaseModifier
     {
         public PlayerControl Player;

@@ -1,5 +1,8 @@
 {
   "language": "it",
+
+  "ModifiersText": "STRMISS",
+
   "RoomText": "Partita",
   "RoomSettings": "Impostazioni della Partita",
   "RoomTabDescription": "Modifica le impostazioni della Partita per la tua stanza.",
@@ -32,6 +35,7 @@
   "TeamConfigButtonText": "Impostazioni delle Squadre",
   "TeamConfigDescText": "Modifica le impostazioni delle Squadre per la tua stanza.",
   "TypeHereText": "Digita qui chi era l'assassino",
+
   "HandShakeFail_MissingAPIDisconnect": "Giocatore senza mod disconnesso.",
   "HandShakeFail_ModdedPlayerDisconnect": "Giocatore con mod disconnesso.",
   "HandShakeFail_MissingMods": "Nel client locale mancano le seguenti mod: {0};",

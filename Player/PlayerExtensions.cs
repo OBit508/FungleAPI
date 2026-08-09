@@ -46,10 +46,16 @@ namespace FungleAPI.Player
         /// <summary>
         /// Perform a custom murder
         /// </summary>
-        public static void RpcCustomSetRole(this PlayerControl source, RoleTypes roleTypes, bool showIntro = false)
+        public static void RpcCustomSetRole(this PlayerControl source, RoleTypes roleTypes, bool showIntro = false, bool sendLate = true)
         {
             if (!AmongUsClient.Instance.AmHost) return;
-            Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { Source = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer);
+            
+            if (sendLate)
+            {
+                Rpc<RpcSetRole>.Instance.SendLate(new SetRoleData() { Source = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer);
+                return;
+            }
+            Rpc<RpcSetRole>.Instance.Send(new SetRoleData() { Source = source, RoleType = roleTypes, ShowIntro = showIntro }, PlayerControl.LocalPlayer);
         }
         /// <summary>
         /// Perform a custom murder

@@ -9,6 +9,7 @@ using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
+using FungleAPI.Modifiers;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using System;
@@ -33,7 +34,7 @@ namespace FungleAPI.PluginLoading
         public List<Type> AllTypes = new List<Type>();
         public List<RoleBehaviour> Roles = new List<RoleBehaviour>();
         public List<ModdedTeam> Teams = new List<ModdedTeam>();
-        public List<Type> Modifiers = new List<Type>();
+        public List<BaseModifier> Modifiers = new List<BaseModifier>();
         public List<OptionCollection> OptionCollections = new List<OptionCollection>();
 
 
