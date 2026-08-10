@@ -258,7 +258,6 @@ namespace FungleAPI.Api
 
             bool modifiers = ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.Count > 0;
             bool taskPanelVisible = hudManager.TaskPanel != null && hudManager.TaskPanel.gameObject.activeSelf;
-            playerTab.SetVisible((roleHintType.HasFlag(RoleHintType.PlayerTab) || modifiers) && taskPanelVisible);
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
             RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
 
@@ -276,6 +275,7 @@ namespace FungleAPI.Api
                 }
             }
 
+            playerTab.SetVisible(stringBuilder.Length > 0 && taskPanelVisible);
 
             playerTab.TabText.text = stringBuilder.ToString();
             playerTab.TabName.text = RoleConfigManager.PlayerTabConfig.TabName();

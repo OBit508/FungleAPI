@@ -112,7 +112,7 @@ namespace FungleAPI.GameOptions
             {
                 return;
             }
-            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Team, moddedOption, baseModifier), PlayerControl.LocalPlayer);
+            Rpc<RpcSyncOption>.Instance.SendLate((SyncOptionType.Modifier, moddedOption, baseModifier), PlayerControl.LocalPlayer);
         }
         public static void RpcSyncGameOption(IModdedOption moddedOption)
         {
