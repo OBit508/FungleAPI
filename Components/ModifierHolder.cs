@@ -9,16 +9,33 @@ namespace FungleAPI.Components
     public class ModifierHolder : PlayerComponent
     {
         public static ModifierHolder LocalPlayer;
+
         public Dictionary<uint, BaseModifier> Modifiers = new Dictionary<uint, BaseModifier>();
-        private readonly List<BaseModifier> iterationBuffer = new List<BaseModifier>();
+
+        private readonly List<BaseModifier> modifierList = new List<BaseModifier>();
+        private BaseModifier[] iterationBuffer = Array.Empty<BaseModifier>();
+        private bool iterationDirty = true;
+        private void RebuildIterationBuffer()
+        {
+            if (!iterationDirty) return;
+
+            if (iterationBuffer.Length != modifierList.Count)
+            {
+                iterationBuffer = new BaseModifier[modifierList.Count];
+            }
+                
+            modifierList.CopyTo(iterationBuffer);
+            iterationDirty = false;
+        }
         public void Update()
         {
-            iterationBuffer.Clear();
-            iterationBuffer.AddRange(Modifiers.Values);
-            foreach (BaseModifier baseModifier in iterationBuffer)
+            RebuildIterationBuffer();
+
+            for (int i = 0; i < iterationBuffer.Length; i++)
             {
-                baseModifier.Update();
+                iterationBuffer[i].Update();
             }
+
             if (LocalPlayer == null && player.AmOwner)
             {
                 LocalPlayer = this;
@@ -26,20 +43,20 @@ namespace FungleAPI.Components
         }
         public void FixedUpdate()
         {
-            iterationBuffer.Clear();
-            iterationBuffer.AddRange(Modifiers.Values);
-            foreach (BaseModifier baseModifier in iterationBuffer)
+            RebuildIterationBuffer();
+
+            for (int i = 0; i < iterationBuffer.Length; i++)
             {
-                baseModifier.FixedUpdate();
+                iterationBuffer[i].FixedUpdate();
             }
         }
         public void CallOnDeath(DeathReason reason)
         {
-            iterationBuffer.Clear();
-            iterationBuffer.AddRange(Modifiers.Values);
-            foreach (BaseModifier baseModifier in iterationBuffer)
+            RebuildIterationBuffer();
+
+            for (int i = 0; i < iterationBuffer.Length; i++)
             {
-                baseModifier.OnDeath(reason);
+                iterationBuffer[i].OnDeath(reason);
             }
         }
         public bool AddModifier(uint modifierId)
@@ -49,6 +66,7 @@ namespace FungleAPI.Components
                 if (Modifiers.TryGetValue(modifierId, out BaseModifier currentModifier))
                 {
                     currentModifier.Deinitialize();
+                    modifierList.Remove(currentModifier);
                 }
 
                 BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(modifier.GetType());
@@ -57,6 +75,8 @@ namespace FungleAPI.Components
                 baseModifier.Initialize(player);
 
                 Modifiers[modifierId] = baseModifier;
+                modifierList.Add(baseModifier);
+                iterationDirty = true;
                 return true;
             }
             return false;
@@ -67,28 +87,21 @@ namespace FungleAPI.Components
             {
                 baseModifier.Deinitialize();
                 Modifiers.Remove(modifierId);
+                modifierList.Remove(baseModifier);
+                iterationDirty = true;
                 return true;
             }
             return false;
         }
         private void OnDestroy()
         {
-            iterationBuffer.Clear();
-            iterationBuffer.AddRange(Modifiers.Values);
-            foreach (BaseModifier modifier in iterationBuffer)
+            for (int i = 0; i < modifierList.Count; i++)
             {
-                modifier.Deinitialize();
+                modifierList[i].Deinitialize();
             }
-            iterationBuffer.Clear();
-            Modifiers.Clear();
-
             if (player != null)
             {
                 ModifierManager.Holders.Remove(player);
-            }
-            if (LocalPlayer == this)
-            {
-                LocalPlayer = null;
             }
         }
         [EventRegister]
