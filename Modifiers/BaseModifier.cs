@@ -45,7 +45,7 @@ namespace FungleAPI.Modifiers
         public virtual void Deinitialize() { }
         public virtual void AppendHint(Il2CppSystem.Text.StringBuilder stringBuilder) 
         {
-            stringBuilder.AppendLine($"{ModifierColor.ToTextColor()}<b>{ModifierName.GetString()}</b>:</color>");
+            stringBuilder.AppendLine($"{ModifierColor.ToTextColor()}<b>{ModifierName.GetString()}</b></color>");
             stringBuilder.AppendLine($"<size=70%>{ModifierBlur.GetString()}</size>");
         }
 
