@@ -1,8 +1,8 @@
 {
   "language": "it",
 
-  "QuantityPerGame": "STRMISS",
-  "ChancePerGame": "STRMISS",
+  "CountPerGame": "STRMISS",
+  "SpawnChance": "STRMISS",
   "ModifiersText": "STRMISS",
   "ModifierConfigButtonText": "STRMISS",
   "ModifierConfigDescText": "STRMISS",

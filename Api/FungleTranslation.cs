@@ -14,8 +14,8 @@ namespace FungleAPI.Api
     [TranslationAttribute("FungleAPI.Assets.FungleTranslations")]
     public static class FungleTranslation
     {
-        public static Translator QuantityPerGame { get; } = new Translator("Quantity per game");
-        public static Translator ChancePerGame { get; } = new Translator("Chance per game");
+        public static Translator CountPerGame { get; } = new Translator("Count per Game");
+        public static Translator SpawnChance { get; } = new Translator("Spawn Chance");
         public static Translator ModifiersText { get; } = new Translator("Modifiers");
         public static Translator ModifierConfigButtonText { get; } = new Translator("Modifiers Settings");
         public static Translator ModifierConfigDescText { get; } = new Translator("Edit the Modifiers settings");

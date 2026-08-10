@@ -95,7 +95,7 @@ namespace FungleAPI.Modifiers
 
             baseModifier.CountData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             baseModifier.CountData.Type = OptionTypes.Float;
-            baseModifier.CountData.Title = FungleTranslation.QuantityPerGame;
+            baseModifier.CountData.Title = FungleTranslation.CountPerGame;
             baseModifier.CountData.Increment = 1;
             baseModifier.CountData.ValidRange = new FloatRange(0, baseModifier.MaxCount);
             baseModifier.CountData.FormatString = null;
@@ -105,7 +105,7 @@ namespace FungleAPI.Modifiers
 
             baseModifier.ChanceData = ScriptableObject.CreateInstance<FloatGameSetting>().DontUnload();
             baseModifier.ChanceData.Type = OptionTypes.Float;
-            baseModifier.ChanceData.Title = FungleTranslation.ChancePerGame;
+            baseModifier.ChanceData.Title = FungleTranslation.SpawnChance;
             baseModifier.ChanceData.Increment = 1;
             baseModifier.ChanceData.ValidRange = new FloatRange(0, 100);
             baseModifier.ChanceData.FormatString = null;
