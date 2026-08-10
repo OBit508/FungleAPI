@@ -3,9 +3,6 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Modifiers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FungleAPI.Components
 {
@@ -13,9 +10,12 @@ namespace FungleAPI.Components
     {
         public static ModifierHolder LocalPlayer;
         public Dictionary<uint, BaseModifier> Modifiers = new Dictionary<uint, BaseModifier>();
+        private readonly List<BaseModifier> iterationBuffer = new List<BaseModifier>();
         public void Update()
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            iterationBuffer.Clear();
+            iterationBuffer.AddRange(Modifiers.Values);
+            foreach (BaseModifier baseModifier in iterationBuffer)
             {
                 baseModifier.Update();
             }
@@ -26,14 +26,18 @@ namespace FungleAPI.Components
         }
         public void FixedUpdate()
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            iterationBuffer.Clear();
+            iterationBuffer.AddRange(Modifiers.Values);
+            foreach (BaseModifier baseModifier in iterationBuffer)
             {
                 baseModifier.FixedUpdate();
             }
         }
         public void CallOnDeath(DeathReason reason)
         {
-            foreach (BaseModifier baseModifier in Modifiers.Values)
+            iterationBuffer.Clear();
+            iterationBuffer.AddRange(Modifiers.Values);
+            foreach (BaseModifier baseModifier in iterationBuffer)
             {
                 baseModifier.OnDeath(reason);
             }
@@ -42,15 +46,15 @@ namespace FungleAPI.Components
         {
             if (ModifierManager.Modifiers.TryGetValue(modifierId, out BaseModifier modifier))
             {
+                if (Modifiers.TryGetValue(modifierId, out BaseModifier currentModifier))
+                {
+                    currentModifier.Deinitialize();
+                }
+
                 BaseModifier baseModifier = (BaseModifier)Activator.CreateInstance(modifier.GetType());
                 baseModifier.ModifierId = modifierId;
                 baseModifier.ModifierOptions = modifier.ModifierOptions;
                 baseModifier.Initialize(player);
-
-                if (Modifiers.ContainsKey(modifierId))
-                {
-                    Modifiers[modifierId].Deinitialize();
-                }
 
                 Modifiers[modifierId] = baseModifier;
                 return true;
@@ -69,7 +73,23 @@ namespace FungleAPI.Components
         }
         private void OnDestroy()
         {
-            ModifierManager.Holders.Remove(ModifierManager.Holders.FirstOrDefault(f => f.Value == this).Key);
+            iterationBuffer.Clear();
+            iterationBuffer.AddRange(Modifiers.Values);
+            foreach (BaseModifier modifier in iterationBuffer)
+            {
+                modifier.Deinitialize();
+            }
+            iterationBuffer.Clear();
+            Modifiers.Clear();
+
+            if (player != null)
+            {
+                ModifierManager.Holders.Remove(player);
+            }
+            if (LocalPlayer == this)
+            {
+                LocalPlayer = null;
+            }
         }
         [EventRegister]
         public static void OnPlayerDeath(PlayerDieEvent playerDieEvent)

@@ -430,64 +430,38 @@ namespace FungleAPI.Api
         }
         public virtual void AssignModifiers()
         {
-            Dictionary<BaseModifier, uint> modifiers = new Dictionary<BaseModifier, uint>();
-            foreach (BaseModifier baseModifier in ModifierManager.Modifiers.Values.Where(m => UnityEngine.Random.RandomRangeInt(0, 100) <= m.GetChance() && m.GetCount() > 0))
-            {
-                modifiers.Add(baseModifier, (uint)baseModifier.GetCount());
-            }
+            List<NetworkedPlayerInfo> availablePlayers = GameData.Instance.AllPlayers.ToSystemList()
+                .Where(player => player != null && !player.Disconnected && player.Object != null && player.Role != null)
+                .ToList();
 
-            List<ModdedTeam> teams = ModdedTeamManager.Teams.Values.ToList().FindAll(t => t != null && t.TeamOptions != null && t.TeamOptions.LocalTeamCount.Value > 0 && t != ModdedTeamManager.Crewmates);
-            teams.Sort((a, b) => b.GetPriority().CompareTo(a.GetPriority()));
-
-            List<NetworkedPlayerInfo> players = GameData.Instance.AllPlayers.ToSystemList();
-
-            int modifiersPerPlayer = 1;
-
-            void Assign(Func<BaseModifier, bool> condition, List<NetworkedPlayerInfo> validPlayers)
-            {
-                List<BaseModifier> validModifiers = modifiers.Keys.Where(condition).ToList();
-
-                if (validModifiers.Count <= 0) return;
-
-                NetworkedPlayerInfo target = validPlayers.Random();
-
-                for (int i = 0; i < modifiersPerPlayer; i++)
+            List<BaseModifier> enabledModifiers = ModifierManager.Modifiers.Values
+                .Where(modifier => modifier.GetCount() > 0)
+                .Where(modifier =>
                 {
-                    if (validModifiers.Count <= 0) return;
+                    int chance = Mathf.Clamp(modifier.GetChance(), 0, 100);
+                    return chance == 100 || chance > 0 && UnityEngine.Random.Range(0, 100) < chance;
+                })
+                .OrderByDescending(modifier => modifier.SpecificTeam != null)
+                .ToList();
 
-                    BaseModifier modifier = validModifiers.Random();
-                    uint count = modifiers[modifier];
-                    count--;
-                    if (count <= 0)
+            foreach (BaseModifier modifier in enabledModifiers)
+            {
+                int count = Mathf.Max(0, modifier.GetCount());
+                for (int index = 0; index < count; index++)
+                {
+                    List<NetworkedPlayerInfo> validPlayers = availablePlayers
+                        .Where(player => modifier.SpecificTeam == null || player.Role.GetTeam() == modifier.SpecificTeam)
+                        .ToList();
+
+                    if (validPlayers.Count == 0)
                     {
-                        modifiers.Remove(modifier);
-                        validModifiers.Remove(modifier);
-                    }
-                    else
-                    {
-                        modifiers[modifier] = count;
+                        break;
                     }
 
-                    target.Object?.RpcAddModifier(modifier.ModifierId);
+                    NetworkedPlayerInfo target = validPlayers.Random();
+                    target.Object.RpcAddModifier(modifier.ModifierId);
+                    availablePlayers.Remove(target);
                 }
-
-                players.Remove(target);
-            }
-
-            foreach (ModdedTeam team in teams)
-            {
-                if (players.Count <= 0) break;
-
-                List<NetworkedPlayerInfo> validPlayers = players.FindAll(p => p.Role.GetTeam() == team);
-
-                if (validPlayers.Count <= 0) continue;
-
-                Assign(m => m.SpecificTeam == null || m.SpecificTeam == team, validPlayers);
-            }
-
-            if (players.Count > 0)
-            {
-                Assign(m => m.SpecificTeam == null, players);
             }
 
             MiraCompatibility.Instance?.AssignModifiers();
