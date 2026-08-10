@@ -1,4 +1,5 @@
-﻿using BepInEx.Core.Logging.Interpolation;
+﻿using AmongUs.Data;
+using BepInEx.Core.Logging.Interpolation;
 using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
@@ -41,6 +42,66 @@ namespace FungleAPI.Utilities
         internal static GenericPopup Popup;
         internal static EditName Screen;
         public static bool GameIsRunning { get; internal set; }
+        /// <summary>
+        /// Show the shapeshifter minigame
+        /// </summary>
+        public static void ShowShapMenu(Dictionary<NetworkedPlayerInfo.PlayerOutfit, Action> victims)
+        {
+            if (ShapPrefab == null)
+            {
+                ShapPrefab = RoleManager.Instance.GetRole(AmongUs.GameOptions.RoleTypes.Shapeshifter).SafeCast<ShapeshifterRole>().ShapeshifterMenu;
+            }
+            ShapeshifterMinigame shapeshifterMinigame = GameObject.Instantiate(ShapPrefab, Camera.main.transform);
+            shapeshifterMinigame.transform.localPosition = new Vector3(0, 0, -50);
+
+            Minigame.Instance = shapeshifterMinigame;
+            shapeshifterMinigame.timeOpened = Time.realtimeSinceStartup;
+            if (PlayerControl.LocalPlayer)
+            {
+                if (MapBehaviour.Instance)
+                {
+                    MapBehaviour.Instance.Close();
+                }
+                PlayerControl.LocalPlayer.MyPhysics.SetNormalizedVelocity(Vector2.zero);
+            }
+            shapeshifterMinigame.logger.Info("Opening minigame " + shapeshifterMinigame.GetType().Name, null);
+            shapeshifterMinigame.StartCoroutine(shapeshifterMinigame.CoAnimateOpen());
+
+            shapeshifterMinigame.potentialVictims = new Il2CppSystem.Collections.Generic.List<ShapeshifterPanel>();
+            List<UiElement> list2 = new List<UiElement>();
+            for (int i = 0; i < victims.Count; i++)
+            {
+                int num = i % 3;
+                int num2 = i / 3;
+                ShapeshifterPanel shapeshifterPanel = GameObject.Instantiate<ShapeshifterPanel>(shapeshifterMinigame.PanelPrefab, shapeshifterMinigame.transform);
+                shapeshifterPanel.transform.localPosition = new Vector3(shapeshifterMinigame.XStart + (float)num * shapeshifterMinigame.XOffset, shapeshifterMinigame.YStart + (float)num2 * shapeshifterMinigame.YOffset, -1f);
+
+                KeyValuePair<NetworkedPlayerInfo.PlayerOutfit, Action> victim = victims.ElementAt(i);
+
+                shapeshifterPanel.shapeshift = new Action(delegate
+                {
+                    victim.Value?.Invoke();
+                    shapeshifterMinigame.Close();
+                });
+                shapeshifterPanel.PlayerIcon.SetFlipX(false);
+                shapeshifterPanel.PlayerIcon.ToggleName(false);
+                SpriteRenderer[] componentsInChildren = shapeshifterPanel.GetComponentsInChildren<SpriteRenderer>();
+                for (int x = 0; x < componentsInChildren.Length; x++)
+                {
+                    componentsInChildren[x].material.SetInt(PlayerMaterial.MaskLayer, i + 2);
+                }
+                shapeshifterPanel.PlayerIcon.SetMaskLayer(i + 2);
+                shapeshifterPanel.PlayerIcon.UpdateFromPlayerOutfit(victim.Key, PlayerMaterial.MaskType.ComplexUI, false, false);
+                shapeshifterPanel.LevelNumberText.text = ProgressionManager.FormatVisualLevel(1);
+                shapeshifterPanel.Background.sprite = ShipStatus.Instance.CosmeticsCache.GetNameplate(victim.Key.NamePlateId).Image;
+                shapeshifterPanel.NameText.text = victim.Key.PlayerName;
+                DataManager.Settings.Accessibility.OnColorBlindModeChanged += new Action(shapeshifterPanel.SetColorblindText);
+                shapeshifterPanel.SetColorblindText();
+                shapeshifterPanel.NameText.color = Color.white;
+                shapeshifterMinigame.potentialVictims.Add(shapeshifterPanel);
+                list2.Add(shapeshifterPanel.Button);
+            }
+        }
         /// <summary>
         /// Show the shapeshifter minigame
         /// </summary>
