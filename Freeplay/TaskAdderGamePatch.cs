@@ -73,6 +73,7 @@ namespace FungleAPI.Freeplay
 
                 TaskFolder folder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
                 folder.Text.enableAutoSizing = true;
+                folder.Text.enableWordWrapping = false;
                 folder.gameObject.SetActive(false);
                 folder.FolderName = folderConfig.FolderName;
                 folder.SetFolderColor(folderConfig.FolderColor);
@@ -82,6 +83,7 @@ namespace FungleAPI.Freeplay
                 {
                     TaskFolder taskFolder = UnityEngine.Object.Instantiate(__instance.RootFolderPrefab, __instance.transform);
                     taskFolder.Text.enableAutoSizing = true;
+                    taskFolder.Text.enableWordWrapping = false;
                     taskFolder.gameObject.SetActive(false);
                     taskFolder.FolderName = folder.FolderName;
                     taskFolder.SetFolderColor(folder.FolderColor);

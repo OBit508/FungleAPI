@@ -61,7 +61,7 @@ namespace FungleAPI.Freeplay
             }
             if (modPlugin.Modifiers.Count > 0)
             {
-                Folder modifierFolder = new Folder() { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.gray };
+                Folder modifierFolder = new Folder() { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.blue };
                 foreach (BaseModifier baseModifier in modPlugin.Modifiers)
                 {
                     Func<bool> factory = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId);
@@ -81,7 +81,10 @@ namespace FungleAPI.Freeplay
                         Overlay = factory
                     });
                 }
-                SubFolders.Add(modifierFolder);
+                if (modifierFolder.Items.Count > 0)
+                {
+                    SubFolders.Add(modifierFolder);
+                }
             }
             Initialized = true;
         }

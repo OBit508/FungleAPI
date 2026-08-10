@@ -1,11 +1,12 @@
 {
   "language": "it",
 
-  "CountPerGame": "STRMISS",
-  "SpawnChance": "STRMISS",
-  "ModifiersText": "STRMISS",
-  "ModifierConfigButtonText": "STRMISS",
-  "ModifierConfigDescText": "STRMISS",
+  "KickedText": "Sei stato espulso dalla stanza.\nMotivo: {0}",
+  "CountPerGame": "Quantità per partita",
+  "SpawnChance": "Probabilità di comparsa",
+  "ModifiersText": "Modificatori",
+  "ModifierConfigButtonText": "Impostazioni modificatori",
+  "ModifierConfigDescText": "Modifica le impostazioni dei modificatori",
   "RoomText": "Partita",
   "RoomSettings": "Impostazioni della Partita",
   "RoomTabDescription": "Modifica le impostazioni della Partita per la tua stanza.",

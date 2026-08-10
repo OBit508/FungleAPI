@@ -126,7 +126,6 @@
     <Compile Include="Event\Vanilla\Ship\UpdateSystemEvent.cs" />
     <Compile Include="Freeplay\Helpers\Folder.cs" />
     <Compile Include="Freeplay\Helpers\FolderItem.cs" />
-    <Compile Include="Api\VanillaFolder.cs" />
     <Compile Include="GameOptions\Attributes\ModdedNumberOptionAttribute.cs" />
     <Compile Include="GameOptions\Attributes\ModdedToggleOptionAttribute.cs" />
     <Compile Include="GameOptions\Collections\OptionCollection.cs" />
@@ -314,11 +313,11 @@
     <EmbeddedResource Include="Assets\FungleAssets\nextButton.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\FungleTranslations\pt-pt.json" />
+    <EmbeddedResource Include="Assets\FungleTranslations\Portuguese.json" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Assets\FungleTranslations\pt-br.json" />
-    <EmbeddedResource Include="Assets\FungleTranslations\it.json" />
+    <EmbeddedResource Include="Assets\FungleTranslations\BrazilianPortuguese.json" />
+    <EmbeddedResource Include="Assets\FungleTranslations\Italian.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Assets\FungleAssets\cog.png" />
