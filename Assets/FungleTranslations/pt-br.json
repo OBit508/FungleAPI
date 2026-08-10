@@ -1,8 +1,9 @@
 {
   "language": "pt-br",
 
+  "KickedText": "Você foi expulso da sala.\nMotivo: {0}",
   "CountPerGame": "Nº por jogo",
-  "SpawnChance": "Chance de aparecer",
+  "SpawnChance": "% de chance",
   "ModifiersText": "Modificadores",
   "ModifierConfigButtonText": "Configurações dos modificadores",
   "ModifierConfigDescText": "Edite as configurações de modificadores para sua sala.",

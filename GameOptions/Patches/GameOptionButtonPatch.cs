@@ -13,7 +13,10 @@ namespace FungleAPI.GameOptions.Patches
     {
         public static bool Prefix(GameOptionButton __instance, bool interactable)
         {
-            __instance.buttonSprite.color = interactable ? __instance.interactableColor : __instance.uninteractableColor;
+            if (__instance.buttonSprite != null)
+            {
+                __instance.buttonSprite.color = interactable ? __instance.interactableColor : __instance.uninteractableColor;
+            }
             __instance.isInteractable = interactable;
             return false;
         }

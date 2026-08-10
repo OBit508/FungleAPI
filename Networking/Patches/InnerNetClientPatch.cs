@@ -87,7 +87,7 @@ namespace FungleAPI.Networking.Patches
                 if (!string.IsNullOrEmpty(AntiCheatManager.LastKickReason))
                 {
                     reason = DisconnectReasons.Custom;
-                    __instance.LastCustomDisconnect = AntiCheatManager.LastKickReason;
+                    __instance.LastCustomDisconnect = string.Format(FungleTranslation.KickedText.GetString(), AntiCheatManager.LastKickReason);
                 }
                 else
                 {

@@ -14,6 +14,7 @@ namespace FungleAPI.Api
     [TranslationAttribute("FungleAPI.Assets.FungleTranslations")]
     public static class FungleTranslation
     {
+        public static Translator KickedText { get; } = new Translator("You have been kicked from the room.\nReason: {0}");
         public static Translator CountPerGame { get; } = new Translator("Count per Game");
         public static Translator SpawnChance { get; } = new Translator("Spawn Chance");
         public static Translator ModifiersText { get; } = new Translator("Modifiers");
