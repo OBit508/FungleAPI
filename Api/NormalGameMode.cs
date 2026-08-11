@@ -271,7 +271,6 @@ namespace FungleAPI.Api
                 foreach (BaseModifier baseModifier in ModifierHolder.LocalPlayer.Modifiers.Values)
                 {
                     baseModifier.AppendHint(stringBuilder);
-                    stringBuilder.AppendLine();
                 }
             }
 

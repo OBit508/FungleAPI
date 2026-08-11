@@ -47,6 +47,7 @@ namespace FungleAPI.Modifiers
         {
             stringBuilder.AppendLine($"{ModifierColor.ToTextColor()}<b>{ModifierName.GetString()}</b></color>");
             stringBuilder.AppendLine($"<size=70%>{ModifierBlur.GetString()}</size>");
+            stringBuilder.AppendLine();
         }
 
         public virtual int GetCount() => AmongUsClient.Instance.AmHost ? ModifierOptions.LocalModifierCount.Value : ModifierOptions.NonHostModifierCount;

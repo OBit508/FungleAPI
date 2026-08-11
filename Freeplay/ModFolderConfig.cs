@@ -64,22 +64,25 @@ namespace FungleAPI.Freeplay
                 Folder modifierFolder = new Folder() { FolderName = FungleTranslation.ModifiersText.GetString(), FolderColor = Color.blue };
                 foreach (BaseModifier baseModifier in modPlugin.Modifiers)
                 {
-                    Func<bool> factory = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId);
-                    modifierFolder.Items.Add(new FolderItem()
+                    if (!baseModifier.HideInFreeplay)
                     {
-                        Name = baseModifier.ModifierName.GetString(),
-                        Color = baseModifier.ModifierColor,
-                        OnClick = delegate 
+                        Func<bool> factory = () => ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.ContainsKey(baseModifier.ModifierId);
+                        modifierFolder.Items.Add(new FolderItem()
                         {
-                            if (factory())
+                            Name = baseModifier.ModifierName.GetString(),
+                            Color = baseModifier.ModifierColor,
+                            OnClick = delegate
                             {
-                                PlayerControl.LocalPlayer?.RpcRemoveModifier(baseModifier.ModifierId);
-                                return;
-                            }
-                            PlayerControl.LocalPlayer?.RpcAddModifier(baseModifier.ModifierId);
-                        },
-                        Overlay = factory
-                    });
+                                if (factory())
+                                {
+                                    PlayerControl.LocalPlayer?.RpcRemoveModifier(baseModifier.ModifierId);
+                                    return;
+                                }
+                                PlayerControl.LocalPlayer?.RpcAddModifier(baseModifier.ModifierId);
+                            },
+                            Overlay = factory
+                        });
+                    }
                 }
                 if (modifierFolder.Items.Count > 0)
                 {
