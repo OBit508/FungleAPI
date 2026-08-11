@@ -17,9 +17,8 @@ namespace FungleAPI.Assets.Late
     {
         private Assembly __assembly;
         private string __resource;
-        private float __pixelPerUnit;
         private bool __loop;
-        public LateGIF(string Resource, float PixelPerUnit, bool Loop = true, Assembly assembly = null)
+        public LateGIF(string Resource, bool Loop = true, Assembly assembly = null)
         {
             __assembly = assembly;
             if (__assembly == null)
@@ -27,7 +26,6 @@ namespace FungleAPI.Assets.Late
                 __assembly = Assembly.GetCallingAssembly();
             }
             __resource = Resource;
-            __pixelPerUnit = PixelPerUnit;
             __loop = Loop;
         }
         protected override GIF LoadAsset()
@@ -36,7 +34,7 @@ namespace FungleAPI.Assets.Late
             try
             {
                 FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");
-                gifFile = AssetLoader.LoadGIF(__assembly, __resource, __pixelPerUnit, __loop);
+                gifFile = AssetLoader.LoadGIF(__assembly, __resource, __loop);
             }
             catch (Exception ex)
             {
