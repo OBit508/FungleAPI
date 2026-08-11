@@ -16,6 +16,8 @@ namespace FungleAPI.GameOptions.Collections
 {
     public class OptionCollection
     {
+        private static readonly object ConfigLock = new object();
+
         public ModPlugin Plugin;
         public List<IModdedOption> Options = new List<IModdedOption>();
 
@@ -27,50 +29,38 @@ namespace FungleAPI.GameOptions.Collections
             Plugin = modPlugin;
             Options.AddRange(moddedOptions);
 
-            Type type = GetType();
             string collectionId = $"{CategoryName}_{OwnerType.Name}_{OwnerType.GetShortUniqueId()}";
 
             ConfigFile configFile = FileManager.GetFile(modPlugin);
 
-            var mutexName = "FungleAPI_Config_" + string.Concat((modPlugin.LocalMod.GUID ?? modPlugin.ModAssembly?.GetName().Name ?? "Unknown").Select(c => char.IsLetterOrDigit(c) ? c : '_'));
-            using var configMutex = new Mutex(false, mutexName);
-            var lockTaken = false;
-            try
+            lock (ConfigLock)
             {
-                try
-                {
-                    configMutex.WaitOne();
-                    lockTaken = true;
-                }
-                catch (AbandonedMutexException)
-                {
-                    lockTaken = true;
-                }
                 modPlugin.OptionCollections.Add(this);
+
                 foreach (IModdedOption moddedOption in Options)
                 {
-                    moddedOption.Entry = configFile.Bind(collectionId, moddedOption.StringOptionId, moddedOption.DefaultValue.ToString());
+                    moddedOption.Entry = configFile.Bind( collectionId, moddedOption.StringOptionId, moddedOption.DefaultValue.ToString());
+
                     moddedOption.SetOnValueChance(delegate
                     {
                         if (LobbyViewSettingsPanePatch.Tab != null && LobbyViewSettingsPanePatch.Tab.TabAssembly == modPlugin.ModAssembly)
+                        {
                             LobbyViewSettingsPanePatch.Tab.RefreshViewTab?.Invoke();
+                        }
                     });
+
                     OptionManager.AllOptions[moddedOption.OptionId] = moddedOption;
                 }
+
                 try
                 {
                     LoadOptions(configFile, collectionId);
                 }
                 catch
                 {
-                    FunglePlugin<FungleApiPlugin>.Logger.LogError("Found a corrupted ConfigEntry value from Options Collections, loading default.");
+                    FunglePlugin<FungleApiPlugin>.Logger.LogError( "Found a corrupted ConfigEntry value from Options Collections, loading default.");
                     SetAsDefault(true);
                 }
-            }
-            finally
-            {
-                if (lockTaken)
-                    configMutex.ReleaseMutex();
             }
         }
         public virtual void LoadOptions(ConfigFile configFile, string collectionId) 
