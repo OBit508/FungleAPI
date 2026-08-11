@@ -90,7 +90,7 @@ namespace FungleAPI.GameModes
 
             HostValue = FungleApiPlugin.Instance.Config.Bind("Essential", "CurrentGamemode", (uint)0);
 
-            if (Values.Count < HostValue.Value)
+            if ((Values.Count - 1) < HostValue.Value)
             {
                 HostValue.Value = 0;
             }
