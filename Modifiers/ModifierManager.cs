@@ -34,12 +34,27 @@ namespace FungleAPI.Modifiers
         {
             return GetHolder(playerControl)?.Modifiers.Values.OfType<T>().FirstOrDefault();
         }
+        public static uint GetModifierId(Type type)
+        {
+            return Modifiers.FirstOrDefault(m => m.Value.GetType() == type).Key;
+        }
+        public static uint GetModifierId<T>() where T : BaseModifier
+        {
+            return GetModifierId(typeof(T));
+        }
+        public static bool AddModifier(this PlayerControl playerControl, uint modifierId)
+        {
+            return GetHolder(playerControl)?.AddModifier(modifierId) ?? false;
+        }
+        public static bool RemoveModifier(this PlayerControl playerControl, uint modifierId)
+        {
+            return GetHolder(playerControl)?.RemoveModifier(modifierId) ?? false;
+        }
         public static void RpcAddModifier(this PlayerControl playerControl, uint modifierId, bool sendLate = true)
         {
             if (playerControl == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
 
-            ModifierHolder holder = GetHolder(playerControl);
-            if (holder != null && holder.AddModifier(modifierId))
+            if (playerControl.AddModifier(modifierId))
             {
                 if (sendLate)
                 {
@@ -53,8 +68,7 @@ namespace FungleAPI.Modifiers
         {
             if (playerControl == null || AmongUsClient.Instance == null || !AmongUsClient.Instance.AmHost) return;
 
-            ModifierHolder holder = GetHolder(playerControl);
-            if (holder != null && holder.RemoveModifier(modifierId))
+            if (playerControl.RemoveModifier(modifierId))
             {
                 if (sendLate)
                 {
