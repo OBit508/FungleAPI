@@ -75,9 +75,16 @@ namespace FungleAPI.Hud
 
             Camera.main.orthographicSize = zoom;
             hudManager.UICamera.orthographicSize = zoom;
-            hudManager.ShadowQuad.transform.parent.Find("ShadowCamera").GetComponent<Camera>().orthographicSize = zoom;
+            foreach (ShadowCamera shadowCamera in GameObject.FindObjectsByType<ShadowCamera>(FindObjectsSortMode.None))
+            {
+                Camera camera = shadowCamera.GetComponent<Camera>();
+                if (camera != null)
+                {
+                    camera.orthographicSize = zoom;
+                }
+            }
 
-            MeshFilter meshFilter = HudManager.Instance.ShadowQuad.GetComponent<MeshFilter>();
+            MeshFilter meshFilter = hudManager.ShadowQuad.GetComponent<MeshFilter>();
             float num = 0.5f / 3 * zoom;
 
             meshFilter.mesh.SetVertices(new Vector3[]
