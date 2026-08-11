@@ -68,22 +68,29 @@ namespace FungleAPI.Hud
                 if (gridArrange.cells != null && gridArrange.cells.Count > 0) gridArrange.ArrangeChilds();
             }
         }
-        public static void SetZoom(float zoom, bool updateQuad = true)
+        public static void SetZoom(float zoom)
         {
             HudManager hudManager = HudManager.Instance;
             if (hudManager == null) return;
 
             Camera.main.orthographicSize = zoom;
             hudManager.UICamera.orthographicSize = zoom;
+            hudManager.ShadowQuad.transform.parent.Find("ShadowCamera").GetComponent<Camera>().orthographicSize = zoom;
+
+            MeshFilter meshFilter = HudManager.Instance.ShadowQuad.GetComponent<MeshFilter>();
+            float num = 0.5f / 3 * zoom;
+
+            meshFilter.mesh.SetVertices(new Vector3[]
+            {
+                    new Vector3(-num, -num, 0),
+                    new Vector3(num, -num, 0),
+                    new Vector3(-num, num, 0),
+                    new Vector3(num, num, 0),
+            });
 
             foreach (AspectPosition aspectPosition in hudManager.GetComponentsInChildren<AspectPosition>(true))
             {
                 aspectPosition.AdjustPosition();
-            }
-
-            if (updateQuad)
-            {
-                HudManager.Instance.ShadowQuad.gameObject.SetActive(zoom <= 3);
             }
         }
         public static void RegisterButton(Type type, ModPlugin plugin)
