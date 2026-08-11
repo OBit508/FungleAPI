@@ -47,7 +47,7 @@ namespace FungleAPI.PluginLoading
             {
                 lobbyTabs.Add(new TeamTab() { TabAssembly = modPlugin.ModAssembly });
             }
-            if (modPlugin.Modifiers.Count > 0)
+            if (modPlugin.Modifiers.FindAll(m => !m.HideInLobby).Count > 0)
             {
                 lobbyTabs.Add(new ModifierTab() { TabAssembly = modPlugin.ModAssembly });
             }
