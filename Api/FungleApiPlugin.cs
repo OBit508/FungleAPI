@@ -49,7 +49,7 @@ namespace FungleAPI.Api
     [BepInDependency("Submerged", DependencyFlags.SoftDependency)]
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
     {
-        public const string ModId = "io.github.obit508.fungleapi";
+        public const string ModId = "fungleapi";
         public const string ModV = "0.3.6";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
