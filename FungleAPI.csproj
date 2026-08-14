@@ -165,7 +165,6 @@
     <Compile Include="Modifiers\ModifierManager.cs" />
     <Compile Include="Modifiers\Networking\RpcAddModifier.cs" />
     <Compile Include="Modifiers\Networking\RpcRemoveModifier.cs" />
-    <Compile Include="Modifiers\TestModifier.cs" />
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
