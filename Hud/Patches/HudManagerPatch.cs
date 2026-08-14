@@ -92,6 +92,11 @@ namespace FungleAPI.Hud.Patches
                 HudHelper.BottomLeft.GetComponent<AspectPosition>().AdjustPosition();
             }
 
+            __instance.gameObject.GetOrAddComponent<Updater>().fixedUpdate += delegate
+            {
+                RoleConfigManager.KillConfig?.FixedUpdate?.Invoke();
+            };
+
             __instance.ImpostorVentButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.ImpostorVentButton.transform);
             __instance.ImpostorVentButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
             __instance.SabotageButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.SabotageButton.transform);
@@ -210,9 +215,8 @@ namespace FungleAPI.Hud.Patches
                 RoleBehaviour role = localPlayer.Data.Role;
                 if (role != null)
                 {
-                    RoleConfigManager.KillConfig?.Update();
-                    RoleConfigManager.VentConfig?.Update?.Invoke();
                     RoleConfigManager.SabotageConfig?.Update?.Invoke();
+                    RoleConfigManager.VentConfig?.Update?.Invoke();
                 }
             }
             return false;

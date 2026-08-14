@@ -5,13 +5,16 @@ using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.Networking;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace FungleAPI.Player.Patches
@@ -97,7 +100,7 @@ namespace FungleAPI.Player.Patches
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
 
-            GameModeManager.GetCurrentGameMode().AdjustLighting();
+            GameModeManager.GetCurrentGameMode().AdjustLighting(__instance);
             return false;
         }
         [HarmonyPatch("IsFlashlightEnabled")]
@@ -106,7 +109,7 @@ namespace FungleAPI.Player.Patches
         {
             if (GameManager.Instance.IsHideAndSeek()) return true;
 
-            __result = GameModeManager.GetCurrentGameMode().IsFlashlightEnabled();
+            __result = GameModeManager.GetCurrentGameMode().IsFlashlightEnabled(__instance);
             return false;
         }
         [HarmonyPatch(nameof(PlayerControl.Revive))]
@@ -117,6 +120,164 @@ namespace FungleAPI.Player.Patches
             {
                 HudManager.Instance.Chat.SetVisible(true);
             }
+        }
+        [HarmonyPatch(nameof(PlayerControl.FixedUpdate))]
+        [HarmonyPrefix]
+        public static bool FixedUpdatePrefix(PlayerControl __instance)
+        {
+            if (!GameData.Instance)
+            {
+                return false;
+            }
+            NetworkedPlayerInfo data = __instance.Data;
+            if (data == null || data.Role == null)
+            {
+                return false;
+            }
+            if (data.IsDead && PlayerControl.LocalPlayer && PlayerControl.LocalPlayer.Data != null)
+            {
+                __instance.Visible = PlayerControl.LocalPlayer.Data.IsDead;
+                __instance.cosmetics.SetPetVisible(true);
+            }
+            if (__instance.AmOwner)
+            {
+                if (ShipStatus.Instance && __instance.lightSource)
+                {
+                    float num = ShipStatus.Instance.CalculateLightRadius(data);
+                    if (!Mathf.Approximately(num, __instance.lightSource.ViewDistance))
+                    {
+                        __instance.AdjustLighting();
+                    }
+                    __instance.lightSource.SetViewDistance(num);
+                }
+                PlayerControl playerControl = data.Role.FindClosestTarget();
+                if (!((__instance.IsKillTimerEnabled || __instance.ForceKillTimerContinue) && data.Role.CanUseKillButton && !data.IsDead))
+                {
+                    __instance.Data.Role.SetPlayerTarget(playerControl);
+                }
+                if (__instance.CanMove && PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled)
+                {
+                    PlayerControl.LocalPlayer.MyPhysics.inputHandler.enabled = false;
+                }
+                if (__instance.CanMove || __instance.inVent)
+                {
+                    __instance.newItemsInRange.Clear();
+                    bool flag2 = (GameOptionsManager.Instance.CurrentGameOptions.GetBool(BoolOptionNames.GhostsDoTasks) || !data.IsDead) && (!AmongUsClient.Instance || !AmongUsClient.Instance.IsGameOver) && __instance.CanMove;
+                    Vector2 truePosition = __instance.GetTruePosition();
+                    int num2 = Physics2D.OverlapCircleNonAlloc(truePosition, __instance.MaxReportDistance, __instance.hitBuffer, Constants.Usables);
+                    IUsable usable = null;
+                    float num3 = float.MaxValue;
+                    bool flag3 = false;
+                    List<Vent> list = new List<Vent>();
+                    for (int i = 0; i < num2; i++)
+                    {
+                        Collider2D collider2D = __instance.hitBuffer[i];
+                        IUsable[] array;
+                        if (!__instance.cache.TryGetValue(collider2D, out Il2CppReferenceArray<IUsable> cached))
+                        {
+                            array = __instance.cache[collider2D] = collider2D.GetComponents<IUsable>().ToArray();
+                        }
+                        else
+                        {
+                            array = cached.ToArray();
+                        }
+                        if (array != null && (flag2 || __instance.inVent))
+                        {
+                            foreach (IUsable usable2 in array)
+                            {
+                                bool flag4;
+                                bool flag5;
+                                float num4 = usable2.CanUse(data, out flag4, out flag5);
+                                if (flag4 || flag5)
+                                {
+                                    __instance.newItemsInRange.Add(usable2);
+                                }
+                                if (flag4 && num4 < num3)
+                                {
+                                    if (usable2.Is(out Vent result))
+                                    {
+                                        list.Add(result);
+                                    }
+                                    else
+                                    {
+                                        num3 = num4;
+                                        usable = usable2;
+                                    }
+                                }
+                            }
+                        }
+                        if (flag2 && !data.IsDead && !flag3 && collider2D.tag == "DeadBody")
+                        {
+                            DeadBody component = collider2D.GetComponent<DeadBody>();
+                            if (component.enabled && !component.Reported && Vector2.Distance(truePosition, component.TruePosition) <= __instance.MaxReportDistance && !PhysicsHelpers.AnythingBetween(truePosition, component.TruePosition, Constants.ShipAndObjectsMask, false))
+                            {
+                                flag3 = true;
+                            }
+                        }
+                    }
+                    Vent vent = ((list.Count > 0) ? Enumerable.First<Vent>(list) : null);
+                    for (int k = __instance.itemsInRange.Count - 1; k > -1; k--)
+                    {
+                        IUsable item = __instance.itemsInRange[k];
+                        int num5 = __instance.newItemsInRange.FindIndex((IUsable j) => j == item);
+                        if (num5 == -1)
+                        {
+                            item.SetOutline(false, false);
+                            __instance.itemsInRange.RemoveAt(k);
+                        }
+                        else
+                        {
+                            __instance.newItemsInRange.RemoveAt(num5);
+                            bool flag6;
+                            if (item.Is(out Vent result))
+                            {
+                                flag6 = result == vent;
+                            }
+                            else
+                            {
+                                flag6 = usable == item;
+                            }
+                            item.SetOutline(true, flag6);
+                        }
+                    }
+                    for (int l = 0; l < __instance.newItemsInRange.Count; l++)
+                    {
+                        IUsable usable3 = __instance.newItemsInRange[l];
+                        bool flag7;
+                        if (usable3.Is(out Vent result))
+                        {
+                            flag7 = result == vent;
+                        }
+                        else
+                        {
+                            flag7 = usable == usable3;
+                        }
+                        usable3.SetOutline(true, flag7);
+                        __instance.itemsInRange.Add(usable3);
+                    }
+                    __instance.closest = usable;
+                    DestroyableSingleton<HudManager>.Instance.ToggleUseAndPetButton(usable, flag2, __instance.CanPet());
+                    DestroyableSingleton<HudManager>.Instance.ReportButton.SetActive(flag3);
+                    DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.SetTarget(vent);
+                    __instance.Data.Role.SetUsableTarget(vent.SafeCast<IUsable>());
+                }
+                else
+                {
+                    __instance.closest = null;
+                    DestroyableSingleton<HudManager>.Instance.UseButton.SetTarget(null);
+                    DestroyableSingleton<HudManager>.Instance.ImpostorVentButton.SetTarget(Vent.currentVent);
+                    DestroyableSingleton<HudManager>.Instance.PetButton.SetDisabled();
+                    DestroyableSingleton<HudManager>.Instance.ReportButton.SetActive(false);
+                    __instance.Data.Role.SetUsableTarget(Vent.currentVent.SafeCast<IUsable>());
+                    if (PlayerCustomizationMenu.Instance)
+                    {
+                        DestroyableSingleton<HudManager>.Instance.UseButton.gameObject.SetActive(false);
+                    }
+                }
+                DestroyableSingleton<HudManager>.Instance.SabotageButton.Refresh();
+                DestroyableSingleton<HudManager>.Instance.AdminButton.Refresh();
+            }
+            return false;
         }
         public static void DoStart(PlayerControl player)
         {

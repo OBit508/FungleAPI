@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Player;
 using System;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Role.Utilities
 {
@@ -63,8 +64,22 @@ namespace FungleAPI.Role.Utilities
                     SetTarget(null);
                 }
             };
-            Update = delegate
+            FixedUpdate = delegate
             {
+                if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
+
+                PlayerControl playerControl = PlayerControl.LocalPlayer.Data.Role.FindClosestTarget();
+                bool flag = PlayerControl.LocalPlayer.Data.Role.CanUseKillButton && !PlayerControl.LocalPlayer.Data.IsDead;
+                if ((PlayerControl.LocalPlayer.IsKillTimerEnabled || PlayerControl.LocalPlayer.ForceKillTimerContinue) && flag)
+                {
+                    PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.LocalPlayer.killTimer - Time.fixedDeltaTime);
+                    SetTarget(playerControl);
+                }
+                else
+                {
+                    SetTarget(null);
+                }
+
                 if (CanUse() != Enabled)
                 {
                     Enabled = CanUse();
@@ -112,9 +127,9 @@ namespace FungleAPI.Role.Utilities
         /// </summary>
         public Action DoClick;
         /// <summary>
-        /// Updates the kill button state
+        /// Updates the kill button
         /// </summary>
-        public Action Update;
+        public Action FixedUpdate;
         /// <summary>
         /// Resets the kill button to its default visual and cooldown state
         /// </summary>

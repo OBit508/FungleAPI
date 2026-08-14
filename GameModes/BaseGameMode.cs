@@ -31,8 +31,8 @@ namespace FungleAPI.GameModes
         public virtual void OnGameStart() { }
         public virtual void OnGameEnd() { }
         public virtual float CalculateLightRadius(NetworkedPlayerInfo player, bool airship) => 0;
-        public virtual void AdjustLighting() { }
-        public virtual bool IsFlashlightEnabled() => false;
+        public virtual void AdjustLighting(PlayerControl playerControl) { }
+        public virtual bool IsFlashlightEnabled(PlayerControl playerControl) => false;
         public virtual bool CanReportBodies() => true;
         public virtual bool CanUse(IUsable usable, PlayerControl player) => true;
         public virtual void OnPlayerDeath(PlayerControl player, bool assignGhostRole) { }

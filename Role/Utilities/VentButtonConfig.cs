@@ -1,5 +1,11 @@
-﻿using System;
+﻿using AmongUs.GameOptions;
+using FungleAPI.Utilities;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Role.Utilities
 {

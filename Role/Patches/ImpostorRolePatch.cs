@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static UnityEngine.GraphicsBuffer;
 
-namespace FungleAPI.GlobalPatches
+namespace FungleAPI.Role.Patches
 {
     [HarmonyPatch(typeof(ImpostorRole), "IsValidTarget")]
     internal static class ImpostorRolePatch

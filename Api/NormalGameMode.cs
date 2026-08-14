@@ -68,32 +68,32 @@ namespace FungleAPI.Api
             }
             return Base();
         }
-        public override void AdjustLighting()
+        public override void AdjustLighting(PlayerControl playerControl)
         {
-            if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
+            if (playerControl == null || playerControl.Data == null) return;
 
             float flashlightSize = 0f;
-            if (IsFlashlightEnabled())
+            if (IsFlashlightEnabled(playerControl))
             {
-                if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+                if (playerControl.Data.Role.IsImpostor)
                 {
-                    GameOptionsManager.Instance.CurrentGameOptions.TryGetFloat(FloatOptionNames.ImpostorFlashlightSize, out flashlightSize);
+                    GameOptions.TryGetFloat(FloatOptionNames.ImpostorFlashlightSize, out flashlightSize);
                 }
                 else
                 {
-                    GameOptionsManager.Instance.CurrentGameOptions.TryGetFloat(FloatOptionNames.CrewmateFlashlightSize, out flashlightSize);
+                    GameOptions.TryGetFloat(FloatOptionNames.CrewmateFlashlightSize, out flashlightSize);
                 }
             }
-            PlayerControl.LocalPlayer.SetFlashlightInputMethod();
-            PlayerControl.LocalPlayer.lightSource.SetupLightingForGameplay(IsFlashlightEnabled(), flashlightSize, PlayerControl.LocalPlayer.TargetFlashlight.transform);
+            playerControl.SetFlashlightInputMethod();
+            playerControl.lightSource.SetupLightingForGameplay(IsFlashlightEnabled(playerControl), flashlightSize, playerControl.TargetFlashlight.transform);
         }
-        public override bool IsFlashlightEnabled()
+        public override bool IsFlashlightEnabled(PlayerControl playerControl)
         {
             if (LobbyBehaviour.Instance != null)
             {
                 return false;
             }
-            if (PlayerControl.LocalPlayer.Data.IsDead)
+            if (playerControl.Data.IsDead)
             {
                 return false;
             }
@@ -102,7 +102,7 @@ namespace FungleAPI.Api
                 return false;
             }
             bool flag = false;
-            return GameOptionsManager.Instance.CurrentGameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag) && flag;
+            return GameOptions.TryGetBool(BoolOptionNames.UseFlashlight, out flag) && flag;
         }
         public override bool CanUse(IUsable usable, PlayerControl player) => true;
         public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
@@ -259,7 +259,11 @@ namespace FungleAPI.Api
             bool modifiers = ModifierHolder.LocalPlayer != null && ModifierHolder.LocalPlayer.Modifiers.Count > 0;
             bool taskPanelVisible = hudManager.TaskPanel != null && hudManager.TaskPanel.gameObject.activeSelf;
             Il2CppSystem.Text.StringBuilder stringBuilder = new Il2CppSystem.Text.StringBuilder();
-            RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
+
+            if (roleHintType.HasFlag(RoleHintType.PlayerTab))
+            {
+                RoleConfigManager.PlayerTabConfig.AppendTabText(stringBuilder);
+            }
 
             if (modifiers)
             {

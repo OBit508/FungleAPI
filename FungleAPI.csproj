@@ -248,7 +248,7 @@
     <Compile Include="GlobalPatches\AmongUsClientPatch.cs" />
     <Compile Include="GameOver\Patches\EndGameManagerPatch.cs" />
     <Compile Include="GlobalPatches\GameStartManagerPatch.cs" />
-    <Compile Include="GlobalPatches\ImpostorRolePatch.cs" />
+    <Compile Include="Role\Patches\ImpostorRolePatch.cs" />
     <Compile Include="Hud\Patches\KillButtonPatch.cs" />
     <Compile Include="GlobalPatches\MainMenuManager.cs" />
     <Compile Include="GlobalPatches\MeetingPatch.cs" />
