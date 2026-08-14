@@ -1,21 +1,22 @@
-﻿using System;
+﻿using AmongUs.Data;
+using AmongUs.GameOptions;
+using FungleAPI.Api;
+using FungleAPI.Components;
+using FungleAPI.Extensions;
+using FungleAPI.GameModes;
+using FungleAPI.ModCompatibility;
+using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Modifiers;
+using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
+using FungleAPI.Utilities;
+using HarmonyLib;
+using InnerNet;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AmongUs.Data;
-using AmongUs.GameOptions;
-using FungleAPI.Api;
-using FungleAPI.Components;
-using FungleAPI.GameModes;
-using FungleAPI.ModCompatibility;
-using FungleAPI.ModCompatibility.MiraSupport;
-using FungleAPI.Role;
-using FungleAPI.Role.Utilities;
-using FungleAPI.Extensions;
-using FungleAPI.Utilities;
-using HarmonyLib;
-using InnerNet;
 using TMPro;
 using UnityEngine;
 
@@ -238,9 +239,9 @@ namespace FungleAPI.Hud.Patches
                 __instance.ReportButton.ToggleVisible(isActive && !role.IsDead && GameModeManager.GetCurrentGameMode().CanReportBodies() && ShipStatus.Instance != null);
             }
 
-            __instance.KillButton.ToggleVisible(role.UseKillButton() && isActive);
-            __instance.SabotageButton.ToggleVisible(role.CanSabotage() && isActive);
-            __instance.ImpostorVentButton.ToggleVisible(role.CanUseVent() && role.Role != RoleTypes.Engineer && isActive);
+            __instance.KillButton.ToggleVisible((role.UseKillButton() || localPlayer.AnyModifierForceKill()) && isActive);
+            __instance.SabotageButton.ToggleVisible((role.CanSabotage() || localPlayer.AnyModifierForceSabotage()) && isActive);
+            __instance.ImpostorVentButton.ToggleVisible((role.CanUseVent() || localPlayer.AnyModifierForceKill()) && role.Role != RoleTypes.Engineer && isActive);
 
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {

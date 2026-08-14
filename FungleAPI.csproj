@@ -165,6 +165,7 @@
     <Compile Include="Modifiers\ModifierManager.cs" />
     <Compile Include="Modifiers\Networking\RpcAddModifier.cs" />
     <Compile Include="Modifiers\Networking\RpcRemoveModifier.cs" />
+    <Compile Include="Modifiers\TestModifier.cs" />
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
@@ -187,7 +188,9 @@
     <Compile Include="PluginLoading\BepInMod.cs" />
     <Compile Include="PluginLoading\FileManager.cs" />
     <Compile Include="PluginLoading\PluginCredits.cs" />
+    <Compile Include="Role\Patches\CrewmateRolePatch.cs" />
     <Compile Include="Role\Patches\MeetingIntroAnimationPatch.cs" />
+    <Compile Include="Role\Patches\ScientistRolePatch.cs" />
     <Compile Include="Role\Utilities\CachedWaitingRole.cs" />
     <Compile Include="Role\RoleConfiguration.cs" />
     <Compile Include="Role\Utilities\RoleExtensions.cs" />

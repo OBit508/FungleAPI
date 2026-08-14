@@ -2,6 +2,7 @@
 using AmongUs.GameOptions;
 using Assets.CoreScripts;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Base.Roles;
 using FungleAPI.Components;
 using FungleAPI.Event;
 using FungleAPI.Event.Vanilla;
@@ -30,6 +31,22 @@ namespace FungleAPI.Player
     /// </summary>
     public static class PlayerExtensions
     {
+        public static PlayerControl FindClosestTarget(this PlayerControl playerControl)
+        {
+            if (playerControl == null || playerControl.Data == null) return null;
+
+            RoleBehaviour roleBehaviour = playerControl.Data.Role;
+
+            if (roleBehaviour.TeamType == RoleTeamTypes.Impostor || roleBehaviour.Role == RoleTypes.Detective || roleBehaviour.Role == RoleTypes.Tracker || roleBehaviour.Is(out RoleBaseHelper _)) return roleBehaviour.FindClosestTarget();
+
+            Il2CppSystem.Collections.Generic.List<PlayerControl> playersInAbilityRangeSorted = roleBehaviour.GetPlayersInAbilityRangeSorted(RoleBehaviour.GetTempPlayerList());
+            if (playersInAbilityRangeSorted.Count <= 0)
+            {
+                return null;
+            }
+            return playersInAbilityRangeSorted[0];
+        }
+
         // RPCs
 
         /// <summary>

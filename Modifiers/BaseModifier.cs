@@ -3,6 +3,7 @@ using FungleAPI.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
+using Il2CppSystem.Linq.Expressions.Interpreter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +35,10 @@ namespace FungleAPI.Modifiers
         public virtual byte MaxCount => 15;
 
         public virtual ModdedTeam SpecificTeam { get; }
+
+        public virtual bool ForceCanKill { get; }
+        public virtual bool ForceCanSabotage { get; }
+        public virtual bool ForceCanVent { get; }
 
         public virtual void OnDeath(DeathReason reason) { }
         public virtual void Update() { }

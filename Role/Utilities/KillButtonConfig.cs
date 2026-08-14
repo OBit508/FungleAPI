@@ -1,5 +1,7 @@
-﻿using FungleAPI.Player;
+﻿using FungleAPI.Modifiers;
+using FungleAPI.Player;
 using System;
+using System.Linq;
 using UnityEngine;
 using static Il2CppSystem.Globalization.CultureInfo;
 
@@ -68,8 +70,8 @@ namespace FungleAPI.Role.Utilities
             {
                 if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
 
-                PlayerControl playerControl = PlayerControl.LocalPlayer.Data.Role.FindClosestTarget();
-                bool flag = PlayerControl.LocalPlayer.Data.Role.CanUseKillButton && !PlayerControl.LocalPlayer.Data.IsDead;
+                PlayerControl playerControl = PlayerControl.LocalPlayer.FindClosestTarget();
+                bool flag = (PlayerControl.LocalPlayer.Data.Role.UseKillButton() || PlayerControl.LocalPlayer.AnyModifierForceKill()) && !PlayerControl.LocalPlayer.Data.IsDead;
                 if ((PlayerControl.LocalPlayer.IsKillTimerEnabled || PlayerControl.LocalPlayer.ForceKillTimerContinue) && flag)
                 {
                     PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.LocalPlayer.killTimer - Time.fixedDeltaTime);

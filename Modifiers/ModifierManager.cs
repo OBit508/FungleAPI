@@ -30,6 +30,10 @@ namespace FungleAPI.Modifiers
 
         internal static Dictionary<PlayerControl, ModifierHolder> Holders = new Dictionary<PlayerControl, ModifierHolder>();
 
+        public static IEnumerable<BaseModifier> GetModifiers(this PlayerControl playerControl)
+        {
+            return GetHolder(playerControl)?.Modifiers.Values;
+        }
         public static T GetModifier<T>(this PlayerControl playerControl) where T : BaseModifier
         {
             return GetHolder(playerControl)?.Modifiers.Values.OfType<T>().FirstOrDefault();
@@ -49,6 +53,18 @@ namespace FungleAPI.Modifiers
         public static bool RemoveModifier(this PlayerControl playerControl, uint modifierId)
         {
             return GetHolder(playerControl)?.RemoveModifier(modifierId) ?? false;
+        }
+        public static bool AnyModifierForceKill(this PlayerControl playerControl)
+        {
+            return GetHolder(playerControl).Modifiers.Values.Any(m => m.ForceCanKill);
+        }
+        public static bool AnyModifierForceSabotage(this PlayerControl playerControl)
+        {
+            return GetHolder(playerControl).Modifiers.Values.Any(m => m.ForceCanSabotage);
+        }
+        public static bool AnyModifierForceVent(this PlayerControl playerControl)
+        {
+            return GetHolder(playerControl).Modifiers.Values.Any(m => m.ForceCanVent);
         }
         public static void RpcAddModifier(this PlayerControl playerControl, uint modifierId, bool sendLate = true)
         {

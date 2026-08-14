@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Event;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.Hud;
 using FungleAPI.Modifiers;
 using System;
 using System.Collections.Generic;
@@ -77,6 +78,9 @@ namespace FungleAPI.Components
                 Modifiers[modifierId] = baseModifier;
                 modifierList.Add(baseModifier);
                 iterationDirty = true;
+
+                HudHelper.UpdateActiveState();
+
                 return true;
             }
             return false;
@@ -89,6 +93,9 @@ namespace FungleAPI.Components
                 Modifiers.Remove(modifierId);
                 modifierList.Remove(baseModifier);
                 iterationDirty = true;
+
+                HudHelper.UpdateActiveState();
+
                 return true;
             }
             return false;

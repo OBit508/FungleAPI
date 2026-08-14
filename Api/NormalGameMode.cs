@@ -211,7 +211,7 @@ namespace FungleAPI.Api
         {
             return new MapOptions
             {
-                Mode = (PlayerControl.LocalPlayer.Data.Role.CanSabotage() && !MeetingHud.Instance) ? MapOptions.Modes.Sabotage : MapOptions.Modes.Normal
+                Mode = ((PlayerControl.LocalPlayer.Data.Role.CanSabotage() || PlayerControl.LocalPlayer.AnyModifierForceSabotage()) && !MeetingHud.Instance) ? MapOptions.Modes.Sabotage : MapOptions.Modes.Normal
             };
         }
         public override DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole)
@@ -288,7 +288,7 @@ namespace FungleAPI.Api
             float num = float.MaxValue;
             PlayerControl @object = pc.Object;
             IUsable usable = vent.SafeCast<IUsable>();
-            couldUse = pc.Role.CanUseVent() && CanUse(usable, @object) && pc.Role.CanUse(usable) && (!@object.MustCleanVent(vent.Id) || (@object.inVent && Vent.currentVent == vent)) && !pc.IsDead && (@object.CanMove || @object.inVent);
+            couldUse = (pc.Role.CanUseVent() || @object.AnyModifierForceVent()) && CanUse(usable, @object) && pc.Role.CanUse(usable) && (!@object.MustCleanVent(vent.Id) || (@object.inVent && Vent.currentVent == vent)) && !pc.IsDead && (@object.CanMove || @object.inVent);
             ISystemType systemType;
             if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Ventilation, out systemType))
             {

@@ -12,6 +12,7 @@ using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;
 using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Modifiers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
@@ -137,15 +138,16 @@ namespace FungleAPI.Role.Patches
             CustomRoleManager.UpdateRole(roleBehaviour);
             if (targetPlayer.AmOwner)
             {
-                if (roleBehaviour.CanUseKillButton)
+                if (roleBehaviour.CanUseKillButton || targetPlayer.AnyModifierForceKill())
                 {
                     RoleConfigManager.KillConfig.InitializeButton();
+                    targetPlayer.SetKillTimer(0.01f);
                 }
-                if (roleBehaviour.CanSabotage())
+                if (roleBehaviour.CanSabotage() || targetPlayer.AnyModifierForceSabotage())
                 {
                     RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
                 }
-                if (roleBehaviour.CanVent)
+                if (roleBehaviour.CanVent || targetPlayer.AnyModifierForceVent())
                 {
                     RoleConfigManager.VentConfig.InitializeButton?.Invoke();
                 }

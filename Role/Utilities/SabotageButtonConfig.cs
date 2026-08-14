@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FungleAPI.Modifiers;
+using System;
 using UnityEngine;
 
 namespace FungleAPI.Role.Utilities
@@ -34,7 +35,7 @@ namespace FungleAPI.Role.Utilities
                 }
                 if (player.inVent || !GameManager.Instance.SabotagesEnabled() || player.petting)
                 {
-                    Button.ToggleVisible(player.Data.Role.CanSabotage() && GameManager.Instance.SabotagesEnabled());
+                    Button.ToggleVisible((player.Data.Role.CanSabotage() || player.AnyModifierForceSabotage()) && GameManager.Instance.SabotagesEnabled());
                 }
                 if (Button.isActiveAndEnabled)
                 {
@@ -69,7 +70,7 @@ namespace FungleAPI.Role.Utilities
             };
             DoClick = delegate
             {
-                if (PlayerControl.LocalPlayer.Data.Role.CanSabotage() && CanUse() && !PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
+                if ((PlayerControl.LocalPlayer.Data.Role.CanSabotage() || PlayerControl.LocalPlayer.AnyModifierForceSabotage()) && CanUse() && !PlayerControl.LocalPlayer.inVent && GameManager.Instance.SabotagesEnabled())
                 {
                     HudManager.Instance.ToggleMapVisible(new MapOptions
                     {
