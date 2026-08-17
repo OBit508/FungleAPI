@@ -48,5 +48,11 @@ namespace FungleAPI.GameModes.Patches
         {
             GameModeManager.GetCurrentGameMode().OnGameEnd();
         }
+        [HarmonyPatch(nameof(GameManager.FixedUpdate))]
+        [HarmonyPrefix]
+        public static void FixedUpdatePrefix(GameManager __instance)
+        {
+            GameModeManager.GetCurrentGameMode().FixedUpdate();
+        }
     }
 }

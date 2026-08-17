@@ -15,6 +15,10 @@
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
+    <Compile Include="Api\Chat\BanCommand.cs" />
+    <Compile Include="Api\Chat\GetIdsCommand.cs" />
+    <Compile Include="Api\Chat\KickCommand.cs" />
+    <Compile Include="Api\HideNSeekMode.cs" />
     <Compile Include="Chat\BaseChatCommand.cs" />
     <Compile Include="Chat\ChatCommandManager.cs" />
     <Compile Include="Chat\Patches\ChatControllerPatch.cs" />
@@ -71,6 +75,7 @@
     <Compile Include="GameModes\Logics\LOptionsN.cs" />
     <Compile Include="GameModes\Logics\LRoleSelection.cs" />
     <Compile Include="GameModes\Patches\DeadBodyPatch.cs" />
+    <Compile Include="GameModes\Patches\GameManagerCreatorPatch.cs" />
     <Compile Include="GameModes\Patches\GameStartManagerPatch.cs" />
     <Compile Include="GameModes\Patches\ImpostorRolePatch.cs" />
     <Compile Include="GameModes\Patches\MapConsolePatch.cs" />

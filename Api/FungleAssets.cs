@@ -27,6 +27,7 @@ namespace FungleAPI.Api
         public static LateSprite NextButton = new LateSprite("FungleAPI.Assets.FungleAssets.nextButton.png", 100);
         public static LateAudio HoverSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Hover.wav");
         public static LateAudio SelectSound = new LateAudio("FungleAPI.Assets.FungleAssets.UI_Select.wav");
+
         public static PluginChanger PluginChangerPrefab;
         public static ModsPage ModsPagePrefab;
         public static PassiveButton CogPrefab;

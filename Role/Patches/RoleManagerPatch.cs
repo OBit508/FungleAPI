@@ -8,6 +8,7 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOptions;
+using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOver;
 using FungleAPI.Hud;

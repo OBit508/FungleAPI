@@ -28,6 +28,7 @@ namespace FungleAPI.GameModes
         public IGameOptions GameOptions => Manager.LogicOptions.currentGameOptions;
         public virtual GameModeOptions ModeOptions { get; }
         public virtual int RequiredPlayerToStart() => 0;
+        public virtual void FixedUpdate() { }
         public virtual void OnGameStart() { }
         public virtual void OnGameEnd() { }
         public virtual float CalculateLightRadius(NetworkedPlayerInfo player, bool airship) => 0;

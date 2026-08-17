@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using FungleAPI.Attributes;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
 using FungleAPI.GameModes;
@@ -23,6 +24,7 @@ using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.Api
 {
+    [RegisterPriority(0)]
     public class NormalGameMode : BaseGameMode
     {
         public static Func<IReadOnlyDictionary<byte, RoleTypes>> ConsumeRoleAssignmentOverrides;

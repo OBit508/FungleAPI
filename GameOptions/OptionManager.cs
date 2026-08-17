@@ -23,7 +23,7 @@ namespace FungleAPI.GameOptions
 {
     public static class OptionManager
     {
-        private static uint __optionId = uint.MinValue;
+        internal static uint __optionId = uint.MinValue;
         public static Dictionary<uint, IModdedOption> AllOptions = new Dictionary<uint, IModdedOption>();
 
         public static Dictionary<Assembly, List<LobbyTab>> LobbyTabs = new Dictionary<Assembly, List<LobbyTab>>();
