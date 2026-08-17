@@ -31,6 +31,7 @@ namespace FungleAPI.GameModes
         public virtual void FixedUpdate() { }
         public virtual void OnGameStart() { }
         public virtual void OnGameEnd() { }
+        public virtual void OnPlayerDisconnect(PlayerControl pc) { }
         public virtual float CalculateLightRadius(NetworkedPlayerInfo player, bool airship) => 0;
         public virtual void AdjustLighting(PlayerControl playerControl) { }
         public virtual bool IsFlashlightEnabled(PlayerControl playerControl) => false;

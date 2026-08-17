@@ -54,5 +54,11 @@ namespace FungleAPI.GameModes.Patches
         {
             GameModeManager.GetCurrentGameMode().FixedUpdate();
         }
+        [HarmonyPatch(nameof(GameManager.OnPlayerDisconnect))]
+        [HarmonyPrefix]
+        public static void OnPlayerDisconnectPrefix(GameManager __instance, PlayerControl pc)
+        {
+            GameModeManager.GetCurrentGameMode().OnPlayerDisconnect(pc);
+        }
     }
 }
