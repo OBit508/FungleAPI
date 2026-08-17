@@ -105,7 +105,7 @@ namespace FungleAPI.Assets
         /// <summary>
         /// Loads a GIF file from an embedded resource and converts it into a GIF
         /// </summary>
-        public static GIF LoadGIF(Assembly assembly, string resource, bool loop = true)
+        public static GIF LoadGIF(Assembly assembly, string resource, float pixelsPerUnit, bool loop = true)
         {
             using (GIFDecoder gifDecoder = new GIFDecoder())
             {
@@ -114,6 +114,7 @@ namespace FungleAPI.Assets
                     gifDecoder.LoadGif(stream.ToArray());
                     GIF gif = new GIF()
                     {
+                        PixelsPerUnit = pixelsPerUnit,
                         Loop = loop
                     };
                     gif.SetGif(gifDecoder.Frames, gifDecoder.FrameDelays);
@@ -124,14 +125,14 @@ namespace FungleAPI.Assets
         /// <summary>
         /// Loads a sprite from an embedded resource
         /// </summary>
-        public static Sprite LoadSprite(Assembly assembly, string resource, float PixelPerUnit, bool readable = false, bool dontUnload = true)
+        public static Sprite LoadSprite(Assembly assembly, string resource, float PixelsPerUnit, bool readable = false, bool dontUnload = true)
         {
             using (Stream stream = assembly.GetManifestResourceStream(resource))
             {
                 Texture2D texture2D = new Texture2D(2, 2, TextureFormat.RGBA32, false);
                 texture2D.LoadImage(stream.ToArray(), !readable);
 
-                Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelPerUnit);
+                Sprite sprite = Sprite.Create(texture2D, new Rect(0f, 0f, texture2D.width, texture2D.height), new Vector2(0.5f, 0.5f), PixelsPerUnit);
                 if (dontUnload)
                 {
                     sprite.DontUnload();

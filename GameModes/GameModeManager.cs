@@ -74,6 +74,21 @@ namespace FungleAPI.GameModes
                     GameStartManager.Instance.ResetStartState();
                 }
             });
+
+            stringOption.MinusBtn.transform.localScale = Vector3.one * 1.35f;
+            stringOption.MinusBtn.transform.localPosition = new Vector3(-1.66f, -0.06f, 0);
+
+            stringOption.PlusBtn.transform.localScale = Vector3.one * 1.35f;
+            stringOption.PlusBtn.transform.localPosition = new Vector3(1.66f, -0.06f, 0);
+
+            stringOption.TitleText.gameObject.SetActive(false);
+            stringOption.transform.GetChild(0).gameObject.SetActive(false);
+
+            stringOption.transform.GetChild(1).localPosition = new Vector3(0, -0.046f, -1);
+
+            stringOption.transform.GetChild(5).localPosition = new Vector3(0, -0.05f, 0);
+            stringOption.transform.GetChild(5).localScale = new Vector3(0.7f, 0.5f, 0);
+
             stringGameSetting.Index = (int)HostValue.Value;
             stringOption.Value = (int)HostValue.Value;
             return stringOption;

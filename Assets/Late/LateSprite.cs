@@ -20,9 +20,9 @@ namespace FungleAPI.Assets.Late
     {
         private Assembly __assembly;
         private string __resource;
-        private float __pixelPerUnit;
+        private float __pixelsPerUnit;
         private bool __readable;
-        public LateSprite(string Resource, float PixelPerUnit, bool readable = false, Assembly assembly = null)
+        public LateSprite(string Resource, float PixelsPerUnit, bool readable = false, Assembly assembly = null)
         {
             __assembly = assembly;
             if (__assembly == null)
@@ -30,7 +30,7 @@ namespace FungleAPI.Assets.Late
                 __assembly = Assembly.GetCallingAssembly();
             }
             __resource = Resource;
-            __pixelPerUnit = PixelPerUnit;
+            __pixelsPerUnit = PixelsPerUnit;
             __readable = readable;
         }
         protected override Sprite LoadAsset()
@@ -39,7 +39,7 @@ namespace FungleAPI.Assets.Late
             try
             {
                 FungleApiPlugin.Instance.Log.LogInfo($"Created {__resource}");
-                sprite = AssetLoader.LoadSprite(__assembly, __resource, __pixelPerUnit, __readable);
+                sprite = AssetLoader.LoadSprite(__assembly, __resource, __pixelsPerUnit, __readable);
             }
             catch (Exception ex)
             {

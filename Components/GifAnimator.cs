@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEngineInternal;
 using static Rewired.Controller;
 
@@ -19,9 +20,9 @@ namespace FungleAPI.Components
     [RegisterTypeInIl2Cpp]
     public class GIFAnimator : MonoBehaviour
     {
-        public GIF GIF;
         public float Speed = 1;
         public bool Stoped;
+        private GIF gif;
         private Color color = Color.white;
         private bool flipX;
         private bool flipY;
@@ -33,6 +34,41 @@ namespace FungleAPI.Components
         private MeshRenderer meshRenderer;
         private MeshFilter meshFilter;
         private float timer;
+        public GIF GIF
+        {
+            get => gif;
+            set
+            {
+                gif = value;
+                if (gif == null || gif.Frames.Count() <= 0)
+                {
+                    material.mainTexture = null;
+                    return;
+                }
+                Texture2D texture = gif.Frames.ElementAt(0);
+
+                float width = texture.width / gif.PixelsPerUnit;
+                float height = texture.height / gif.PixelsPerUnit;
+
+                float pivotX = 0.5f;
+                float pivotY = 0.5f;
+
+                float left = -width * pivotX;
+                float right = width * (1f - pivotX);
+                float bottom = -height * pivotY;
+                float top = height * (1f - pivotY);
+
+                meshFilter.mesh.vertices = new Vector3[4]
+                {
+                    new Vector3(left,  bottom, 0),
+                    new Vector3(right, bottom, 0),
+                    new Vector3(right, top,    0),
+                    new Vector3(left,  top,    0)
+                };
+
+                material.mainTexture = texture;
+            }
+        }
         public Color Color
         {
             get => color;
@@ -40,7 +76,9 @@ namespace FungleAPI.Components
             {
                 color = value;
                 if (material != null)
+                {
                     material.color = value;
+                }
             }
         }
         public bool FlipX
@@ -129,13 +167,6 @@ namespace FungleAPI.Components
             {
                 meshFilter = gameObject.AddComponent<MeshFilter>();
                 meshFilter.mesh = new Mesh();
-                meshFilter.mesh.vertices = new Vector3[4]
-                {
-                    new Vector3(-0.5f, -0.5f, 0),
-                    new Vector3( 0.5f, -0.5f, 0),
-                    new Vector3( 0.5f,  0.5f, 0),
-                    new Vector3(-0.5f,  0.5f, 0)
-                };
                 meshFilter.mesh.uv = new Vector2[4]
                 {
                     new Vector2(0, 0),

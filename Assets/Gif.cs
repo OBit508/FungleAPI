@@ -11,6 +11,7 @@ namespace FungleAPI.Assets
     public class GIF
     {
         public bool Loop;
+        public float PixelsPerUnit;
         public IEnumerable<float> Delays;
         public IEnumerable<Texture2D> Frames;
         public float maxTime;

@@ -95,7 +95,10 @@ namespace FungleAPI.Hud.Patches
 
             __instance.gameObject.GetOrAddComponent<Updater>().fixedUpdate += delegate
             {
-                RoleConfigManager.KillConfig?.FixedUpdate?.Invoke();
+                if (__instance.KillButton.isActiveAndEnabled)
+                {
+                    RoleConfigManager.KillConfig?.FixedUpdate?.Invoke();
+                }
             };
 
             __instance.ImpostorVentButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.ImpostorVentButton.transform);
@@ -216,8 +219,14 @@ namespace FungleAPI.Hud.Patches
                 RoleBehaviour role = localPlayer.Data.Role;
                 if (role != null)
                 {
-                    RoleConfigManager.SabotageConfig?.Update?.Invoke();
-                    RoleConfigManager.VentConfig?.Update?.Invoke();
+                    if (__instance.SabotageButton.isActiveAndEnabled)
+                    {
+                        RoleConfigManager.SabotageConfig?.Update?.Invoke();
+                    }
+                    if (__instance.ImpostorVentButton.isActiveAndEnabled)
+                    {
+                        RoleConfigManager.VentConfig?.Update?.Invoke();
+                    }
                 }
             }
             return false;
