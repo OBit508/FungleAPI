@@ -65,6 +65,10 @@ namespace FungleAPI.Role
         /// </summary>
         public bool HideInFreeplay = false;
         /// <summary>
+        /// Indicates whether the role have the same vision as impostors
+        /// </summary>
+        public bool ImpostorVision;
+        /// <summary>
         /// Max role count
         /// </summary>
         public byte MaxRoleCount = 15;

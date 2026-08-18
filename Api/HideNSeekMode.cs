@@ -976,6 +976,7 @@ namespace FungleAPI.Api
 
             return new ValueTuple<int, int, int>(crewmatesAlive, impostorsAlive, impostorsTotal);
         }
+        public override int RequiredPlayerToStart() => 2;
         public float GetRoundTimeElapsed() => GetTotalRoundTime() - GetTotalTimeRemaining();
         public float GetTotalRoundTime() => GetEscapeTime() + GetFinalCountdownTime();
         public float GetTotalTimeRemaining() => currentHideTime + currentFinalHideTime;
