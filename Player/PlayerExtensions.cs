@@ -165,23 +165,6 @@ namespace FungleAPI.Player
             return BodyUtils.GetBodyById(player.PlayerId);
         }
         /// <summary>
-        /// Get the vote area on meeting
-        /// </summary>
-        public static PlayerVoteArea GetVoteArea(this PlayerControl player)
-        {
-            if (MeetingHud.Instance)
-            {
-                foreach (PlayerVoteArea playerVoteArea in MeetingHud.Instance.playerStates)
-                {
-                    if (playerVoteArea.TargetPlayerId == player.PlayerId)
-                    {
-                        return playerVoteArea;
-                    }
-                }
-            }
-            return null;
-        }
-        /// <summary>
         /// Get the chat bubble on the chat tab
         /// </summary>
         public static List<ChatBubble> GetChatBubble(this PlayerControl player)

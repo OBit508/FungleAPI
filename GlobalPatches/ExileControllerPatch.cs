@@ -27,6 +27,7 @@ namespace FungleAPI.GlobalPatches
             {
                 return false;
             }
+
             if (__instance.specialInputHandler != null)
             {
                 __instance.specialInputHandler.disableVirtualCursor = true;
@@ -36,9 +37,10 @@ namespace FungleAPI.GlobalPatches
             __instance.initData = init;
             __instance.Text.gameObject.SetActive(false);
             __instance.Text.text = string.Empty;
+            __instance.wasOverruled = init.wasOverruled;
             if (DestroyableSingleton<HudManager>.InstanceExists)
             {
-                DestroyableSingleton<HudManager>.Instance.SetMapButtonEnabled(false);
+                DestroyableSingleton<HudManager>.Instance.SetMapAndInfoButtonsEnabled(false);
             }
             if (init != null && init.outfit != null)
             {
@@ -102,6 +104,10 @@ namespace FungleAPI.GlobalPatches
                     __instance.completeString = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NoExileSkip);
                 }
                 __instance.Player.gameObject.SetActive(false);
+            }
+            if (init.wasOverruled)
+            {
+                __instance.judgeText.gameObject.SetActive(true);
             }
 
             string teamsText = "";

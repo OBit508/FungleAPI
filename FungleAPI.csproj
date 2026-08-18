@@ -75,13 +75,16 @@
     <Compile Include="GameModes\Logics\LOptionsN.cs" />
     <Compile Include="GameModes\Logics\LRoleSelection.cs" />
     <Compile Include="GameModes\Patches\DeadBodyPatch.cs" />
+    <Compile Include="GameModes\Patches\EngineerRolePatch.cs" />
     <Compile Include="GameModes\Patches\GameManagerCreatorPatch.cs" />
     <Compile Include="GameModes\Patches\GameStartManagerPatch.cs" />
     <Compile Include="GameModes\Patches\ImpostorRolePatch.cs" />
     <Compile Include="GameModes\Patches\MapConsolePatch.cs" />
+    <Compile Include="GameModes\Patches\MinigamePatch.cs" />
     <Compile Include="GameModes\Patches\PhantomRolePatch.cs" />
     <Compile Include="GameModes\Patches\ReportButtonPatch.cs" />
     <Compile Include="GameModes\Patches\SpawnInMinigamePatch.cs" />
+    <Compile Include="GameModes\Patches\TaskPanelBehaviourPatch.cs" />
     <Compile Include="GameOptions\Collections\ModifierOptionCollection.cs" />
     <Compile Include="GameOptions\Lobby\FungleTab.cs" />
     <Compile Include="GameOptions\Lobby\ModifierTab.cs" />

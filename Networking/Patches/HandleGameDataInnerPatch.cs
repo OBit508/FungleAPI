@@ -23,7 +23,7 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Networking.Patches
 {
-    [HarmonyPatch(typeof(InnerNetClient._HandleGameDataInner_d__167), nameof(InnerNetClient._HandleGameDataInner_d__167.MoveNext))]
+    [HarmonyPatch(typeof(InnerNetClient._HandleGameDataInner_d__168), nameof(InnerNetClient._HandleGameDataInner_d__168.MoveNext))]
     [HarmonyPriority(Priority.Last)]
     internal static class HandleGameDataInnerPatch
     {
@@ -51,7 +51,7 @@ namespace FungleAPI.Networking.Patches
             }
             FunglePlugin<FungleApiPlugin>.Logger.LogError(string.Format("Failed to read stored Msg {0} RPC {1} for ", msgNum, (RpcCalls)callId) + netId.ToString());
         }
-        public static bool Prefix(InnerNetClient._HandleGameDataInner_d__167 __instance, ref bool __result)
+        public static bool Prefix(InnerNetClient._HandleGameDataInner_d__168 __instance, ref bool __result)
         {
             MessageReader messageReader = __instance.reader;
 

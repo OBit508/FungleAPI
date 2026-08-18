@@ -17,8 +17,8 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Role.Patches
 {
-    [HarmonyPatch(typeof(RoleOptionsCollectionV10))]
-    internal static class RoleOptionsCollectionV010Patch
+    [HarmonyPatch(typeof(RoleOptionsCollectionV11))]
+    internal static class RoleOptionsCollectionV11Patch
     {
         [HarmonyPrefix]
         [HarmonyPatch("AnyRolesEnabled")]

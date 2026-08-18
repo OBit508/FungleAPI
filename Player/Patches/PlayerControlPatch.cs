@@ -82,6 +82,28 @@ namespace FungleAPI.Player.Patches
         public static void CompleteTaskPostfix(PlayerControl __instance, uint idx)
         {
             EventManager.CallEvent(new CompleteTaskEvent(__instance, idx));
+
+            if (GameModeManager.GetCurrentGameMode() is HideNSeekMode hideNSeekMode)
+            {
+                NormalPlayerTask normalPlayerTask = ShipStatus.Instance.GetTaskById((byte)idx);
+                if (normalPlayerTask != null)
+                {
+                    switch (normalPlayerTask.Length)
+                    {
+                        case NormalPlayerTask.TaskLength.None:
+                        case NormalPlayerTask.TaskLength.Common:
+                            hideNSeekMode.OnTaskComplete(hideNSeekMode.GetCommonTaskTimeValue());
+                            break;
+                        case NormalPlayerTask.TaskLength.Short:
+                            hideNSeekMode.OnTaskComplete(hideNSeekMode.GetShortTaskTimeValue());
+                            break;
+                        case NormalPlayerTask.TaskLength.Long:
+                            hideNSeekMode.OnTaskComplete(hideNSeekMode.GetLongTaskTimeValue());
+                            break;
+                    }
+                    SoundManager.Instance.PlaySoundImmediate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.TaskFinishedSound, false, 1f, 1f, null);
+                }
+            }
         }
         [HarmonyPatch("Die")]
         [HarmonyPostfix]

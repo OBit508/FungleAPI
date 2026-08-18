@@ -2,190 +2,668 @@
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
+using FungleAPI.Base.Rpc;
+using FungleAPI.Components;
+using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Options;
+using FungleAPI.GameOver;
+using FungleAPI.GameOver.Ends;
+using FungleAPI.Modifiers;
+using FungleAPI.Networking;
+using FungleAPI.Player;
 using FungleAPI.PluginLoading;
+using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
+using Hazel;
+using PowerTools;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace FungleAPI.Api
 {
     public class HideNSeekMode : BaseGameMode
     {
-        public override StringNames GameModeName => StringNames.GameTypeHideAndSeek;
-        public override GameModeOptions ModeOptions { get; } = new HNSOptions();
         public Dictionary<StringNames, IModdedOption> Settings = new Dictionary<StringNames, IModdedOption>();
 
-        public bool IsFinalCountdown
-        {
-            get
-            {
-                return this.currentHideTime <= 0f;
-            }
-        }
-        public float CurrentFinalHideTime
-        {
-            get
-            {
-                return this.currentFinalHideTime;
-            }
-        }
-        public float TotalFinalHideTime
-        {
-            get
-            {
-                return this.totalFinalHideTime;
-            }
-        }
-
-        private float lastMusicSyncTime;
-
-        // Token: 0x040010DC RID: 4316
-        private bool isDoingTask;
-
-        // Token: 0x040010DD RID: 4317
-        private float normalVolume;
-
-        // Token: 0x040010DE RID: 4318
-        private float taskVolume;
-
-        // Token: 0x040010DF RID: 4319
-        private float dangerLevel1Volume;
-
-        // Token: 0x040010E0 RID: 4320
-        private float dangerLevel2Volume;
-
-        // Token: 0x040010E1 RID: 4321
-        private AudioSource normalSource;
-
-        // Token: 0x040010E2 RID: 4322
-        private AudioSource taskSource;
-
-        // Token: 0x040010E3 RID: 4323
-        private AudioSource dangerLevel1Source;
-
-        // Token: 0x040010E4 RID: 4324
-        private AudioSource dangerLevel2Source;
-
-        // Token: 0x040010E5 RID: 4325
-        private float musicLerpSpeed = 5f;
-
-        // Token: 0x040010E6 RID: 4326
-        private readonly Dictionary<LogicHnSMusic.HideAndSeekMusicTrack, string> musicNames = new Dictionary<LogicHnSMusic.HideAndSeekMusicTrack, string>
-    {
-        {
-            LogicHnSMusic.HideAndSeekMusicTrack.Normal,
-            "HnS_Music_Normal"
-        },
-        {
-            LogicHnSMusic.HideAndSeekMusicTrack.Task,
-            "HnS_Music_Task"
-        },
-        {
-            LogicHnSMusic.HideAndSeekMusicTrack.DangerLevel1,
-            "HnS_Music_DangerLevel1"
-        },
-        {
-            LogicHnSMusic.HideAndSeekMusicTrack.DangerLevel2,
-            "HnS_Music_DangerLevel2"
-        }
-    };
-
-        // Token: 0x020002D3 RID: 723
-        public enum HideAndSeekMusicTrack
-        {
-            // Token: 0x040010E8 RID: 4328
-            None,
-            // Token: 0x040010E9 RID: 4329
-            Normal,
-            // Token: 0x040010EA RID: 4330
-            Task,
-            // Token: 0x040010EB RID: 4331
-            DangerLevel1,
-            // Token: 0x040010EC RID: 4332
-            DangerLevel2
-        }
-        private int deadPlayerCount;
         private float currentHideTime = float.MaxValue;
         private float currentFinalHideTime = float.MaxValue;
         private float totalFinalHideTime = float.MaxValue;
         private float totalHideTime = float.MaxValue;
+
+        private HideAndSeekTimerBar timerBar;
+        private Coroutine beepCoroutine;
+
         private DangerMeter dangerMeter;
         private List<PlayerControl> impostors;
         private float scaryMusicDistance;
         private float veryScaryMusicDistance;
         private float dangerLevel1;
         private float dangerLevel2;
+
+        private float syncTimer;
+
+        private readonly Dictionary<HideAndSeekMusicTrack, string> musicNames = new Dictionary<HideAndSeekMusicTrack, string>
+        {
+            { HideAndSeekMusicTrack.Normal,       "HnS_Music_Normal" },
+            { HideAndSeekMusicTrack.Task,         "HnS_Music_Task" },
+            { HideAndSeekMusicTrack.DangerLevel1, "HnS_Music_DangerLevel1" },
+            { HideAndSeekMusicTrack.DangerLevel2, "HnS_Music_DangerLevel2" },
+        };
+
+        public float HideCountdown;
+
+        private bool isDoingTask;
+        private float normalVolume;
+        private float taskVolume;
+        private float dangerLevel1Volume;
+        private float dangerLevel2Volume;
+
+        private AudioSource normalSource;
+        private AudioSource taskSource;
+        private AudioSource dangerLevel1Source;
+        private AudioSource dangerLevel2Source;
+
+        private float musicLerpSpeed = 5f;
+        private float lastMusicSyncTime;
         private bool firstMusicActivation;
         private float firstCrossfadeCountdown;
-        private HideAndSeekTimerBar timerBar;
-        private Coroutine beepCoroutine;
 
-        public override void OnGameEnd()
+        private ObjectPoolBehavior pingPool;
+        private Coroutine seekerPingCoroutine;
+
+        private int deadPlayerCount;
+
+        public override StringNames GameModeName => StringNames.GameTypeHideAndSeek;
+        public override GameModeOptions ModeOptions { get; } = new HNSOptions();
+
+        public bool IsFinalCountdown => currentHideTime <= 0f;
+        public float CurrentFinalHideTime => currentFinalHideTime;
+        public float TotalFinalHideTime => totalFinalHideTime;
+        public override IEnumerator CoIntroBegin(IntroCutscene introCutscene)
         {
-            if (this.timerBar != null)
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Starting intro cutscene", null);
+            SoundManager.Instance.PlaySound(introCutscene.IntroStinger, false, 1f, null);
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Game Mode: Hide and Seek", null);
+            introCutscene.LogPlayerRoleData();
+            introCutscene.HideAndSeekPanels.SetActive(true);
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
             {
-                GameObject.Destroy(this.timerBar.gameObject);
+                introCutscene.CrewmateRules.SetActive(false);
+                introCutscene.ImpostorRules.SetActive(true);
             }
-            if (this.beepCoroutine != null)
+            else
             {
-                this.Manager.StopCoroutine(this.beepCoroutine);
+                introCutscene.CrewmateRules.SetActive(true);
+                introCutscene.ImpostorRules.SetActive(false);
             }
-            this.beepCoroutine = null;
-            this.impostors = null;
-            this.ResetMusic();
+            Il2CppSystem.Collections.Generic.List<PlayerControl> list2 = IntroCutscene.SelectTeamToShow(new Func<NetworkedPlayerInfo, bool>((NetworkedPlayerInfo pcd) => PlayerControl.LocalPlayer.Data.Role.IsImpostor != pcd.Role.IsImpostor));
+            if (list2 == null || list2.Count < 1)
+            {
+                Logger.GlobalInstance.Error("IntroCutscene :: CoBegin() :: teamToShow is EMPTY or NULL", null);
+            }
+            PlayerControl impostor = PlayerControl.AllPlayerControls.Find((PlayerControl pc) => pc.Data.Role.IsImpostor);
+            if (impostor == null)
+            {
+                Logger.GlobalInstance.Error("IntroCutscene :: CoBegin() :: impostor is NULL", null);
+            }
+            GameManager.Instance.SetSpecialCosmetics(impostor);
+            introCutscene.ImpostorName.gameObject.SetActive(true);
+            introCutscene.ImpostorTitle.gameObject.SetActive(true);
+            introCutscene.BackgroundBar.enabled = false;
+            introCutscene.TeamTitle.gameObject.SetActive(false);
+            if (impostor != null)
+            {
+                introCutscene.ImpostorName.text = impostor.Data.PlayerName;
+            }
+            else
+            {
+                introCutscene.ImpostorName.text = "???";
+            }
+            yield return new WaitForSecondsRealtime(0.1f);
+            PoolablePlayer playerSlot = null;
+            if (impostor != null)
+            {
+                playerSlot = introCutscene.CreatePlayer(1, 1, impostor.Data, false);
+                playerSlot.SetBodyType(PlayerBodyTypes.Normal);
+                playerSlot.SetFlipX(false);
+                playerSlot.transform.localPosition = introCutscene.impostorPos;
+                playerSlot.transform.localScale = Vector3.one * introCutscene.impostorScale;
+            }
+            yield return ShipStatus.Instance.CosmeticsCache.PopulateFromPlayers();
+            yield return new WaitForSecondsRealtime(6f);
+            if (playerSlot != null)
+            {
+                playerSlot.gameObject.SetActive(false);
+            }
+            introCutscene.HideAndSeekPanels.SetActive(false);
+            introCutscene.CrewmateRules.SetActive(false);
+            introCutscene.ImpostorRules.SetActive(false);
+            StartMusicWithIntro();
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+            {
+                float crewmateLeadTime = (float)GetCrewmateLeadTime();
+                introCutscene.HideAndSeekTimerText.gameObject.SetActive(true);
+                PoolablePlayer poolablePlayer;
+                AnimationClip animationClip;
+                if (AprilFoolsMode.ShouldHorseAround())
+                {
+                    poolablePlayer = introCutscene.HorseWrangleVisualSuit;
+                    poolablePlayer.gameObject.SetActive(true);
+                    poolablePlayer.SetBodyType(PlayerBodyTypes.Seeker);
+                    animationClip = introCutscene.HnSSeekerSpawnHorseAnim;
+                    introCutscene.HorseWrangleVisualPlayer.SetBodyType(PlayerBodyTypes.Normal);
+                    introCutscene.HorseWrangleVisualPlayer.UpdateFromPlayerData(PlayerControl.LocalPlayer.Data, PlayerControl.LocalPlayer.CurrentOutfitType, PlayerMaterial.MaskType.None, false, null, false);
+                }
+                else if (AprilFoolsMode.ShouldLongAround())
+                {
+                    poolablePlayer = introCutscene.HideAndSeekPlayerVisual;
+                    poolablePlayer.gameObject.SetActive(true);
+                    poolablePlayer.SetBodyType(PlayerBodyTypes.LongSeeker);
+                    animationClip = introCutscene.HnSSeekerSpawnLongAnim;
+                }
+                else
+                {
+                    poolablePlayer = introCutscene.HideAndSeekPlayerVisual;
+                    poolablePlayer.gameObject.SetActive(true);
+                    poolablePlayer.SetBodyType(PlayerBodyTypes.Seeker);
+                    animationClip = introCutscene.HnSSeekerSpawnAnim;
+                }
+                poolablePlayer.SetBodyCosmeticsVisible(false);
+                poolablePlayer.UpdateFromPlayerData(PlayerControl.LocalPlayer.Data, PlayerControl.LocalPlayer.CurrentOutfitType, PlayerMaterial.MaskType.None, false, null, false);
+                SpriteAnim component = poolablePlayer.GetComponent<SpriteAnim>();
+                poolablePlayer.gameObject.SetActive(true);
+                poolablePlayer.ToggleName(false);
+                component.Play(animationClip, 1f);
+                while (crewmateLeadTime > 0f)
+                {
+                    introCutscene.HideAndSeekTimerText.text = Mathf.RoundToInt(crewmateLeadTime).ToString();
+                    crewmateLeadTime -= Time.deltaTime;
+                    yield return null;
+                }
+            }
+            else
+            {
+                ShipStatus.Instance.HideCountdown = (float)GetCrewmateLeadTime();
+                if (AprilFoolsMode.ShouldHorseAround())
+                {
+                    if (impostor != null)
+                    {
+                        impostor.AnimateCustom(introCutscene.HnSSeekerSpawnHorseInGameAnim);
+                    }
+                }
+                else if (AprilFoolsMode.ShouldLongAround())
+                {
+                    if (impostor != null)
+                    {
+                        impostor.AnimateCustom(introCutscene.HnSSeekerSpawnLongInGameAnim);
+                    }
+                }
+                else if (impostor != null)
+                {
+                    impostor.AnimateCustom(introCutscene.HnSSeekerSpawnAnim);
+                    impostor.cosmetics.SetBodyCosmeticsVisible(false);
+                }
+            }
+            impostor = null;
+            playerSlot = null;
+            ShipStatus.Instance.StartSFX();
+            introCutscene.gameObject.Destroy();
+            HideCountdown = 10;
+        }
+        public override PlayerBodyTypes GetBodyType(PlayerControl player)
+        {
+            if (player == null || player.Data == null || player.Data.Role == null)
+            {
+                if (AprilFoolsMode.ShouldHorseAround())
+                {
+                    return PlayerBodyTypes.Horse;
+                }
+                if (AprilFoolsMode.ShouldLongAround())
+                {
+                    return PlayerBodyTypes.Long;
+                }
+                return PlayerBodyTypes.Normal;
+            }
+            else if (AprilFoolsMode.ShouldHorseAround())
+            {
+                if (player.Data.Role.IsImpostor)
+                {
+                    return PlayerBodyTypes.Normal;
+                }
+                return PlayerBodyTypes.Horse;
+            }
+            else if (AprilFoolsMode.ShouldLongAround())
+            {
+                if (player.Data.Role.IsImpostor)
+                {
+                    return PlayerBodyTypes.LongSeeker;
+                }
+                return PlayerBodyTypes.Long;
+            }
+            else if (AprilFoolsMode.ShouldClassicMode())
+            {
+                if (player.Data.Role.IsImpostor)
+                {
+                    return PlayerBodyTypes.Seeker;
+                }
+                return PlayerBodyTypes.Classic;
+            }
+            else
+            {
+                if (player.Data.Role.IsImpostor)
+                {
+                    return PlayerBodyTypes.Seeker;
+                }
+                return PlayerBodyTypes.Normal;
+            }
+        }
+        public override MapOptions GetMapOptions()
+        {
+            MapOptions mapOptions = new MapOptions
+            {
+                Mode = MapOptions.Modes.Normal
+            };
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && SeekerAdminMapEnabled(PlayerControl.LocalPlayer))
+            {
+                mapOptions.Mode = MapOptions.Modes.CountOverlay;
+                mapOptions.AllowMovementWhileMapOpen = true;
+                mapOptions.IncludeDeadBodies = false;
+                mapOptions.ShowLivePlayerPosition = false;
+            }
+            return mapOptions;
+        }
+        public bool SeekerAdminMapEnabled(PlayerControl player)
+        {
+            int item = GetPlayerCounts().Item1;
+            return !player.inVent && !(player.Data == null) && !(player.Data.Role == null) && ((!player.inVent && player.Data.Role.IsImpostor && IsFinalCountdown && GetSeekerFinalMap()) || (player.Data.Role.IsImpostor && item <= (GameData.Instance.PlayerCount - 1) / 3));
+        }
+        public void OnTaskComplete(float timeDeduction)
+        {
+            if (timerBar != null)
+            {
+                timerBar.TaskComplete();
+            }
+            AdjustEscapeTimer(timeDeduction, true);
+        }
+        public override DeadBody GetDeadBody(GameManager gameManager, RoleBehaviour impostorRole)
+        {
+            return gameManager.deadBodyPrefab[impostorRole.GetCreatedDeadBody() == DeadBodyType.Viper ? 1 : 0];
+        }
+        public override void SetTaskPanelText(HudManager hudManager)
+        {
+            PlayerControl localPlayer = PlayerControl.LocalPlayer;
+            if (hudManager == null || localPlayer == null || localPlayer.Data == null || localPlayer.Data.Role == null || hudManager.tasksString == null)
+            {
+                return;
+            }
+
+            NetworkedPlayerInfo data = localPlayer.Data;
+            if (localPlayer.myTasks != null)
+            {
+                for (int i = 0; i < PlayerControl.LocalPlayer.myTasks.Count; i++)
+                {
+                    PlayerTask playerTask = PlayerControl.LocalPlayer.myTasks[i];
+                    if (playerTask)
+                    {
+                        if (playerTask.TaskType == TaskTypes.FixComms && !(data.Role != null && data.Role.IsImpostor))
+                        {
+                            hudManager.tasksString.Clear();
+                            playerTask.AppendTaskText(hudManager.tasksString);
+                            break;
+                        }
+                        playerTask.AppendTaskText(hudManager.tasksString);
+                    }
+                }
+                if (data.Role != null)
+                {
+                    data.Role.AppendTaskHint(hudManager.tasksString);
+                }
+                if (HideCountdown > 0)
+                {
+                    hudManager.tasksString.Append("\n\n" + ((int)HideCountdown).ToString());
+                }
+                hudManager.tasksString.TrimEnd();
+            }
+        }
+        public override float CalculateLightRadius(NetworkedPlayerInfo player, bool airship)
+        {
+            ShipStatus ship = ShipStatus.Instance;
+            float Base()
+            {
+                if (player == null || player.IsDead)
+                {
+                    return ship.MaxLightRadius;
+                }
+                if (player.Role.IsImpostor)
+                {
+                    float impLight = 0;
+                    if (Settings[StringNames.GameImpostorLight] is ModdedNumberOption moddedNumberOption)
+                    {
+                        impLight = moddedNumberOption.FloatValue;
+                    }
+                    return ship.MaxLightRadius * impLight;
+                }
+                float t = 1f;
+                ISystemType systemType;
+                if (ship.Systems.TryGetValue(SystemTypes.Electrical, out systemType))
+                {
+                    t = systemType.SafeCast<SwitchSystem>().Value / 255f;
+                }
+
+                float crewLight = 0;
+                if (Settings[StringNames.GameCrewLight] is ModdedNumberOption moddedNumberOption2)
+                {
+                    crewLight = moddedNumberOption2.FloatValue;
+                }
+
+                return Mathf.Lerp(ship.MinLightRadius, ship.MaxLightRadius, t) * crewLight;
+            }
+            if (airship)
+            {
+                AirshipStatus airshipStatus = ship.SafeCast<AirshipStatus>();
+
+                float num = Base();
+                if (player.Role.AffectedByLightAffectors)
+                {
+                    foreach (LightAffector lightAffector in airshipStatus.LightAffectors)
+                    {
+                        if (player.Object && player.Object.Collider.IsTouching(lightAffector.Hitbox))
+                        {
+                            num *= lightAffector.Multiplier;
+                        }
+                    }
+                }
+                return num;
+            }
+            return Base();
+        }
+        public override void AdjustLighting(PlayerControl playerControl)
+        {
+            if (playerControl == null || playerControl.Data == null) return;
+
+            float flashlightSize = 0f;
+            if (IsFlashlightEnabled(playerControl))
+            {
+                if (playerControl.Data.Role.IsImpostor)
+                {
+                    if (Settings[StringNames.ImpostorFlashlightSize] is ModdedNumberOption moddedNumberOption)
+                    {
+                        flashlightSize = moddedNumberOption.FloatValue;
+                    }
+                }
+                else
+                {
+                    if (Settings[StringNames.CrewmateFlashlightSize] is ModdedNumberOption moddedNumberOption)
+                    {
+                        flashlightSize = moddedNumberOption.FloatValue;
+                    }
+                }
+            }
+            playerControl.SetFlashlightInputMethod();
+            playerControl.lightSource.SetupLightingForGameplay(IsFlashlightEnabled(playerControl), flashlightSize, playerControl.TargetFlashlight.transform);
+        }
+        public override bool IsFlashlightEnabled(PlayerControl playerControl)
+        {
+            if (LobbyBehaviour.Instance != null)
+            {
+                return false;
+            }
+            if (playerControl.Data.IsDead)
+            {
+                return false;
+            }
+            return Settings[StringNames.UseFlashlight] is ModdedToggleOption moddedToggleOption && moddedToggleOption.BooleanValue;
         }
         public override void OnGameStart()
         {
-            this.totalHideTime = GetEscapeTime();
-            this.currentHideTime = this.totalHideTime;
-            this.totalFinalHideTime = GetFinalCountdownTime();
-            this.currentFinalHideTime = this.totalFinalHideTime;
-            if (this.timerBar != null)
+            totalHideTime = GetEscapeTime();
+            currentHideTime = totalHideTime;
+            totalFinalHideTime = GetFinalCountdownTime();
+            currentFinalHideTime = totalFinalHideTime;
+
+            if (AmongUsClient.Instance.AmHost)
             {
-                GameObject.Destroy(this.timerBar);
+                Rpc<RpcSyncTime>.Instance.Send(PlayerControl.LocalPlayer);
+                syncTimer = 10;
             }
-            this.timerBar = GameObject.Instantiate<HideAndSeekTimerBar>(GameManagerCreator.Instance.HideAndSeekManagerPrefab.TimerBarPrefab, DestroyableSingleton<HudManager>.Instance.transform.parent);
-            this.firstMusicActivation = true;
+
+            if (timerBar != null)
+            {
+                GameObject.Destroy(timerBar);
+            }
+
+            HudManager.Instance.TaskPanel.transform.parent.GetChild(1).gameObject.SetActive(false);
+
+            timerBar = GameObject.Instantiate<HideAndSeekTimerBar>(GameManagerCreator.Instance.HideAndSeekManagerPrefab.TimerBarPrefab, DestroyableSingleton<HudManager>.Instance.transform.parent);
+
+            firstMusicActivation = true;
+
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor)
             {
-                this.dangerMeter = DestroyableSingleton<HudManager>.Instance.DangerMeter;
-                this.dangerMeter.gameObject.SetActive(true);
+                HudManager.Instance.DangerMeter = DestroyableSingleton<HudManager>.Instance.transform.GetChild(4).GetChild(0).GetComponent<DangerMeter>();
+                dangerMeter = HudManager.Instance.DangerMeter;
+                dangerMeter.gameObject.SetActive(true);
             }
-            this.impostors = new List<PlayerControl>();
+
+            impostors = new List<PlayerControl>();
             foreach (PlayerControl playerControl in PlayerControl.AllPlayerControls)
             {
                 NetworkedPlayerInfo data = playerControl.Data;
-                if (((data != null) ? data.Role : null) != null && playerControl.Data.Role.IsImpostor)
+                if (data?.Role != null && data.Role.IsImpostor)
                 {
-                    this.impostors.Add(playerControl);
+                    impostors.Add(playerControl);
                 }
             }
-            this.scaryMusicDistance = GetScaryMusicDistance() * GetSpeedMod();
-            this.veryScaryMusicDistance = GetVeryScaryMusicDistance() * GetSpeedMod();
-            if (this.scaryMusicDistance < this.veryScaryMusicDistance)
+
+            scaryMusicDistance = GetScaryMusicDistance() * GetSpeedMod();
+            veryScaryMusicDistance = GetVeryScaryMusicDistance() * GetSpeedMod();
+            if (scaryMusicDistance < veryScaryMusicDistance)
             {
-                float num = this.veryScaryMusicDistance;
-                float num2 = this.scaryMusicDistance;
-                this.scaryMusicDistance = num;
-                this.veryScaryMusicDistance = num2;
+                (scaryMusicDistance, veryScaryMusicDistance) = (veryScaryMusicDistance, scaryMusicDistance);
             }
-            this.InitMusic();
-            this.ResetMusic();
+
+            InitMusic();
+            ResetMusic();
+        }
+        public override void OnGameEnd()
+        {
+            if (timerBar != null)
+            {
+                GameObject.Destroy(timerBar.gameObject);
+            }
+
+            if (beepCoroutine != null)
+            {
+                Manager.StopCoroutine(beepCoroutine);
+            }
+            beepCoroutine = null;
+
+            impostors = null;
+            ResetMusic();
+            DestroyPingCoroutine();
+
+            pingPool = GameManagerCreator.Instance.HideAndSeekManagerPrefab.PingPool;
+        }
+        public void UpdateGameFlow()
+        {
+            if (IsFinalCountdown)
+            {
+                AdjustFinalEscapeTimer(Time.fixedDeltaTime);
+                return;
+            }
+            AdjustEscapeTimer(Time.fixedDeltaTime, false);
+        }
+        public void UpdateMeter()
+        {
+            PlayerControl localPlayer = PlayerControl.LocalPlayer;
+            if (impostors == null || localPlayer == null)
+            {
+                return;
+            }
+            if (impostors.Count <= 0)
+            {
+                return;
+            }
+            float num = float.MaxValue;
+            foreach (PlayerControl playerControl in impostors)
+            {
+                if (!(playerControl == null))
+                {
+                    float sqrMagnitude = (playerControl.transform.position - localPlayer.transform.position).sqrMagnitude;
+                    if (sqrMagnitude < scaryMusicDistance && num > sqrMagnitude)
+                    {
+                        num = sqrMagnitude;
+                    }
+                }
+            }
+            if (HideCountdown > 0f)
+            {
+                dangerLevel1 = 0f;
+                dangerLevel2 = 0f;
+            }
+            else
+            {
+                if (firstMusicActivation)
+                {
+                    firstMusicActivation = false;
+                    firstCrossfadeCountdown = 3f;
+                    SetMusicCrossfadeSpeed(0.6f);
+                }
+                if (firstCrossfadeCountdown > 0f)
+                {
+                    firstCrossfadeCountdown -= Time.deltaTime;
+                    if (firstCrossfadeCountdown <= 0f)
+                    {
+                        SetMusicCrossfadeSpeed(5f);
+                    }
+                }
+                dangerLevel1 = Mathf.Clamp01((scaryMusicDistance - num) / (scaryMusicDistance - veryScaryMusicDistance));
+                dangerLevel2 = Mathf.Clamp01((veryScaryMusicDistance - num) / veryScaryMusicDistance);
+            }
+            UpdateDangerMeter();
+            UpdateDangerMusic();
+            ApplyMusicVolumes(Time.fixedDeltaTime);
+        }
+        public void UpdatePings()
+        {
+            if (!Manager.GameHasStarted)
+            {
+                return;
+            }
+            if (!IsFinalCountdown)
+            {
+                return;
+            }
+            if (seekerPingCoroutine != null)
+            {
+                return;
+            }
+            if (!GetSeekerPings())
+            {
+                return;
+            }
+            seekerPingCoroutine = Manager.StartCoroutine(SeekerPing().WrapToIl2Cpp());
+        }
+        public override void FixedUpdate()
+        {
+            HideCountdown -= Time.fixedDeltaTime;
+
+            UpdateGameFlow();
+            UpdateMeter();
+            UpdatePings();
+
+            if (AmongUsClient.Instance.AmHost)
+            {
+                syncTimer -= Time.fixedDeltaTime;
+                if (syncTimer <= 0)
+                {
+                    Rpc<RpcSyncTime>.Instance.Send(PlayerControl.LocalPlayer);
+                    syncTimer = 5;
+                }
+            }
+        }
+        public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
+        {
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+            {
+                return;
+            }
+
+            deadPlayerCount++;
+            GameObject.Instantiate<HideAndSeekDeathPopup>(GameManagerCreator.Instance.HideAndSeekManagerPrefab.DeathPopupPrefab, DestroyableSingleton<HudManager>.Instance.transform.parent).Show(player, deadPlayerCount);
+
+            if (AmongUsClient.Instance.AmHost && assignGhostRole)
+            {
+                DestroyableSingleton<RoleManager>.Instance.AssignRoleOnDeath(player, false);
+            }
+        }
+        public override void OnPlayerDisconnect(PlayerControl pc)
+        {
+            if (pc.Data.Role.IsImpostor)
+            {
+                impostors?.Remove(pc);
+            }
+        }
+        public override bool CanUse(IUsable usable, PlayerControl player)
+        {
+            return !usable.Is(out Vent _) || !player.Data.Role.IsImpostor;
+        }
+        public override float GetPlayerSpeedMod(PlayerControl pc)
+        {
+            if (pc?.Data?.Role == null)
+            {
+                return base.GetPlayerSpeedMod(pc);
+            }
+
+            if (pc.Data.IsDead)
+            {
+                return GetSpeedMod() + 1f;
+            }
+
+            if (!pc.Data.Role.IsImpostor)
+            {
+                return GetSpeedMod();
+            }
+
+            float speed = GetSpeedMod() + GetSpeedMod() * 0.25f;
+            if (IsFinalCountdown && Settings[StringNames.SeekerFinalSpeed] is ModdedNumberOption seekerFinalSpeed)
+            {
+                speed *= seekerFinalSpeed.FloatValue;
+            }
+            return speed;
+        }
+        private void ApplyMusicVolumes(float deltaTime)
+        {
+            if (normalSource == null || taskSource == null || dangerLevel1Source == null || dangerLevel2Source == null)
+            {
+                return;
+            }
+
+            float step = deltaTime * musicLerpSpeed;
+
+            normalSource.volume = Mathf.MoveTowards(normalSource.volume, normalVolume, step);
+            taskSource.volume = Mathf.MoveTowards(taskSource.volume, taskVolume, step);
+            dangerLevel1Source.volume = Mathf.MoveTowards(dangerLevel1Source.volume, dangerLevel1Volume, step);
+            dangerLevel2Source.volume = Mathf.MoveTowards(dangerLevel2Source.volume, dangerLevel2Volume, step);
         }
         public void ResetMusic()
         {
-            this.SetMusicValues(0f, 0f);
+            SetMusicValues(0f, 0f);
         }
         public void SetMusicCrossfadeSpeed(float lerpSpeed)
         {
-            this.musicLerpSpeed = lerpSpeed;
+            musicLerpSpeed = lerpSpeed;
+        }
+        public void SetTaskState(bool isDoingTask)
+        {
+            this.isDoingTask = isDoingTask;
         }
         public void SetMusicValues(float dangerLevel1, float dangerLevel2)
         {
@@ -193,425 +671,113 @@ namespace FungleAPI.Api
             {
                 return;
             }
-            if (this.normalSource == null || this.taskSource == null || this.dangerLevel1Source == null || this.dangerLevel2Source == null)
+
+            if (normalSource == null || taskSource == null || dangerLevel1Source == null || dangerLevel2Source == null)
             {
                 return;
             }
-            this.normalVolume = (this.isDoingTask ? 0f : 1f);
-            this.taskVolume = (this.isDoingTask ? 1f : 0f);
-            this.dangerLevel1Volume = 0f;
-            this.dangerLevel2Volume = 0f;
+
+            normalVolume = isDoingTask ? 0f : 1f;
+            taskVolume = isDoingTask ? 1f : 0f;
+            dangerLevel1Volume = 0f;
+            dangerLevel2Volume = 0f;
+
             if (dangerLevel1 > 0f)
             {
-                this.dangerLevel1Volume = dangerLevel1;
-                if (this.isDoingTask)
+                dangerLevel1Volume = dangerLevel1;
+                if (isDoingTask)
                 {
-                    this.taskVolume = 1f - dangerLevel1;
+                    taskVolume = 1f - dangerLevel1;
                 }
                 else
                 {
-                    this.normalVolume = 1f - dangerLevel1;
+                    normalVolume = 1f - dangerLevel1;
                 }
             }
+
             if (dangerLevel2 > 0f)
             {
-                this.dangerLevel2Volume = dangerLevel2;
-                this.dangerLevel1Volume = 1f - dangerLevel2;
+                dangerLevel2Volume = dangerLevel2;
+                dangerLevel1Volume = 1f - dangerLevel2;
             }
         }
-        public void SetTaskState(bool isDoingTask)
-        {
-            this.isDoingTask = isDoingTask;
-        }
+
         public void StartMusicWithIntro()
         {
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor)
             {
-                AudioClip audioClip = (((this.Manager as HideAndSeekManager).LogicOptionsHnS.GetEscapeTime() <= 180f) ? GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.ImpostorShortMusic : GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.ImpostorLongMusic);
-                if (AprilFoolsMode.ShouldHorseAround())
-                {
-                    audioClip = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.ImpostorRanchMusic;
-                }
-                SoundManager.Instance.PlaySound(audioClip, true, 1f, SoundManager.Instance.MusicChannel);
+                return;
             }
+
+            HideAndSeekMusicCollection musicCollection = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection;
+            bool isShortGame = GetEscapeTime() <= 180f;
+
+            AudioClip audioClip = isShortGame ? musicCollection.ImpostorShortMusic : musicCollection.ImpostorLongMusic;
+
+            if (AprilFoolsMode.ShouldHorseAround())
+            {
+                audioClip = musicCollection.ImpostorRanchMusic;
+            }
+
+            SoundManager.Instance.PlaySound(audioClip, true, 1f, SoundManager.Instance.MusicChannel);
         }
-        private void SyncMusic()
-        {
-            this.taskSource.timeSamples = this.normalSource.timeSamples;
-            this.dangerLevel1Source.timeSamples = this.normalSource.timeSamples;
-            this.dangerLevel2Source.timeSamples = this.normalSource.timeSamples;
-            this.lastMusicSyncTime = Time.unscaledTime;
-        }
+
         private void InitMusic()
         {
-            if (this.normalSource == null)
+            HideAndSeekMusicCollection musicCollection = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection;
+            AudioMixerGroup musicChannel = SoundManager.Instance.MusicChannel;
+
+            if (normalSource == null)
             {
-                this.normalSource = SoundManager.Instance.GetNamedSfxSource(this.musicNames[LogicHnSMusic.HideAndSeekMusicTrack.Normal]);
+                normalSource = SoundManager.Instance.GetNamedSfxSource(musicNames[HideAndSeekMusicTrack.Normal]);
             }
-            this.normalSource.outputAudioMixerGroup = SoundManager.Instance.MusicChannel;
-            this.normalSource.clip = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.NormalMusic;
-            this.normalSource.loop = true;
-            if (this.taskSource == null)
+            normalSource.outputAudioMixerGroup = musicChannel;
+            normalSource.clip = musicCollection.NormalMusic;
+            normalSource.loop = true;
+
+            if (taskSource == null)
             {
-                this.taskSource = SoundManager.Instance.GetNamedSfxSource(this.musicNames[LogicHnSMusic.HideAndSeekMusicTrack.Task]);
+                taskSource = SoundManager.Instance.GetNamedSfxSource(musicNames[HideAndSeekMusicTrack.Task]);
             }
-            this.taskSource.outputAudioMixerGroup = SoundManager.Instance.MusicChannel;
-            this.taskSource.volume = 0f;
-            this.taskSource.clip = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.TaskMusic;
-            this.taskSource.loop = true;
-            if (this.dangerLevel1Source == null)
+            taskSource.outputAudioMixerGroup = musicChannel;
+            taskSource.volume = 0f;
+            taskSource.clip = musicCollection.TaskMusic;
+            taskSource.loop = true;
+
+            if (dangerLevel1Source == null)
             {
-                this.dangerLevel1Source = SoundManager.Instance.GetNamedSfxSource(this.musicNames[LogicHnSMusic.HideAndSeekMusicTrack.DangerLevel1]);
+                dangerLevel1Source = SoundManager.Instance.GetNamedSfxSource(musicNames[HideAndSeekMusicTrack.DangerLevel1]);
             }
-            this.dangerLevel1Source.outputAudioMixerGroup = SoundManager.Instance.MusicChannel;
-            this.dangerLevel1Source.volume = 0f;
-            this.dangerLevel1Source.clip = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.DangerLevel1Music;
-            this.dangerLevel1Source.loop = true;
-            if (this.dangerLevel2Source == null)
+            dangerLevel1Source.outputAudioMixerGroup = musicChannel;
+            dangerLevel1Source.volume = 0f;
+            dangerLevel1Source.clip = musicCollection.DangerLevel1Music;
+            dangerLevel1Source.loop = true;
+
+            if (dangerLevel2Source == null)
             {
-                this.dangerLevel2Source = SoundManager.Instance.GetNamedSfxSource(this.musicNames[LogicHnSMusic.HideAndSeekMusicTrack.DangerLevel2]);
+                dangerLevel2Source = SoundManager.Instance.GetNamedSfxSource(musicNames[HideAndSeekMusicTrack.DangerLevel2]);
             }
-            this.dangerLevel2Source.outputAudioMixerGroup = SoundManager.Instance.MusicChannel;
-            this.dangerLevel2Source.volume = 0f;
-            this.dangerLevel2Source.clip = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection.DangerLevel2Music;
-            this.dangerLevel2Source.loop = true;
-            this.normalSource.Play();
-            this.taskSource.Play();
-            this.dangerLevel1Source.Play();
-            this.dangerLevel2Source.Play();
-            this.SyncMusic();
+            dangerLevel2Source.outputAudioMixerGroup = musicChannel;
+            dangerLevel2Source.volume = 0f;
+            dangerLevel2Source.clip = musicCollection.DangerLevel2Music;
+            dangerLevel2Source.loop = true;
+
+            normalSource.Play();
+            taskSource.Play();
+            dangerLevel1Source.Play();
+            dangerLevel2Source.Play();
+
+            SyncMusic();
         }
 
-        public override void OnPlayerDeath(PlayerControl player, bool assignGhostRole)
+        private void SyncMusic()
         {
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
-            {
-                return;
-            }
-            this.deadPlayerCount++;
-            GameObject.Instantiate<HideAndSeekDeathPopup>(GameManagerCreator.Instance.HideAndSeekManagerPrefab.DeathPopupPrefab, DestroyableSingleton<HudManager>.Instance.transform.parent).Show(player, this.deadPlayerCount);
-        }
-        public override void OnPlayerDisconnect(PlayerControl pc)
-        {
-            if (pc.Data.Role.IsImpostor)
-            {
-                List<PlayerControl> list = this.impostors;
-                if (list == null)
-                {
-                    return;
-                }
-                list.Remove(pc);
-            }
-        }
-        public float GetSpeedMod()
-        {
-            if (Settings[StringNames.GamePlayerSpeed] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.FloatValue;
-            }
-            return 1;
-        }
-        public override float GetPlayerSpeedMod(PlayerControl pc)
-        {
-            if (pc == null || pc.Data == null || pc.Data.Role == null)
-            {
-                return base.GetPlayerSpeedMod(pc);
-            }
-            if (pc.Data.IsDead)
-            {
-                return GetSpeedMod() + 1f;
-            }
-            if (!pc.Data.Role.IsImpostor)
-            {
-                return GetSpeedMod();
-            }
-            float num = GetSpeedMod() + GetSpeedMod() * 0.25f;
-            if (IsFinalCountdown && Settings[StringNames.SeekerFinalSpeed] is ModdedNumberOption moddedNumber)
-            {
-                num *= moddedNumber.FloatValue;
-            }
-            return num;
+            taskSource.timeSamples = normalSource.timeSamples;
+            dangerLevel1Source.timeSamples = normalSource.timeSamples;
+            dangerLevel2Source.timeSamples = normalSource.timeSamples;
+            lastMusicSyncTime = Time.unscaledTime;
         }
 
-        // Token: 0x0600122C RID: 4652 RVA: 0x00049637 File Offset: 0x00047837
-        public override float GetKillDistance()
-        {
-            return HideNSeekGameOptionsV10.KillDistances[Mathf.Clamp(0, 0, HideNSeekGameOptionsV10.KillDistances.Length - 1)];
-        }
-
-        // Token: 0x0600122D RID: 4653 RVA: 0x00049659 File Offset: 0x00047859
-        public override float GetEngineerCooldown()
-        {
-            return this.GetCrewmateVentCooldown();
-        }
-
-        // Token: 0x0600122E RID: 4654 RVA: 0x00049661 File Offset: 0x00047861
-        public override float GetEngineerInVentTime()
-        {
-            return this.GetCrewmateInVentTime();
-        }
-
-        // Token: 0x0600122F RID: 4655 RVA: 0x00049669 File Offset: 0x00047869
-        public int GetCrewmateLeadTime()
-        {
-            return 10;
-        }
-
-        // Token: 0x06001230 RID: 4656 RVA: 0x0004966D File Offset: 0x0004786D
-        public float GetEscapeTime()
-        {
-            if (Settings[StringNames.EscapeTime] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.FloatValue;
-            }
-            return 200;
-        }
-
-        // Token: 0x06001231 RID: 4657 RVA: 0x0004967A File Offset: 0x0004787A
-        public float GetFinalCountdownTime()
-        {
-            if (Settings[StringNames.FinalEscapeTime] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.FloatValue;
-            }
-            return 50;
-        }
-
-        // Token: 0x06001232 RID: 4658 RVA: 0x00049687 File Offset: 0x00047887
-        public int GetCrewmateVentUses()
-        {
-            if (Settings[StringNames.MaxVentUses] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.IntValue;
-            }
-            return 1;
-        }
-
-        // Token: 0x06001233 RID: 4659 RVA: 0x00049694 File Offset: 0x00047894
-        public float GetScaryMusicDistance()
-        {
-            return 55f;
-        }
-
-        // Token: 0x06001234 RID: 4660 RVA: 0x0004969B File Offset: 0x0004789B
-        public float GetVeryScaryMusicDistance()
-        {
-            return 15f;
-        }
-
-        // Token: 0x06001235 RID: 4661 RVA: 0x000496A2 File Offset: 0x000478A2
-        public float GetCrewmateInVentTime()
-        {
-            if (Settings[StringNames.MaxTimeInVent] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.IntValue;
-            }
-            return 3;
-        }
-
-        // Token: 0x06001236 RID: 4662 RVA: 0x000496AF File Offset: 0x000478AF
-        public float GetCrewmateVentCooldown()
-        {
-            return 1f;
-        }
-
-        // Token: 0x06001237 RID: 4663 RVA: 0x000496B6 File Offset: 0x000478B6
-        public float GetCommonTaskTimeValue()
-        {
-            return 10f - (float)GameData.Instance.PlayerCount * 1f / 2f;
-        }
-
-        // Token: 0x06001238 RID: 4664 RVA: 0x000496D5 File Offset: 0x000478D5
-        public float GetShortTaskTimeValue()
-        {
-            return this.GetCommonTaskTimeValue();
-        }
-
-        // Token: 0x06001239 RID: 4665 RVA: 0x000496DD File Offset: 0x000478DD
-        public float GetLongTaskTimeValue()
-        {
-            return 20f - (float)GameData.Instance.PlayerCount * 1f;
-        }
-
-        // Token: 0x0600123A RID: 4666 RVA: 0x000496F6 File Offset: 0x000478F6
-        public bool GetSeekerFinalMap()
-        {
-            if (Settings[StringNames.SeekerFinalMap] is ModdedToggleOption moddedToggle)
-            {
-                return moddedToggle.BooleanValue;
-            }
-            return false;
-        }
-
-        // Token: 0x0600123B RID: 4667 RVA: 0x00049703 File Offset: 0x00047903
-        public int ImpostorPlayerID()
-        {
-            return -1;
-        }
-
-        // Token: 0x0600123C RID: 4668 RVA: 0x00049710 File Offset: 0x00047910
-        public bool HasImpostorPlayerID()
-        {
-            return false;
-        }
-
-        // Token: 0x0600123D RID: 4669 RVA: 0x00049720 File Offset: 0x00047920
-        public bool ValidateImpostorPlayerID(List<NetworkedPlayerInfo> players)
-        {
-            return this.HasImpostorPlayerID() && players.Find((NetworkedPlayerInfo p) => (int)p.PlayerId == this.ImpostorPlayerID()) != null;
-        }
-
-        // Token: 0x0600123E RID: 4670 RVA: 0x00049744 File Offset: 0x00047944
-        public bool GetSeekerPings()
-        {
-            if (Settings[StringNames.SeekerPings] is ModdedToggleOption moddedToggle)
-            {
-                return moddedToggle.BooleanValue;
-            }
-            return false;
-        }
-
-        // Token: 0x0600123F RID: 4671 RVA: 0x00049751 File Offset: 0x00047951
-        public float GetMaxPingTime()
-        {
-            if (Settings[StringNames.MaxPingTime] is ModdedNumberOption moddedNumberOption)
-            {
-                return moddedNumberOption.FloatValue;
-            }
-            return 6;
-        }
-
-        // Token: 0x06001240 RID: 4672 RVA: 0x0004975E File Offset: 0x0004795E
-        public float GetShowPingTime()
-        {
-            return 2f;
-        }
-
-        // Token: 0x06001241 RID: 4673 RVA: 0x00049765 File Offset: 0x00047965
-        public override bool GetShowCrewmateNames()
-        {
-            if (Settings[StringNames.ShowCrewmateNames] is ModdedToggleOption moddedToggle)
-            {
-                return moddedToggle.BooleanValue;
-            }
-            return false;
-        }
-        public override global::TaskBarMode GetTaskBarMode()
-        {
-            return global::TaskBarMode.Normal;
-        }
-        public override int GetEmergencyCooldown()
-        {
-            return 0;
-        }
-        public override int GetNumEmergencyMeetings()
-        {
-            return 0;
-        }
-        public override bool GetVisualTasks()
-        {
-            return false;
-        }
-        public override bool GetGhostsDoTasks()
-        {
-            return false;
-        }
-        public override void FixedUpdate()
-        {
-            // Game Flow
-            if (this.IsFinalCountdown)
-            {
-                this.AdjustFinalEscapeTimer(Time.fixedDeltaTime);
-                return;
-            }
-            this.AdjustEscapeTimer(Time.fixedDeltaTime, false);
-
-            // Danger Level
-            PlayerControl localPlayer = PlayerControl.LocalPlayer;
-            if (this.impostors == null || localPlayer == null)
-            {
-                return;
-            }
-            if (this.impostors.Count <= 0)
-            {
-                return;
-            }
-            float num = float.MaxValue;
-            foreach (PlayerControl playerControl in this.impostors)
-            {
-                if (!(playerControl == null))
-                {
-                    float sqrMagnitude = (playerControl.transform.position - localPlayer.transform.position).sqrMagnitude;
-                    if (sqrMagnitude < this.scaryMusicDistance && num > sqrMagnitude)
-                    {
-                        num = sqrMagnitude;
-                    }
-                }
-            }
-            if (ShipStatus.Instance.HideCountdown > 0f)
-            {
-                this.dangerLevel1 = 0f;
-                this.dangerLevel2 = 0f;
-            }
-            else
-            {
-                if (this.firstMusicActivation)
-                {
-                    this.firstMusicActivation = false;
-                    this.firstCrossfadeCountdown = 3f;
-                    SetMusicCrossfadeSpeed(0.6f);
-                }
-                if (this.firstCrossfadeCountdown > 0f)
-                {
-                    this.firstCrossfadeCountdown -= Time.deltaTime;
-                    if (this.firstCrossfadeCountdown <= 0f)
-                    {
-                        SetMusicCrossfadeSpeed(5f);
-                    }
-                }
-                this.dangerLevel1 = Mathf.Clamp01((this.scaryMusicDistance - num) / (this.scaryMusicDistance - this.veryScaryMusicDistance));
-                this.dangerLevel2 = Mathf.Clamp01((this.veryScaryMusicDistance - num) / this.veryScaryMusicDistance);
-            }
-            this.UpdateDangerMeter();
-            this.UpdateDangerMusic();
-        }
-        public override void CheckEndCriteria()
-        {
-            if (!GameData.Instance)
-            {
-                return;
-            }
-            ValueTuple<int, int, int> playerCounts = GetPlayerCounts();
-            int item = playerCounts.Item1;
-            int item2 = playerCounts.Item2;
-            if (item2 <= 0 && !DestroyableSingleton<TutorialManager>.InstanceExists)
-            {
-                this.Manager.RpcEndGame(GameOverReason.ImpostorDisconnect, !DataManager.Player.Ads.HasPurchasedAdRemoval);
-            }
-            if (item > 0)
-            {
-                if (!DestroyableSingleton<TutorialManager>.InstanceExists && AllTimersExpired())
-                {
-                    this.Manager.RpcEndGame(GameOverReason.HideAndSeek_CrewmatesByTimer, !DataManager.Player.Ads.HasPurchasedAdRemoval);
-                }
-                return;
-            }
-            if (!DestroyableSingleton<TutorialManager>.InstanceExists)
-            {
-                this.Manager.RpcEndGame(GameOverReason.HideAndSeek_ImpostorsByKills, !DataManager.Player.Ads.HasPurchasedAdRemoval);
-                return;
-            }
-            DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorKills));
-            this.Manager.ReviveEveryoneFreeplay();
-        }
-        private void UpdateDangerMeter()
-        {
-            if (this.dangerMeter == null)
-            {
-                return;
-            }
-            this.dangerMeter.SetDangerValue(this.dangerLevel1, this.dangerLevel2);
-        }
         private void UpdateDangerMusic()
         {
             PlayerControl localPlayer = PlayerControl.LocalPlayer;
@@ -621,38 +787,87 @@ namespace FungleAPI.Api
                 ResetMusic();
                 return;
             }
-            SetMusicValues(this.dangerLevel1, this.dangerLevel2);
+            SetMusicValues(dangerLevel1, dangerLevel2);
         }
+        public override void OnMinigameOpen() => SetTaskState(true);
+        public override void OnMinigameClose() => SetTaskState(false);
+        private void UpdateDangerMeter()
+        {
+            if (dangerMeter == null)
+            {
+                return;
+            }
+            dangerMeter.SetDangerValue(dangerLevel1, dangerLevel2);
+        }
+        private void DestroyPingCoroutine()
+        {
+            if (seekerPingCoroutine != null)
+            {
+                Manager.StopCoroutine(seekerPingCoroutine);
+                seekerPingCoroutine = null;
+            }
+        }
+        private IEnumerator SeekerPing()
+        {
+            while (Manager.GameHasStarted)
+            {
+                for (int i = 0; i < PlayerControl.AllPlayerControls.Count; i++)
+                {
+                    PlayerControl player = PlayerControl.AllPlayerControls[i];
+                    bool isVisibleCrewmate = player.Data.Role.TeamType == RoleTeamTypes.Crewmate && !player.Data.IsDead;
+                    bool shouldSeeThisPing = PlayerControl.LocalPlayer.Data.RoleType == RoleTypes.Impostor || player == PlayerControl.LocalPlayer;
 
-        public float GetRoundTimeElapsed()
-        {
-            return this.GetTotalRoundTime() - this.GetTotalTimeRemaining();
-        }
-        public float GetTotalRoundTime()
-        {
-            float escapeTime = GetEscapeTime();
-            float finalCountdownTime = GetFinalCountdownTime();
-            return escapeTime + finalCountdownTime;
-        }
-        public float GetTotalTimeRemaining()
-        {
-            return this.currentHideTime + this.currentFinalHideTime;
-        }
+                    if (isVisibleCrewmate && shouldSeeThisPing)
+                    {
+                        PingBehaviour pingBehaviour = pingPool.Get<PingBehaviour>();
+                        pingBehaviour.target = player.GetTruePosition();
+                        pingBehaviour.AmSeeker = PlayerControl.LocalPlayer.Data.RoleType == RoleTypes.Impostor;
+                        pingBehaviour.UpdatePosition();
+                        pingBehaviour.gameObject.SetActive(true);
+                        pingBehaviour.SetImageEnabled(true);
+                    }
+                }
 
+                yield return new WaitForSeconds(GetShowPingTime());
+
+                foreach (PoolableBehavior poolableBehavior in pingPool.activeChildren)
+                {
+                    ArrowBehaviour arrowBehaviour = poolableBehavior.SafeCast<ArrowBehaviour>();
+                    arrowBehaviour.target = Vector3.zero;
+                    arrowBehaviour.SetImageEnabled(false);
+                    arrowBehaviour.gameObject.SetActive(false);
+                }
+
+                yield return new WaitForSeconds(GetMaxPingTime());
+            }
+        }
         private void AdjustEscapeTimer(float timeDeduction, bool forceDirty)
         {
-            float num = this.currentHideTime;
-            this.currentHideTime -= timeDeduction;
-            this.currentHideTime = Mathf.Max(this.currentHideTime, 0f);
-            if (this.currentHideTime <= 10f && this.beepCoroutine == null)
+            if (timerBar == null) return;
+
+            float previousHideTime = currentHideTime;
+            currentHideTime -= timeDeduction;
+            currentHideTime = Mathf.Max(currentHideTime, 0f);
+
+            if (currentHideTime <= 10f && beepCoroutine == null)
             {
-                this.beepCoroutine = Manager.StartCoroutine(this.BeepAlmostEverySecond().WrapToIl2Cpp());
+                beepCoroutine = Manager.StartCoroutine(BeepAlmostEverySecond().WrapToIl2Cpp());
             }
-            if (num > 0f && this.currentHideTime <= 0f)
+
+            if (previousHideTime > 0f && currentHideTime <= 0f)
             {
-                this.OnFinalCountdownTriggered();
+                OnFinalCountdownTriggered();
             }
-            this.timerBar.UpdateTimer(this.currentHideTime, this.totalHideTime);
+
+            timerBar.UpdateTimer(currentHideTime, totalHideTime);
+        }
+        private void AdjustFinalEscapeTimer(float timeDeduction)
+        {
+            if (timerBar == null) return;
+
+            currentFinalHideTime -= timeDeduction;
+            currentFinalHideTime = Mathf.Max(currentFinalHideTime, 0f);
+            timerBar.UpdateTimer(currentFinalHideTime, totalFinalHideTime);
         }
         private void OnFinalCountdownTriggered()
         {
@@ -664,94 +879,176 @@ namespace FungleAPI.Api
                     PlayerTask.GetOrCreateTask<ImportantTextTask>(playerControl, 0).Text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.HideActionButton);
                 }
             }
-            if (!PlayerControl.LocalPlayer.Data.IsDead && Minigame.Instance != null)
+
+            if (!PlayerControl.LocalPlayer.Data.IsDead)
             {
-                Minigame instance = Minigame.Instance;
-                if (instance != null)
-                {
-                    instance.ForceClose();
-                }
+                Minigame.Instance?.ForceClose();
             }
-            this.timerBar.StartFinalHide();
+
+            timerBar.StartFinalHide();
             SoundManager.Instance.PlaySound(GameManagerCreator.Instance.HideAndSeekManagerPrefab.FinalHideAlertSFX, false, 1f, null);
             DestroyableSingleton<HudManager>.Instance.SetAlertOverlay(true);
         }
-        private void AdjustFinalEscapeTimer(float timeDeduction)
+        private IEnumerator BeepAlmostEverySecond()
         {
-            this.currentFinalHideTime -= timeDeduction;
-            this.currentFinalHideTime = Mathf.Max(this.currentFinalHideTime, 0f);
-            this.timerBar.UpdateTimer(this.currentFinalHideTime, this.totalFinalHideTime);
-        }
-        private System.Collections.IEnumerator BeepAlmostEverySecond()
-        {
-            while (!this.IsFinalCountdown)
+            while (!IsFinalCountdown)
             {
-                float num = this.currentHideTime / 10f;
-                float num2 = 1.5f - num / 2f;
-                SoundManager.Instance.PlaySoundImmediate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.FinalHideCountdownSFX, false, 1f, num2, null);
+                float progress = currentHideTime / 10f;
+                float pitch = 1.5f - progress / 2f;
+                SoundManager.Instance.PlaySoundImmediate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.FinalHideCountdownSFX, false, 1f, pitch, null);
                 yield return new WaitForSeconds(1f);
             }
-            yield return Effects.Wait(this.currentFinalHideTime - 10f);
-            while (this.currentFinalHideTime > 0f)
-            {
-                float num3 = this.currentFinalHideTime / 10f;
-                float num4 = 1.5f - num3 / 2f;
-                SoundManager.Instance.PlaySoundImmediate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.FinalHideCountdownSFX, false, 1f, num4, null);
-                yield return new WaitForSeconds(1f);
-            }
-            yield break;
-        }
 
-        private bool AllTimersExpired()
+            yield return Effects.Wait(currentFinalHideTime - 10f);
+
+            while (currentFinalHideTime > 0f)
+            {
+                float progress = currentFinalHideTime / 10f;
+                float pitch = 1.5f - progress / 2f;
+                SoundManager.Instance.PlaySoundImmediate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.FinalHideCountdownSFX, false, 1f, pitch, null);
+                yield return new WaitForSeconds(1f);
+            }
+        }
+        public override void CheckEndCriteria()
         {
-            return this.currentHideTime <= 0f && this.currentFinalHideTime <= 0f;
+            if (!GameData.Instance)
+            {
+                return;
+            }
+
+            (int crewmatesAlive, int impostorsAlive, int impostorsTotal) = GetPlayerCounts();
+
+            if (impostorsTotal <= 0 && !DestroyableSingleton<TutorialManager>.InstanceExists)
+            {
+                Manager.RpcEndGame<ImpostorDisconnect>();
+            }
+
+            if (crewmatesAlive > 0)
+            {
+                if (!DestroyableSingleton<TutorialManager>.InstanceExists && AllTimersExpired())
+                {
+                    Manager.RpcEndGame<HideAndSeek_CrewmatesByTimer>();
+                }
+                return;
+            }
+
+            if (!DestroyableSingleton<TutorialManager>.InstanceExists)
+            {
+                Manager.RpcEndGame<HideAndSeek_ImpostorsByKills>();
+                return;
+            }
+
+            DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorKills));
+            Manager.ReviveEveryoneFreeplay();
         }
         protected ValueTuple<int, int, int> GetPlayerCounts()
         {
-            int num = 0;
-            int num2 = 0;
-            int num3 = 0;
+            int crewmatesAlive = 0;
+            int impostorsAlive = 0;
+            int impostorsTotal = 0;
+
             for (int i = 0; i < GameData.Instance.PlayerCount; i++)
             {
-                NetworkedPlayerInfo networkedPlayerInfo = GameData.Instance.AllPlayers[i];
-                if (!(networkedPlayerInfo == null) && !networkedPlayerInfo.Disconnected && !(networkedPlayerInfo.Role == null))
+                NetworkedPlayerInfo playerInfo = GameData.Instance.AllPlayers[i];
+                if (playerInfo == null || playerInfo.Disconnected || playerInfo.Role == null) continue;
+
+                if (playerInfo.Role.IsImpostor)
                 {
-                    if (networkedPlayerInfo.Role.IsImpostor)
+                    impostorsTotal++;
+                }
+
+                if (!playerInfo.IsDead)
+                {
+                    if (playerInfo.Role.IsImpostor)
                     {
-                        num3++;
-                    }
-                    if (!networkedPlayerInfo.IsDead)
-                    {
-                        if (networkedPlayerInfo.Role.IsImpostor)
-                        {
-                            num2++;
-                        }
-                        else
-                        {
-                            num++;
-                        }
+                        impostorsAlive++;
                     }
                     else
                     {
-                        ImpostorGhostRole impostorGhostRole = networkedPlayerInfo.Role as ImpostorGhostRole;
-                        if (impostorGhostRole != null && impostorGhostRole.WasManuallyPicked)
-                        {
-                            num2++;
-                        }
+                        crewmatesAlive++;
                     }
                 }
+                else if (playerInfo.Role is ImpostorGhostRole impostorGhostRole && impostorGhostRole.WasManuallyPicked)
+                {
+                    impostorsAlive++;
+                }
             }
-            return new ValueTuple<int, int, int>(num, num2, num3);
+
+            return new ValueTuple<int, int, int>(crewmatesAlive, impostorsAlive, impostorsTotal);
+        }
+        public float GetRoundTimeElapsed() => GetTotalRoundTime() - GetTotalTimeRemaining();
+        public float GetTotalRoundTime() => GetEscapeTime() + GetFinalCountdownTime();
+        public float GetTotalTimeRemaining() => currentHideTime + currentFinalHideTime;
+        private bool AllTimersExpired() => currentHideTime <= 0f && currentFinalHideTime <= 0f;
+        public float GetSpeedMod() => Settings[StringNames.GamePlayerSpeed] is ModdedNumberOption speedOption ? speedOption.FloatValue : 1f;
+        public override float GetKillDistance() => HideNSeekGameOptionsV10.KillDistances[Mathf.Clamp(0, 0, HideNSeekGameOptionsV10.KillDistances.Length - 1)];
+        public override float GetEngineerCooldown() => GetCrewmateVentCooldown();
+        public override float GetEngineerInVentTime() => GetCrewmateInVentTime();
+        public int GetCrewmateLeadTime() => 10;
+        public float GetEscapeTime() => Settings[StringNames.EscapeTime] is ModdedNumberOption option ? option.FloatValue : 200;
+        public float GetFinalCountdownTime() => Settings[StringNames.FinalEscapeTime] is ModdedNumberOption option ? option.FloatValue : 50;
+        public int GetCrewmateVentUses() => Settings[StringNames.MaxVentUses] is ModdedNumberOption option ? option.IntValue : 1;
+        public float GetScaryMusicDistance() => 55f;
+        public float GetVeryScaryMusicDistance() => 15f;
+        public float GetCrewmateInVentTime() => Settings[StringNames.MaxTimeInVent] is ModdedNumberOption option ? option.IntValue : 3;
+        public float GetCrewmateVentCooldown() => 1f;
+        public float GetCommonTaskTimeValue() => 10f - GameData.Instance.PlayerCount * 1f / 2f;
+        public float GetShortTaskTimeValue() => GetCommonTaskTimeValue();
+        public float GetLongTaskTimeValue() => 20f - GameData.Instance.PlayerCount * 1f;
+        public bool GetSeekerFinalMap() => Settings[StringNames.SeekerFinalMap] is ModdedToggleOption option && option.BooleanValue;
+        public int ImpostorPlayerID() => -1;
+        public bool HasImpostorPlayerID() => false;
+        public bool ValidateImpostorPlayerID(List<NetworkedPlayerInfo> players) => HasImpostorPlayerID() && players.Find(p => (int)p.PlayerId == ImpostorPlayerID()) != null;
+        public bool GetSeekerPings() => Settings[StringNames.SeekerPings] is ModdedToggleOption option && option.BooleanValue;
+        public float GetMaxPingTime() => Settings[StringNames.MaxPingTime] is ModdedNumberOption option ? option.FloatValue : 6f;
+        public float GetShowPingTime() => 2f;
+        public override bool GetShowCrewmateNames() => Settings[StringNames.ShowCrewmateNames] is ModdedToggleOption option && option.BooleanValue;
+        public override int GetEmergencyCooldown() => 0;
+        public override int GetNumEmergencyMeetings() => 0;
+        public override bool GetVisualTasks() => false;
+        public override bool GetGhostsDoTasks() => false;
+        public override float GetKillCooldown() => 1;
+        public override void SelectRoles(RoleManager roleManager)
+        {
+            if (PlayerControl.AllPlayerControls.Count > 0)
+            {
+                List<PlayerControl> playerControls = PlayerControl.AllPlayerControls.ToSystemList();
+
+                PlayerControl seeker = playerControls.Random();
+                playerControls.Remove(seeker);
+                seeker.RpcSetRole(RoleTypes.Impostor);
+
+                foreach (PlayerControl playerControl in playerControls)
+                {
+                    playerControl.RpcSetRole(RoleTypes.Engineer);
+                }
+            }
         }
 
+        public enum HideAndSeekMusicTrack
+        {
+            None,
+            Normal,
+            Task,
+            DangerLevel1,
+            DangerLevel2
+        }
+        internal class RpcSyncTime : SimpleRpc<PlayerControl>
+        {
+            public override void Write(MessageWriter messageWriter)
+            {
+                messageWriter.Write(GameMode<HideNSeekMode>.Instance.currentHideTime);
+                messageWriter.Write(GameMode<HideNSeekMode>.Instance.currentFinalHideTime);
+            }
+            public override void Handle(PlayerControl innerNetObject, MessageReader messageReader)
+            {
+                if (!AntiCheatManager.CheckForCheater(innerNetObject)) return;
 
-
-
-
-
-
-
-        public class HNSOptions : GameModeOptions
+                GameMode<HideNSeekMode>.Instance.currentHideTime = messageReader.ReadSingle();
+                GameMode<HideNSeekMode>.Instance.currentFinalHideTime = messageReader.ReadSingle();
+            }
+        }
+        internal class HNSOptions : GameModeOptions
         {
             public override void Initialize(ModPlugin modPlugin) { }
         }
@@ -785,7 +1082,7 @@ namespace FungleAPI.Api
 
                     if (moddedOption != null)
                     {
-                        moddedOption.StringOptionId = $"{moddedOption.Data.Title.ToString()}.{GetType().GetShortUniqueId()}";
+                        moddedOption.StringOptionId = $"{moddedOption.Data.Title}.{GetType().GetShortUniqueId()}";
                         moddedOption.OwnerPlugin = FungleApiPlugin.Plugin;
                         moddedOption.OptionId = OptionManager.__optionId;
                         OptionManager.__optionId++;

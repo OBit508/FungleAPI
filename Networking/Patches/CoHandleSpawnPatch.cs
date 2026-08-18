@@ -16,13 +16,13 @@ using static Il2CppSystem.Net.WebSockets.ManagedWebSocket;
 
 namespace FungleAPI.Networking.Patches
 {
-    [HarmonyPatch(typeof(InnerNetClient._CoHandleSpawn_d__168), "MoveNext")]
+    [HarmonyPatch(typeof(InnerNetClient._CoHandleSpawn_d__169), "MoveNext")]
     internal static class CoHandleSpawnPatch
     {
         public const ulong Magic = 32199616299822962UL;
         public const byte Version = 2;
         public const int HeaderSize = 8;
-        public static void Postfix(InnerNetClient._CoHandleSpawn_d__168 __instance, bool __result)
+        public static void Postfix(InnerNetClient._CoHandleSpawn_d__169 __instance, bool __result)
         {
             if (ReactorCompatibility.Instance != null || __result || HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault()) return;
 

@@ -15,6 +15,7 @@ using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using InnerNet;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -30,6 +31,61 @@ namespace FungleAPI.Api
         public static Func<IReadOnlyDictionary<byte, RoleTypes>> ConsumeRoleAssignmentOverrides;
         public override StringNames GameModeName => StringNames.GameTypeClassic;
         public override int RequiredPlayerToStart() => 4;
+        public override IEnumerator CoIntroBegin(IntroCutscene introCutscene)
+        {
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Starting intro cutscene", null);
+            SoundManager.Instance.PlaySound(introCutscene.IntroStinger, false, 1f, null);
+            Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Game Mode: Normal", null);
+            introCutscene.LogPlayerRoleData();
+            introCutscene.HideAndSeekPanels.SetActive(false);
+            introCutscene.CrewmateRules.SetActive(false);
+            introCutscene.ImpostorRules.SetActive(false);
+            introCutscene.ImpostorName.gameObject.SetActive(false);
+            introCutscene.ImpostorTitle.gameObject.SetActive(false);
+            Il2CppSystem.Collections.Generic.List<PlayerControl> list = IntroCutscene.SelectTeamToShow(new Func<NetworkedPlayerInfo, bool>((NetworkedPlayerInfo pcd) => !PlayerControl.LocalPlayer.Data.Role.IsImpostor || pcd.Role.TeamType == PlayerControl.LocalPlayer.Data.Role.TeamType));
+            if (list == null || list.Count < 1)
+            {
+                Logger.GlobalInstance.Error("IntroCutscene :: CoBegin() :: teamToShow is EMPTY or NULL", null);
+            }
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
+            {
+                introCutscene.ImpostorText.gameObject.SetActive(false);
+            }
+            else
+            {
+                int adjustedNumImpostors = GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount);
+                if (adjustedNumImpostors == 1)
+                {
+                    introCutscene.ImpostorText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NumImpostorsS);
+                }
+                else
+                {
+                    introCutscene.ImpostorText.text = string.Format(StringNames.NumImpostorsP.GetString(), adjustedNumImpostors);
+                }
+                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[FF1919FF]", "<color=#FF1919FF>");
+                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[]", "</color>");
+            }
+            yield return introCutscene.ShowTeam(list, 3f);
+            yield return introCutscene.ShowRole();
+            ShipStatus.Instance.StartSFX();
+            introCutscene.gameObject.Destroy();
+        }
+        public override PlayerBodyTypes GetBodyType(PlayerControl player)
+        {
+            if (AprilFoolsMode.ShouldHorseAround())
+            {
+                return PlayerBodyTypes.Horse;
+            }
+            if (AprilFoolsMode.ShouldLongAround())
+            {
+                return PlayerBodyTypes.Long;
+            }
+            if (AprilFoolsMode.ShouldClassicMode())
+            {
+                return PlayerBodyTypes.Classic;
+            }
+            return PlayerBodyTypes.Normal;
+        }
         public override float CalculateLightRadius(NetworkedPlayerInfo player, bool airship)
         {
             ShipStatus ship = ShipStatus.Instance;
