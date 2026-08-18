@@ -32,10 +32,10 @@ namespace FungleAPI.Api
     {
         public Dictionary<StringNames, IModdedOption> Settings = new Dictionary<StringNames, IModdedOption>();
 
-        private float currentHideTime = float.MaxValue;
-        private float currentFinalHideTime = float.MaxValue;
-        private float totalFinalHideTime = float.MaxValue;
-        private float totalHideTime = float.MaxValue;
+        private float currentHideTime = 100;
+        private float currentFinalHideTime = 100;
+        private float totalFinalHideTime = 100;
+        private float totalHideTime = 100;
 
         private HideAndSeekTimerBar timerBar;
         private Coroutine beepCoroutine;
@@ -432,7 +432,6 @@ namespace FungleAPI.Api
             if (AmongUsClient.Instance.AmHost)
             {
                 Rpc<RpcSyncTime>.Instance.Send(PlayerControl.LocalPlayer);
-                syncTimer = 10;
             }
 
             if (timerBar != null)
@@ -572,19 +571,22 @@ namespace FungleAPI.Api
         }
         public override void FixedUpdate()
         {
-            HideCountdown -= Time.fixedDeltaTime;
-
-            UpdateGameFlow();
-            UpdateMeter();
-            UpdatePings();
-
-            if (AmongUsClient.Instance.AmHost)
+            if (AmongUsClient.Instance.IsGameStarted)
             {
-                syncTimer -= Time.fixedDeltaTime;
-                if (syncTimer <= 0)
+                HideCountdown -= Time.fixedDeltaTime;
+
+                UpdateGameFlow();
+                UpdateMeter();
+                UpdatePings();
+
+                if (AmongUsClient.Instance.AmHost)
                 {
-                    Rpc<RpcSyncTime>.Instance.Send(PlayerControl.LocalPlayer);
-                    syncTimer = 5;
+                    syncTimer -= Time.fixedDeltaTime;
+                    if (syncTimer <= 0)
+                    {
+                        Rpc<RpcSyncTime>.Instance.Send(PlayerControl.LocalPlayer);
+                        syncTimer = 5;
+                    }
                 }
             }
         }
@@ -857,19 +859,13 @@ namespace FungleAPI.Api
                 OnFinalCountdownTriggered();
             }
 
-            if (timerBar == null || !timerBar.isActiveAndEnabled || timerBar.timeText == null) return;
-
-            TimeSpan timeSpan = TimeSpan.FromSeconds(currentHideTime);
-            timerBar.timeText.text = timeSpan.ToString("m\\:ss");
-            timerBar.targetBarSize = Mathf.Clamp01(currentHideTime / totalHideTime);
+            timerBar?.UpdateTimer(currentHideTime, totalHideTime);
         }
         private void AdjustFinalEscapeTimer(float timeDeduction)
         {
-            if (timerBar == null) return;
-
             currentFinalHideTime -= timeDeduction;
             currentFinalHideTime = Mathf.Max(currentFinalHideTime, 0f);
-            timerBar.UpdateTimer(currentFinalHideTime, totalFinalHideTime);
+            timerBar?.UpdateTimer(currentFinalHideTime, totalFinalHideTime);
         }
         private void OnFinalCountdownTriggered()
         {
