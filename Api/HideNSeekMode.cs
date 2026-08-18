@@ -423,7 +423,7 @@ namespace FungleAPI.Api
         }
         public override void OnGameStart()
         {
-            pingPool = GameManagerCreator.Instance.HideAndSeekManagerPrefab.PingPool;
+            pingPool = GameObject.Instantiate(GameManagerCreator.Instance.HideAndSeekManagerPrefab.PingPool);
             totalHideTime = GetEscapeTime();
             currentHideTime = totalHideTime;
             totalFinalHideTime = GetFinalCountdownTime();
@@ -857,9 +857,11 @@ namespace FungleAPI.Api
                 OnFinalCountdownTriggered();
             }
 
-            if (timerBar == null || timerBar.timeText == null) return;
+            if (timerBar == null || !timerBar.isActiveAndEnabled || timerBar.timeText == null) return;
 
-            timerBar.UpdateTimer(currentHideTime, totalHideTime);
+            TimeSpan timeSpan = TimeSpan.FromSeconds(currentHideTime);
+            timerBar.timeText.text = timeSpan.ToString("m\\:ss");
+            timerBar.targetBarSize = Mathf.Clamp01(currentHideTime / totalHideTime);
         }
         private void AdjustFinalEscapeTimer(float timeDeduction)
         {
