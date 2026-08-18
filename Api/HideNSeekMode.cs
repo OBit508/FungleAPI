@@ -215,7 +215,7 @@ namespace FungleAPI.Api
             playerSlot = null;
             ShipStatus.Instance.StartSFX();
             introCutscene.gameObject.Destroy();
-            HideCountdown = impostors.Contains(PlayerControl.LocalPlayer) ? 0 : 10;
+            HideCountdown = PlayerControl.LocalPlayer.Data.Role.IsImpostor ? 0 : 10;
         }
         public override PlayerBodyTypes GetBodyType(PlayerControl player)
         {
@@ -829,7 +829,12 @@ namespace FungleAPI.Api
                 {
                     ArrowBehaviour arrowBehaviour = poolableBehavior.SafeCast<ArrowBehaviour>();
                     arrowBehaviour.target = Vector3.zero;
-                    arrowBehaviour.SetImageEnabled(false);
+                    
+                    if (arrowBehaviour.image != null)
+                    {
+                        arrowBehaviour.image.enabled = false;
+                    }
+
                     arrowBehaviour.gameObject.SetActive(false);
                 }
 
@@ -838,8 +843,6 @@ namespace FungleAPI.Api
         }
         private void AdjustEscapeTimer(float timeDeduction, bool forceDirty)
         {
-            if (timerBar == null) return;
-
             float previousHideTime = currentHideTime;
             currentHideTime -= timeDeduction;
             currentHideTime = Mathf.Max(currentHideTime, 0f);
@@ -853,6 +856,8 @@ namespace FungleAPI.Api
             {
                 OnFinalCountdownTriggered();
             }
+
+            if (timerBar == null || timerBar.timeText == null) return;
 
             timerBar.UpdateTimer(currentHideTime, totalHideTime);
         }
