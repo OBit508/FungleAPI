@@ -215,7 +215,7 @@ namespace FungleAPI.Api
             playerSlot = null;
             ShipStatus.Instance.StartSFX();
             introCutscene.gameObject.Destroy();
-            HideCountdown = 10;
+            HideCountdown = impostors.Contains(PlayerControl.LocalPlayer) ? 0 : 10;
         }
         public override PlayerBodyTypes GetBodyType(PlayerControl player)
         {
@@ -423,6 +423,7 @@ namespace FungleAPI.Api
         }
         public override void OnGameStart()
         {
+            pingPool = GameManagerCreator.Instance.HideAndSeekManagerPrefab.PingPool;
             totalHideTime = GetEscapeTime();
             currentHideTime = totalHideTime;
             totalFinalHideTime = GetFinalCountdownTime();
@@ -488,8 +489,6 @@ namespace FungleAPI.Api
             impostors = null;
             ResetMusic();
             DestroyPingCoroutine();
-
-            pingPool = GameManagerCreator.Instance.HideAndSeekManagerPrefab.PingPool;
         }
         public void UpdateGameFlow()
         {
@@ -701,7 +700,6 @@ namespace FungleAPI.Api
                 dangerLevel1Volume = 1f - dangerLevel2;
             }
         }
-
         public void StartMusicWithIntro()
         {
             if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor)
@@ -721,7 +719,6 @@ namespace FungleAPI.Api
 
             SoundManager.Instance.PlaySound(audioClip, true, 1f, SoundManager.Instance.MusicChannel);
         }
-
         private void InitMusic()
         {
             HideAndSeekMusicCollection musicCollection = GameManagerCreator.Instance.HideAndSeekManagerPrefab.MusicCollection;
@@ -769,7 +766,6 @@ namespace FungleAPI.Api
 
             SyncMusic();
         }
-
         private void SyncMusic()
         {
             taskSource.timeSamples = normalSource.timeSamples;
@@ -777,7 +773,6 @@ namespace FungleAPI.Api
             dangerLevel2Source.timeSamples = normalSource.timeSamples;
             lastMusicSyncTime = Time.unscaledTime;
         }
-
         private void UpdateDangerMusic()
         {
             PlayerControl localPlayer = PlayerControl.LocalPlayer;
@@ -927,14 +922,14 @@ namespace FungleAPI.Api
             {
                 if (!DestroyableSingleton<TutorialManager>.InstanceExists && AllTimersExpired())
                 {
-                    Manager.RpcEndGame<HideAndSeek_CrewmatesByTimer>();
+                    Manager.RpcEndGame<CrewmatesByTask>();
                 }
                 return;
             }
 
             if (!DestroyableSingleton<TutorialManager>.InstanceExists)
             {
-                Manager.RpcEndGame<HideAndSeek_ImpostorsByKills>();
+                Manager.RpcEndGame<ImpostorsByKill>();
                 return;
             }
 
@@ -967,10 +962,6 @@ namespace FungleAPI.Api
                     {
                         crewmatesAlive++;
                     }
-                }
-                else if (playerInfo.Role is ImpostorGhostRole impostorGhostRole && impostorGhostRole.WasManuallyPicked)
-                {
-                    impostorsAlive++;
                 }
             }
 
