@@ -34,6 +34,8 @@ namespace FungleAPI.Components
         private MeshRenderer meshRenderer;
         private MeshFilter meshFilter;
         private float timer;
+        private float halfWidth = 0.5f;
+        private float halfHeight = 0.5f;
         public GIF GIF
         {
             get => gif;
@@ -47,24 +49,10 @@ namespace FungleAPI.Components
                 }
                 Texture2D texture = gif.Frames.ElementAt(0);
 
-                float width = texture.width / gif.PixelsPerUnit;
-                float height = texture.height / gif.PixelsPerUnit;
+                halfWidth = texture.width / (gif.PixelsPerUnit * 2f);
+                halfHeight = texture.height / (gif.PixelsPerUnit * 2f);
 
-                float pivotX = 0.5f;
-                float pivotY = 0.5f;
-
-                float left = -width * pivotX;
-                float right = width * (1f - pivotX);
-                float bottom = -height * pivotY;
-                float top = height * (1f - pivotY);
-
-                meshFilter.mesh.vertices = new Vector3[4]
-                {
-                    new Vector3(left,  bottom, 0),
-                    new Vector3(right, bottom, 0),
-                    new Vector3(right, top,    0),
-                    new Vector3(left,  top,    0)
-                };
+                ApplyFlip();
 
                 material.mainTexture = texture;
             }
@@ -167,16 +155,21 @@ namespace FungleAPI.Components
             {
                 meshFilter = gameObject.AddComponent<MeshFilter>();
                 meshFilter.mesh = new Mesh();
-                meshFilter.mesh.uv = new Vector2[4]
+                meshFilter.mesh.vertices = new Vector3[]
+                {
+                    new Vector3(-0.5f, -0.5f, 0),
+                    new Vector3( 0.5f, -0.5f, 0),
+                    new Vector3( 0.5f,  0.5f, 0),
+                    new Vector3(-0.5f,  0.5f, 0)
+                };
+                meshFilter.mesh.uv = new Vector2[]
                 {
                     new Vector2(0, 0),
                     new Vector2(1, 0),
                     new Vector2(1, 1),
                     new Vector2(0, 1)
                 };
-                meshFilter.mesh.triangles = new int[6] { 0, 1, 2, 0, 2, 3 };
-                meshFilter.mesh.RecalculateNormals();
-                meshFilter.mesh.RecalculateBounds();
+                meshFilter.mesh.triangles = new int[] { 0, 1, 2, 0, 2, 3 };
             }
 
             meshRenderer.material = new Material(Shader.Find("Sprites/Default"));
@@ -184,6 +177,8 @@ namespace FungleAPI.Components
             material.color = color;
             meshRenderer.sortingOrder = sortingOrder;
             meshRenderer.sortingLayerID = sortingLayerID;
+
+            ApplyFlip();
         }
         private void ApplyMaskInteraction()
         {
@@ -223,10 +218,10 @@ namespace FungleAPI.Components
 
             meshFilter.mesh.vertices = new Vector3[4]
             {
-                new Vector3(-0.5f * x, -0.5f * y, 0),
-                new Vector3( 0.5f * x, -0.5f * y, 0),
-                new Vector3( 0.5f * x,  0.5f * y, 0),
-                new Vector3(-0.5f * x,  0.5f * y, 0)
+                new Vector3(-halfWidth * x, -halfHeight * y, 0),
+                new Vector3( halfWidth * x, -halfHeight * y, 0),
+                new Vector3( halfWidth * x,  halfHeight * y, 0),
+                new Vector3(-halfWidth * x,  halfHeight * y, 0)
             };
             meshFilter.mesh.RecalculateNormals();
             meshFilter.mesh.RecalculateBounds();
