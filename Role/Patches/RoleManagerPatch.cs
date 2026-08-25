@@ -101,18 +101,9 @@ namespace FungleAPI.Role.Patches
 
                 if (role != null && targetPlayer.AmOwner)
                 {
-                    if (role.CanUseKillButton)
-                    {
-                        RoleConfigManager.KillConfig?.ResetButton();
-                    }
-                    if (role.CanSabotage())
-                    {
-                        RoleConfigManager.SabotageConfig?.ResetButton?.Invoke();
-                    }
-                    if (role.CanVent)
-                    {
-                        RoleConfigManager.VentConfig?.ResetButton?.Invoke();
-                    }
+                    RoleConfigManager.KillConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.SabotageConfig?.ResetButton?.Invoke();
+                    RoleConfigManager.VentConfig?.ResetButton?.Invoke();
                     RoleConfigManager.ReportConfig?.ResetButton?.Invoke();
                 }
                 role.Deinitialize(targetPlayer);
@@ -139,19 +130,11 @@ namespace FungleAPI.Role.Patches
             CustomRoleManager.UpdateRole(roleBehaviour);
             if (targetPlayer.AmOwner)
             {
-                if (roleBehaviour.CanUseKillButton || targetPlayer.AnyModifierForceKill())
-                {
-                    RoleConfigManager.KillConfig.InitializeButton();
-                    targetPlayer.SetKillTimer(0.01f);
-                }
-                if (roleBehaviour.CanSabotage() || targetPlayer.AnyModifierForceSabotage())
-                {
-                    RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
-                }
-                if (roleBehaviour.CanVent || targetPlayer.AnyModifierForceVent())
-                {
-                    RoleConfigManager.VentConfig.InitializeButton?.Invoke();
-                }
+                RoleConfigManager.KillConfig?.InitializeButton?.Invoke();
+                targetPlayer.SetKillTimer(0.01f);
+
+                RoleConfigManager.SabotageConfig.InitializeButton?.Invoke();
+                RoleConfigManager.VentConfig.InitializeButton?.Invoke();
                 RoleConfigManager.ReportConfig.InitializeButton?.Invoke();
 
                 foreach (CustomAbilityButton customAbilityButton in HudHelper.Buttons.Values)

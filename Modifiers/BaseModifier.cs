@@ -36,7 +36,7 @@ namespace FungleAPI.Modifiers
 
         public virtual ModdedTeam SpecificTeam { get; }
 
-        public virtual bool ForceCanKill { get; }
+        public virtual bool ForceCanKillButton { get; }
         public virtual bool ForceCanSabotage { get; }
         public virtual bool ForceCanVent { get; }
 

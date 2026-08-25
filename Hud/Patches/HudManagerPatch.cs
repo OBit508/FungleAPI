@@ -7,6 +7,7 @@ using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility;
 using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.Modifiers;
+using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
@@ -254,9 +255,9 @@ namespace FungleAPI.Hud.Patches
                 __instance.ReportButton.ToggleVisible(isActive && !role.IsDead && GameModeManager.GetCurrentGameMode().CanReportBodies() && ShipStatus.Instance != null);
             }
 
-            __instance.KillButton.ToggleVisible((role.UseKillButton() || localPlayer.AnyModifierForceKill()) && isActive);
-            __instance.SabotageButton.ToggleVisible((role.CanSabotage() || localPlayer.AnyModifierForceSabotage()) && isActive);
-            __instance.ImpostorVentButton.ToggleVisible((role.CanUseVent() || localPlayer.AnyModifierForceKill()) && role.Role != RoleTypes.Engineer && isActive);
+            __instance.KillButton.ToggleVisible(localPlayer.CanUseKillButton() && isActive);
+            __instance.SabotageButton.ToggleVisible(localPlayer.CanUseSabotage() && isActive);
+            __instance.ImpostorVentButton.ToggleVisible(localPlayer.CanUseVent() && role.Role != RoleTypes.Engineer && isActive);
 
             foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
             {

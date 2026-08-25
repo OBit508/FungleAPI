@@ -54,9 +54,9 @@ namespace FungleAPI.Modifiers
         {
             return GetHolder(playerControl)?.RemoveModifier(modifierId) ?? false;
         }
-        public static bool AnyModifierForceKill(this PlayerControl playerControl)
+        public static bool AnyModifierForceKillButton(this PlayerControl playerControl)
         {
-            return GetHolder(playerControl).Modifiers.Values.Any(m => m.ForceCanKill);
+            return GetHolder(playerControl).Modifiers.Values.Any(m => m.ForceCanKillButton);
         }
         public static bool AnyModifierForceSabotage(this PlayerControl playerControl)
         {

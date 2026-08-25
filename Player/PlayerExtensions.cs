@@ -10,6 +10,7 @@ using FungleAPI.Event.Vanilla.Player;
 using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOver;
+using FungleAPI.Modifiers;
 using FungleAPI.Networking;
 using FungleAPI.Player.Networking;
 using FungleAPI.Player.Networking.Data;
@@ -31,6 +32,10 @@ namespace FungleAPI.Player
     /// </summary>
     public static class PlayerExtensions
     {
+        public static bool CanUseKillButton(this PlayerControl playerControl) => playerControl.Data.Role.UseKillButton() || playerControl.AnyModifierForceKillButton();
+        public static bool CanUseSabotage(this PlayerControl playerControl) => playerControl.Data.Role.CanSabotage() || playerControl.AnyModifierForceSabotage();
+        public static bool CanUseVent(this PlayerControl playerControl) => playerControl.Data.Role.CanUseVent() || playerControl.AnyModifierForceVent();
+
         public static PlayerControl FindClosestTarget(this PlayerControl playerControl)
         {
             if (playerControl == null || playerControl.Data == null) return null;

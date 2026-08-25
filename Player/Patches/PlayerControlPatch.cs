@@ -37,7 +37,7 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool SetKillTimerPrefix(PlayerControl __instance, float time)
         {
-            if (__instance.Data.Role.CanUseKillButton || __instance.AnyModifierForceKill())
+            if (__instance.CanUseKillButton())
             {
                 float @float = RoleConfigManager.KillConfig.Cooldown();
                 if (@float <= 0f)

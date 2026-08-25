@@ -71,7 +71,7 @@ namespace FungleAPI.Role.Utilities
                 if (PlayerControl.LocalPlayer == null || PlayerControl.LocalPlayer.Data == null) return;
 
                 PlayerControl playerControl = PlayerControl.LocalPlayer.FindClosestTarget();
-                bool flag = (PlayerControl.LocalPlayer.Data.Role.UseKillButton() || PlayerControl.LocalPlayer.AnyModifierForceKill()) && !PlayerControl.LocalPlayer.Data.IsDead;
+                bool flag = PlayerControl.LocalPlayer.CanUseKillButton() && !PlayerControl.LocalPlayer.Data.IsDead;
                 if ((PlayerControl.LocalPlayer.IsKillTimerEnabled || PlayerControl.LocalPlayer.ForceKillTimerContinue) && flag)
                 {
                     PlayerControl.LocalPlayer.SetKillTimer(PlayerControl.LocalPlayer.killTimer - Time.fixedDeltaTime);
