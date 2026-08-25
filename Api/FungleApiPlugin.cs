@@ -66,6 +66,7 @@ namespace FungleAPI.Api
         {
             if (IL2CPPChainloader.Instance.Plugins.ContainsKey("mira.api"))
             {
+                // Check MatchInfoGuide when its updated
                 Log.LogError($"Mira API compatibility is broken!!!");
                 return;
             }
