@@ -245,8 +245,12 @@ namespace FungleAPI.Player
                 bool flag = PlayerControl.LocalPlayer.Data.Role.Role == RoleTypes.GuardianAngel;
                 if (flag && (int)PlayerControl.LocalPlayer.Data.PlayerId == target.protectedByGuardianId)
                 {
-                    DataManager.Player.Stats.IncrementStat(StatID.Role_GuardianAngel_CrewmatesProtected);
-                    DestroyableSingleton<AchievementManager>.Instance.OnProtectACrewmate();
+                    try
+                    {
+                        DataManager.Player.Stats.IncrementStat(StatID.Role_GuardianAngel_CrewmatesProtected);
+                        DestroyableSingleton<AchievementManager>.Instance.OnProtectACrewmate();
+                    }
+                    catch { }
                 }
                 if (source.AmOwner || flag)
                 {
@@ -268,18 +272,22 @@ namespace FungleAPI.Player
                 DestroyableSingleton<DebugAnalytics>.Instance.Analytics.Kill(target.Data, source.Data);
                 if (source.AmOwner)
                 {
-                    if (GameManager.Instance.IsHideAndSeek())
+                    try
                     {
-                        DataManager.Player.Stats.IncrementStat(StatID.HideAndSeek_ImpostorKills);
+                        if (GameManager.Instance.IsHideAndSeek())
+                        {
+                            DataManager.Player.Stats.IncrementStat(StatID.HideAndSeek_ImpostorKills);
+                        }
+                        else
+                        {
+                            DataManager.Player.Stats.IncrementStat(StatID.ImpostorKills);
+                        }
+                        if (source.CurrentOutfitType == PlayerOutfitType.Shapeshifted)
+                        {
+                            DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);
+                        }
                     }
-                    else
-                    {
-                        DataManager.Player.Stats.IncrementStat(StatID.ImpostorKills);
-                    }
-                    if (source.CurrentOutfitType == PlayerOutfitType.Shapeshifted)
-                    {
-                        DataManager.Player.Stats.IncrementStat(StatID.Role_Shapeshifter_ShiftedKills);
-                    }
+                    catch { }
                     if (Constants.ShouldPlaySfx() && playKillSound)
                     {
                         SoundManager.Instance.PlaySound(source.KillSfx, false, 0.8f, null);
@@ -312,7 +320,13 @@ namespace FungleAPI.Player
                     target.cosmetics.SetNameMask(false);
                     target.RpcSetScanner(false);
                 }
-                DestroyableSingleton<AchievementManager>.Instance.OnMurder(source.AmOwner, target.AmOwner, source.CurrentOutfitType == PlayerOutfitType.Shapeshifted, source.shapeshiftTargetPlayerId, (int)target.PlayerId);
+
+                try
+                {
+                    AchievementManager.Instance.OnMurder(source.AmOwner, target.AmOwner, source.CurrentOutfitType == PlayerOutfitType.Shapeshifted, source.shapeshiftTargetPlayerId, (int)target.PlayerId);
+                }
+                catch { }
+
                 source.MyPhysics.StartCoroutine(source.KillAnimations.Random().CoPerformCustomKill(source, target, resultFlags, createDeadBody, teleportMurderer).WrapToIl2Cpp());
                 source.logger.Debug(string.Format("{0} succeeded in murdering {1}", source.PlayerId, target.PlayerId), null);
             }

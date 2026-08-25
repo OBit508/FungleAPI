@@ -113,6 +113,7 @@
     <Compile Include="GameModes\Patches\LogicOptionsNormalPatch.cs" />
     <Compile Include="GameModes\Patches\NormalGameManagerPatch.cs" />
     <Compile Include="GameOptions\Patches\GameOptionButtonPatch.cs" />
+    <Compile Include="GameOptions\Patches\MatchInfoGuidePatch.cs" />
     <Compile Include="GameOptions\SyncManager.cs" />
     <Compile Include="Cosmetics\CosmeticManager.cs" />
     <Compile Include="Cosmetics\Colors\CustomColor.cs" />
