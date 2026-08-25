@@ -15,18 +15,10 @@
   </PropertyGroup>
   <PropertyGroup />
 
-  <ItemGroup>
-    <PackageReference Include="Reactor" Version="2.5.0-ci.371" IncludeAssets="compile;build;analyzers" ExcludeAssets="runtime" Condition="'$(AmongUs)' == ''" />
-    <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" Private="false" ExcludeAssets="runtime;native" />
+  <ItemGroup>    
+	<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" Private="false" ExcludeAssets="runtime;native" />
     <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" PrivateAssets="all" />
     <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all" ExcludeAssets="runtime" />
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(AmongUs)' != ''">
-    <Reference Include="Reactor">
-      <HintPath>$(AmongUs)\BepInEx\plugins\Reactor.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>
