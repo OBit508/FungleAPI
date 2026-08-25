@@ -86,6 +86,7 @@ namespace FungleAPI.GameOptions.Patches
             {
                 RolesParents[assembly] = new GameObject(assembly.GetName().Name)
                 {
+                    active = false,
                     transform =
                     {
                         parent = __instance.MatchInfoRoleScroller.Inner,
