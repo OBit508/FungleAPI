@@ -23,21 +23,7 @@ namespace FungleAPI.Components
         {
             NameText = Owner.PlayerName;
 
-            bool canSee = false;
-
-            ICustomRole localRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
-            if (localRole != null)
-            {
-                canSee = localRole.CanSeeRole(Owner.Role);
-            }
-            else
-            {
-                ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
-                ModdedTeam team = Owner.Role.GetTeam();
-                canSee = localTeam == team && (localTeam.KnowMembers || Owner.Object.AmOwner);
-            }
-
-            if (canSee)
+            if (PlayerControl.LocalPlayer.Data.Role.CanSeeRole(Owner.Role))
             {
                 NameText = $"{Owner.Role.NameColor.ToTextColor()}{Owner.PlayerName}</color>";
                 if (Owner.Role.ShowRoleText())

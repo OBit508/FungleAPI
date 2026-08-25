@@ -58,29 +58,15 @@ namespace FungleAPI.Components
         }
         public void SetRoleText(RoleTypes roleTypes)
         {
-            if (RoleText == null) Start();
-            if (RoleText == null || PlayerControl.LocalPlayer?.Data?.Role == null)
-                return;
+            if (RoleText == null || PlayerControl.LocalPlayer?.Data?.Role == null) return;
 
             RoleBehaviour roleBehaviour = RoleManager.Instance.GetRole(roleTypes);
 
+            if (!roleBehaviour) return;
+
             if (roleBehaviour != null && roleBehaviour.ShowRoleText())
             {
-                bool canSee = false;
-
-                ICustomRole localRole = PlayerControl.LocalPlayer.Data.Role.CustomRole();
-                if (localRole != null)
-                {
-                    canSee = localRole.CanSeeRole(roleBehaviour);
-                }
-                else
-                {
-                    ModdedTeam localTeam = PlayerControl.LocalPlayer.Data.Role.GetTeam();
-                    ModdedTeam team = roleBehaviour.GetTeam();
-                    canSee = localTeam == team && (localTeam.KnowMembers || player.AmOwner);
-                }
-
-                if (canSee)
+                if (PlayerControl.LocalPlayer.Data.Role.CanSeeRole(roleBehaviour))
                 {
                     RoleText.gameObject.SetActive(true);
                     RoleText.text = roleBehaviour.NiceName;

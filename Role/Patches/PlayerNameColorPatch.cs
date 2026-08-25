@@ -22,28 +22,7 @@ namespace FungleAPI.Role.Patches
                 return false;
             }
 
-            RoleBehaviour role = PlayerControl.LocalPlayer.Data.Role;
-
-            if (role.IsMiraRole() && MiraCompatibility.Instance.RoleExtensions.CanLocalPlayerSeeRole(role, otherPlayerRole.Player))
-            {
-                __result = role.TeamColor;
-                return false;
-            }
-
-            bool canSee = false;
-
-            ICustomRole customRole = role.CustomRole();
-            if (customRole != null)
-            {
-                canSee = customRole.CanSeeRole(otherPlayerRole);
-            }
-            else
-            {
-                ModdedTeam team = role.GetTeam();
-
-                canSee = team == otherPlayerRole.GetTeam() && (team.KnowMembers || otherPlayerRole.Player.AmOwner);
-            }
-            __result = canSee ? otherPlayerRole.NameColor : Color.white;
+            __result = PlayerControl.LocalPlayer.Data.Role.CanSeeRole(otherPlayerRole) ? otherPlayerRole.NameColor : Color.white;
             return false;
         }
     }

@@ -77,6 +77,22 @@ namespace FungleAPI.Role.Utilities
             }
             return role.TeamType == RoleTeamTypes.Impostor ? ModdedTeamManager.Impostors : ModdedTeamManager.Crewmates;
         }
+        public static bool CanSeeRole(this RoleBehaviour roleBehaviour, RoleBehaviour otherPlayerRole)
+        {
+            if (roleBehaviour.IsMiraRole() && MiraCompatibility.Instance.RoleExtensions.CanLocalPlayerSeeRole(roleBehaviour, otherPlayerRole.Player))
+            {
+                return true;
+            }
+
+            if (roleBehaviour.CustomRole() != null)
+            {
+                return roleBehaviour.CustomRole().CanSeeRole(otherPlayerRole);
+            }
+
+            ModdedTeam team = roleBehaviour.GetTeam();
+
+            return team == otherPlayerRole.GetTeam() && (team.KnowMembers || otherPlayerRole.Player.AmOwner);
+        }
         /// <summary>
         /// Returns if the role can sabotage
         /// </summary>
