@@ -105,10 +105,8 @@ namespace FungleAPI.Hud
             }
             Button = GameObject.Instantiate(HudManager.Instance.AbilityButton, Location == ButtonLocation.BottomRight ? HudHelper.BottomRight : HudHelper.BottomLeft);
             Button.name = OverrideText;
-            Button.graphic.material = HudManager.Instance.KillButton.graphic.material;
             Button.graphic.sprite = sprite;
             Button.OverrideText(OverrideText);
-            Button.buttonLabelText.fontMaterial = HudManager.Instance.KillButton.buttonLabelText.fontMaterial;
             Button.buttonLabelText.SetOutlineColor(TextOutlineColor);
             SetCooldown(InitialCooldown);
             if (!LimitedUses)

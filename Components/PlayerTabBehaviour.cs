@@ -65,6 +65,10 @@ namespace FungleAPI.Components
             float taskHeight = taskPanel.taskText.textBounds.size.y + 1f;
             float yPos = taskPanel.open ? taskHeight : 2f;
 
+            float dangerOffset = HudManager.Instance.DangerMeter != null && HudManager.Instance.DangerMeter.isActiveAndEnabled ? 1f : 0f;
+
+            yPos += dangerOffset;
+
             Panel.closedPosition = new Vector3(-Panel.background.sprite.bounds.size.x * Panel.background.transform.localScale.x, taskPanel.open ? yPos + 0.2f : yPos, Panel.closedPosition.z);
             Panel.openPosition = new Vector3(taskPanel.openPosition.x, yPos, taskPanel.openPosition.z);
 

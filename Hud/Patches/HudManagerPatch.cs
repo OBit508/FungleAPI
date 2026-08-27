@@ -102,13 +102,9 @@ namespace FungleAPI.Hud.Patches
                 }
             };
 
-            __instance.ImpostorVentButton.graphic.material = __instance.KillButton.graphic.material;
-            __instance.ImpostorVentButton.buttonLabelText.fontMaterial = __instance.KillButton.buttonLabelText.fontMaterial;
             __instance.ImpostorVentButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.ImpostorVentButton.transform);
             __instance.ImpostorVentButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
 
-            __instance.SabotageButton.graphic.material = __instance.KillButton.graphic.material;
-            __instance.SabotageButton.buttonLabelText.fontMaterial = __instance.KillButton.buttonLabelText.fontMaterial;
             __instance.SabotageButton.cooldownTimerText = GameObject.Instantiate<TextMeshPro>(__instance.KillButton.cooldownTimerText, __instance.SabotageButton.transform);
             __instance.SabotageButton.cooldownTimerText.transform.localPosition = __instance.KillButton.cooldownTimerText.transform.localPosition;
 
