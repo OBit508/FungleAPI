@@ -48,6 +48,7 @@ namespace FungleAPI.Role
             { typeof(TrackerRole), RoleTypes.Tracker },
             { typeof(ViperRole), RoleTypes.Viper },
             { typeof(DetectiveRole), RoleTypes.Detective },
+            { typeof(JudgeRole), RoleTypes.Judge }
         };
         /// <summary>
         /// Returns the NeutralGhost role created by the API
