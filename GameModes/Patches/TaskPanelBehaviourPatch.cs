@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using FungleAPI.ModCompatibility.MiraSupport;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,13 @@ namespace FungleAPI.GameModes.Patches
     { 
         public static bool Prefix(TaskPanelBehaviour __instance)
         {
-            
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.GameModeBridge.IsMiraMode(GameModeManager.GetCurrentGameMode()))
+            {
+                MiraCompatibility.Instance.GameModeBridge.UpdateTaskPanel(__instance);
+                return false;
+            }
+
+            UpdatePos(__instance);
             return false;
         }
         public static void UpdatePos(TaskPanelBehaviour taskPanelBehaviour)

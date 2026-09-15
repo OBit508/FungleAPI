@@ -1,5 +1,6 @@
 ﻿using FungleAPI.Attributes;
 using FungleAPI.Extensions;
+using FungleAPI.GameModes.Patches;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -42,6 +43,12 @@ namespace FungleAPI.Components
         }
         public void Update()
         {
+            if (!HudManager.Instance.TaskPanel.isActiveAndEnabled)
+            {
+                TaskPanelBehaviourPatch.UpdatePos(Panel);
+                return;
+            }
+
             Vector3 vector = Panel.background.sprite.bounds.extents;
             Vector3 vector2 = Panel.tab.sprite.bounds.extents;
 
