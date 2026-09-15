@@ -17,8 +17,8 @@ namespace FungleAPI.Cosmetics
         public bool InFront = true;
 
         private Action<HatViewData> __configureData;
-        public CustomHat(StringNames hatName, string ownerPlugin, Action<HatViewData> configureData, Action<PreviewViewData> configurePreview = null)
-            :base(hatName, ownerPlugin, configurePreview)
+        public CustomHat(StringNames hatName, Action<HatViewData> configureData, Action<PreviewViewData> configurePreview = null)
+            :base(hatName, configurePreview)
         {
             __configureData = configureData;
         }

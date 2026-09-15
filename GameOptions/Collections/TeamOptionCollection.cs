@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.Api;
 using FungleAPI.GameOptions.Patches;
+using FungleAPI.Modifiers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
@@ -52,7 +53,7 @@ namespace FungleAPI.GameOptions.Collections
             base.SetAsDefault(amHost);
         }
         public TeamOptionCollection(ModdedTeam moddedTeam)
-            :base("Teams", moddedTeam.GetType())
+            :base("Teams", $"{moddedTeam.GetType().Name}_{moddedTeam.GetType().GetShortUniqueId()}")
         {
             Team = moddedTeam;
         }

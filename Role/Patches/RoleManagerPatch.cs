@@ -54,7 +54,6 @@ namespace FungleAPI.Role.Patches
 
                 foreach (ModPlugin plugin in ModPluginManager.AllPlugins)
                 {
-                    plugin.Settings.Initialize(plugin);
                     foreach (ModdedTeam moddedTeam in plugin.Teams)
                     {
                         moddedTeam.Initialize(plugin);

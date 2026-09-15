@@ -39,14 +39,18 @@ namespace FungleAPI.PluginLoading
         List<LobbyTab> LoadTabs(ModPlugin modPlugin) 
         {
             List<LobbyTab> lobbyTabs = new List<LobbyTab>() { new GamemodeSettingsTab() { TabAssembly = modPlugin.ModAssembly } };
-            if (modPlugin.Settings.Groups.Count > 0)
-            {
-                lobbyTabs.Add(new RoomSettingsTab() { TabAssembly = modPlugin.ModAssembly });
-            }
+
             if (modPlugin.Teams.Count > 0)
             {
                 lobbyTabs.Add(new TeamTab() { TabAssembly = modPlugin.ModAssembly });
             }
+
+            foreach (BaseSettingTab baseSettingTab in modPlugin.SettingTabs)
+            {
+                baseSettingTab.Initialize(modPlugin);
+                lobbyTabs.Add(new DefaultSettingTab() { TabAssembly = modPlugin.ModAssembly, Owner = baseSettingTab });
+            }
+            
             if (modPlugin.Modifiers.FindAll(m => !m.HideInLobby).Count > 0)
             {
                 lobbyTabs.Add(new ModifierTab() { TabAssembly = modPlugin.ModAssembly });

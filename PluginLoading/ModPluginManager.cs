@@ -87,7 +87,7 @@ namespace FungleAPI.PluginLoading
                     try
                     {
                         bool registeredInIl2cpp = false;
-                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
+                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.FolderConfig != null, plugin.Cosmetics != null);
                         if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
                         {
                             ClassInjector.RegisterTypeInIl2Cpp(type);
@@ -105,7 +105,7 @@ namespace FungleAPI.PluginLoading
                     try
                     {
                         bool registeredInIl2cpp = false;
-                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.Settings != null, plugin.FolderConfig != null, plugin.Cosmetics != null);
+                        ProcessType(type, plugin, ref registeredInIl2cpp, plugin.FolderConfig != null, plugin.Cosmetics != null);
                         if (!registeredInIl2cpp && type.GetCustomAttribute<RegisterTypeInIl2Cpp>() != null)
                         {
                             ClassInjector.RegisterTypeInIl2Cpp(type);
@@ -124,10 +124,6 @@ namespace FungleAPI.PluginLoading
                 }
             }
 
-            if (plugin.Settings == null)
-            {
-                plugin.Settings = new RoomSettings();
-            }
             if (plugin.FolderConfig == null)
             {
                 plugin.FolderConfig = new ModFolderConfig();
@@ -138,11 +134,11 @@ namespace FungleAPI.PluginLoading
             }
             fungleBasePlugin?.FullyLoaded();
         }
-        private static void ProcessType(Type type, ModPlugin plugin, ref bool registeredInIl2cpp, bool hasSettings, bool hasFolderConfig, bool hasCosmetics)
+        private static void ProcessType(Type type, ModPlugin plugin, ref bool registeredInIl2cpp, bool hasFolderConfig, bool hasCosmetics)
         {
-            if (!hasSettings && typeof(RoomSettings).IsAssignableFrom(type))
+            if (typeof(BaseSettingTab).IsAssignableFrom(type))
             {
-                plugin.Settings = (RoomSettings)Activator.CreateInstance(type);
+                plugin.SettingTabs.Add((BaseSettingTab)Activator.CreateInstance(type));
                 return;
             }
             else if (!hasFolderConfig && typeof(ModFolderConfig).IsAssignableFrom(type))

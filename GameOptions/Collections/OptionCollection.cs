@@ -21,7 +21,7 @@ namespace FungleAPI.GameOptions.Collections
         public ModPlugin Plugin;
         public List<IModdedOption> Options = new List<IModdedOption>();
 
-        public Type OwnerType;
+        public string UniqueName;
         public string CategoryName;
 
         public virtual void Initialize(ModPlugin modPlugin, List<IModdedOption> moddedOptions)
@@ -29,7 +29,7 @@ namespace FungleAPI.GameOptions.Collections
             Plugin = modPlugin;
             Options.AddRange(moddedOptions);
 
-            string collectionId = $"{CategoryName}_{OwnerType.Name}_{OwnerType.GetShortUniqueId()}";
+            string collectionId = $"{CategoryName}_{UniqueName}";
 
             ConfigFile configFile = FileManager.GetFile(modPlugin);
 
@@ -77,10 +77,10 @@ namespace FungleAPI.GameOptions.Collections
                 moddedOption.SetValue(moddedOption.DefaultValue, amHost);
             }
         }
-        public OptionCollection(string categoryName, Type ownerType)
+        public OptionCollection(string categoryName, string uniqueName)
         {
             CategoryName = categoryName;
-            OwnerType = ownerType;
+            UniqueName = uniqueName;
         }
     }
 }

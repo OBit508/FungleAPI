@@ -13,8 +13,8 @@ namespace FungleAPI.Cosmetics
     {
         private Func<PetBehaviour> __createPet;
         private Func<Sprite> __previewSprite;
-        public CustomPet(StringNames hatName, string ownerPlugin, Func<PetBehaviour> createPet, Func<Sprite> previewSprite, Action<PreviewViewData> configurePreview = null)
-            : base(hatName, ownerPlugin, configurePreview)
+        public CustomPet(StringNames hatName, Func<PetBehaviour> createPet, Func<Sprite> previewSprite, Action<PreviewViewData> configurePreview = null)
+            : base(hatName, configurePreview)
         {
             __createPet = createPet;
             __previewSprite = previewSprite;

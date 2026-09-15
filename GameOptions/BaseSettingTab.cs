@@ -13,15 +13,18 @@ using System.Threading.Tasks;
 
 namespace FungleAPI.GameOptions
 {
-    /// <summary>
-    /// Class used to create the room tab settings
-    /// </summary>
     [FungleIgnore]
-    public class RoomSettings
+    public abstract class BaseSettingTab
     {
         public List<SettingsGroup> Groups = new List<SettingsGroup>();
         public OptionCollection OptionCollection;
         public bool initialized;
+
+        public abstract StringNames ViewTabButtonText { get; }
+        public abstract StringNames EditTabButtonText { get; }
+
+        public abstract StringNames TabDescriptionText { get; }
+
         public virtual void Initialize(ModPlugin modPlugin)
         {
             if (!initialized)
@@ -43,7 +46,7 @@ namespace FungleAPI.GameOptions
                         Groups.Add(group);
                     }
                 }
-                OptionCollection = new OptionCollection("Room", type);
+                OptionCollection = new OptionCollection(type.FullName, type.GetShortUniqueId());
                 OptionCollection.Initialize(modPlugin, moddedOptions);
                 initialized = true;
             }

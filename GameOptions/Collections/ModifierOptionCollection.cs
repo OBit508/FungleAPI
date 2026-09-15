@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.Modifiers;
 using FungleAPI.Role;
+using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,7 +47,7 @@ namespace FungleAPI.GameOptions.Collections
             base.SetAsDefault(amHost);
         }
         public ModifierOptionCollection(BaseModifier baseModifier)
-            : base("Modifiers", baseModifier.GetType())
+            : base("Modifiers", $"{baseModifier.GetType().Name}_{baseModifier.GetType().GetShortUniqueId()}")
         {
             Modifier = baseModifier;
         }

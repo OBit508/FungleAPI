@@ -13,15 +13,17 @@ using UnityEngine;
 
 namespace FungleAPI.GameOptions.Lobby
 {
-    public class RoomSettingsTab : FungleTab
+    public class DefaultSettingTab : FungleTab
     {
-        public override string ViewTabButtonText => FungleTranslation.RoomText.GetString();
-        public override string EditTabButtonText => FungleTranslation.RoomSettings.GetString();
-        public override string TabDescriptionText => FungleTranslation.RoomTabDescription.GetString();
+        public BaseSettingTab Owner;
+
+        public override string ViewTabButtonText => Owner.ViewTabButtonText.GetString();
+        public override string EditTabButtonText => Owner.EditTabButtonText.GetString();
+        public override string TabDescriptionText => Owner.TabDescriptionText.GetString();
         public override void BuildViewTab(LobbyViewSettingsPane lobbyViewSettingsPane)
         {
             float num = 1.44f;
-            foreach (SettingsGroup group in Plugin.Settings.Groups)
+            foreach (SettingsGroup group in Owner.Groups)
             {
                 CategoryHeaderMasked categoryHeaderMasked = GameObject.Instantiate(lobbyViewSettingsPane.categoryHeaderOrigin);
                 categoryHeaderMasked.SetHeader(group.GroupName, 61);
@@ -67,7 +69,7 @@ namespace FungleAPI.GameOptions.Lobby
         public override void BuildEditTab(GameOptionsMenu gameOptionsMenu)
         {
             float num = 2;
-            foreach (SettingsGroup group in Plugin.Settings.Groups)
+            foreach (SettingsGroup group in Owner.Groups)
             {
                 CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate(gameOptionsMenu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, gameOptionsMenu.settingsContainer);
                 categoryHeaderMasked.SetHeader(group.GroupName, 20);

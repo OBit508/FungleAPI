@@ -12,8 +12,8 @@ namespace FungleAPI.Cosmetics
     public class CustomSkin : BaseCosmetic
     {
         private Action<SkinViewData> __configureData;
-        public CustomSkin(StringNames hatName, string ownerPlugin, Action<SkinViewData> configureData, Action<PreviewViewData> configurePreview = null)
-            : base(hatName, ownerPlugin, configurePreview)
+        public CustomSkin(StringNames hatName, Action<SkinViewData> configureData, Action<PreviewViewData> configurePreview = null)
+            : base(hatName, configurePreview)
         {
             __configureData = configureData;
         }

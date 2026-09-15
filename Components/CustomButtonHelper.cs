@@ -10,7 +10,7 @@ using UnityEngine;
 namespace FungleAPI.Components
 {
     [RegisterTypeInIl2Cpp]
-    public class CustomAbilityButtonHelper : MonoBehaviour
+    public class CustomButtonHelper : MonoBehaviour
     {
         public CustomAbilityButton Button;
 

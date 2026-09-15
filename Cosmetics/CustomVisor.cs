@@ -14,8 +14,8 @@ namespace FungleAPI.Cosmetics
         public bool BehindHats = false;
 
         private Action<VisorViewData> __configureData;
-        public CustomVisor(StringNames hatName, string ownerPlugin, Action<VisorViewData> configureData, Action<PreviewViewData> configurePreview = null)
-            : base(hatName, ownerPlugin, configurePreview)
+        public CustomVisor(StringNames hatName, Action<VisorViewData> configureData, Action<PreviewViewData> configurePreview = null)
+            : base(hatName, configurePreview)
         {
             __configureData = configureData;
         }

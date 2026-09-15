@@ -23,9 +23,8 @@ namespace FungleAPI.GameModes.Patches
                 hideNSeekMode.ModeOptions.Groups.Add(new HideNSeekMode.HNSGroup(rulesCategory, hideNSeekMode));
             }
 
-            hideNSeekMode.ModeOptions.OptionCollection = new OptionCollection("GameModes", typeof(HideNSeekMode));
+            hideNSeekMode.ModeOptions.OptionCollection = new OptionCollection("GameModes", "HnS");
             hideNSeekMode.ModeOptions.OptionCollection.Initialize(FungleApiPlugin.Plugin, hideNSeekMode.Settings.Values.ToList());
-
         }
     }
 }

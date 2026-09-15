@@ -1,6 +1,7 @@
 ﻿using BepInEx.Configuration;
 using FungleAPI.Api;
 using FungleAPI.GameOptions.Patches;
+using FungleAPI.Modifiers;
 using FungleAPI.PluginLoading;
 using FungleAPI.Role;
 using FungleAPI.Utilities;
@@ -52,7 +53,7 @@ namespace FungleAPI.GameOptions.Collections
             base.SetAsDefault(amHost);
         }
         public RoleOptionCollection(ICustomRole customRole)
-            :base("Roles", customRole.GetType())
+            :base("Roles", $"{customRole.GetType().Name}_{customRole.GetType().GetShortUniqueId()}")
         {
             Role = customRole;
         }

@@ -133,19 +133,6 @@ namespace FungleAPI.Hud.Patches
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
         {
-            foreach (CustomAbilityButton button in HudHelper.Buttons.Values)
-            {
-                try
-                {
-                    if (button.Button == null || !button.Button.isActiveAndEnabled) continue;
-
-                    button.Update();
-                }
-                catch (Exception exception)
-                {
-                    FungleApiPlugin.Instance.Log.LogError($"Failed to update button {button.GetType().FullName}: {exception}");
-                }
-            }
             if (__instance.consoleUIRoot.transform.localPosition.x != __instance.consoleUIHorizontalShift)
             {
                 Vector3 localPosition = __instance.consoleUIRoot.transform.localPosition;

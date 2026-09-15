@@ -2,6 +2,7 @@
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,7 @@ namespace FungleAPI.GameModes
                         Groups.Add(group);
                     }
                 }
-                OptionCollection = new OptionCollection("GameModes", type);
+                OptionCollection = new OptionCollection("GameModes", $"{type.Name}_{type.GetShortUniqueId()}");
                 OptionCollection.Initialize(modPlugin, moddedOptions);
                 initialized = true;
             }

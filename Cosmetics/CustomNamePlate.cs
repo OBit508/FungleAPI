@@ -12,8 +12,8 @@ namespace FungleAPI.Cosmetics
     public class CustomNamePlate : BaseCosmetic
     {
         private Action<NamePlateViewData> __configureData;
-        public CustomNamePlate(StringNames hatName, string ownerPlugin, Action<NamePlateViewData> configureData, Action<PreviewViewData> configurePreview = null)
-            : base(hatName, ownerPlugin, configurePreview)
+        public CustomNamePlate(StringNames hatName, Action<NamePlateViewData> configureData, Action<PreviewViewData> configurePreview = null)
+            : base(hatName, configurePreview)
         {
             __configureData = configureData;
         }

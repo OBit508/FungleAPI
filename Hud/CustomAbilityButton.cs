@@ -114,6 +114,7 @@ namespace FungleAPI.Hud
                 Button.usesRemainingSprite.gameObject.SetActive(false);
             }
             Button.GetComponent<PassiveButton>().SetNewAction(ClickHandler);
+            Button.gameObject.AddComponent<CustomButtonHelper>().Button = this;
 
             if (MiraCompatibility.Instance != null)
             {

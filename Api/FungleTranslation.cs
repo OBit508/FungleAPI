@@ -20,9 +20,6 @@ namespace FungleAPI.Api
         public static Translator ModifiersText { get; } = new Translator("Modifiers");
         public static Translator ModifierConfigButtonText { get; } = new Translator("Modifiers Settings");
         public static Translator ModifierConfigDescText { get; } = new Translator("Edit the Modifiers settings");
-        public static Translator RoomText { get; } = new Translator("Room");
-        public static Translator RoomSettings { get; } = new Translator("Room Settings");
-        public static Translator RoomTabDescription { get; } = new Translator("Edit the Room settings for your lobby.");
         public static Translator PluralGameModeText { get; } = new Translator("Game Modes");
         public static Translator CheatingWarnText { get; } = new Translator("{0} is cheating.");
         public static Translator FungleCreditsText { get; } = new Translator("Thanks for using Fungle Api!!!");

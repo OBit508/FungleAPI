@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -20,10 +21,10 @@ namespace FungleAPI.Cosmetics
 
         protected Action<PreviewViewData> __configurePreview;
         
-        public BaseCosmetic(StringNames cosmeticName, string ownerPlugin, Action<PreviewViewData> configurePreview = null)
+        public BaseCosmetic(StringNames cosmeticName, Action<PreviewViewData> configurePreview = null)
         {
             CosmeticName = cosmeticName;
-            OwnerPlugin = ownerPlugin;
+            OwnerPlugin = Assembly.GetCallingAssembly().GetName().Name;
             __configurePreview = configurePreview;
         }
 
