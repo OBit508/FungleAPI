@@ -68,7 +68,6 @@ namespace FungleAPI.Api
             {
                 // Check MatchInfoGuide when its updated
                 Log.LogError($"Mira API compatibility is broken!!!");
-                return;
             }
 
             ModPlugin plugin = new ModPlugin();

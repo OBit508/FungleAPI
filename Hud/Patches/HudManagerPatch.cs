@@ -92,6 +92,8 @@ namespace FungleAPI.Hud.Patches
                 gridArrange.Start();
                 gridArrange.ArrangeChilds();
                 HudHelper.BottomLeft.GetComponent<AspectPosition>().AdjustPosition();
+
+                Helpers.StartCoroutine(MiraCompatibility.Instance.GameModeBridge.CoPostHudStart(__instance));
             }
 
             __instance.gameObject.GetOrAddComponent<Updater>().fixedUpdate += delegate
@@ -219,6 +221,12 @@ namespace FungleAPI.Hud.Patches
                     }
                 }
             }
+
+            if (MiraCompatibility.Instance != null && GameManager.Instance != null && GameManager.Instance.GameHasStarted)
+            {
+                MiraCompatibility.Instance.GameModeBridge.HudUpdate(__instance);
+            }
+
             return false;
         }
 

@@ -3,6 +3,7 @@ using FungleAPI.Api;
 using FungleAPI.Assets;
 using FungleAPI.Event;
 using FungleAPI.Freeplay.Helpers;
+using FungleAPI.GameModes;
 using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace FungleAPI.ModCompatibility.MiraSupport
         public static MiraCompatibility Instance;
         public virtual MiraRoleExtensions RoleExtensions => null;
         public virtual MiraConfigs RoleConfigs => null;
+        public virtual MiraModeBridge GameModeBridge => null;
         public virtual void Initialize() { }
         public virtual IEnumerable<RoleBehaviour> CompleteRoleRegistration() => null;
         public virtual void PopulateMiraLobbyTabs() { }

@@ -1,4 +1,6 @@
-﻿using FungleAPI.Role.Utilities;
+﻿using FungleAPI.GameModes;
+using FungleAPI.ModCompatibility.MiraSupport;
+using FungleAPI.Role.Utilities;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -14,7 +16,20 @@ namespace FungleAPI.Role.Patches
     {
         public static bool Prefix(ImpostorRole __instance, NetworkedPlayerInfo target, ref bool __result)
         {
-            __result = !(target == null) && !target.Disconnected && !target.IsDead && target.PlayerId != __instance.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible && (target.Role.GetTeam() != __instance.GetTeam() || __instance.GetTeam().FriendlyFire);
+            bool result = true;
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.GameModeBridge.IsMiraMode(GameModeManager.GetCurrentGameMode()))
+            {
+                bool runOriginal = true;
+                result = false;
+                MiraCompatibility.Instance.GameModeBridge.CanKill(ref runOriginal, ref result, target.Object);
+
+                if (!runOriginal)
+                {
+                    return result;
+                }
+            }
+
+            __result = !(target == null) && result && !target.Disconnected && !target.IsDead && target.PlayerId != __instance.Player.PlayerId && !(target.Role == null) && !(target.Object == null) && !target.Object.inVent && !target.Object.inMovingPlat && target.Object.Visible && (target.Role.GetTeam() != __instance.GetTeam() || __instance.GetTeam().FriendlyFire);
             return false;
         }
     }

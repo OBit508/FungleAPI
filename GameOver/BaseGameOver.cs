@@ -2,6 +2,7 @@
 using Assets.CoreScripts;
 using FungleAPI.Attributes;
 using FungleAPI.Extensions;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities.Sound;
 using Hazel;
@@ -31,7 +32,19 @@ namespace FungleAPI.GameOver
         public virtual void SetData()
         {
             Winners.Clear();
-            foreach (NetworkedPlayerInfo networkedPlayerInfo in GameData.Instance.AllPlayers)
+
+            IEnumerable<NetworkedPlayerInfo> networkedPlayerInfos = null;
+            if (MiraCompatibility.Instance != null)
+            {
+                networkedPlayerInfos = MiraCompatibility.Instance.GameModeBridge.GetOverrideWinners();
+            }
+
+            if (networkedPlayerInfos == null)
+            {
+                networkedPlayerInfos = GameData.Instance.AllPlayers.ToArray();
+            }
+
+            foreach (NetworkedPlayerInfo networkedPlayerInfo in networkedPlayerInfos)
             {
                 if (networkedPlayerInfo.Role.DidWin(Reason))
                 {

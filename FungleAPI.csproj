@@ -178,6 +178,7 @@
     <Compile Include="ModCompatibility\MiraSupport\MiraConfigs.cs" />
     <Compile Include="ModCompatibility\MiraSupport\MiraCompatibility.cs" />
     <Compile Include="ModCompatibility\MiraSupport\MiraExtensions.cs" />
+    <Compile Include="ModCompatibility\MiraSupport\MiraModeBridge.cs" />
     <Compile Include="ModCompatibility\MiraSupport\MiraRoleExtensions.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCompatibility.cs" />
     <Compile Include="ModCompatibility\ReactorSupport\ReactorCreditsLocation.cs" />
