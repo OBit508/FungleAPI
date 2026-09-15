@@ -48,6 +48,7 @@
     <Compile Include="BepInEx\BepInAutoPluginAttribute.cs" />
     <Compile Include="BepInEx\PatcherAutoPluginAttribute.cs" />
     <Compile Include="Components\CustomAbilityButtonHelper.cs" />
+    <Compile Include="Components\HandShakeHelper.cs" />
     <Compile Include="Components\IntroHelper.cs" />
     <Compile Include="Components\ModifierHolder.cs" />
     <Compile Include="Components\PlayerTabBehaviour.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Event\Vanilla\BeforeIntroBeginEvent.cs" />
     <Compile Include="Event\Vanilla\IntroEndEvent.cs" />
     <Compile Include="Event\Vanilla\IntroStartEvent.cs" />
+    <Compile Include="Event\Vanilla\JoinGameEvent.cs" />
     <Compile Include="Event\Vanilla\Player\AfterSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\Player\BeforeSetRoleEvent.cs" />
     <Compile Include="Event\Vanilla\ShipStartEvent.cs" />
@@ -168,9 +170,9 @@
     <Compile Include="GameOptions\Patches\LobbyViewSettingsPanePatch.cs" />
     <Compile Include="GameOptions\Patches\RolesSettingMenuPatch.cs" />
     <Compile Include="GlobalPatches\PlayerBanDataPatch.cs" />
-    <Compile Include="GlobalPatches\ServerManagerPatch.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
+    <Compile Include="Hud\Patches\MatchInfoHudButtonPatch.cs" />
     <Compile Include="Hud\Patches\ReportButtonPatch.cs" />
     <Compile Include="Hud\Patches\VentButtonPatch.cs" />
     <Compile Include="ModCompatibility\MiraSupport\MiraConfigs.cs" />
@@ -187,7 +189,6 @@
     <Compile Include="Networking\AntiCheatManager.cs" />
     <Compile Include="Networking\CustomRpcMessage.cs" />
     <Compile Include="Networking\Patches\CoHandleSpawnPatch.cs" />
-    <Compile Include="Networking\Patches\CoSendSceneChangePatch.cs" />
     <Compile Include="Networking\Patches\HandleGameDataInnerPatch.cs" />
     <Compile Include="Networking\HandShakeManager.cs" />
     <Compile Include="Networking\Patches\InnerNetClientPatch.cs" />
@@ -200,6 +201,7 @@
     <Compile Include="Player\Networking\Data\SetRoleData.cs" />
     <Compile Include="Player\Networking\RpcMoveToVent.cs" />
     <Compile Include="Player\BodyUtils.cs" />
+    <Compile Include="Player\Networking\RpcSendMods.cs" />
     <Compile Include="Player\Networking\RpcSetRole.cs" />
     <Compile Include="Player\Patches\PlayerPhysicsPatch.cs" />
     <Compile Include="Player\PlayerExtensions.cs" />

@@ -4,9 +4,10 @@ using BepInEx.Unity.IL2CPP.Utils;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
 using FungleAPI.Components;
-using FungleAPI.Extensions;
 using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Event.Vanilla.Player;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.ModCompatibility;
@@ -27,27 +28,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace FungleAPI.GlobalPatches
 {
     internal static class AmongUsClientPatch
     {
-        public static Dictionary<int, KeyValuePair<string, string>> WrongModdeds = new Dictionary<int, KeyValuePair<string, string>>();
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerLeft))]
         [HarmonyPostfix]
         public static void RemoveFromList(AmongUsClient __instance, ClientData data)
         {
             EventManager.CallEvent(new PlayerLeaveEvent(data));
-            if (WrongModdeds.ContainsKey(data.Id))
-            {
-                WrongModdeds.Remove(data.Id);
-            }
         }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.JoinGame))]
         [HarmonyPostfix]
         public static void ResetModdedList(InnerNetClient __instance)
         {
-            WrongModdeds.Clear();
+            EventManager.CallEvent(new JoinGameEvent());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
 using FungleAPI.Chat;
 using FungleAPI.Components;
@@ -24,14 +25,18 @@ namespace FungleAPI.Player.Patches
     internal static class PlayerControlPatch
     {
         internal static List<Il2CppSystem.Type> AllPlayerComponents = new List<Il2CppSystem.Type>();
-        [HarmonyPatch("Start")]
-        [HarmonyPostfix]
-        public static void StartPostfix(PlayerControl __instance)
+        [HarmonyPatch(nameof(PlayerControl.Start))]
+        [HarmonyPrefix]
+        public static bool StartPrefix(PlayerControl __instance, ref Il2CppSystem.Collections.IEnumerator __result)
         {
+            HandShakeHelper handShakeHelper = __instance.gameObject.GetOrAddComponent<HandShakeHelper>();
+            handShakeHelper.Owner = __instance;
             if (__instance.GetComponent<PlayerHelper>() == null)
             {
                 DoStart(__instance);
             }
+            __result = handShakeHelper.CoStartPlayer().WrapToIl2Cpp();
+            return false;
         }
         [HarmonyPatch("SetKillTimer")]
         [HarmonyPrefix]

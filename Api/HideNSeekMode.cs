@@ -471,6 +471,8 @@ namespace FungleAPI.Api
 
             InitMusic();
             ResetMusic();
+
+            ShipStatus.Instance?.BreakEmergencyButton();
         }
         public override void OnGameEnd()
         {

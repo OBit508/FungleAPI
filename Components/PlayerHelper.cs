@@ -37,8 +37,6 @@ namespace FungleAPI.Components
         public TextMeshPro RoleText;
         public void Start()
         {
-            StartCoroutine(CoInitialize().WrapToIl2Cpp());
-
             if (RoleText != null) return;
 
             TextMeshPro original = player.cosmetics.nameText;
@@ -76,24 +74,6 @@ namespace FungleAPI.Components
             }
 
             RoleText.gameObject.SetActive(false);
-        }
-        public System.Collections.IEnumerator CoInitialize()
-        {
-            if (!AmongUsClient.Instance.AmHost) yield break;
-
-            while (player.Data == null || player.Data.ClientId < 0) yield return null;
-
-            if (AmongUsClient.Instance.HostId == player.Data.ClientId) yield break;
-
-            if (AmongUsClientPatch.WrongModdeds.TryGetValue(player.Data.ClientId, out KeyValuePair<string, string> mods))
-            {
-                AmongUsClientPatch.WrongModdeds.Remove(player.Data.ClientId);
-                Rpc<RpcSendModsDisconnect>.Instance.Send(mods, PlayerControl.LocalPlayer);
-                AmongUsClient.Instance.KickPlayer(player.Data.ClientId, false);
-                HudManager.Instance?.Notifier.AddDisconnectMessage(FungleTranslation.HandShakeFail_ModdedPlayerDisconnect.GetString());
-                yield break;
-            }
-            SyncManager.RpcSyncEverything(player.Data.ClientId);
         }
         public void Update()
         {

@@ -40,8 +40,8 @@
   "TeamConfigDescText": "Modifica le impostazioni delle Squadre per la tua stanza.",
   "TypeHereText": "Digita qui chi era l'assassino",
 
-  "HandShakeFail_MissingAPIDisconnect": "Giocatore senza mod disconnesso.",
-  "HandShakeFail_ModdedPlayerDisconnect": "Giocatore con mod disconnesso.",
+  "HandShakeFail_MissingAPIDisconnect": "{0} does not have FungleAPI.",
+  "HandShakeFail_ModdedPlayerDisconnect": "{0} has different mods.",
   "HandShakeFail_MissingMods": "Nel client locale mancano le seguenti mod: {0};",
   "HandShakeFail_ExtraMods": "Nel client dell'host mancano le seguenti mod: {0};",
   "HandShakeFail_HostNotModded": "L'Host non utilizza mod.",

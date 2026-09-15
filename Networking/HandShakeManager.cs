@@ -21,25 +21,28 @@ namespace FungleAPI.Networking
 
         public static bool? ModdedServerHandshakeActive;
 
-        public static void GetMods((string GUID, string version, string name)[] mods, out Dictionary<string, KeyValuePair<string, string>> missingMods, out List<KeyValuePair<string, string>> extraMods)
+        public static void GetMods(BepInMod[] mods, out List<BepInMod> missingMods, out List<BepInMod> missingOnClientMods)
         {
-            missingMods = new Dictionary<string, KeyValuePair<string, string>>();
-            extraMods = new List<KeyValuePair<string, string>>();
+            Dictionary<string, BepInMod> msMods = new Dictionary<string, BepInMod>();
+
+            missingOnClientMods = new List<BepInMod>();
 
             foreach (BepInMod bepInMod in RequiredMods.Values)
             {
-                missingMods.Add(bepInMod.GUID, new KeyValuePair<string, string>(bepInMod.Name, bepInMod.Version));
+                msMods.Add(bepInMod.GUID, bepInMod);
             }
             
-            foreach ((string GUID, string version, string name) mod in mods)
+            foreach (BepInMod mod in mods)
             {
-                if (RequiredMods.TryGetValue(mod.GUID, out BepInMod bepInMod) && bepInMod.Version == mod.version)
+                if (RequiredMods.TryGetValue(mod.GUID, out BepInMod bepInMod) && bepInMod.Version == mod.Version)
                 {
-                    missingMods.Remove(mod.GUID);
+                    msMods.Remove(mod.GUID);
                     continue;
                 }
-                extraMods.Add(new KeyValuePair<string, string>(mod.name, mod.version));
+                missingOnClientMods.Add(mod);
             }
+
+            missingMods = msMods.Values.ToList();
         }
         public static void DisconnectWithReason(string reason)
         {
