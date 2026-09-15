@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using FungleAPI.GameOptions.Lobby;
+using FungleAPI.ModCompatibility.MiraSupport;
 
 namespace FungleAPI.Api
 {
@@ -38,6 +39,8 @@ namespace FungleAPI.Api
             float num = 1.44f;
 
             BaseGameMode baseGameMode = GameModeManager.GetCurrentGameMode();
+
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.GameModeBridge.IsMiraMode(baseGameMode) && MiraCompatibility.Instance.GameModeBridge.BuildViewTab(baseGameMode, lobbyViewSettingsPane)) return;
 
             if (baseGameMode.GameModeId != GameMode<NormalGameMode>.Instance.GameModeId && baseGameMode.ModeOptions != null)
             {
@@ -151,6 +154,8 @@ namespace FungleAPI.Api
             num -= 0.45f;
 
             BaseGameMode baseGameMode = GameModeManager.GetCurrentGameMode();
+
+            if (MiraCompatibility.Instance != null && MiraCompatibility.Instance.GameModeBridge.IsMiraMode(baseGameMode) && MiraCompatibility.Instance.GameModeBridge.BuildEditTab(baseGameMode, gameOptionsMenu)) return;
 
             if (baseGameMode.GameModeId != GameMode<NormalGameMode>.Instance.GameModeId && baseGameMode.ModeOptions != null)
             {

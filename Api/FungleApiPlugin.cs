@@ -64,12 +64,6 @@ namespace FungleAPI.Api
         public static ModPlugin Plugin => FunglePlugin<FungleApiPlugin>.Plugin;
         public override void Load()
         {
-            if (IL2CPPChainloader.Instance.Plugins.ContainsKey("mira.api"))
-            {
-                // Check MatchInfoGuide when its updated
-                Log.LogError($"Mira API compatibility is broken!!!");
-            }
-
             ModPlugin plugin = new ModPlugin();
             ModPluginManager.Register(plugin, Assembly.GetExecutingAssembly(), this);
             plugin.FunglePlugin = this;

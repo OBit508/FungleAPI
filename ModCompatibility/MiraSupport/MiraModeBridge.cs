@@ -18,5 +18,7 @@ namespace FungleAPI.ModCompatibility.MiraSupport
         public virtual System.Collections.IEnumerator CoPostHudStart(HudManager hudManager) { yield break; }
         public virtual void HudUpdate(HudManager hudManager) { }
         public virtual void UpdateTaskPanel(TaskPanelBehaviour instance) { }
+        public virtual bool BuildViewTab(BaseGameMode baseGameMode, LobbyViewSettingsPane lobbyViewSettingsPane) => false;
+        public virtual bool BuildEditTab(BaseGameMode baseGameMode, GameOptionsMenu gameOptionsMenu) => false;
     }
 }

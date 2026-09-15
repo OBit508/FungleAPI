@@ -19,6 +19,7 @@ using FungleAPI.Role.Utilities;
 using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using HarmonyLib;
+using Il2CppSystem.Data;
 using InnerNet;
 using MonoMod.Cil;
 using System;
@@ -28,6 +29,8 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using xCloud;
+using static Il2CppSystem.Globalization.CultureInfo;
+using static UnityEngine.UIElements.StylePropertyAnimationSystem;
 
 namespace FungleAPI.Role.Patches
 {
@@ -68,7 +71,21 @@ namespace FungleAPI.Role.Patches
                     OptionManager.LobbyTabs[plugin.ModAssembly] = tabs;
                 }
 
-                MiraCompatibility.Instance?.PopulateMiraLobbyTabs();
+                if (MiraCompatibility.Instance != null)
+                {
+                    MiraCompatibility.Instance.PopulateMiraLobbyTabs();
+                    foreach (BaseGameMode baseGameMode in MiraCompatibility.Instance.GameModeBridge.GetMiraGameModes())
+                    {
+                        baseGameMode.GameModeId = (uint)GameModeManager.Values.Count;
+                        GameModeManager.Values.Add(baseGameMode.GameModeName);
+                        if (GameModeManager.Data != null)
+                        {
+                            GameModeManager.Data.Values = GameModeManager.Values.ToArray();
+                        }
+
+                        GameModeManager.GameModes.Add(baseGameMode.GameModeId, baseGameMode);
+                    }
+                }
 
                 waitingRegister = false;
             }

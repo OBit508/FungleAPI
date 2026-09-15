@@ -24,8 +24,8 @@ namespace FungleAPI.GameModes
         public static NormalGameMode Default = new NormalGameMode();
         public static Dictionary<uint, BaseGameMode> GameModes = new Dictionary<uint, BaseGameMode>();
 
-        private static List<StringNames> Values = new List<StringNames>();
-        private static StringGameSetting Data;
+        internal static List<StringNames> Values = new List<StringNames>();
+        internal static StringGameSetting Data;
         internal static ConfigEntry<uint> HostValue;
         internal static uint NonHostValue;
 
