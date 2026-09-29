@@ -29,14 +29,18 @@ namespace FungleAPI.Player.Patches
         [HarmonyPrefix]
         public static bool StartPrefix(PlayerControl __instance, ref Il2CppSystem.Collections.IEnumerator __result)
         {
-            HandShakeHelper handShakeHelper = __instance.gameObject.GetOrAddComponent<HandShakeHelper>();
-            handShakeHelper.Owner = __instance;
+            if (AmongUsClient.Instance.NetworkMode != NetworkModes.FreePlay)
+            {
+                HandShakeHelper handShakeHelper = __instance.gameObject.GetOrAddComponent<HandShakeHelper>();
+                handShakeHelper.Owner = __instance;
+                __result = handShakeHelper.CoStartPlayer().WrapToIl2Cpp();
+            }
+
             if (__instance.GetComponent<PlayerHelper>() == null)
             {
                 DoStart(__instance);
             }
-            __result = handShakeHelper.CoStartPlayer().WrapToIl2Cpp();
-            return false;
+            return AmongUsClient.Instance.NetworkMode == NetworkModes.FreePlay;
         }
         [HarmonyPatch("SetKillTimer")]
         [HarmonyPrefix]

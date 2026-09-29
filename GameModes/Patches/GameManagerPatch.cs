@@ -60,5 +60,12 @@ namespace FungleAPI.GameModes.Patches
         {
             GameModeManager.GetCurrentGameMode().OnPlayerDisconnect(pc);
         }
+        [HarmonyPatch(nameof(GameManager.OnPlayerDeath))]
+        [HarmonyPrefix]
+        public static bool OnPlayerDeathPrefix(PlayerControl player, bool assignGhostRole)
+        {
+            GameModeManager.GetCurrentGameMode().OnPlayerDeath(player, assignGhostRole);
+            return false;
+        }
     }
 }

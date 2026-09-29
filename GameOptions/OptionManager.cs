@@ -5,6 +5,7 @@ using FungleAPI.GameOptions.Attributes;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOptions.Lobby;
 using FungleAPI.GameOptions.Options;
+using FungleAPI.ModCompatibility.MiraSupport;
 using FungleAPI.PluginLoading;
 using FungleAPI.Utilities;
 using FungleAPI.Utilities.Harmony;
@@ -167,6 +168,11 @@ namespace FungleAPI.GameOptions
             option.LabelBackground.enabled = false;
             option.name = "ModdedOption";
             option.enabled = true;
+
+            if (MiraCompatibility.Instance != null)
+            {
+                option.transform.Find("ResetOption")?.gameObject.SetActive(false);
+            }
         }
         internal static float Quantize(float value, float defaultValue, FloatGameSetting setting)
         {

@@ -1,6 +1,7 @@
 ﻿using AmongUs.Data;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
+using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GlobalPatches;
 using FungleAPI.Networking;
@@ -17,7 +18,7 @@ using UnityEngine;
 namespace FungleAPI.Components
 {
     [Attributes.RegisterTypeInIl2Cpp]
-    public class HandShakeHelper : MonoBehaviour
+    internal class HandShakeHelper : MonoBehaviour
     {
         public PlayerControl Owner;
 
@@ -26,13 +27,14 @@ namespace FungleAPI.Components
         public List<BepInMod> MissingOnClientMods = new List<BepInMod>();
 
         public bool DidHandShake;
+
         public System.Collections.IEnumerator ClientInitialize()
         {
             yield return Owner.ClientInitialize();
 
-            if (!AmongUsClient.Instance.AmHost) yield break;
+            if (!AmongUsClient.Instance.AmHost) { this.Destroy(); yield break; }
 
-            if (AmongUsClient.Instance.HostId == Owner.OwnerId) yield break;
+            if (AmongUsClient.Instance.HostId == Owner.OwnerId) { this.Destroy(); yield break; }
 
             if (!HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault())
             {
@@ -96,6 +98,8 @@ namespace FungleAPI.Components
             }
 
             SyncManager.RpcSyncEverything(Owner.OwnerId);
+
+            this.Destroy();
         }
         public System.Collections.IEnumerator CoStartPlayer()
         {
@@ -162,6 +166,11 @@ namespace FungleAPI.Components
             if (PlayerControl.LocalPlayer == Owner)
             {
                 Owner.clickKillCollider.enabled = false;
+            }
+
+            if (Owner.AmOwner)
+            {
+                this.Destroy();
             }
         }
     }

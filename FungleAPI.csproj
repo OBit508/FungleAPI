@@ -82,7 +82,6 @@
     <Compile Include="GameModes\Logics\LGameFlow.cs" />
     <Compile Include="GameModes\Logics\LOption.cs" />
     <Compile Include="GameModes\Logics\LOptionsN.cs" />
-    <Compile Include="GameModes\Logics\LRoleSelection.cs" />
     <Compile Include="GameModes\Patches\CreateGameOptionsPatch.cs" />
     <Compile Include="GameModes\Patches\DeadBodyPatch.cs" />
     <Compile Include="GameModes\Patches\EngineerRolePatch.cs" />
@@ -169,6 +168,7 @@
     <Compile Include="GameOptions\Lobby\LobbyTab.cs" />
     <Compile Include="GameOptions\Patches\LobbyViewSettingsPanePatch.cs" />
     <Compile Include="GameOptions\Patches\RolesSettingMenuPatch.cs" />
+    <Compile Include="GameOver\Patches\GameManagerPatch.cs" />
     <Compile Include="GlobalPatches\PlayerBanDataPatch.cs" />
     <Compile Include="Hud\CustomButton.cs" />
     <Compile Include="Hud\Patches\MapRoomPatch.cs" />
