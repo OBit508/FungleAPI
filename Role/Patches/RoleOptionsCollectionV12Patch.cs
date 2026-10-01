@@ -17,14 +17,14 @@ using static Il2CppSystem.Linq.Expressions.Interpreter.CastInstruction.CastInstr
 
 namespace FungleAPI.Role.Patches
 {
-    [HarmonyPatch(typeof(RoleOptionsCollectionV11))]
-    internal static class RoleOptionsCollectionV11Patch
+    [HarmonyPatch(typeof(RoleOptionsCollectionV12))]
+    internal static class RoleOptionsCollectionV12Patch
     {
         [HarmonyPrefix]
-        [HarmonyPatch("AnyRolesEnabled")]
-        public static bool AnyRolesEnabledPrefix(RoleOptionsCollectionV09 __instance, ref bool __result)
+        [HarmonyPatch(nameof(RoleOptionsCollectionV12.AnyRolesEnabled))]
+        public static bool AnyRolesEnabledPrefix(RoleOptionsCollectionV12 __instance, ref bool __result)
         {
-            foreach (Il2CppSystem.Collections.Generic.KeyValuePair<RoleTypes, RoleDataV09> keyValuePair in __instance.roles)
+            foreach (Il2CppSystem.Collections.Generic.KeyValuePair<RoleTypes, RoleDataV12> keyValuePair in __instance.roles)
             {
                 if (__instance.GetNumPerGame(keyValuePair.Key) > 0)
                 {
@@ -34,8 +34,8 @@ namespace FungleAPI.Role.Patches
             return false;
         }
         [HarmonyPrefix]
-        [HarmonyPatch("GetChancePerGame")]
-        public static bool GetChancePrefix([HarmonyArgument(0)] RoleTypes roleType, ref int __result)
+        [HarmonyPatch(nameof(RoleOptionsCollectionV12.GetChancePerGame))]
+        public static bool GetChancePrefix(RoleTypes roleType, ref int __result)
         {
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)
@@ -46,8 +46,8 @@ namespace FungleAPI.Role.Patches
             return true;
         }
         [HarmonyPrefix]
-        [HarmonyPatch("GetNumPerGame")]
-        public static bool GetNumPrefix([HarmonyArgument(0)] RoleTypes roleType, ref int __result)
+        [HarmonyPatch(nameof(RoleOptionsCollectionV12.GetNumPerGame))]
+        public static bool GetNumPrefix(RoleTypes roleType, ref int __result)
         {
             ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
             if (role != null)

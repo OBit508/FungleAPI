@@ -1,4 +1,5 @@
-﻿using AmongUs.Matchmaking;
+﻿using AmongUs.GameOptions;
+using AmongUs.Matchmaking;
 using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.Components;
@@ -40,7 +41,7 @@ namespace FungleAPI.Freeplay
             FolderName = modPlugin.FunglePlugin.ModName;
             foreach (KeyValuePair<ModdedTeam, List<RoleBehaviour>> teams in modPlugin.GetTeamsAndRoles())
             {
-                teams.Value.RemoveAll(r => r.CustomRole() == null && RoleManager.IsGhostRole(r.Role) || r.CustomRole() != null && r.CustomRole().Configuration.HideInFreeplay);
+                teams.Value.RemoveAll(r => r.CustomRole() == null && (r.Role == RoleTypes.CrewmateGhost || r.Role == RoleTypes.ImpostorGhost) || r.CustomRole() != null && r.CustomRole().Configuration.HideInFreeplay);
                 if (teams.Value.Count > 0)
                 {
                     if (teams.Key.HideInFreeplay) continue;

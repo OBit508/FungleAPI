@@ -4,6 +4,7 @@ using FungleAPI.Api;
 using FungleAPI.Extensions;
 using FungleAPI.GameOptions;
 using FungleAPI.GlobalPatches;
+using FungleAPI.ModCompatibility.ReactorSupportTemp;
 using FungleAPI.Networking;
 using FungleAPI.Player.Networking;
 using FungleAPI.PluginLoading;
@@ -36,7 +37,7 @@ namespace FungleAPI.Components
 
             if (AmongUsClient.Instance.HostId == Owner.OwnerId) { this.Destroy(); yield break; }
 
-            if (!HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault())
+            if (!HandShakeManager.ModdedServerHandshakeActive.GetValueOrDefault() && ReactorCompatibility.Instance == null)
             {
                 ClientData clientData = AmongUsClient.Instance.GetClient(Owner.OwnerId);
 

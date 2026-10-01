@@ -18,36 +18,45 @@ namespace FungleAPI.Ship
     /// </summary>
     public static class ShipExtensions
     {
+        private static ShipStatus sp;
+        private static ShipType last;
+
         /// <summary>
         /// Returns the ship type
         /// </summary>
         public static ShipType GetShipType(this ShipStatus shipStatus)
         {
-            if (LevelImpostorSupport.LevelImpostorAssembly != null && shipStatus.GetComponent(Il2CppType.From(LevelImpostorSupport.LIShipStatus)) != null)
+            if (sp != shipStatus)
             {
-                return ShipType.LevelImpostor;
+                if (LevelImpostorSupport.LevelImpostorAssembly != null && shipStatus.GetComponent(Il2CppType.From(LevelImpostorSupport.LIShipStatus)) != null)
+                {
+                    last = ShipType.LevelImpostor;
+                }
+                if (SubmergedCompatibility.Instance != null && shipStatus.GetComponent(Il2CppType.From(SubmergedCompatibility.Instance.SubmarineStatus)) != null)
+                {
+                    last = ShipType.Submerged;
+                }
+                if (shipStatus.SafeCast<SkeldShipStatus>() != null)
+                {
+                    last = ShipType.Skeld;
+                }
+                else if (shipStatus.SafeCast<MiraShipStatus>() != null)
+                {
+                    last = ShipType.MiraHQ;
+                }
+                else if (shipStatus.SafeCast<PolusShipStatus>() != null)
+                {
+                    last = ShipType.Polus;
+                }
+                else if (shipStatus.SafeCast<AirshipStatus>() != null)
+                {
+                    last = ShipType.Airship;
+                }
+                last = ShipType.Fungle;
+                sp = shipStatus;
             }
-            if (SubmergedCompatibility.Instance != null && shipStatus.GetComponent(Il2CppType.From(SubmergedCompatibility.Instance.SubmarineStatus)) != null)
-            {
-                return ShipType.Submerged;
-            }
-            if (shipStatus.SafeCast<SkeldShipStatus>() != null)
-            {
-                return ShipType.Skeld;
-            }
-            else if (shipStatus.SafeCast<MiraShipStatus>() != null)
-            {
-                return ShipType.MiraHQ;
-            }
-            else if (shipStatus.SafeCast<PolusShipStatus>() != null)
-            {
-                return ShipType.Polus;
-            }
-            else if (shipStatus.SafeCast<AirshipStatus>() != null)
-            {
-                return ShipType.Airship;
-            }
-            return ShipType.Fungle;
+
+            return last;
         }
 
         /// <summary>

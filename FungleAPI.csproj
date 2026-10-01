@@ -17,7 +17,7 @@
 
   <ItemGroup>    
 	<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" Private="false" ExcludeAssets="runtime;native" />
-    <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" PrivateAssets="all" />
+    <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.9.29" PrivateAssets="all" />
     <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" PrivateAssets="all" ExcludeAssets="runtime" />
   </ItemGroup>
 
@@ -309,7 +309,7 @@
     <Compile Include="Assets\AssetLoader.cs" />
     <Compile Include="Components\GifAnimator.cs" />
     <Compile Include="Role\Patches\RoleBehaviourPatch.cs" />
-    <Compile Include="Role\Patches\RoleOptionsCollectionV010Patch.cs" />
+    <Compile Include="Role\Patches\RoleOptionsCollectionV12Patch.cs" />
     <Compile Include="Freeplay\TaskAdderGamePatch.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <Compile Include="Ship\Patches\VentPatch.cs" />
