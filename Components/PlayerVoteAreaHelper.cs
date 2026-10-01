@@ -28,7 +28,7 @@ namespace FungleAPI.Components
                 NameText = $"{Owner.Role.NameColor.ToTextColor()}{Owner.PlayerName}</color>";
                 if (Owner.Role.ShowRoleText())
                 {
-                    NameText += $"\n{Owner.Role.TeamColor.ToTextColor()}<size=60%>{Owner.Role.NiceName}</size></color>";
+                    NameText = $"{Owner.Role.TeamColor.ToTextColor()}<size=60%>{Owner.Role.NiceName}</size>\n{Owner.Role.NameColor.ToTextColor()}{Owner.PlayerName}</color>";
 
                     SetColorblindText = () =>
                     {

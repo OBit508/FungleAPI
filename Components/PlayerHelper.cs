@@ -44,7 +44,7 @@ namespace FungleAPI.Components
             RoleText = GameObject.Instantiate(original, original.transform);
             RoleText.transform.localScale = Vector3.one * 0.6f;
 
-            RoleText.transform.localPosition = new Vector3(0, -0.2f, 0);
+            RoleText.transform.localPosition = new Vector3(0, 0.2f, 0);
 
             RoleText.gameObject.SetActive(false);
 
@@ -75,11 +75,6 @@ namespace FungleAPI.Components
 
             RoleText.gameObject.SetActive(false);
         }
-        public void Update()
-        {
-            player.cosmetics.colorBlindText.transform.localPosition = new Vector3(0, RoleText.gameObject.activeSelf ? -0.4f : -0.2f, 0);
-        }
-
         [EventRegister]
         private static void SetRoleText(AfterSetRoleEvent afterSetRoleEvent)
         {
