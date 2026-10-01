@@ -126,13 +126,12 @@ namespace FungleAPI.Api
                         }
 
                         PluginCredits? pluginCredits = modPlugin.FunglePlugin.Credits;
-                        if (pluginCredits != null && modPlugin != Plugin)
+                        if (pluginCredits != null)
                         {
                             ReactorCompatibility.Instance?.Register(pluginCredits.Value.Name, pluginCredits.Value.Version, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         }
                     }
                 }
-                ReactorCompatibility.Instance?.Register("FungleAPI", ModVersion, false, (p) => p == ReactorCreditsLocation.PingTracker);
 
                 // Organiza os mods registrados por GUID
 

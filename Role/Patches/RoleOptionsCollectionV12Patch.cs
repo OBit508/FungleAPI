@@ -35,24 +35,24 @@ namespace FungleAPI.Role.Patches
         }
         [HarmonyPrefix]
         [HarmonyPatch(nameof(RoleOptionsCollectionV12.GetChancePerGame))]
-        public static bool GetChancePrefix(RoleTypes roleType, ref int __result)
+        public static bool GetChancePrefix(RoleTypes role, ref int __result)
         {
-            ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
-            if (role != null)
+            ICustomRole customRole = RoleManager.Instance.GetRole(role).CustomRole();
+            if (customRole != null)
             {
-                __result = role.GetChance();
+                __result = customRole.GetChance();
                 return false;
             }
             return true;
         }
         [HarmonyPrefix]
         [HarmonyPatch(nameof(RoleOptionsCollectionV12.GetNumPerGame))]
-        public static bool GetNumPrefix(RoleTypes roleType, ref int __result)
+        public static bool GetNumPrefix(RoleTypes role, ref int __result)
         {
-            ICustomRole role = RoleManager.Instance.GetRole(roleType).CustomRole();
-            if (role != null)
+            ICustomRole customRole = RoleManager.Instance.GetRole(role).CustomRole();
+            if (customRole != null)
             {
-                __result = role.GetCount();
+                __result = customRole.GetCount();
                 return false;
             }
             return true;

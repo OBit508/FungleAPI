@@ -22,7 +22,7 @@ namespace FungleAPI.GlobalPatches
 
             if (modsText == null)
             {
-                modsText = $"FungleAPI {FungleApiPlugin.ModV}";
+                modsText = $"FungleAPI {FungleApiPlugin.Instance.ModVersion}";
 
                 List<ModPlugin> plugins = ModPluginManager.AllPlugins.FindAll(p => p.FunglePlugin.Credits != null && p != FungleApiPlugin.Plugin);
 
