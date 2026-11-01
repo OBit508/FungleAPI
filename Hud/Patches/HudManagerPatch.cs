@@ -1,5 +1,6 @@
 ﻿using AmongUs.Data;
 using AmongUs.GameOptions;
+using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Api;
 using FungleAPI.Components;
 using FungleAPI.Extensions;
@@ -128,6 +129,13 @@ namespace FungleAPI.Hud.Patches
                 }
             }
         }
+        [HarmonyPatch(nameof(HudManager.CoShowIntro))]
+        [HarmonyPrefix]
+        public static bool CoShowIntroPrefix(ref Il2CppSystem.Collections.IEnumerator __result)
+        {
+            __result = CoShowIntro().WrapToIl2Cpp();
+            return false;
+        }
         [HarmonyPatch("Update")]
         [HarmonyPrefix]
         public static bool UpdatePrefix(HudManager __instance)
@@ -251,6 +259,37 @@ namespace FungleAPI.Hud.Patches
             {
                 button.Button.ToggleVisible(button.Active && isActive);
             }
+        }
+        public static System.Collections.IEnumerator CoShowIntro()
+        {
+            HudManager hudManager = HudManager.Instance;
+            while (!ShipStatus.Instance)
+            {
+                yield return null;
+            }
+            hudManager.IsIntroDisplayed = true;
+            hudManager.LobbyTimerExtensionUI.HideAll();
+            hudManager.SetMapAndInfoButtonsEnabled(false);
+            DestroyableSingleton<HudManager>.Instance.FullScreen.transform.localPosition = new Vector3(0f, 0f, -250f);
+            yield return DestroyableSingleton<HudManager>.Instance.ShowEmblem(true);
+            IntroCutscene introCutscene = GameObject.Instantiate<IntroCutscene>(hudManager.IntroPrefab, hudManager.transform);
+            yield return GameModeManager.GetCurrentGameMode().CoIntroBegin(introCutscene);
+            PlayerControl.LocalPlayer.SetKillTimer(10f);
+            ShipStatus.Instance.Systems[SystemTypes.Sabotage].SafeCast<SabotageSystemType>().SetInitialSabotageCooldown();
+            ISystemType systemType;
+            if (ShipStatus.Instance.Systems.TryGetValue(SystemTypes.Doors, out systemType) && systemType.Is(out IDoorSystem doorSystem))
+            {
+                doorSystem.SetInitialSabotageCooldown();
+            }
+            yield return ShipStatus.Instance.PrespawnStep();
+            PlayerControl.LocalPlayer.AdjustLighting();
+            yield return hudManager.CoFadeFullScreen(Color.black, Color.clear, 0.2f, false);
+            hudManager.FullScreen.transform.localPosition = new Vector3(0f, 0f, -500f);
+            hudManager.IsIntroDisplayed = false;
+            hudManager.SetMapAndInfoButtonsEnabled(true);
+            hudManager.CrewmatesKilled.gameObject.SetActive(GameManager.Instance.ShowCrewmatesKilled());
+            GameManager.Instance.StartGame();
+            yield break;
         }
         public static void CreatePlayerTab()
         {
