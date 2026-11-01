@@ -1,4 +1,6 @@
 ﻿using FungleAPI.Api;
+using FungleAPI.Role.Utilities;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -17,5 +19,6 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText => FungleTranslation.CrewmateGameOver.GetString();
         public override Color BackgroundColor { get; set; } = Palette.CrewmateBlue;
         public override Color NameColor { get; set; } = Palette.CrewmateBlue;
+        public override bool DidWin(NetworkedPlayerInfo networkedPlayerInfo) => networkedPlayerInfo.Role.GetTeam() == ModdedTeamManager.Crewmates;
     }
 }

@@ -516,7 +516,7 @@ namespace FungleAPI.Api
                 if (!player.Data.IsDead)
                 {
                     ModdedTeam team = player.Data.Role.GetTeam();
-                    if (team != ModdedTeamManager.Crewmates)
+                    if (team != ModdedTeamManager.Crewmates && !team.KeepGameRunning)
                     {
                         if (team != ModdedTeamManager.Neutrals)
                         {
@@ -589,37 +589,14 @@ namespace FungleAPI.Api
                     KeyValuePair<ModdedTeam, int> pair = independentTeams.First();
                     if (neutralKillerCount.Count <= 0 && pair.Value >= crewmateCount)
                     {
-                        if (pair.Key == ModdedTeamManager.Impostors)
-                        {
-                            if (TutorialManager.InstanceExists)
-                            {
-                                DestroyableSingleton<HudManager>.Instance.ShowPopUp(DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameOverImpostorKills));
-                                Manager.ReviveEveryoneFreeplay();
-                            }
-                            else
-                            {
-                                switch (GameData.LastDeathReason)
-                                {
-                                    case DeathReason.Exile:
-                                        Manager.RpcEndGame<ImpostorsByVote>();
-                                        break;
-                                    case DeathReason.Kill:
-                                        Manager.RpcEndGame<ImpostorsByKill>();
-                                        break;
-                                    default:
-                                        Manager.RpcEndGame<CrewmateDisconnect>();
-                                        break;
-                                }
-                            }
-                            return;
-                        }
                         if (TutorialManager.InstanceExists)
                         {
                             HudManager.Instance.ShowPopUp(pair.Key.VictoryText);
+                            Manager.ReviveEveryoneFreeplay();
                         }
                         else
                         {
-                            Manager.RpcEndGame(pair.Key.DefaultGameOver);
+                            pair.Key.CallGameOver(Manager);
                         }
                     }
                 }

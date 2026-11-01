@@ -1,7 +1,9 @@
 ﻿using FungleAPI.Api;
+using FungleAPI.Networking;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
+using FungleAPI.Teams;
 using FungleAPI.Utilities;
 using Hazel;
 using System;
@@ -22,7 +24,8 @@ namespace FungleAPI.GameOver.Ends
         public override string WinText { get; set; }
         public override Color BackgroundColor { get; set; }
         public override Color NameColor => BackgroundColor;
-        public override void SetData()
+        public override bool DidWin(NetworkedPlayerInfo networkedPlayerInfo) => networkedPlayerInfo.Role.GetTeam() == ModdedTeamManager.Neutrals && networkedPlayerInfo.Role.KeepGameRunning() && !networkedPlayerInfo.IsDead;
+        public override void SetWinners()
         {
             ICustomRole customRole = Winner.Data.Role.CustomRole();
             if (customRole != null)
@@ -34,17 +37,14 @@ namespace FungleAPI.GameOver.Ends
             WinText = string.Format(FungleTranslation.VictoryText.GetString(), customRole.RoleName.GetString());
             BackgroundColor = Winner.Data.Role.NameColor;
         }
-        public override void ReceiveDataFromRpcEndGame(PlayerControl data)
+        public override void Serialize(MessageWriter messageWriter, PlayerControl dataT)
         {
-            Winner = data;
+            Winner = dataT;
+            messageWriter.WritePlayer(dataT);
         }
-        public override byte GetExtraByte()
+        public override void Deserialize(MessageReader messageReader)
         {
-            return Winner.PlayerId;
-        }
-        public override void InterpretExtraByte(byte b)
-        {
-            Winner = PlayerExtensions.GetPlayerById(b);
+            Winner = messageReader.ReadPlayer();
         }
     }
 }

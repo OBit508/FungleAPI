@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using AmongUs.GameOptions;
+﻿using AmongUs.GameOptions;
 using BepInEx.Configuration;
 using FungleAPI.Attributes;
 using FungleAPI.Extensions;
@@ -12,11 +6,19 @@ using FungleAPI.GameOptions;
 using FungleAPI.GameOptions.Collections;
 using FungleAPI.GameOver;
 using FungleAPI.PluginLoading;
+using FungleAPI.Role;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Translation;
 using FungleAPI.Utilities;
 using HarmonyLib;
 using Il2CppSystem.Linq.Expressions;
 using MonoMod.Cil;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -52,14 +54,12 @@ namespace FungleAPI.Teams
         /// Victory screen text
         /// </summary>
         public abstract string VictoryText { get; }
-        /// <summary>
-        /// Default game over
-        /// </summary>
-        public abstract BaseGameOver DefaultGameOver { get; }
+        public abstract void CallGameOver(GameManager gameManager);
         /// <summary>
         /// Default role assigned to this team
         /// </summary>
         public virtual RoleTypes DefaultRole { get; }
+        public virtual bool KeepGameRunning => true;
         /// <summary>
         /// Determines whether friendly fire is enabled
         /// </summary>
@@ -96,6 +96,42 @@ namespace FungleAPI.Teams
                 TeamOptions.Initialize(plugin, OptionManager.GetAndInitializeModdedOptions(GetType(), plugin));
                 Initialized = true;
             }
+        }
+        public virtual void BeginIntro(IntroCutscene introCutscene)
+        {
+            introCutscene.TeamTitle.text = TeamName.GetString();
+            introCutscene.BackgroundBar.material.color = TeamColor;
+            introCutscene.TeamTitle.color = TeamColor;
+
+            List<PlayerControl> playersToDisplay = new List<PlayerControl>() { PlayerControl.LocalPlayer };
+            playersToDisplay.AddRange(PlayerControl.AllPlayerControls.ToArray().Where(p => !p.AmOwner && (!KnowMembers || KnowMembers && p.Data.Role.GetTeam() == this)));
+
+            for (int i = 0; i < playersToDisplay.Count; i++)
+            {
+                PlayerControl playerControl = playersToDisplay[i];
+                if (playerControl)
+                {
+                    NetworkedPlayerInfo data = playerControl.Data;
+                    if (!(data == null))
+                    {
+                        PoolablePlayer poolablePlayer = introCutscene.CreatePlayer(i, 1, data, true);
+                        if (i == 0 && data.PlayerId == PlayerControl.LocalPlayer.PlayerId)
+                        {
+                            introCutscene.ourCrewmate = poolablePlayer;
+                        }
+                    }
+                }
+            }
+
+            if (!KnowMembers)
+            {
+                Transform transform = introCutscene.BackgroundBar.transform;
+                Vector3 position = transform.position;
+                position.y -= 0.25f;
+                transform.position = position;
+            }
+
+            introCutscene.ImpostorText.text = IntroHelpers.GetDefaultTeamsText();
         }
         /// <summary>
         /// Creates the category header

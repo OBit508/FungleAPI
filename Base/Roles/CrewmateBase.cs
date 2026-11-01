@@ -23,9 +23,5 @@ namespace FungleAPI.Base.Roles
             }
             return usable.SafeCast<ZiplineConsole>() != null || usable.SafeCast<Ladder>() != null || usable.SafeCast<PlatformConsole>() != null || usable.SafeCast<Console>() != null || usable.SafeCast<DoorConsole>() != null || usable.SafeCast<Vent>() != null;
         }
-        public override bool DidWin(GameOverReason gameOverReason)
-        {
-            return GameManager.Instance.DidHumansWin(gameOverReason);
-        }
     }
 }

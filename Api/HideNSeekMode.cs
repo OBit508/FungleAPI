@@ -4,6 +4,8 @@ using AmongUs.GameOptions;
 using BepInEx.Unity.IL2CPP.Utils.Collections;
 using FungleAPI.Base.Rpc;
 using FungleAPI.Components;
+using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Extensions;
 using FungleAPI.GameModes;
 using FungleAPI.GameOptions;
@@ -88,6 +90,8 @@ namespace FungleAPI.Api
         public float TotalFinalHideTime => totalFinalHideTime;
         public override IEnumerator CoIntroBegin(IntroCutscene introCutscene)
         {
+            EventManager.CallEvent(new IntroStartEvent());
+
             Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Starting intro cutscene", null);
             SoundManager.Instance.PlaySound(introCutscene.IntroStinger, false, 1f, null);
             Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Game Mode: Hide and Seek", null);
@@ -214,6 +218,9 @@ namespace FungleAPI.Api
             impostor = null;
             playerSlot = null;
             ShipStatus.Instance.StartSFX();
+
+            EventManager.CallEvent(new IntroEndEvent());
+
             introCutscene.gameObject.Destroy();
             HideCountdown = PlayerControl.LocalPlayer.Data.Role.IsImpostor ? 0 : 10;
         }

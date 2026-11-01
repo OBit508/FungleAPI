@@ -33,7 +33,7 @@ namespace FungleAPI.GameModes.Patches
         [HarmonyPrefix]
         public static bool RpcEndGamePrefix(GameManager __instance, GameOverReason endReason)
         {
-            __instance.RpcEndGame(endReason.GetGameOver());
+            __instance.RpcEndGame(GameOverManager.GetGameOver((ushort)endReason));
             return false;
         }
         [HarmonyPatch(nameof(GameManager.StartGame))]

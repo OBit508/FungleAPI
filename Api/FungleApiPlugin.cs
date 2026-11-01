@@ -50,12 +50,12 @@ namespace FungleAPI.Api
     public class FungleApiPlugin : BasePlugin, IFungleBasePlugin
     {
         public const string ModId = "fungleapi";
-        public const string ModV = "0.3.62";
+        public const string ModV = "0.3.63";
         public static readonly Harmony Harmony = new Harmony(ModId);
         public static FungleApiPlugin Instance { get; private set; }
 
         public string ModName { get; } = "Vanilla";
-        public string ModVersion { get; } = "0.3.6-2";
+        public string ModVersion { get; } = "0.3.6-3";
 
         internal static FungleHelper Helper;
         /// <summary>
@@ -109,6 +109,7 @@ namespace FungleAPI.Api
             };
             IL2CPPChainloader.Instance.Finished += () => // Chamado quando o BeplnEx termina de carregar os mods
             {
+                ReactorCompatibility.Instance?.Register("FungleAPI", ModVersion, false, (l) => l == ReactorCreditsLocation.PingTracker);
                 foreach (PluginInfo pluginInfo in IL2CPPChainloader.Instance.Plugins.Values)
                 {
                     Assembly assembly = pluginInfo.Instance.GetType().Assembly;
@@ -126,7 +127,7 @@ namespace FungleAPI.Api
                         }
 
                         PluginCredits? pluginCredits = modPlugin.FunglePlugin.Credits;
-                        if (pluginCredits != null)
+                        if (pluginCredits != null && modPlugin != Plugin)
                         {
                             ReactorCompatibility.Instance?.Register(pluginCredits.Value.Name, pluginCredits.Value.Version, false, (l) => l == ReactorCreditsLocation.PingTracker);
                         }

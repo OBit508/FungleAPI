@@ -71,7 +71,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static void WriteGameOver(this MessageWriter messageWriter, BaseGameOver customGameOver)
         {
-            messageWriter.Write((byte)customGameOver.Reason);
+            messageWriter.Write(customGameOver.GameOverId);
         }
         /// <summary>
         /// Write a role
@@ -172,8 +172,7 @@ namespace FungleAPI.Networking
         /// </summary>
         public static BaseGameOver ReadGameOver(this MessageReader messageReader)
         {
-            GameOverReason reason = (GameOverReason)messageReader.ReadByte();
-            return reason.GetGameOver();
+            return GameOverManager.GetGameOver(messageReader.ReadUInt16());
         }
         /// <summary>
         /// Read a role

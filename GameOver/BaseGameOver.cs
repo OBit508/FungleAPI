@@ -1,5 +1,6 @@
 ﻿using AmongUs.Data;
 using Assets.CoreScripts;
+using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.Extensions;
 using FungleAPI.ModCompatibility.MiraSupport;
@@ -28,8 +29,9 @@ namespace FungleAPI.GameOver
         public virtual Color BackgroundColor { get; set; }
         public virtual Color NameColor { get; set; }
         public virtual AudioClip Clip { get; set; }
-        public GameOverReason Reason { get; internal set; }
-        public virtual void SetData()
+        public ushort GameOverId { get; internal set; }
+        public virtual bool DidWin(NetworkedPlayerInfo networkedPlayerInfo) => false;
+        public virtual void SetWinners()
         {
             Winners.Clear();
 
@@ -46,21 +48,23 @@ namespace FungleAPI.GameOver
 
             foreach (NetworkedPlayerInfo networkedPlayerInfo in networkedPlayerInfos)
             {
-                if (networkedPlayerInfo.Role.DidWin(Reason))
+                if (DidWin(networkedPlayerInfo))
                 {
                     Winners.Add(new CachedPlayerData(networkedPlayerInfo));
                 }
-                
             }
         }
-        public virtual byte GetExtraByte() { return 0; }
-        public virtual void InterpretExtraByte(byte b) { }
+
+        internal virtual void SerializeWithData(MessageWriter messageWriter, object data) { Serialize(messageWriter); }
+        public virtual void Serialize(MessageWriter messageWriter) { }
+        public virtual void Deserialize(MessageReader messageReader) { }
+
         public virtual void OnSetEverythingUp(EndGameManager endGameManager) 
         {
             AudioClip winClip = Clip;
             if (winClip == null)
             {
-                switch (Reason)
+                switch ((GameOverReason)GameOverId)
                 {
                     case GameOverReason.CrewmatesByVote: winClip = endGameManager.CrewStinger; break;
                     case GameOverReason.CrewmatesByTask: winClip = endGameManager.CrewStinger; break;
@@ -71,7 +75,7 @@ namespace FungleAPI.GameOver
             }
             DataManager.Player.Stats.IncrementStat(StatID.GamesFinished);
             endGameManager.Navigation.HideButtons();
-            if (Reason == GameOverReason.ImpostorDisconnect)
+            if (GameOverId == (ushort)GameOverReason.ImpostorDisconnect)
             {
                 DataManager.Player.Stats.IncrementGameResultStat(EndGameResult.CachedGameOverReason, GameResultStat.Draws);
             }
@@ -149,6 +153,7 @@ namespace FungleAPI.GameOver
     [FungleIgnore]
     public class BaseGameOver<DataT> : BaseGameOver
     {
-        public virtual void ReceiveDataFromRpcEndGame(DataT data) { }
+        internal override void SerializeWithData(MessageWriter messageWriter, object data) { Serialize(messageWriter, (DataT)data); }
+        public virtual void Serialize(MessageWriter messageWriter, DataT dataT) { Serialize(messageWriter); }
     }
 }

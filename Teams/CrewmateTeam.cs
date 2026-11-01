@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,14 @@ namespace FungleAPI.Teams
         public override StringNames TeamName => StringNames.Crewmate;
         public override StringNames PluralName => StringNames.Crewmates;
         public override string VictoryText => FungleTranslation.CrewmateGameOver.GetString();
-        public override BaseGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<CrewmatesByTask>();
+        public override void CallGameOver(GameManager gameManager) => gameManager.RpcEndGame<CrewmatesByTask>();
         public override byte DefaultCount => byte.MaxValue;
         public override bool HideInLobby => true;
+        public override void BeginIntro(IntroCutscene introCutscene)
+        {
+            base.BeginIntro(introCutscene);
+            introCutscene.ImpostorText.text = IntroHelpers.GetTeamsTextAsCrewmate();
+        }
         public override CategoryHeaderEditRole CreatCategoryHeaderEditRole(Transform parent)
         {
             CategoryHeaderEditRole categoryHeaderEditRole = UnityEngine.Object.Instantiate(PrefabUtils.FindPrefab<CategoryHeaderEditRole>(), Vector3.zero, Quaternion.identity, parent);

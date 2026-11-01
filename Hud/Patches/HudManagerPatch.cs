@@ -45,9 +45,6 @@ namespace FungleAPI.Hud.Patches
                 MapBehaviour.Instance.gameObject.SetActive(false);
             }
 
-            __instance.IntroPrefab.gameObject.GetOrAddComponent<IntroHelper>();
-
-
             if (MiraCompatibility.Instance == null)
             {
                 HudHelper.BottomRight = HudManager.Instance.AbilityButton.transform.parent;

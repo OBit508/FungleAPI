@@ -1,6 +1,8 @@
 ﻿using FungleAPI.Api;
+using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
+using FungleAPI.Role.Utilities;
 using FungleAPI.Utilities;
 using System;
 using System.Collections.Generic;
@@ -19,7 +21,7 @@ namespace FungleAPI.Teams
         public override StringNames TeamName { get; } = FungleTranslation.NeutralText;
         public override StringNames PluralName { get; } = FungleTranslation.NeutralsText;
         public override string VictoryText => FungleTranslation.NeutralGameOver.GetString();
-        public override BaseGameOver DefaultGameOver => GameOverManager.GetGameOverInstance<NeutralGameOver>();
+        public override void CallGameOver(GameManager gameManager) => gameManager.RpcEndGame<NeutralGameOver, PlayerControl>(PlayerControl.AllPlayerControls.FirstOrDefault(p => !p.Data.IsDead && p.Data.Role.KeepGameRunning() && p.Data.Role.GetTeam() == this));
         public override byte MaxCount => 50;
     }
 }

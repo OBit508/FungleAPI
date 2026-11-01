@@ -1,5 +1,7 @@
 ﻿using AmongUs.GameOptions;
 using FungleAPI.Attributes;
+using FungleAPI.Event;
+using FungleAPI.Event.Vanilla;
 using FungleAPI.Extensions;
 using FungleAPI.GameOver;
 using FungleAPI.GameOver.Ends;
@@ -33,6 +35,8 @@ namespace FungleAPI.GameModes
         public virtual int RequiredPlayerToStart() => 4;
         public virtual System.Collections.IEnumerator CoIntroBegin(IntroCutscene introCutscene) 
         {
+            EventManager.CallEvent(new IntroStartEvent());
+
             Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Starting intro cutscene", null);
             SoundManager.Instance.PlaySound(introCutscene.IntroStinger, false, 1f, null);
             Logger.GlobalInstance.Info("IntroCutscene :: CoBegin() :: Game Mode: Normal", null);
@@ -42,32 +46,15 @@ namespace FungleAPI.GameModes
             introCutscene.ImpostorRules.SetActive(false);
             introCutscene.ImpostorName.gameObject.SetActive(false);
             introCutscene.ImpostorTitle.gameObject.SetActive(false);
-            Il2CppSystem.Collections.Generic.List<PlayerControl> list = IntroCutscene.SelectTeamToShow(new Func<NetworkedPlayerInfo, bool>((NetworkedPlayerInfo pcd) => !PlayerControl.LocalPlayer.Data.Role.IsImpostor || pcd.Role.TeamType == PlayerControl.LocalPlayer.Data.Role.TeamType));
-            if (list == null || list.Count < 1)
-            {
-                Logger.GlobalInstance.Error("IntroCutscene :: CoBegin() :: teamToShow is EMPTY or NULL", null);
-            }
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
-            {
-                introCutscene.ImpostorText.gameObject.SetActive(false);
-            }
-            else
-            {
-                int adjustedNumImpostors = GameManager.Instance.LogicOptions.GetAdjustedNumImpostors(GameData.Instance.PlayerCount);
-                if (adjustedNumImpostors == 1)
-                {
-                    introCutscene.ImpostorText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.NumImpostorsS);
-                }
-                else
-                {
-                    introCutscene.ImpostorText.text = string.Format(StringNames.NumImpostorsP.GetString(), adjustedNumImpostors);
-                }
-                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[FF1919FF]", "<color=#FF1919FF>");
-                introCutscene.ImpostorText.text = introCutscene.ImpostorText.text.Replace("[]", "</color>");
-            }
-            yield return introCutscene.ShowTeam(list, 3f);
+
+            introCutscene.ImpostorText.gameObject.SetActive(true);
+
+            yield return IntroHelpers.ShowTeam(introCutscene, 3);
             yield return introCutscene.ShowRole();
             ShipStatus.Instance.StartSFX();
+
+            EventManager.CallEvent(new IntroEndEvent());
+
             introCutscene.gameObject.Destroy();
         }
         public virtual PlayerBodyTypes GetBodyType(PlayerControl player) => PlayerBodyTypes.Normal;

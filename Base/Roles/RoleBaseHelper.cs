@@ -1,6 +1,7 @@
 ﻿using FungleAPI.Api;
 using FungleAPI.Attributes;
 using FungleAPI.Extensions;
+using FungleAPI.GameOver;
 using FungleAPI.Player;
 using FungleAPI.Role;
 using FungleAPI.Role.Utilities;
@@ -96,6 +97,10 @@ namespace FungleAPI.Base.Roles
             {
                 base.AppendTaskHint(taskStringBuilder);
             }
+        }
+        public override bool DidWin(GameOverReason gameOverReason)
+        {
+            return GameOverManager.GetGameOver((ushort)gameOverReason).DidWin(Player.Data);
         }
         public override DeadBody FindClosestBody()
         {
